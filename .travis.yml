@@ -1,0 +1,90 @@
+sudo: required
+language: php
+addons:
+    mariadb: '10.1'
+
+env:
+    global:
+        - PIMCORE_ENVIRONMENT=test
+        - DACHCOM_BUNDLE_TEST=1
+        - PIMCORE_TEST_URL=http://localhost
+        - PIMCORE_TEST_DB_DSN="mysql://root@localhost/dachcom_bundle_test"
+        - SYMFONY_DEPRECATIONS_HELPER=weak
+        - DACHCOM_TEST_SECTION=codeception
+matrix:
+    include:
+        -   name: "PHPStan Static Analysis (Pimcore 5.6.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - DACHCOM_TEST_SECTION=phpstan
+        -   name: "PHP ECS (Pimcore 5.6.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - DACHCOM_TEST_SECTION=ecs
+        -   name: "Codeception Tests (Pimcore 5.4.x, PHP 7.1)"
+            sudo: required
+            php: 7.1
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+        -   name: "Codeception Tests ( Pimcore 5.4.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.4"
+        -   name: "Codeception Tests ( Pimcore 5.5.x, PHP 7.1)"
+            sudo: required
+            php: 7.1
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+        -   name: "Codeception Tests ( Pimcore 5.5.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.0.5"
+        -   name: "Codeception Tests ( Pimcore 5.6.x, PHP 7.1)"
+            sudo: required
+            php: 7.1
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+        -   name: "Codeception Tests ( Pimcore 5.6.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.2.0"
+        -   name: "Codeception Tests ( Pimcore 5.7.x, PHP 7.1)"
+            sudo: required
+            php: 7.1
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.2.0"
+        -   name: "Codeception Tests ( Pimcore 5.7.x, PHP 7.2)"
+            sudo: required
+            php: 7.2
+            env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+    allow_failures:
+        -   env:
+                - PIMCORE_SKELETON_BRANCH="tags/v1.1.0"
+                - DACHCOM_TEST_SECTION=ecs
+    fast_finish: true
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+install:
+    - tests/_etc/travis/install
+
+after_failure:
+    - cd $TRAVIS_BUILD_DIR
+    - cat ./lib/SearchBundle/tests/_output/*
+
+script:
+    - _etc/travis/script
+
+notifications:
+    email:
+        - shagspiel@dachcom.ch

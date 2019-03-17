@@ -1,0 +1,39 @@
+{
+    "name": "dachcom-digital/search",
+    "type": "pimcore-bundle",
+    "license": "GPL-3.0-or-later",
+    "description": "Pimcore 5.x Search Bundle.",
+    "keywords": ["pimcore", "search"],
+    "homepage": "https://github.com/dachcom-digital/pimcore-search",
+    "authors": [
+        {
+            "name": "DACHCOM.DIGITAL Stefan Hagspiel",
+            "email": "shagspiel@dachcom.ch",
+            "homepage": "http://www.dachcom.com/",
+            "role": "Developer"
+        }
+    ],
+
+    "autoload": {
+        "psr-4": {
+            "SearchBundle\\": "src/SearchBundle"
+        }
+    },
+
+    "extra": {
+        "pimcore": {
+            "bundles": [
+                "SearchBundle\\SearchBundle"
+            ]
+        }
+    },
+    "require": {
+        "pimcore/core-version": "^5.4.0"
+    },
+    "require-dev": {
+        "codeception/codeception": "~2.3.0",
+        "phpstan/phpstan": "^0.11.1",
+        "phpstan/phpstan-symfony": "^0.11.0",
+        "symplify/easy-coding-standard": "^5.4"
+    }
+}
