@@ -1,13 +1,13 @@
 <?php
 
-namespace SearchBundle;
+namespace DynamicSearchBundle;
 
-use SearchBundle\Tool\Install;
+use DynamicSearchBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class SearchBundle extends AbstractPimcoreBundle
+class DynamicSearchBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 

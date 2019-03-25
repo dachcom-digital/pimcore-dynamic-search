@@ -1,6 +1,6 @@
 <?php
 
-namespace SearchBundle\Tool;
+namespace DynamicSearchBundle\Tool;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Migrations\AbortMigrationException;

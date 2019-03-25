@@ -1,6 +1,6 @@
 <?php
 
-namespace SearchBundle\Migrations;
+namespace DynamicSearchBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;

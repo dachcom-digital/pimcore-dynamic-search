@@ -1,10 +1,10 @@
 <?php
 
-namespace SearchBundle\Configuration;
+namespace DynamicSearchBundle\Configuration;
 
 class Configuration
 {
-    const SYSTEM_CONFIG_DIR_PATH = PIMCORE_PRIVATE_VAR . '/bundles/SearchBundle';
+    const SYSTEM_CONFIG_DIR_PATH = PIMCORE_PRIVATE_VAR . '/bundles/DynamicSearchBundle';
 
     /**
      * @var array

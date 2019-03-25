@@ -2,6 +2,6 @@
 
 return [
     "bundle" => [
-        "SearchBundle\\SearchBundle" => TRUE,
+        "DynamicSearchBundle\\DynamicSearchBundle" => TRUE,
     ]
 ];
