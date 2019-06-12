@@ -1,6 +1,6 @@
 search.controller.admin.get_state:
-    path: /admin/search/settings/get/state
+    path: /admin/dynamic-search/settings/get/state
     defaults: { _controller: DynamicSearchBundle:Admin\Settings:getState }
 search.controller.admin.get_logs:
-    path: /admin/search/settings/logs/get
+    path: /admin/dynamic-search/settings/logs/get
     defaults: { _controller: DynamicSearchBundle:Admin\Settings:getLog }

@@ -1,0 +1,19 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    dynamic_search.log.formatter.provider:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] [%%extra.provider%%] [%%extra.contextName%%] %%level_name%%: %%message%%\n"
+
+    DynamicSearchBundle\Logger\ProviderContextProcessor:
+        tags:
+            - { name: monolog.processor, channel: dynamic_search }
+
+    DynamicSearchBundle\Logger\Logger:
+        tags:
+            - { name: monolog.logger, channel: dynamic_search }

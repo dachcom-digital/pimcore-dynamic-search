@@ -1,0 +1,12 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Registry\DataProviderRegistry: ~
+
+    DynamicSearchBundle\Registry\IndexProviderRegistry: ~
+
+    DynamicSearchBundle\Registry\DataTransformerRegistry: ~

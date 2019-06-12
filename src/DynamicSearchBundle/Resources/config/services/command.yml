@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    DynamicSearchBundle\Command\SearchCommand:
+        tags:
+            - { name: console.command, command: 'dynamic-search:run' }

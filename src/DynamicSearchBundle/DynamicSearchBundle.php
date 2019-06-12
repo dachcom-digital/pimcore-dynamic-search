@@ -2,6 +2,9 @@
 
 namespace DynamicSearchBundle;
 
+use DynamicSearchBundle\DependencyInjection\Compiler\DataProviderPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\DataTransformerResolverPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\IndexProviderPass;
 use DynamicSearchBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
@@ -11,7 +14,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    const PACKAGE_NAME = 'dachcom-digital/search';
+    const PACKAGE_NAME = 'dachcom-digital/dynamic-search';
 
     /**
      * @param ContainerBuilder $container
@@ -19,6 +22,10 @@ class DynamicSearchBundle extends AbstractPimcoreBundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
+
+        $container->addCompilerPass(new DataProviderPass());
+        $container->addCompilerPass(new IndexProviderPass());
+        $container->addCompilerPass(new DataTransformerResolverPass());
     }
 
     /**
@@ -35,7 +42,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle
     public function getJsPaths()
     {
         return [
-            '/bundles/formbuilder/js/plugin.js',
+            '/bundles/dynamicsearch/js/plugin.js',
         ];
     }
 
@@ -45,7 +52,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle
     public function getCssPaths()
     {
         return [
-            '/bundles/formbuilder/css/admin.css'
+            '/bundles/dynamicsearch/css/admin.css'
         ];
     }
 

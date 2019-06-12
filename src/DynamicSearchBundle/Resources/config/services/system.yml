@@ -1,0 +1,13 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # configuration
+    DynamicSearchBundle\Configuration\Configuration: ~
+
+    DynamicSearchBundle\Tool\Install:
+        arguments:
+            $bundle: "@=service('kernel').getBundle('DynamicSearchBundle')"

@@ -123,7 +123,7 @@ pimcore.plugin.search.settings = Class.create({
             });
 
             Ext.Ajax.request({
-                url: '/admin/search/settings/logs/get',
+                url: '/admin/dynamic-search/settings/logs/get',
                 success: function(response){
                     var data = Ext.decode(response.responseText);
                     Ext.getCmp('search-log-data').setValue(data.logData);
@@ -138,7 +138,7 @@ pimcore.plugin.search.settings = Class.create({
     updateCrawlerState : function() {
         var _ = this;
         Ext.Ajax.request({
-            url: '/admin/search/settings/get/state',
+            url: '/admin/dynamic-search/settings/get/state',
             method: 'get',
             success: function (response) {
                 var res = Ext.decode(response.responseText);
@@ -151,7 +151,7 @@ pimcore.plugin.search.settings = Class.create({
 
     getData: function () {
         Ext.Ajax.request({
-            url: '/admin/search/settings/get/state',
+            url: '/admin/dynamic-search/settings/get/state',
             success: function (response) {
                 this.data = Ext.decode(response.responseText);
                 this.getTabPanel();

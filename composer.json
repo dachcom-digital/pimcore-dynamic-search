@@ -2,7 +2,7 @@
     "name": "dachcom-digital/dynamic-search",
     "type": "pimcore-bundle",
     "license": "GPL-3.0-or-later",
-    "description": "Pimcore 5.x Dynamic Search Bundle.",
+    "description": "Pimcore >= 5.4 Dynamic Search Bundle",
     "keywords": ["pimcore", "search"],
     "homepage": "https://github.com/dachcom-digital/pimcore-dynamic-search",
     "authors": [

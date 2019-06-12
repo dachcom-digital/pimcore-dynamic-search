@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use DynamicSearchBundle\Configuration\Configuration as BundleConfiguration;
 
-class SearchExtension extends Extension
+class DynamicSearchExtension extends Extension
 {
     /**
      * @param array            $configs

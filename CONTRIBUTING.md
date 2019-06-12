@@ -43,7 +43,7 @@ derivative works. Except for this license, You reserve all rights, title, and in
 
 #### 2. Grant of Patent License.
 Subject to the terms and conditions of this agreement, You grant to the Projects’ maintainers, contributors, users and
-to dachcom-digital/search a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section)
+to dachcom-digital/dynamic-search a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section)
 patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer your contributions, where
 such license applies only to those patent claims licensable by you that are necessarily infringed by your contribution
 or by combination of your contribution with the project to which this contribution was submitted.

@@ -2,10 +2,11 @@
 
 namespace DynamicSearchBundle\Configuration;
 
-class Configuration
-{
-    const SYSTEM_CONFIG_DIR_PATH = PIMCORE_PRIVATE_VAR . '/bundles/DynamicSearchBundle';
+use DynamicSearchBundle\Context\ContextData;
+use DynamicSearchBundle\Context\ContextDataInterface;
 
+class Configuration implements ConfigurationInterface
+{
     /**
      * @var array
      */
@@ -20,20 +21,39 @@ class Configuration
     }
 
     /**
-     * @return array
-     */
-    public function getConfigNode()
-    {
-        return $this->config;
-    }
-
-    /**
      * @param string $slot
      *
      * @return mixed
      */
-    public function getConfig($slot)
+    public function get($slot)
     {
         return $this->config[$slot];
+    }
+
+    /**
+     * @return array|ContextDataInterface
+     */
+    public function getContextDefinitions()
+    {
+        $contextDefinitions = [];
+        foreach ($this->config['context'] as $contextName => $context) {
+            $contextDefinitions[] = $this->getContextDefinition($contextName);
+        }
+
+        return $contextDefinitions;
+    }
+
+    /**
+     * @param string $contextName
+     *
+     * @return ContextDataInterface
+     */
+    public function getContextDefinition(string $contextName)
+    {
+        if (!isset($this->config['context'][$contextName]) || !is_array($this->config['context'][$contextName])) {
+            return null;
+        }
+
+        return new ContextData($contextName, $this->config['context'][$contextName]);
     }
 }

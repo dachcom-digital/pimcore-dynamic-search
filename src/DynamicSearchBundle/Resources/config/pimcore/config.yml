@@ -1,0 +1,9 @@
+monolog:
+    channels: ['dynamic_search']
+    handlers:
+        dynamic_search_logging:
+            type: stream
+            path: '%kernel.project_dir%/var/bundles/DynamicSearchBundle/dynamic_search.log'
+            level: debug
+            formatter: dynamic_search.log.formatter.provider
+            channels: ['dynamic_search']

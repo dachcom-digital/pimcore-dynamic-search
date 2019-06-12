@@ -1,0 +1,15 @@
+imports:
+    - { resource: services/*.yml }
+
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Processor\WorkflowProcessor: ~
+
+    DynamicSearchBundle\Service\LockService: ~
+
+    DynamicSearchBundle\Service\LongProcessService: ~
