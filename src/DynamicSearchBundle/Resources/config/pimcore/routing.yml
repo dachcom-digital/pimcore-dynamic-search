@@ -1,6 +1,14 @@
-search.controller.admin.get_state:
-    path: /admin/dynamic-search/settings/get/state
-    defaults: { _controller: DynamicSearchBundle:Admin\Settings:getState }
-search.controller.admin.get_logs:
-    path: /admin/dynamic-search/settings/logs/get
-    defaults: { _controller: DynamicSearchBundle:Admin\Settings:getLog }
+dynamic_search.controller.admin.get_state:
+    path: /admin/dynamic-search/settings/state
+    defaults: { _controller: DynamicSearchBundle:Admin\Settings:state }
+dynamic_search.controller.admin.get_logs:
+    path: /admin/dynamic-search/settings/logs
+    defaults: { _controller: DynamicSearchBundle:Admin\Settings:log }
+
+dynamic_search.controller.auto_complete:
+    path: /dynamic-search/{contextName}/auto-complete
+    defaults: { _controller: DynamicSearchBundle\Controller\SearchController:autoCompleteAction }
+
+dynamic_search.controller.search:
+    path: /lucence-search/{contextName}/search
+    defaults: { _controller: DynamicSearchBundle\Controller\SearchController:searchAction }

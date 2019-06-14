@@ -1,12 +1,14 @@
 # Pimcore 5 - Dynamic Search
 
+![Dynamic Search Schema](https://user-images.githubusercontent.com/700119/59495255-3f997580-8e8f-11e9-94ef-eb5e4c6cc3dd.png)
+
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/dynamic-search.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/dynamic-search)
 [![Travis](https://img.shields.io/travis/com/dachcom-digital/pimcore-dynamic-search/master.svg?style=flat-square)](https://travis-ci.com/dachcom-digital/pimcore-dynamic-search)
 [![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat-square)](#)
 
-# DO NOT USE THIS BUNDLE IN PRODUCTION
-
+# Attention!
+This bundle has no stable release yet and is allowed to introduce major changes without any further warnings.
 
 ## Requirements
 * Pimcore >= 5.4.0
@@ -21,6 +23,10 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 ### Index Provider
 - Lucene Search
 - Elastic Search
+
+### Data Transformer
+- Http Response HTML Transformer
+- Http Response PDF Transformer
 
 ### Installation  
 

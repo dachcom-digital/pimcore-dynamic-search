@@ -3,7 +3,7 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: true
+        public: false
 
     DynamicSearchBundle\Command\SearchCommand:
         tags:

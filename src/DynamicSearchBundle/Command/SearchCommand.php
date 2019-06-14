@@ -47,6 +47,7 @@ class SearchCommand extends Command
         $this
             ->setName('dynamic-search:run')
             ->setDescription('Run Dynamic Search')
+            ->addOption('context', 'c', InputOption::VALUE_REQUIRED, 'Only perform on specific context')
             ->addOption('force', 'f',
                 InputOption::VALUE_NONE,
                 'Force Crawl Start');
@@ -75,7 +76,12 @@ class SearchCommand extends Command
         $this->lockService->lock($lockKey, 'user command');
 
         try {
-            $this->workflowProcessor->performFullContextLoop();
+            if ($input->getOption('context') === null) {
+                $this->workflowProcessor->performFullContextLoop();
+            } else {
+                $this->workflowProcessor->performSingleContextLoop($input->getOption('context'));
+            }
+
         } catch (\Throwable $e) {
             $output->writeln(sprintf('<error>%s. (File: %s, Line: %s)</error>', $e->getMessage(), $e->getFile(), $e->getLine()));
         }
