@@ -5,15 +5,24 @@ services:
         autoconfigure: true
         public: false
 
-    dynamic_search.log.formatter.provider:
-        class: Monolog\Formatter\LineFormatter
-        arguments:
-            - "[%%datetime%%] [%%extra.provider%%] [%%extra.contextName%%] %%level_name%%: %%message%%\n"
-
     DynamicSearchBundle\Logger\ProviderContextProcessor:
         tags:
-            - { name: monolog.processor, channel: dynamic_search }
+            - { name: monolog.processor, handler: dynamic_search_stream_logging }
+
+    DynamicSearchBundle\Logger\ProviderContextConsoleProcessor:
+        tags:
+            - { name: monolog.processor, handler: dynamic_search_console_logging }
 
     DynamicSearchBundle\Logger\Logger:
         tags:
             - { name: monolog.logger, channel: dynamic_search }
+
+    dynamic_search.log.formatter.stream.provider:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] [%%extra.provider%%] [%%extra.contextName%%] %%level_name%%: %%message%%\n"
+
+    dynamic_search.log.formatter.console.provider:
+        class: Symfony\Bridge\Monolog\Formatter\ConsoleFormatter
+        arguments:
+            - "[%%datetime%%] %%level_name%%: %%start_tag%%%%message%%%%end_tag%% %%extra%%\n"

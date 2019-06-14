@@ -7,19 +7,38 @@ use Ramsey\Uuid\Uuid;
 
 class IndexDocument
 {
+    /**
+     * @var string
+     */
     protected $uuid;
 
-    protected $documentBoost = 1;
+    /**
+     * @var int
+     */
+    protected $documentBoost;
 
     /**
      * @var array
      */
     protected $fields;
 
+    /**
+     * @param int $documentBoost
+     *
+     * @throws \Exception
+     */
     public function __construct(int $documentBoost = 1)
     {
         $this->documentBoost = $documentBoost;
         $this->uuid = Uuid::uuid4()->toString();
+    }
+
+    /**
+     * @return string
+     */
+    public function getUUid()
+    {
+        return $this->uuid;
     }
 
     /**

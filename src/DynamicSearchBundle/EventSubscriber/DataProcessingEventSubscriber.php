@@ -5,12 +5,14 @@ namespace DynamicSearchBundle\EventSubscriber;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\DynamicSearchEvents;
 use DynamicSearchBundle\Event\NewDataEvent;
+use DynamicSearchBundle\Exception\DataTransformerException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\DataTransformerManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
+use DynamicSearchBundle\Transformer\DataTransformerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class DynamicSearchEventSubscriber implements EventSubscriberInterface
+class DataProcessingEventSubscriber implements EventSubscriberInterface
 {
     /**
      * @var LoggerInterface
@@ -56,39 +58,54 @@ class DynamicSearchEventSubscriber implements EventSubscriberInterface
 
     public function addDataToIndex(NewDataEvent $event)
     {
-        $transformedData = $this->dataTransformerManager->execute($event->getProvider(), $event->getContextData(), $event->getData());
+        $dataTransformer = $this->dataTransformerManager->getDataTransformer($event->getProvider(), $event->getContextData(), $event->getData());
 
-        if (!$transformedData instanceof IndexDocument) {
+        if (!$dataTransformer instanceof DataTransformerInterface) {
             return;
         }
 
-        $indexProvider = $this->indexManager->getIndexManger($event->getContextData());
+        try {
+            $indexDocument = $dataTransformer->transformData($event->getContextData(), $event->getData());
+        } catch (\Throwable $e) {
+            throw new DataTransformerException(sprintf('Error while apply data transformation for "%s". Error was: %s', $dataTransformer->getAlias(), $e->getMessage()));
+        }
 
-        $indexProvider->executeInsert($event->getContextData(), $transformedData);
+        if (!$indexDocument instanceof IndexDocument) {
+            return;
+        }
+
+        $this->logger->debug(
+            sprintf('Index Document with %d fields successfully generated. Used "%s" transformer',
+                count($indexDocument->getFields()), $dataTransformer->getAlias()
+            ), $event->getProvider(), $event->getContextData()->getName());
+
+        $indexProvider = $this->indexManager->getIndexProvider($event->getContextData());
+
+        $indexProvider->executeInsert($event->getContextData(), $indexDocument);
     }
 
     public function updateDataInIndex(NewDataEvent $event)
     {
-        $transformedData = $this->dataTransformerManager->execute($event->getProvider(), $event->getContextData(), $event->getData());
+        $transformedData = $this->dataTransformerManager->getDataTransformer($event->getProvider(), $event->getContextData(), $event->getData());
 
         if (!$transformedData instanceof IndexDocument) {
             return;
         }
 
-        $indexProvider = $this->indexManager->getIndexManger($event->getContextData());
+        $indexProvider = $this->indexManager->getIndexProvider($event->getContextData());
 
         $indexProvider->executeUpdate($event->getContextData(), $transformedData);
     }
 
     public function deleteDataFromIndex(NewDataEvent $event)
     {
-        $transformedData = $this->dataTransformerManager->execute($event->getProvider(), $event->getContextData(), $event->getData());
+        $transformedData = $this->dataTransformerManager->getDataTransformer($event->getProvider(), $event->getContextData(), $event->getData());
 
         if (!$transformedData instanceof IndexDocument) {
             return;
         }
 
-        $indexProvider = $this->indexManager->getIndexManger($event->getContextData());
+        $indexProvider = $this->indexManager->getIndexProvider($event->getContextData());
 
         $indexProvider->executeDelete($event->getContextData(), $transformedData);
     }

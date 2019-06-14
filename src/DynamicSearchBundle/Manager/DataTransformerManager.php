@@ -46,9 +46,8 @@ class DataTransformerManager implements DataTransformerManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function execute(string $dataProvider, ContextDataInterface $contextData, $data)
+    public function getDataTransformer(string $dataProvider, ContextDataInterface $contextData, $data)
     {
-        $indexDocument = null;
         $dataTransformer = null;
 
         try {
@@ -66,13 +65,7 @@ class DataTransformerManager implements DataTransformerManagerInterface
 
         $dataTransformer->setLogger($this->logger);
 
-        try {
-            $indexDocument = $dataTransformer->transformData($contextData, $data);
-        } catch (\Throwable $e) {
-            throw new DataTransformerException(sprintf('Error while apply data transformation for "%s". Error was: %s', $dataTransformer->getAlias(), $e->getMessage()));
-        }
-
-        return $indexDocument;
+        return $dataTransformer;
     }
 
     /**

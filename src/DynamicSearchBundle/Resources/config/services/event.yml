@@ -5,6 +5,7 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\EventSubscriber\DynamicSearchEventSubscriber: ~
+    DynamicSearchBundle\EventSubscriber\DataProcessingEventSubscriber: ~
+    DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber: ~
 
     DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher: ~

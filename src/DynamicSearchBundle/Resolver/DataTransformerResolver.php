@@ -43,6 +43,6 @@ class DataTransformerResolver implements DataResolverInterface
             return $validTransformer;
         }
 
-        throw new DataTransformerNotFoundException(null);
+        throw new DataTransformerNotFoundException();
     }
 }

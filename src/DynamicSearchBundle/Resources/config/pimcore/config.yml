@@ -1,9 +1,25 @@
 monolog:
     channels: ['dynamic_search']
     handlers:
-        dynamic_search_logging:
+
+        console:
+            type: console
+            channels:
+                type: exclusive
+                elements: ['!dynamic_search']
+
+        dynamic_search_stream_logging:
             type: stream
             path: '%kernel.project_dir%/var/bundles/DynamicSearchBundle/dynamic_search.log'
-            level: debug
-            formatter: dynamic_search.log.formatter.provider
             channels: ['dynamic_search']
+            formatter: dynamic_search.log.formatter.stream.provider
+
+        dynamic_search_console_logging:
+            type: console
+            verbosity_levels:
+                VERBOSITY_NORMAL: DEBUG
+                VERBOSITY_VERBOSE: DEBUG
+                VERBOSITY_VERY_VERBOSE: DEBUG
+                VERBOSITY_DEBUG: DEBUG
+            channels: ['dynamic_search']
+            formatter: dynamic_search.log.formatter.console.provider

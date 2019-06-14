@@ -12,5 +12,5 @@ interface DataManagerInterface
      *
      * @return DataProviderInterface
      */
-    public function getDataManger(ContextDataInterface $contextData);
+    public function getDataProvider(ContextDataInterface $contextData);
 }

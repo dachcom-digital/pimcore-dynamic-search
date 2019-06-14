@@ -2,7 +2,8 @@
 
 namespace DynamicSearchBundle\EventDispatcher;
 
-use DynamicSearchBundle\EventSubscriber\DynamicSearchEventSubscriber;
+use DynamicSearchBundle\EventSubscriber\DataProcessingEventSubscriber;
+use DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
@@ -15,12 +16,16 @@ class DynamicSearchEventDispatcher implements DynamicSearchEventDispatcherInterf
     protected $eventDispatcher;
 
     /**
-     * @param DynamicSearchEventSubscriber $subscriber
+     * @param DataProcessingEventSubscriber $dataProcessingEventSubscriber
+     * @param ErrorEventSubscriber          $errorEventSubscriber
      */
-    public function __construct(DynamicSearchEventSubscriber $subscriber)
-    {
+    public function __construct(
+        DataProcessingEventSubscriber $dataProcessingEventSubscriber,
+        ErrorEventSubscriber $errorEventSubscriber
+    ) {
         $eventDispatcher = new EventDispatcher();
-        $eventDispatcher->addSubscriber($subscriber);
+        $eventDispatcher->addSubscriber($dataProcessingEventSubscriber);
+        $eventDispatcher->addSubscriber($errorEventSubscriber);
 
         $this->eventDispatcher = new ImmutableEventDispatcher($eventDispatcher);
     }

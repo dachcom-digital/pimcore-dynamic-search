@@ -12,5 +12,5 @@ interface IndexManagerInterface
      *
      * @return IndexProviderInterface
      */
-    public function getIndexManger(ContextDataInterface $contextData);
+    public function getIndexProvider(ContextDataInterface $contextData);
 }

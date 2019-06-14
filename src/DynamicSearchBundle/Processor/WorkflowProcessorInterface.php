@@ -2,19 +2,19 @@
 
 namespace DynamicSearchBundle\Processor;
 
-use DynamicSearchBundle\Exception\ProviderException;
+use DynamicSearchBundle\Exception\RuntimeException;
 
 interface WorkflowProcessorInterface
 {
     /**
-     * @throws ProviderException
+     * @throws RuntimeException
      */
     public function performFullContextLoop();
 
     /**
      * @param string $contextName
      *
-     * @throws ProviderException
+     * @throws RuntimeException
      */
     public function performSingleContextLoop(string $contextName);
 }

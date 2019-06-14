@@ -45,12 +45,12 @@ class DataManager implements DataManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function getDataManger(ContextDataInterface $contextData)
+    public function getDataProvider(ContextDataInterface $contextData)
     {
         $dataProviderToken = $contextData->getDataProvider();
 
         if (is_null($dataProviderToken) || !$this->dataProviderRegistry->has($dataProviderToken)) {
-            throw new ProviderException(sprintf('Invalid requested data provider "%s"', $dataProviderToken));
+            throw new ProviderException('Invalid requested data provider', $dataProviderToken);
         }
 
         $dataProvider = $this->dataProviderRegistry->get($dataProviderToken);
@@ -73,7 +73,7 @@ class DataManager implements DataManagerInterface
         try {
             $contextData->assertValidContextProviderOptions($dataProvider, ContextDataInterface::DATA_PROVIDER_OPTIONS);
         } catch (ContextConfigurationException $e) {
-            throw new ProviderException(sprintf('Invalid context configuration for data provider "%s". Error was: %s', get_class($dataProvider), $e->getMessage()));
+            throw new ProviderException($e->getMessage(), $contextData->getDataProvider(), $e);
         }
     }
 }

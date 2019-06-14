@@ -42,12 +42,15 @@ class IndexManager implements IndexManagerInterface
         $this->indexProviderRegistry = $indexProviderRegistry;
     }
 
-    public function getIndexManger(ContextDataInterface $contextData)
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndexProvider(ContextDataInterface $contextData)
     {
         $indexProviderToken = $contextData->getIndexProvider();
 
         if (is_null($indexProviderToken) || !$this->indexProviderRegistry->has($indexProviderToken)) {
-            throw new ProviderException(sprintf('Invalid requested index provider "%s"', $indexProviderToken));
+            throw new ProviderException('Invalid requested index provider', $indexProviderToken);
         }
 
         $indexProvider = $this->indexProviderRegistry->get($indexProviderToken);
@@ -71,8 +74,7 @@ class IndexManager implements IndexManagerInterface
         try {
             $contextData->assertValidContextProviderOptions($indexProvider, ContextDataInterface::INDEX_PROVIDER_OPTIONS);
         } catch (ContextConfigurationException $e) {
-            throw new ProviderException(sprintf('Invalid context configuration for index provider "%s". Error was: %s', get_class($indexProvider), $e->getMessage()));
+            throw new ProviderException($e->getMessage(), $contextData->getIndexProvider(), $e);
         }
     }
-
 }

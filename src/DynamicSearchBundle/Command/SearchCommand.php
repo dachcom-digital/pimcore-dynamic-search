@@ -4,10 +4,8 @@ namespace DynamicSearchBundle\Command;
 
 use DynamicSearchBundle\Command\Traits\SignalWatchTrait;
 
-use DynamicSearchBundle\Manager\DataManagerInterface;
 use DynamicSearchBundle\Processor\WorkflowProcessorInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
-use DynamicSearchBundle\Service\LongProcessServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -60,6 +58,8 @@ class SearchCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $lockKey = LockServiceInterface::RUNNING_PROCESS;
+
+        $this->watchSignalWithLockKey($lockKey);
 
         if ($this->lockService->isLocked($lockKey)) {
 
