@@ -143,11 +143,11 @@ class WorkflowProcessor implements WorkflowProcessorInterface
                 $provider->warmUp($contextData);
             } catch (ProcessCancelledException $e) {
                 $this->validProcessRunning = false;
-                $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated.', $e->getMessage());
+                $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated', $e->getMessage());
                 $this->dispatchCancelledProcessToProviders($errorMessage, $contextData, $providers);
             } catch (\Throwable $e) {
                 $this->validProcessRunning = false;
-                $errorMessage = sprintf('Error while warming up provider. Error was: %s. FailOver has been initiated.', $e->getMessage());
+                $errorMessage = sprintf('Error while warming up provider. Error was: %s. FailOver has been initiated', $e->getMessage());
                 $this->dispatchFailOverToProviders($errorMessage, $contextData, $providers);
             }
         }
@@ -172,11 +172,11 @@ class WorkflowProcessor implements WorkflowProcessorInterface
                 $provider->coolDown($contextData);
             } catch (ProcessCancelledException $e) {
                 $this->validProcessRunning = false;
-                $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated.', $e->getMessage());
+                $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated', $e->getMessage());
                 $this->dispatchCancelledProcessToProviders($errorMessage, $contextData, $providers);
             } catch (\Throwable $e) {
                 $this->validProcessRunning = false;
-                $errorMessage = sprintf('Error while cooling down provider. Error was: %s. FailOver has been initiated.', $e->getMessage());
+                $errorMessage = sprintf('Error while cooling down provider. Error was: %s. FailOver has been initiated', $e->getMessage());
                 $this->dispatchFailOverToProviders($errorMessage, $contextData, $providers);
             }
         }
@@ -199,11 +199,11 @@ class WorkflowProcessor implements WorkflowProcessorInterface
             $dataProvider->execute($contextData);
         } catch (ProcessCancelledException $e) {
             $this->validProcessRunning = false;
-            $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated.', $e->getMessage());
+            $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated', $e->getMessage());
             $this->dispatchCancelledProcessToProviders($errorMessage, $contextData, $involvedProviders);
         } catch (\Throwable $e) {
             $this->validProcessRunning = false;
-            $errorMessage = sprintf('Error while executing data provider. Error was: %s. FailOver has been initiated.', $e->getMessage());
+            $errorMessage = sprintf('Error while executing data provider. Error was: %s. FailOver has been initiated', $e->getMessage());
             $this->dispatchFailOverToProviders($errorMessage, $contextData, $involvedProviders);
         }
     }

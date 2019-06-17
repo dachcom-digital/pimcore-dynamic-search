@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Provider\IndexProviderInterface;
+use DynamicSearchBundle\Provider\OutputChannel\OutputChannelInterface;
 
 interface IndexProviderRegistryInterface
 {
@@ -11,12 +12,21 @@ interface IndexProviderRegistryInterface
      *
      * @return bool
      */
-    public function has($alias);
+    public function has(string $alias);
 
     /**
      * @param string $alias
      *
      * @return IndexProviderInterface
      */
-    public function get($alias);
+    public function get(string $alias);
+
+    /**
+     * @param string $type
+     * @param string $alias
+     *
+     * @return OutputChannelInterface
+     */
+    public function getOutputChannel(string $type, string $alias);
+
 }

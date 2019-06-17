@@ -9,5 +9,6 @@ services:
     DynamicSearchBundle\Configuration\Configuration: ~
 
     DynamicSearchBundle\Tool\Install:
+        public: true
         arguments:
             $bundle: "@=service('kernel').getBundle('DynamicSearchBundle')"

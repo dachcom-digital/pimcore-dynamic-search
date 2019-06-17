@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Context;
 
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Exception\UnresolvedContextConfigurationException;
+use DynamicSearchBundle\Provider\IndexProviderInterface;
 use DynamicSearchBundle\Service\OptionAwareResolverInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -105,8 +106,7 @@ class ContextData implements ContextDataInterface
      */
     public function assertValidContextProviderOptions(OptionAwareResolverInterface $resolver, string $providerType)
     {
-        $optionsResolver = new OptionsResolver();
-        $resolver->configureOptions($optionsResolver);
+        $optionsResolver = $this->getDefaultOptionsResolver($resolver);
 
         $rawOptions = $this->rawContextOptions[$providerType];
         if (!is_array($rawOptions)) {
@@ -127,8 +127,7 @@ class ContextData implements ContextDataInterface
      */
     public function assertValidContextTransformerOptions(OptionAwareResolverInterface $resolver, string $transformerName)
     {
-        $optionsResolver = new OptionsResolver();
-        $resolver->configureOptions($optionsResolver);
+        $optionsResolver = $this->getDefaultOptionsResolver($resolver);
 
         if (!is_array($this->parsedContextOptions[self::DATA_TRANSFORMER_OPTIONS])) {
             $this->parsedContextOptions[self::DATA_TRANSFORMER_OPTIONS] = [];
@@ -146,5 +145,19 @@ class ContextData implements ContextDataInterface
         }
 
         return $this;
+    }
+
+    protected function getDefaultOptionsResolver(OptionAwareResolverInterface $resolver)
+    {
+        $optionsResolver = new OptionsResolver();
+        $resolver->configureOptions($optionsResolver);
+
+        if ($resolver instanceof IndexProviderInterface) {
+            $optionsResolver->setRequired(['output_channel_autocomplete', 'output_channel_search']);
+            $optionsResolver->setAllowedTypes('output_channel_autocomplete', ['string']);
+            $optionsResolver->setAllowedTypes('output_channel_search', ['string']);
+        }
+
+        return $optionsResolver;
     }
 }

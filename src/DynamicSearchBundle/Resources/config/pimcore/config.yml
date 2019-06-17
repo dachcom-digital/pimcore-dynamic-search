@@ -9,7 +9,8 @@ monolog:
                 elements: ['!dynamic_search']
 
         dynamic_search_stream_logging:
-            type: stream
+            type: rotating_file
+            max_files: 1
             path: '%kernel.project_dir%/var/bundles/DynamicSearchBundle/dynamic_search.log'
             channels: ['dynamic_search']
             formatter: dynamic_search.log.formatter.stream.provider

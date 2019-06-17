@@ -10,5 +10,5 @@ dynamic_search.controller.auto_complete:
     defaults: { _controller: DynamicSearchBundle\Controller\SearchController:autoCompleteAction }
 
 dynamic_search.controller.search:
-    path: /lucence-search/{contextName}/search
+    path: /dynamic-search/{contextName}/search
     defaults: { _controller: DynamicSearchBundle\Controller\SearchController:searchAction }

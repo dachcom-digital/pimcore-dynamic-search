@@ -82,9 +82,6 @@ class HttpResponsePdfDataTransformer implements DataTransformerInterface
 
         $resolver->setAllowedTypes('boost', ['int']);
         $resolver->setAllowedTypes('restriction', ['array']);
-
-        $this->assetTmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY;
-
     }
 
     /**

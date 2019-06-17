@@ -28,6 +28,11 @@ class IndexManager implements IndexManagerInterface
     protected $indexProviderRegistry;
 
     /**
+     * @var array
+     */
+    protected $validProviders;
+
+    /**
      * @param LoggerInterface                $logger
      * @param ConfigurationInterface         $configuration
      * @param IndexProviderRegistryInterface $indexProviderRegistry
@@ -49,6 +54,10 @@ class IndexManager implements IndexManagerInterface
     {
         $indexProviderToken = $contextData->getIndexProvider();
 
+        if (isset($this->validProviders[$indexProviderToken])) {
+            return $this->validProviders[$indexProviderToken];
+        }
+
         if (is_null($indexProviderToken) || !$this->indexProviderRegistry->has($indexProviderToken)) {
             throw new ProviderException('Invalid requested index provider', $indexProviderToken);
         }
@@ -59,7 +68,30 @@ class IndexManager implements IndexManagerInterface
 
         $indexProvider->setLogger($this->logger);
 
+        $this->validProviders[$indexProviderToken] = $indexProvider;
+
         return $indexProvider;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndexProviderOutputChannel(ContextDataInterface $contextData, string $type)
+    {
+        $indexProvider = $this->getIndexProvider($contextData);
+
+        $options = $contextData->getIndexProviderOptions();
+
+        $serviceName = sprintf('output_channel_%s', $type);
+
+        if (!isset($options[$serviceName])) {
+            throw new ProviderException(sprintf('Invalid requested index output channel service "%s"', $type));
+        }
+
+        $outputChannel = $this->indexProviderRegistry->getOutputChannel($type, $contextData->getIndexProvider());
+
+        return $outputChannel;
 
     }
 
