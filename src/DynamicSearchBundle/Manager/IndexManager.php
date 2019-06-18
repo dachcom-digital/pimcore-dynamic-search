@@ -8,6 +8,7 @@ use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Provider\IndexProviderInterface;
+use DynamicSearchBundle\Registry\IndexFieldRegistryInterface;
 use DynamicSearchBundle\Registry\IndexProviderRegistryInterface;
 
 class IndexManager implements IndexManagerInterface
@@ -28,6 +29,11 @@ class IndexManager implements IndexManagerInterface
     protected $indexProviderRegistry;
 
     /**
+     * @var IndexFieldRegistryInterface
+     */
+    protected $indexFieldRegistry;
+
+    /**
      * @var array
      */
     protected $validProviders;
@@ -36,15 +42,18 @@ class IndexManager implements IndexManagerInterface
      * @param LoggerInterface                $logger
      * @param ConfigurationInterface         $configuration
      * @param IndexProviderRegistryInterface $indexProviderRegistry
+     * @param IndexFieldRegistryInterface    $indexFieldRegistry
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
-        IndexProviderRegistryInterface $indexProviderRegistry
+        IndexProviderRegistryInterface $indexProviderRegistry,
+        IndexFieldRegistryInterface $indexFieldRegistry
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->indexProviderRegistry = $indexProviderRegistry;
+        $this->indexFieldRegistry = $indexFieldRegistry;
     }
 
     /**
@@ -72,6 +81,19 @@ class IndexManager implements IndexManagerInterface
 
         return $indexProvider;
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndexField(ContextDataInterface $contextData, string $identifier)
+    {
+        $indexProviderName = $contextData->getIndexProvider();
+        if (!$this->indexFieldRegistry->hasForIndexProvider($indexProviderName, $identifier)) {
+            return null;
+        }
+
+        return $this->indexFieldRegistry->getForIndexProvider($indexProviderName, $identifier);
     }
 
     /**

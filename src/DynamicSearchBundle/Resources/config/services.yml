@@ -8,7 +8,9 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\Processor\WorkflowProcessor: ~
+    DynamicSearchBundle\Processor\ContextWorkflowProcessor: ~
+
+    DynamicSearchBundle\Processor\TransformerWorkflowProcessor: ~
 
     DynamicSearchBundle\Service\LockService: ~
 

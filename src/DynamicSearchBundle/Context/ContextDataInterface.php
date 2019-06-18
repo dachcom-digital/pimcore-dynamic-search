@@ -41,13 +41,9 @@ interface ContextDataInterface
      */
     public function getIndexProviderOptions();
 
-    /**
-     * @param string $transformerName
-     *
-     * @return array
-     * @throws UnresolvedContextConfigurationException
-     */
-    public function getDataTransformOptions($transformerName);
+    public function getDocumentOptionsConfig();
+
+    public function getDocumentFieldsConfig();
 
     /**
      * @param OptionAwareResolverInterface $resolver
@@ -57,14 +53,4 @@ interface ContextDataInterface
      * @throws ContextConfigurationException
      */
     public function assertValidContextProviderOptions(OptionAwareResolverInterface $resolver, string $providerType);
-
-    /**
-     * @param OptionAwareResolverInterface $resolver
-     * @param string                       $transformerName
-     *
-     * @return $this
-     * @throws ContextConfigurationException
-     */
-    public function assertValidContextTransformerOptions(OptionAwareResolverInterface $resolver, string $transformerName);
-
 }

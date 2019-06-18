@@ -5,12 +5,4 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\Resolver\DataTransformerResolver:
-
-    DynamicSearchBundle\Transformer\HttpResponseHtmlDataTransformer:
-        tags:
-            - { name: dynamic_search.data_transformer, priority: 10 }
-
-    DynamicSearchBundle\Transformer\HttpResponsePdfDataTransformer:
-        tags:
-            - { name: dynamic_search.data_transformer, priority: 5 }
+    DynamicSearchBundle\Resolver\DispatchTransformerResolver: ~

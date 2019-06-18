@@ -4,17 +4,17 @@ namespace DynamicSearchBundle\Processor;
 
 use DynamicSearchBundle\Exception\RuntimeException;
 
-interface WorkflowProcessorInterface
+interface ContextWorkflowProcessorInterface
 {
     /**
      * @throws RuntimeException
      */
-    public function performFullContextLoop();
+    public function dispatchFullContextLoop();
 
     /**
      * @param string $contextName
      *
      * @throws RuntimeException
      */
-    public function performSingleContextLoop(string $contextName);
+    public function dispatchSingleContextLoop(string $contextName);
 }

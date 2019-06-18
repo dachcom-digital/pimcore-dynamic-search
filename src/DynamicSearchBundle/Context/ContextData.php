@@ -90,15 +90,17 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getDataTransformOptions($transformerName)
+    public function getDocumentOptionsConfig()
     {
-        if (!isset($this->parsedContextOptions[self::DATA_TRANSFORMER_OPTIONS])) {
-            throw new UnresolvedContextConfigurationException($transformerName);
-        }
+        return $this->rawContextOptions['data_transformer_options']['document_options'];
+    }
 
-        $options = $this->parsedContextOptions[self::DATA_TRANSFORMER_OPTIONS];
-
-        return isset($options[$transformerName]) && is_array($options[$transformerName]) ? $options[$transformerName] : [];
+    /**
+     * {@inheritDoc}
+     */
+    public function getDocumentFieldsConfig()
+    {
+        return $this->rawContextOptions['data_transformer_options']['document_fields'];
     }
 
     /**
@@ -117,31 +119,6 @@ class ContextData implements ContextDataInterface
             $this->parsedContextOptions[$providerType] = $optionsResolver->resolve($rawOptions);
         } catch (\Throwable $e) {
             throw new ContextConfigurationException($providerType, $e->getMessage());
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function assertValidContextTransformerOptions(OptionAwareResolverInterface $resolver, string $transformerName)
-    {
-        $optionsResolver = $this->getDefaultOptionsResolver($resolver);
-
-        if (!is_array($this->parsedContextOptions[self::DATA_TRANSFORMER_OPTIONS])) {
-            $this->parsedContextOptions[self::DATA_TRANSFORMER_OPTIONS] = [];
-        }
-
-        $rawOptions = $this->rawContextOptions[self::DATA_TRANSFORMER_OPTIONS][$transformerName];
-        if (!is_array($rawOptions)) {
-            $rawOptions = [];
-        }
-
-        try {
-            $this->parsedContextOptions[self::DATA_TRANSFORMER_OPTIONS][$transformerName] = $optionsResolver->resolve($rawOptions);
-        } catch (\Throwable $e) {
-            throw new ContextConfigurationException($transformerName, $e->getMessage());
         }
 
         return $this;

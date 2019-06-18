@@ -3,21 +3,15 @@
 namespace DynamicSearchBundle\Transformer;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Service\OptionAwareResolverInterface;
+use DynamicSearchBundle\Transformer\Container\DataContainerInterface;
 
-interface DataTransformerInterface extends OptionAwareResolverInterface
+interface DispatchTransformerInterface
 {
     /**
      * @param LoggerInterface $logger
      */
-    public function setLogger(LoggerInterface $logger);
-
-    /**
-     * @return string
-     */
-    public function getAlias(): string;
+    public function setLogger(LoggerInterface $logger): void;
 
     /**
      * @param mixed $data
@@ -30,7 +24,8 @@ interface DataTransformerInterface extends OptionAwareResolverInterface
      * @param ContextDataInterface $contextData
      * @param mixed                $data
      *
-     * @return IndexDocument|bool
+     * @return DataContainerInterface|null
      */
-    public function transformData(ContextDataInterface $contextData, $data);
+    public function transformData(ContextDataInterface $contextData, $data): ?DataContainerInterface;
+
 }

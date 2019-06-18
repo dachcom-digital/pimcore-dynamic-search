@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Document;
 
-use DynamicSearchBundle\Transformer\Field\Type\TypeInterface;
+use DynamicSearchBundle\Transformer\Container\FieldContainerInterface;
 use Ramsey\Uuid\Uuid;
 
 class IndexDocument
@@ -13,9 +13,13 @@ class IndexDocument
     protected $uuid;
 
     /**
+     * @var string
+     */
+    protected $dispatchTransformerName;
+    /**
      * @var int
      */
-    protected $documentBoost;
+    protected $options;
 
     /**
      * @var array
@@ -23,13 +27,15 @@ class IndexDocument
     protected $fields;
 
     /**
-     * @param int $documentBoost
+     * @param array  $options
+     * @param string $dispatchTransformerName
      *
      * @throws \Exception
      */
-    public function __construct(int $documentBoost = 1)
+    public function __construct(array $options, string $dispatchTransformerName)
     {
-        $this->documentBoost = $documentBoost;
+        $this->options = $options;
+        $this->dispatchTransformerName = $dispatchTransformerName;
         $this->uuid = Uuid::uuid4()->toString();
     }
 
@@ -42,32 +48,43 @@ class IndexDocument
     }
 
     /**
-     * @param string $fieldType
-     * @param string $name
-     * @param mixed  $value
-     * @param array  $fieldProperties
-     * @param int    $boost
-     * @param bool   $indexed
-     * @param bool   $stored
-     *
-     * @throws \Exception
+     * @return string
      */
-    public function addField(string $fieldType, string $name, $value, array $fieldProperties = [], int $boost = 1, bool $indexed = true, bool $stored = true)
+    public function getDispatchedTransformerName()
     {
-        if (!is_subclass_of($fieldType, TypeInterface::class)) {
-            throw new \Exception(sprintf('Could not load type "%s": class does not implement "%s".', $fieldType, TypeInterface::class));
-        }
+        return $this->dispatchTransformerName;
+    }
 
-        /** @var TypeInterface $field */
-        $field = new $fieldType();
-        $field->setName($name);
-        $field->setValue($value);
-        $field->setIndexed($indexed);
-        $field->setStored($stored);
-        $field->setBoost($boost);
-        $field->setProperties($fieldProperties);
+    /**
+     * @param mixed $key
+     *
+     * @return bool
+     */
+    public function hasDocumentOptions($key)
+    {
+        return isset($this->options[$key]);
+    }
 
-        $this->fields[] = $field;
+    /**
+     * @param mixed $key
+     *
+     * @return mixed
+     */
+    public function getDocumentOptions($key)
+    {
+        return $this->options[$key];
+    }
+
+    /**
+     * @param mixed                   $indexField
+     * @param FieldContainerInterface $fieldContainer
+     */
+    public function addField($indexField, FieldContainerInterface $fieldContainer)
+    {
+        $this->fields[] = [
+            'indexField'     => $indexField,
+            'fieldContainer' => $fieldContainer
+        ];
     }
 
     public function hasFields()
@@ -76,15 +93,10 @@ class IndexDocument
     }
 
     /**
-     * @return array|TypeInterface[]
+     * @return array
      */
     public function getFields()
     {
-        return $this->fields;
-    }
-
-    public function getDocumentBoost()
-    {
-        return $this->documentBoost;
+        return !$this->hasFields() ? [] : $this->fields;
     }
 }

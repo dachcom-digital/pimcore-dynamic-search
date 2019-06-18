@@ -12,7 +12,7 @@ use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Service\LongProcessServiceInterface;
 
-class WorkflowProcessor implements WorkflowProcessorInterface
+class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
 {
     /**
      * @var LoggerInterface
@@ -68,7 +68,7 @@ class WorkflowProcessor implements WorkflowProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function performFullContextLoop()
+    public function dispatchFullContextLoop()
     {
         $this->validProcessRunning = true;
 
@@ -91,7 +91,7 @@ class WorkflowProcessor implements WorkflowProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function performSingleContextLoop(string $contextName)
+    public function dispatchSingleContextLoop(string $contextName)
     {
         $this->validProcessRunning = true;
 

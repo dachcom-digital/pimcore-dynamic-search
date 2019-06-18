@@ -7,6 +7,6 @@ services:
 
     DynamicSearchBundle\Manager\DataManager: ~
 
-    DynamicSearchBundle\Manager\DataTransformerManager: ~
+    DynamicSearchBundle\Manager\TransformerManager: ~
 
     DynamicSearchBundle\Manager\IndexManager: ~

@@ -9,4 +9,6 @@ services:
 
     DynamicSearchBundle\Registry\IndexProviderRegistry: ~
 
-    DynamicSearchBundle\Registry\DataTransformerRegistry: ~
+    DynamicSearchBundle\Registry\TransformerRegistry: ~
+
+    DynamicSearchBundle\Registry\IndexFieldRegistry: ~

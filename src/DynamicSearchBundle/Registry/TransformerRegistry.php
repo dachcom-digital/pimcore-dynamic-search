@@ -1,0 +1,78 @@
+<?php
+
+namespace DynamicSearchBundle\Registry;
+
+use DynamicSearchBundle\Transformer\DispatchTransformerInterface;
+use DynamicSearchBundle\Transformer\FieldTransformerInterface;
+
+class TransformerRegistry implements TransformerRegistryInterface
+{
+    /**
+     * @var array
+     */
+    protected $dispatchTransformer;
+
+    /**
+     * @var array
+     */
+    protected $fieldTransformer;
+
+    /**
+     * @param        $service
+     * @param string $identifier
+     */
+    public function registerDispatchTransformer($service, string $identifier)
+    {
+        if (!in_array(DispatchTransformerInterface::class, class_implements($service), true)) {
+            throw new \InvalidArgumentException(
+                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DispatchTransformerInterface::class, implode(', ', class_implements($service)))
+            );
+        }
+
+        $this->dispatchTransformer[$identifier] = $service;
+    }
+
+    /**
+     * @param        $service
+     * @param string $identifier
+     * @param string $dataTransformer
+     */
+    public function registerFieldTransformer($service, string $identifier, string $dataTransformer)
+    {
+        if (!in_array(FieldTransformerInterface::class, class_implements($service), true)) {
+            throw new \InvalidArgumentException(
+                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), FieldTransformerInterface::class, implode(', ', class_implements($service)))
+            );
+        }
+
+        if (!isset($this->fieldTransformer[$dataTransformer])) {
+            $this->fieldTransformer[$dataTransformer] = [];
+        }
+
+        $this->fieldTransformer[$dataTransformer][$identifier] = $service;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasFieldTransformer(string $dispatchTransformerName, string $identifier)
+    {
+        return isset($this->fieldTransformer[$dispatchTransformerName]) && isset($this->fieldTransformer[$dispatchTransformerName][$identifier]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFieldTransformer(string $dispatchTransformerName, string $identifier)
+    {
+        return $this->fieldTransformer[$dispatchTransformerName][$identifier];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAllDispatchTransformers()
+    {
+        return $this->dispatchTransformer;
+    }
+}

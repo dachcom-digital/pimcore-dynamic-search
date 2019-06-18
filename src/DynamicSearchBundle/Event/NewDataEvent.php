@@ -8,11 +8,6 @@ use Symfony\Component\EventDispatcher\Event;
 class NewDataEvent extends Event
 {
     /**
-     * @var string
-     */
-    protected $provider;
-
-    /**
      * @var ContextDataInterface
      */
     protected $contextData;
@@ -23,23 +18,13 @@ class NewDataEvent extends Event
     protected $data;
 
     /**
-     * @param string               $provider
      * @param ContextDataInterface $contextData
      * @param mixed                $data
      */
-    public function __construct(string $provider, ContextDataInterface $contextData, $data)
+    public function __construct(ContextDataInterface $contextData, $data)
     {
-        $this->provider = $provider;
         $this->contextData = $contextData;
         $this->data = $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProvider()
-    {
-        return $this->provider;
     }
 
     /**
