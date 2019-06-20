@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+
+<div class="container mt-5">
+
+    <div class="row">
+        <div class="col-12">
+            <h1>Dynamic Search</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+
+            {% block dynamic_search_output_channel_search_list_error %}
+                {% if error_message is defined and error_message is not null %}
+                    <div class="dynamic-search output-channel-search error alert alert-danger">{{ error_message }}</div>
+                {% endif %}
+            {% endblock %}
+
+            <div class="dynamic-search output-channel-search list">
+                {% block dynamic_search_output_channel_search_list_content %}
+                    {# render content #}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+        integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o"
+        crossorigin="anonymous">
+</script>
+</body>
+</html>

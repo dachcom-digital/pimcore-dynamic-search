@@ -1,0 +1,3 @@
+dynamic_search_frontend_search_list:
+    path: /dynamic-search/{contextName}/search
+    defaults: { _controller: DynamicSearchBundle\Controller\SearchFrontendController:searchAction }

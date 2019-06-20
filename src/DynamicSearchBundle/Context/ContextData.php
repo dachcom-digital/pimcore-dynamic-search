@@ -3,9 +3,9 @@
 namespace DynamicSearchBundle\Context;
 
 use DynamicSearchBundle\Exception\ContextConfigurationException;
-use DynamicSearchBundle\Exception\UnresolvedContextConfigurationException;
+use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
+use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Provider\IndexProviderInterface;
-use DynamicSearchBundle\Service\OptionAwareResolverInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContextData implements ContextDataInterface
@@ -46,45 +46,123 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getDataProvider()
+    public function getDataProviderName()
     {
-        return $this->rawContextOptions['data_provider'];
+        return $this->rawContextOptions['data_provider']['service'];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getIndexProvider()
+    public function getIndexProviderName()
     {
-        return $this->rawContextOptions['index_provider'];
+        return $this->rawContextOptions['index_provider']['service'];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getDataProviderOptions()
+    public function getDataProviderOptions(DataProviderInterface $dataProvider)
     {
-        if (!isset($this->parsedContextOptions[self::DATA_PROVIDER_OPTIONS])) {
-            throw new UnresolvedContextConfigurationException(self::DATA_PROVIDER_OPTIONS);
+        if (isset($this->parsedContextOptions['data_provider_options'])) {
+            return $this->parsedContextOptions['data_provider_options'];
         }
 
-        $options = $this->parsedContextOptions[self::DATA_PROVIDER_OPTIONS];
+        $optionsResolver = new OptionsResolver();
+        $dataProvider->configureOptions($optionsResolver);
 
-        return $options;
+        $rawOptions = $this->rawContextOptions['data_provider']['options'];
+        if (!is_array($rawOptions)) {
+            $rawOptions = [];
+        }
+
+        try {
+            $this->parsedContextOptions['data_provider_options'] = $optionsResolver->resolve($rawOptions);
+        } catch (\Throwable $e) {
+            throw new ContextConfigurationException('data_provider_options', $e->getMessage());
+        }
+
+        return $this->parsedContextOptions['data_provider_options'];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getIndexProviderOptions()
+    public function getIndexProviderOptions(IndexProviderInterface $indexProvider)
     {
-        if (!isset($this->parsedContextOptions[self::INDEX_PROVIDER_OPTIONS])) {
-            throw new UnresolvedContextConfigurationException(self::INDEX_PROVIDER_OPTIONS);
+        if (isset($this->parsedContextOptions['index_provider_options'])) {
+            return $this->parsedContextOptions['index_provider_options'];
         }
 
-        $options = $this->parsedContextOptions[self::INDEX_PROVIDER_OPTIONS];
+        $optionsResolver = new OptionsResolver();
+        $indexProvider->configureOptions($optionsResolver);
 
-        return $options;
+        $rawOptions = $this->rawContextOptions['index_provider']['options'];
+        if (!is_array($rawOptions)) {
+            $rawOptions = [];
+        }
+
+        try {
+            $this->parsedContextOptions['index_provider_options'] = $optionsResolver->resolve($rawOptions);
+        } catch (\Throwable $e) {
+            throw new ContextConfigurationException('index_provider_options', $e->getMessage());
+        }
+
+        return $this->parsedContextOptions['index_provider_options'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOutputChannelServiceName(string $outputChannelName)
+    {
+        if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
+            return null;
+        }
+
+        return $this->rawContextOptions['output_channels'][$outputChannelName]['service'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOutputChannelRuntimeOptionsProvider(string $outputChannelName)
+    {
+        if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
+            return null;
+        }
+
+        return $this->rawContextOptions['output_channels'][$outputChannelName]['runtime_options_provider'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOutputChannelOptions(string $outputChannelName, OutputChannelInterface $outputChannel, ?OptionsResolver $optionsResolver = null)
+    {
+        if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
+            return [];
+        }
+
+        if (isset($this->parsedContextOptions[$outputChannelName])) {
+            return $this->parsedContextOptions[$outputChannelName];
+        }
+
+        $optionsResolver = $optionsResolver instanceof OptionsResolver ? $optionsResolver : new OptionsResolver();
+        $outputChannel->configureOptions($optionsResolver);
+
+        $rawOptions = $this->rawContextOptions['output_channels'][$outputChannelName]['options'];
+        if (!is_array($rawOptions)) {
+            $rawOptions = [];
+        }
+
+        try {
+            $this->parsedContextOptions[$outputChannelName] = $optionsResolver->resolve($rawOptions);
+        } catch (\Throwable $e) {
+            throw new ContextConfigurationException($outputChannelName, $e->getMessage());
+        }
+
+        return $this->parsedContextOptions[$outputChannelName];
     }
 
     /**
@@ -92,7 +170,7 @@ class ContextData implements ContextDataInterface
      */
     public function getDocumentOptionsConfig()
     {
-        return $this->rawContextOptions['data_transformer_options']['document_options'];
+        return $this->rawContextOptions['data_transformer']['document'];
     }
 
     /**
@@ -100,41 +178,6 @@ class ContextData implements ContextDataInterface
      */
     public function getDocumentFieldsConfig()
     {
-        return $this->rawContextOptions['data_transformer_options']['document_fields'];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function assertValidContextProviderOptions(OptionAwareResolverInterface $resolver, string $providerType)
-    {
-        $optionsResolver = $this->getDefaultOptionsResolver($resolver);
-
-        $rawOptions = $this->rawContextOptions[$providerType];
-        if (!is_array($rawOptions)) {
-            $rawOptions = [];
-        }
-
-        try {
-            $this->parsedContextOptions[$providerType] = $optionsResolver->resolve($rawOptions);
-        } catch (\Throwable $e) {
-            throw new ContextConfigurationException($providerType, $e->getMessage());
-        }
-
-        return $this;
-    }
-
-    protected function getDefaultOptionsResolver(OptionAwareResolverInterface $resolver)
-    {
-        $optionsResolver = new OptionsResolver();
-        $resolver->configureOptions($optionsResolver);
-
-        if ($resolver instanceof IndexProviderInterface) {
-            $optionsResolver->setRequired(['output_channel_autocomplete', 'output_channel_search']);
-            $optionsResolver->setAllowedTypes('output_channel_autocomplete', ['string']);
-            $optionsResolver->setAllowedTypes('output_channel_search', ['string']);
-        }
-
-        return $optionsResolver;
+        return $this->rawContextOptions['data_transformer']['fields'];
     }
 }

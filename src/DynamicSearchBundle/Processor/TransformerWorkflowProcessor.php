@@ -92,7 +92,7 @@ class TransformerWorkflowProcessor implements TransformerWorkflowProcessorInterf
         foreach ($documentOptions as $documentOptionName => $documentOption) {
 
             $fieldTransformerName = $documentOption['field_transformer'];
-            $fieldTransformerOptions = $documentOption['options'];
+            $fieldTransformerOptions = $documentOption['field_transformer_options'];
 
             $fieldTransformer = $this->transformerManager->getFieldTransformer($dispatchTransformerName, $fieldTransformerName);
             if (!$fieldTransformer instanceof FieldTransformerInterface) {
@@ -129,7 +129,7 @@ class TransformerWorkflowProcessor implements TransformerWorkflowProcessorInterf
         foreach ($documentFields as $documentFieldName => $documentFieldOptions) {
 
             $fieldTransformerName = $documentFieldOptions['field_transformer'];
-            $fieldTransformerOptions = $documentFieldOptions['options'];
+            $fieldTransformerOptions = $documentFieldOptions['field_transformer_options'];
             $fieldTransformerIndexType = $documentFieldOptions['index_type'];
 
             $fieldTransformer = $this->transformerManager->getFieldTransformer($dispatchTransformerName, $fieldTransformerName);

@@ -12,6 +12,8 @@ services:
 
     DynamicSearchBundle\Processor\TransformerWorkflowProcessor: ~
 
+    DynamicSearchBundle\Processor\OutputChannelWorkflowProcessor: ~
+
     DynamicSearchBundle\Service\LockService: ~
 
     DynamicSearchBundle\Service\LongProcessService: ~

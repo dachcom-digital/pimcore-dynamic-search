@@ -12,3 +12,5 @@ services:
     DynamicSearchBundle\Registry\TransformerRegistry: ~
 
     DynamicSearchBundle\Registry\IndexFieldRegistry: ~
+
+    DynamicSearchBundle\Registry\OutputChannelRegistry: ~

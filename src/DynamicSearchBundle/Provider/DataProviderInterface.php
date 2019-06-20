@@ -16,6 +16,11 @@ interface DataProviderInterface extends OptionAwareResolverInterface
     public function setLogger(LoggerInterface $logger);
 
     /**
+     * @param array $options
+     */
+    public function setOptions(array $options);
+
+    /**
      * @param ContextDataInterface $contextData
      *
      * @throws ProviderException

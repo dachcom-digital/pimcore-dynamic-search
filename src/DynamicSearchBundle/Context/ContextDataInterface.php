@@ -3,16 +3,18 @@
 namespace DynamicSearchBundle\Context;
 
 use DynamicSearchBundle\Exception\ContextConfigurationException;
-use DynamicSearchBundle\Exception\UnresolvedContextConfigurationException;
-use DynamicSearchBundle\Service\OptionAwareResolverInterface;
+use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
+use DynamicSearchBundle\Provider\DataProviderInterface;
+use DynamicSearchBundle\Provider\IndexProviderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface ContextDataInterface
 {
-    const DATA_PROVIDER_OPTIONS = 'data_provider_options';
-
-    const INDEX_PROVIDER_OPTIONS = 'index_provider_options';
-
-    const DATA_TRANSFORMER_OPTIONS = 'data_transformer_options';
+    const AVAILABLE_OUTPUT_CHANNEL_TYPES = [
+        'autocomplete',
+        'suggestions',
+        'search'
+    ];
 
     /**
      * @return string
@@ -22,35 +24,60 @@ interface ContextDataInterface
     /**
      * @return string
      */
-    public function getDataProvider();
+    public function getDataProviderName();
 
     /**
      * @return string
      */
-    public function getIndexProvider();
+    public function getIndexProviderName();
 
     /**
-     * @return array
-     * @throws UnresolvedContextConfigurationException
-     */
-    public function getDataProviderOptions();
-
-    /**
-     * @return array
-     * @throws UnresolvedContextConfigurationException
-     */
-    public function getIndexProviderOptions();
-
-    public function getDocumentOptionsConfig();
-
-    public function getDocumentFieldsConfig();
-
-    /**
-     * @param OptionAwareResolverInterface $resolver
-     * @param string                       $providerType
+     * @param DataProviderInterface $dataProvider
      *
-     * @return $this
+     * @return mixed
      * @throws ContextConfigurationException
      */
-    public function assertValidContextProviderOptions(OptionAwareResolverInterface $resolver, string $providerType);
+    public function getDataProviderOptions(DataProviderInterface $dataProvider);
+
+    /**
+     * @param IndexProviderInterface $indexProvider
+     *
+     * @return mixed
+     * @throws ContextConfigurationException
+     */
+    public function getIndexProviderOptions(IndexProviderInterface $indexProvider);
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return string|null
+     */
+    public function getOutputChannelServiceName(string $outputChannelName);
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return string|null
+     */
+    public function getOutputChannelRuntimeOptionsProvider(string $outputChannelName);
+
+    /**
+     * @param string                 $outputChannelName
+     * @param OutputChannelInterface $outputChannel
+     * @param OptionsResolver|null   $optionsResolver
+     *
+     * @return mixed
+     * @throws ContextConfigurationException
+     */
+    public function getOutputChannelOptions(string $outputChannelName, OutputChannelInterface $outputChannel, ?OptionsResolver $optionsResolver = null);
+
+    /**
+     * @return array
+     */
+    public function getDocumentOptionsConfig();
+
+    /**
+     * @return array
+     */
+    public function getDocumentFieldsConfig();
 }

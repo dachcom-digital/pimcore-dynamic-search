@@ -6,6 +6,7 @@ services:
         public: false
 
     DynamicSearchBundle\EventSubscriber\DataProcessingEventSubscriber: ~
+
     DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber: ~
 
     DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher: ~

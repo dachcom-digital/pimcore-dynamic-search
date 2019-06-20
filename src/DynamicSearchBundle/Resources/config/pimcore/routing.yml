@@ -9,6 +9,6 @@ dynamic_search.controller.auto_complete:
     path: /dynamic-search/{contextName}/auto-complete
     defaults: { _controller: DynamicSearchBundle\Controller\SearchController:autoCompleteAction }
 
-dynamic_search.controller.search:
-    path: /dynamic-search/{contextName}/search
-    defaults: { _controller: DynamicSearchBundle\Controller\SearchController:searchAction }
+dynamic_search.controller.suggestions:
+    path: /dynamic-search/{contextName}/suggestions
+    defaults: { _controller: DynamicSearchBundle\Controller\SearchController:suggestionsAction }

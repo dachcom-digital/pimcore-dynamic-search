@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\OutputChannel\RuntimeOptions\DefaultRuntimeOptionsProvider:
+        tags:
+            - { name: dynamic_search.output_channel.runtime_options_provider, identifier: default }

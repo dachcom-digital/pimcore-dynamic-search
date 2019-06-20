@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\DependencyInjection;
 
+use DynamicSearchBundle\Paginator\Paginator;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -26,5 +27,7 @@ class DynamicSearchExtension extends Extension
 
         $configManagerDefinition = $container->getDefinition(BundleConfiguration::class);
         $configManagerDefinition->addMethodCall('setConfig', [$config]);
+
+        $container->setParameter('dynamic_search_default_paginator_class', Paginator::class);
     }
 }

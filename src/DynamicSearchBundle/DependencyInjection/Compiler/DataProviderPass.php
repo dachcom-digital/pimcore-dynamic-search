@@ -17,7 +17,7 @@ final class DataProviderPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('dynamic_search.data_provider', true) as $id => $tags) {
             $definition = $container->getDefinition(DataProviderRegistry::class);
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('register', [new Reference($id), $attributes['alias']]);
+                $definition->addMethodCall('register', [new Reference($id), $attributes['identifier']]);
             }
         }
     }

@@ -9,6 +9,10 @@ services:
         tags:
             - 'controller.service_arguments'
 
+    DynamicSearchBundle\Controller\SearchFrontendController:
+        tags:
+            - 'controller.service_arguments'
+
     DynamicSearchBundle\Controller\Admin\SettingsController:
         tags:
             - 'controller.service_arguments'

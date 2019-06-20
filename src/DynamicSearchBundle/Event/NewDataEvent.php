@@ -2,15 +2,14 @@
 
 namespace DynamicSearchBundle\Event;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class NewDataEvent extends Event
 {
     /**
-     * @var ContextDataInterface
+     * @var string
      */
-    protected $contextData;
+    protected $contextName;
 
     /**
      * @var mixed
@@ -18,21 +17,21 @@ class NewDataEvent extends Event
     protected $data;
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $data
+     * @param string $contextName
+     * @param mixed  $data
      */
-    public function __construct(ContextDataInterface $contextData, $data)
+    public function __construct(string $contextName, $data)
     {
-        $this->contextData = $contextData;
+        $this->contextName = $contextName;
         $this->data = $data;
     }
 
     /**
-     * @return ContextDataInterface
+     * @return string
      */
-    public function getContextData()
+    public function getContextName()
     {
-        return $this->contextData;
+        return $this->contextName;
     }
 
     /**

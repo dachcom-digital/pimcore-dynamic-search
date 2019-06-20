@@ -1,0 +1,9 @@
+<div class="search-item mt-1 mb-1">
+    {% if document.title is defined %}
+        <h4>{{ document.title }}</h4>
+    {% endif %}
+    {% if document.content is defined %}
+        <span>{{ document.content }}</span>
+    {% endif %}
+    <hr>
+</div>

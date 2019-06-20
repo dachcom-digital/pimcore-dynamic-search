@@ -1,0 +1,39 @@
+{% extends '@DynamicSearch/layout.html.twig' %}
+
+{% block dynamic_search_output_channel_search_list_content %}
+
+    {{ parent() }}
+
+    {% if has_error == false %}
+
+        {% include '@DynamicSearch/OutputChannel/Search/Partial/_search_form.html.twig' %}
+
+        {% for document in paginator %}
+            {% include '@DynamicSearch/OutputChannel/Search/Partial/_item.html.twig' with { document: document } only %}
+        {% endfor %}
+
+        {% include '@DynamicSearch/OutputChannel/Search/Partial/Pagination/_default.html.twig' with {
+            current_filters: { contextName: 'default', (query_identifier): user_query },
+            current_page: current_page,
+            pagination_path: 'dynamic_search_frontend_search_list',
+            last_page: paginator.count(),
+            show_always_first_and_last: true,
+            extreme_pages_limit: 5,
+            nearby_pages_limit: 2
+        } only %}
+
+        {# use this paginator for simple ajax loader ("more...")
+
+            {% include '@DynamicSearch/OutputChannel/Search/Partial/Pagination/_single.html.twig' with {
+                current_filters: {  contextName: 'default', q: user_query },
+                current_page: current_page,
+                pagination_path: 'dynamic_search_frontend_search_list',
+                last_page: paginator.count(),
+                show_always_first_and_last: true,
+            } only %}
+
+        #}
+
+    {% endif %}
+
+{% endblock %}

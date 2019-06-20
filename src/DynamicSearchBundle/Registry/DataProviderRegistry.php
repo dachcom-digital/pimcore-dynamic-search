@@ -13,9 +13,9 @@ class DataProviderRegistry implements DataProviderRegistryInterface
 
     /**
      * @param $service
-     * @param $alias
+     * @param $identifier
      */
-    public function register($service, $alias)
+    public function register($service, $identifier)
     {
         if (!in_array(DataProviderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -23,26 +23,26 @@ class DataProviderRegistry implements DataProviderRegistryInterface
             );
         }
 
-        $this->provider[$alias] = $service;
+        $this->provider[$identifier] = $service;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function has($alias)
+    public function has($identifier)
     {
-        return isset($this->provider[$alias]);
+        return isset($this->provider[$identifier]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get($alias)
+    public function get($identifier)
     {
-        if (!$this->has($alias)) {
-            throw new \Exception('"' . $alias . '" Data Provider does not exist');
+        if (!$this->has($identifier)) {
+            throw new \Exception('"' . $identifier . '" Data Provider does not exist');
         }
 
-        return $this->provider[$alias];
+        return $this->provider[$identifier];
     }
 }

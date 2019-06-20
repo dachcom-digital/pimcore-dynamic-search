@@ -7,7 +7,6 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Registry\DataProviderRegistryInterface;
 
 class DataManager implements DataManagerInterface
@@ -47,7 +46,7 @@ class DataManager implements DataManagerInterface
      */
     public function getDataProvider(ContextDataInterface $contextData)
     {
-        $dataProviderToken = $contextData->getDataProvider();
+        $dataProviderToken = $contextData->getDataProviderName();
 
         if (is_null($dataProviderToken) || !$this->dataProviderRegistry->has($dataProviderToken)) {
             throw new ProviderException('Invalid requested data provider', $dataProviderToken);
@@ -55,25 +54,15 @@ class DataManager implements DataManagerInterface
 
         $dataProvider = $this->dataProviderRegistry->get($dataProviderToken);
 
-        $this->applyProviderOptions($dataProvider, $contextData);
+        try {
+            $dataProviderOptions = $contextData->getDataProviderOptions($dataProvider);
+        } catch (ContextConfigurationException $e) {
+            throw new ProviderException($e->getMessage(), $contextData->getDataProviderName(), $e);
+        }
 
         $dataProvider->setLogger($this->logger);
+        $dataProvider->setOptions($dataProviderOptions);
 
         return $dataProvider;
-    }
-
-    /**
-     * @param DataProviderInterface $dataProvider
-     * @param ContextDataInterface  $contextData
-     *
-     * @throws ProviderException
-     */
-    protected function applyProviderOptions(DataProviderInterface $dataProvider, ContextDataInterface $contextData)
-    {
-        try {
-            $contextData->assertValidContextProviderOptions($dataProvider, ContextDataInterface::DATA_PROVIDER_OPTIONS);
-        } catch (ContextConfigurationException $e) {
-            throw new ProviderException($e->getMessage(), $contextData->getDataProvider(), $e);
-        }
     }
 }

@@ -2,15 +2,14 @@
 
 namespace DynamicSearchBundle\Event;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class ErrorEvent extends Event
 {
     /**
-     * @var ContextDataInterface
+     * @var string
      */
-    protected $contextData;
+    protected $contextName;
 
     /**
      * @var string|null
@@ -28,25 +27,25 @@ class ErrorEvent extends Event
     protected $exception;
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param string               $message
-     * @param string|null          $providerName
-     * @param \Exception|null      $exception
+     * @param string          $contextName
+     * @param string          $message
+     * @param string|null     $providerName
+     * @param \Exception|null $exception
      */
-    public function __construct(ContextDataInterface $contextData, string $message, string $providerName = null, \Exception $exception = null)
+    public function __construct(string $contextName, string $message, string $providerName = null, \Exception $exception = null)
     {
-        $this->contextData = $contextData;
+        $this->contextName = $contextName;
         $this->providerName = $providerName;
         $this->message = $message;
         $this->exception = $exception;
     }
 
     /**
-     * @return ContextDataInterface
+     * @return string
      */
-    public function getContextData()
+    public function getContextName()
     {
-        return $this->contextData;
+        return $this->contextName;
     }
 
     /**

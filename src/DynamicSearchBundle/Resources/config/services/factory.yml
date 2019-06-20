@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    DynamicSearchBundle\Factory\PaginatorFactory:
+        arguments:
+            $paginatorClass: '%dynamic_search_default_paginator_class%'

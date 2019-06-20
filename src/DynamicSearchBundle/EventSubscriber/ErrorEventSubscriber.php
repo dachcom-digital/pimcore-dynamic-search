@@ -7,7 +7,6 @@ use DynamicSearchBundle\Event\ErrorEvent;
 use DynamicSearchBundle\Exception\ProcessCancelledException;
 use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Manager\DataTransformerManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -22,11 +21,6 @@ class ErrorEventSubscriber implements EventSubscriberInterface
      * @var LoggerInterface
      */
     protected $logger;
-
-    /**
-     * @var DataTransformerManagerInterface
-     */
-    protected $dataTransformerManager;
 
     /**
      * @var IndexManagerInterface
@@ -60,7 +54,7 @@ class ErrorEventSubscriber implements EventSubscriberInterface
      */
     public function onAbort(ErrorEvent $event)
     {
-        $this->logger->error($event->getMessage(), $event->getProviderName(), $event->getContextData()->getName());
+        $this->logger->error($event->getMessage(), $event->getProviderName(), $event->getContextName());
 
         throw new ProcessCancelledException($event->getMessage());
     }
@@ -76,7 +70,7 @@ class ErrorEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->logger->error($event->getMessage(), $event->getProviderName(), $event->getContextData()->getName());
+        $this->logger->error($event->getMessage(), $event->getProviderName(), $event->getContextName());
 
         throw new RuntimeException($event->getMessage());
     }

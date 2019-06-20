@@ -109,9 +109,6 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
 
     }
 
-    /**
-     * @param ContextDataInterface $contextDefinition
-     */
     protected function dispatchContext(ContextDataInterface $contextDefinition)
     {
         $dataProvider = $this->dataManager->getDataProvider($contextDefinition);
@@ -136,7 +133,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
 
         foreach ($providers as $provider) {
 
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProvider() : $contextData->getIndexProvider();
+            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('warm up provider'), $providerName, $contextData->getName());
 
             try {
@@ -165,7 +162,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
 
         foreach ($providers as $provider) {
 
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProvider() : $contextData->getIndexProvider();
+            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('cooling down provider'), $providerName, $contextData->getName());
 
             try {
@@ -193,7 +190,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
             return;
         }
 
-        $this->logger->log('DEBUG', sprintf('execute provider'), $contextData->getDataProvider(), $contextData->getName());
+        $this->logger->log('DEBUG', sprintf('execute provider'), $contextData->getDataProviderName(), $contextData->getName());
 
         try {
             $dataProvider->execute($contextData);
@@ -218,7 +215,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         $this->logger->error($errorMessage, 'workflow', $contextData->getName());
 
         foreach ($providers as $provider) {
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProvider() : $contextData->getIndexProvider();
+            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('executing provider cancelled shutdown'), $providerName, $contextData->getName());
 
             try {
@@ -240,7 +237,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         $this->logger->error($errorMessage, 'workflow', $contextData->getName());
 
         foreach ($providers as $provider) {
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProvider() : $contextData->getIndexProvider();
+            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('executing provider emergency shutdown'), $providerName, $contextData->getName());
 
             try {

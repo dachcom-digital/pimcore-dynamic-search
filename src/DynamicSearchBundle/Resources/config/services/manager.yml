@@ -10,3 +10,5 @@ services:
     DynamicSearchBundle\Manager\TransformerManager: ~
 
     DynamicSearchBundle\Manager\IndexManager: ~
+
+    DynamicSearchBundle\Manager\OutputChannelManager: ~

@@ -3,8 +3,7 @@
 namespace DynamicSearchBundle\Controller;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Manager\IndexManagerInterface;
+use DynamicSearchBundle\Processor\OutputChannelWorkflowProcessor;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,18 +16,20 @@ class SearchController extends Controller
     protected $configuration;
 
     /**
-     * @var IndexManagerInterface
+     * @var OutputChannelWorkflowProcessor
      */
-    protected $indexManager;
+    protected $outputChannelWorkflowProcessor;
 
     /**
-     * @param ConfigurationInterface $configuration
-     * @param IndexManagerInterface  $indexManager
+     * @param ConfigurationInterface         $configuration
+     * @param OutputChannelWorkflowProcessor $outputChannelWorkflowProcessor
      */
-    public function __construct(ConfigurationInterface $configuration, IndexManagerInterface $indexManager)
-    {
+    public function __construct(
+        ConfigurationInterface $configuration,
+        OutputChannelWorkflowProcessor $outputChannelWorkflowProcessor
+    ) {
         $this->configuration = $configuration;
-        $this->indexManager = $indexManager;
+        $this->outputChannelWorkflowProcessor = $outputChannelWorkflowProcessor;
     }
 
     /**
@@ -39,15 +40,18 @@ class SearchController extends Controller
      */
     public function autoCompleteAction(Request $request, string $contextName)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($contextName);
-
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            return $this->json(['error' => sprintf('Context configuration "%s" does not exist', $contextName)], 500);
+        try {
+            $data = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'autocomplete', ['request' => $request]);
+        } catch (\Throwable $e) {
+            return $this->json(
+                ['error' => sprintf('Error while loading auto complete output channel for "%s" context. Error was: %s', $contextName, $e->getMessage())],
+                500,
+                [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
+            );
         }
-
-        $autoCompleteService = $this->indexManager->getIndexProviderOutputChannel($contextDefinition, 'autocomplete');
-
-        $data = $autoCompleteService->execute($contextDefinition, ['query' => $request->get('q')]);
 
         return $this->json($data);
 
@@ -59,17 +63,20 @@ class SearchController extends Controller
      *
      * @return JsonResponse
      */
-    public function searchAction(Request $request, string $contextName)
+    public function suggestionsAction(Request $request, string $contextName)
     {
-         $contextDefinition = $this->configuration->getContextDefinition($contextName);
-
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            return $this->json(['error' => sprintf('Context configuration "%s" does not exist', $contextName)], 500);
+        try {
+            $data = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'suggestions', ['request' => $request]);
+        } catch (\Exception $e) {
+            return $this->json(
+                ['error' => sprintf('Error while loading suggestions output channel for "%s" context. Error was: %s', $contextName, $e->getMessage())],
+                500,
+                [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]
+            );
         }
-
-        $autoCompleteService = $this->indexManager->getIndexProviderOutputChannel($contextDefinition, 'search');
-
-        $data = $autoCompleteService->execute($contextDefinition, ['query' => $request->get('q')]);
 
         return $this->json($data);
     }

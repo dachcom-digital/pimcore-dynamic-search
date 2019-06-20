@@ -56,7 +56,7 @@ class TransformerManager implements TransformerManagerInterface
     public function getDispatchTransformer(ContextDataInterface $contextData, $data)
     {
         $dataTransformerContainer = null;
-        $dataProviderName = $contextData->getDataProvider();
+        $dataProviderName = $contextData->getDataProviderName();
 
         try {
             $dataTransformerContainer = $this->transformerResolver->resolve($data);

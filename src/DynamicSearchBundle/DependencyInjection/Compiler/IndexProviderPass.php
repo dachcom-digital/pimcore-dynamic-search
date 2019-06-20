@@ -16,21 +16,13 @@ final class IndexProviderPass implements CompilerPassInterface
     {
         $definition = $container->getDefinition(IndexProviderRegistry::class);
 
+        ##
+        ## dynamic_search.index_provider
+        ##
+
         foreach ($container->findTaggedServiceIds('dynamic_search.index_provider', true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('register', [new Reference($id), $attributes['alias']]);
-            }
-        }
-
-        foreach ($container->findTaggedServiceIds('dynamic_search.index_provider.output_channel', true) as $id => $tags) {
-            foreach ($tags as $attributes) {
-                $validTypes = ['autocomplete', 'search'];
-                if (!in_array($attributes['type'], $validTypes)) {
-                    throw new \InvalidArgumentException(sprintf('"%s" is an invalid output channel type. Channel needs to be one of %s', $attributes['type'],
-                        implode(', ', $validTypes)));
-
-                }
-                $definition->addMethodCall('registerOutputChannel', [new Reference($id), $attributes['type'], $attributes['alias']]);
+                $definition->addMethodCall('register', [new Reference($id), $attributes['identifier']]);
             }
         }
     }

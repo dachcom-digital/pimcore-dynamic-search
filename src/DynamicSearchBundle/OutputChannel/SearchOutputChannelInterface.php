@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicSearchBundle\Provider\OutputChannel;
+namespace DynamicSearchBundle\OutputChannel;
 
 interface SearchOutputChannelInterface extends OutputChannelInterface
 {

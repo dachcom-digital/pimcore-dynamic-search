@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\EventSubscriber;
 
+use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\DynamicSearchEvents;
 use DynamicSearchBundle\Event\NewDataEvent;
@@ -20,6 +21,11 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     protected $logger;
 
     /**
+     * @var ConfigurationInterface
+     */
+    protected $configuration;
+
+    /**
      * @var TransformerManagerInterface
      */
     protected $transformerManager;
@@ -36,17 +42,20 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
 
     /**
      * @param LoggerInterface                       $logger
+     * @param ConfigurationInterface                $configuration
      * @param TransformerManagerInterface           $dataTransformerManager
      * @param IndexManagerInterface                 $indexManager
      * @param TransformerWorkflowProcessorInterface $transformerWorkflowProcessor
      */
     public function __construct(
         LoggerInterface $logger,
+        ConfigurationInterface $configuration,
         TransformerManagerInterface $dataTransformerManager,
         IndexManagerInterface $indexManager,
         TransformerWorkflowProcessorInterface $transformerWorkflowProcessor
     ) {
         $this->logger = $logger;
+        $this->configuration = $configuration;
         $this->transformerManager = $dataTransformerManager;
         $this->indexManager = $indexManager;
         $this->transformerWorkflowProcessor = $transformerWorkflowProcessor;
@@ -66,10 +75,12 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
 
     public function addDataToIndex(NewDataEvent $event)
     {
-        $indexProvider = $this->indexManager->getIndexProvider($event->getContextData());
+        $contextDefinition = $this->configuration->getContextDefinition($event->getContextName());
+
+        $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
 
         try {
-            $indexDocument = $this->transformerWorkflowProcessor->dispatchIndexDocumentTransform($event->getContextData(), $event->getData());
+            $indexDocument = $this->transformerWorkflowProcessor->dispatchIndexDocumentTransform($contextDefinition, $event->getData());
         } catch (\Throwable $e) {
             throw new TransformerException(sprintf('Error while apply data transformation. Error was: %s', $e->getMessage()));
         }
@@ -81,15 +92,15 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
         $this->logger->debug(
             sprintf('Index Document with %d fields successfully generated. Used "%s" transformer',
                 count($indexDocument->getFields()), $indexDocument->getDispatchedTransformerName()
-            ), $event->getContextData()->getIndexProvider(), $event->getContextData()->getName());
+            ), $contextDefinition->getIndexProviderName(), $event->getContextName());
 
-        $indexProvider->executeInsert($event->getContextData(), $indexDocument);
+        $indexProvider->executeInsert($contextDefinition, $indexDocument);
 
     }
 
     public function updateDataInIndex(NewDataEvent $event)
     {
-       //$indexProvider->executeUpdate($event->getContextData(), $indexDocument);
+        //$indexProvider->executeUpdate($event->getContextData(), $indexDocument);
     }
 
     public function deleteDataFromIndex(NewDataEvent $event)

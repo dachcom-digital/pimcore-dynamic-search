@@ -1,0 +1,45 @@
+{% spaceless %}
+    {% if last_page > 1 %}
+        <nav>
+            <ul class="pagination dynamic-search-pagination-default">
+                {% if current_page > 1 %}
+                    <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page-1})) }}">Previous</a></li>
+
+                    {% for i in range(1, extreme_pages_limit) if ( i < current_page - nearby_pages_limit ) %}
+                        <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: i})) }}">{{ i }}</a></li>
+                    {% endfor %}
+
+                    {% if extreme_pages_limit + 1 < current_page - nearby_pages_limit %}
+                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">...</a></li>
+                    {% endif %}
+
+                    {% for i in range(current_page-nearby_pages_limit, current_page-1) if ( i > 0 ) %}
+                        <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: i})) }}">{{ i }}</a></li>
+                    {% endfor %}
+                {% elseif show_always_first_and_last %}
+                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
+                {% endif %}
+
+                <li class="page-item active"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({ page: current_page })) }}">{{ current_page }}</a></li>
+
+                {% if current_page < last_page %}
+                    {% for i in range(current_page+1, current_page + nearby_pages_limit) if ( i <= last_page ) %}
+                        <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: i})) }}">{{ i }}</a></li>
+                    {% endfor %}
+
+                    {% if  (last_page - extreme_pages_limit) > (current_page + nearby_pages_limit) %}
+                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">...</a></li>
+                    {% endif %}
+
+                    {% for i in range(last_page - extreme_pages_limit+1, last_page) if ( i > current_page + nearby_pages_limit ) %}
+                        <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: i})) }}">{{ i }}</a></li>
+                    {% endfor %}
+
+                    <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page+1})) }}">Next</a></li>
+                {% elseif show_always_first_and_last %}
+                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% endspaceless %}

@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Form\Type\SearchFormType:
+        tags:
+            - {name: form.type}
