@@ -4,7 +4,9 @@ namespace DynamicSearchBundle\Service;
 
 interface LockServiceInterface
 {
-    const RUNNING_PROCESS = 'running_process';
+    const CONTEXT_INDEXING = 'context_indexing';
+
+    const QUEUE_INDEXING = 'queue_indexing';
 
     /**
      * @param string $token

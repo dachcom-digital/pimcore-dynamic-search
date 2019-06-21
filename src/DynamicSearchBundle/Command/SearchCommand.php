@@ -58,22 +58,29 @@ class SearchCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $lockKey = LockServiceInterface::RUNNING_PROCESS;
+        // should we skip context indexing if queue index is running?
+        // currently we think it's not required:
+        // queue update is modifying stable index while the context cycle will generate a new one.
 
-        $this->watchSignalWithLockKey($lockKey);
+        // if ($this->lockService->isLocked(LockServiceInterface::QUEUE_INDEXING)) {
+        //     $output->writeln(sprintf('<error>%s</error>', $this->lockService->getLockMessage(LockServiceInterface::QUEUE_INDEXING)));
+        //     return;
+        // }
 
-        if ($this->lockService->isLocked($lockKey)) {
+        $this->watchSignalWithLockKey(LockServiceInterface::CONTEXT_INDEXING);
+
+        if ($this->lockService->isLocked(LockServiceInterface::CONTEXT_INDEXING)) {
 
             if ($input->getOption('force') === false) {
-                $output->writeln(sprintf('<error>%s</error>', $this->lockService->getLockMessage($lockKey)));
+                $output->writeln(sprintf('<error>%s</error>', $this->lockService->getLockMessage(LockServiceInterface::CONTEXT_INDEXING)));
 
                 return;
             }
 
-            $this->lockService->unlock($lockKey);
+            $this->lockService->unlock(LockServiceInterface::CONTEXT_INDEXING);
         }
 
-        $this->lockService->lock($lockKey, 'user command');
+        $this->lockService->lock(LockServiceInterface::CONTEXT_INDEXING, 'context indexing via command');
 
         try {
             if ($input->getOption('context') === null) {
@@ -85,7 +92,7 @@ class SearchCommand extends Command
             $output->writeln(sprintf('<error>%s. (File: %s, Line: %s)</error>', $e->getMessage(), $e->getFile(), $e->getLine()));
         }
 
-        $this->lockService->unlock($lockKey);
+        $this->lockService->unlock(LockServiceInterface::CONTEXT_INDEXING);
 
     }
 }

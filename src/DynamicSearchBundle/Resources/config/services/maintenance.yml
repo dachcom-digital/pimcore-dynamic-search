@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\EventListener\Maintenance\QueuedDataTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: dynamic_search_check_modified_data }

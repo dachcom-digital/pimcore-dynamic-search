@@ -10,6 +10,7 @@ use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\DataManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
+use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Provider\ProviderInterface;
 use DynamicSearchBundle\Service\LongProcessServiceInterface;
@@ -37,6 +38,11 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
     protected $indexManager;
 
     /**
+     * @var QueueManagerInterface
+     */
+    protected $queueManager;
+
+    /**
      * @var LongProcessServiceInterface
      */
     protected $longProcessService;
@@ -51,6 +57,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
      * @param ConfigurationInterface      $configuration
      * @param DataManagerInterface        $dataManager
      * @param IndexManagerInterface       $indexManager
+     * @param QueueManagerInterface       $queueManager
      * @param LongProcessServiceInterface $longProcessService
      */
     public function __construct(
@@ -58,12 +65,14 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         ConfigurationInterface $configuration,
         DataManagerInterface $dataManager,
         IndexManagerInterface $indexManager,
+        QueueManagerInterface $queueManager,
         LongProcessServiceInterface $longProcessService
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->dataManager = $dataManager;
         $this->indexManager = $indexManager;
+        $this->queueManager = $queueManager;
         $this->longProcessService = $longProcessService;
     }
 
@@ -77,6 +86,8 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         if (count($contextDefinitions) === 0) {
             throw new RuntimeException('No context configuration found. Please add them to the "dynamic_search.context" configuration node');
         }
+
+        $this->queueManager->clearQueue();
 
         $this->longProcessService->boot();
 
@@ -98,6 +109,8 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         if (!$contextDefinition instanceof ContextDataInterface) {
             throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
         }
+
+        $this->queueManager->clearQueue();
 
         $this->longProcessService->boot();
 

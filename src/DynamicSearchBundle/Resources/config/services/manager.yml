@@ -12,3 +12,5 @@ services:
     DynamicSearchBundle\Manager\IndexManager: ~
 
     DynamicSearchBundle\Manager\OutputChannelManager: ~
+
+    DynamicSearchBundle\Manager\QueueManager: ~

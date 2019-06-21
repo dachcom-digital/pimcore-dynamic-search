@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Queue\DataCollector: ~
+
+    DynamicSearchBundle\Queue\DataProcessor: ~
