@@ -59,7 +59,7 @@ class OutputChannelWorkflowProcessor implements OutputChannelWorkflowProcessorIn
      */
     public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName, array $contextOptions): OutputChannelResultInterface
     {
-        $contextDefinition = $this->configuration->getContextDefinition($contextName);
+        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_FETCH, $contextName);
         if (!$contextDefinition instanceof ContextDataInterface) {
             // throw
         }

@@ -16,14 +16,19 @@ interface ConfigurationInterface
     public function get($slot);
 
     /**
+     * @param string $dispatchType
+     * @param array  $runtimeOptions
+     *
      * @return ContextData[]
      */
-    public function getContextDefinitions();
+    public function getContextDefinitions(string $dispatchType, array $runtimeOptions = []);
 
     /**
      * @param string $contextName
+     * @param string $dispatchType
+     * @param array  $runtimeOptions
      *
      * @return ContextData
      */
-    public function getContextDefinition(string $contextName);
+    public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeOptions = []);
 }

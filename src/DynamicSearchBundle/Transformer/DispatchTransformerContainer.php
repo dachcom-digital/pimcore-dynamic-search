@@ -15,17 +15,27 @@ class DispatchTransformerContainer implements DispatchTransformerContainerInterf
      */
     protected $identifier;
 
+    /**
+     * @param DispatchTransformerInterface $transformer
+     * @param string                       $identifier
+     */
     public function __construct(DispatchTransformerInterface $transformer, string $identifier)
     {
         $this->transformer = $transformer;
         $this->identifier = $identifier;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTransformer()
     {
         return $this->transformer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getIdentifier()
     {
         return $this->identifier;

@@ -7,14 +7,41 @@ use DynamicSearchBundle\Exception\RuntimeException;
 interface ContextWorkflowProcessorInterface
 {
     /**
-     * @throws RuntimeException
-     */
-    public function dispatchFullContextLoop();
-
-    /**
-     * @param string $contextName
+     * @param array $runtimeOptions
      *
      * @throws RuntimeException
      */
-    public function dispatchSingleContextLoop(string $contextName);
+    public function dispatchFullContextCreation(array $runtimeOptions = []);
+
+    /**
+     * @param string $contextName
+     * @param array  $runtimeOptions
+     *
+     * @throws RuntimeException
+     */
+    public function dispatchSingleContextCreation(string $contextName, array $runtimeOptions = []);
+
+    /**
+     * @param string $contextName
+     * @param array  $runtimeOptions
+     *
+     * @throws RuntimeException
+     */
+    public function dispatchInsert(string $contextName, array $runtimeOptions = []);
+
+    /**
+     * @param string $contextName
+     * @param array  $runtimeOptions
+     *
+     * @throws RuntimeException
+     */
+    public function dispatchUpdate(string $contextName, array $runtimeOptions = []);
+
+    /**
+     * @param string $contextName
+     * @param array  $runtimeOptions
+     *
+     * @throws RuntimeException
+     */
+    public function dispatchDeletion(string $contextName, array $runtimeOptions = []);
 }

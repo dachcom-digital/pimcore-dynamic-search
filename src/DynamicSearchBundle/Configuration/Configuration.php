@@ -3,7 +3,6 @@
 namespace DynamicSearchBundle\Configuration;
 
 use DynamicSearchBundle\Context\ContextData;
-use DynamicSearchBundle\Context\ContextDataInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -31,29 +30,27 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @return array|ContextDataInterface
+     * {@inheritDoc}
      */
-    public function getContextDefinitions()
+    public function getContextDefinitions(string $dispatchType, array $runtimeOptions = [])
     {
         $contextDefinitions = [];
         foreach ($this->config['context'] as $contextName => $context) {
-            $contextDefinitions[] = $this->getContextDefinition($contextName);
+            $contextDefinitions[] = $this->getContextDefinition($dispatchType, $contextName, $runtimeOptions);
         }
 
         return $contextDefinitions;
     }
 
     /**
-     * @param string $contextName
-     *
-     * @return ContextDataInterface
+     * {@inheritDoc}
      */
-    public function getContextDefinition(string $contextName)
+    public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeOptions = [])
     {
         if (!isset($this->config['context'][$contextName]) || !is_array($this->config['context'][$contextName])) {
             return null;
         }
 
-        return new ContextData($contextName, $this->config['context'][$contextName]);
+        return new ContextData($dispatchType, $contextName, $this->config['context'][$contextName], $runtimeOptions);
     }
 }

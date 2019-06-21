@@ -57,6 +57,10 @@ class TransformerWorkflowProcessor implements TransformerWorkflowProcessorInterf
         }
 
         $indexDocument = $this->generateIndexDocument($contextData, $dispatchTransformerContainer->getIdentifier(), $dispatchedTransformerData);
+        if ($indexDocument->getDocumentOption('id') === null) {
+            return null;
+        }
+
         $indexDocumentFields = $this->generateIndexDocumentFields($contextData, $dispatchTransformerContainer->getIdentifier(), $dispatchedTransformerData);
 
         foreach ($indexDocumentFields as $indexDocumentField) {
@@ -100,12 +104,17 @@ class TransformerWorkflowProcessor implements TransformerWorkflowProcessorInterf
             }
 
             $optionsResolver = new OptionsResolver();
-            $fieldTransformer->configureOptions($optionsResolver);
+            $requiredOptionsResolver = $fieldTransformer->configureOptions($optionsResolver);
+            $options = $requiredOptionsResolver === false ? [] : $optionsResolver->resolve($fieldTransformerOptions);
 
-            $options = $optionsResolver->resolve($fieldTransformerOptions);
+            $fieldTransformerContainer = $fieldTransformer->transformData($options, $dispatchTransformerName, $transformedData);
+            if (!$fieldTransformerContainer instanceof FieldContainerInterface) {
+                continue;
+            }
 
-            $indexDocumentOptions[$documentOptionName] = $fieldTransformer->transformData($options, $dispatchTransformerName, $transformedData);
+            $fieldTransformerContainer->setName($documentOptionName);
 
+            $indexDocumentOptions[] = $fieldTransformerContainer;
         }
 
         $indexDocument = new IndexDocument($indexDocumentOptions, $dispatchTransformerName);
@@ -133,22 +142,15 @@ class TransformerWorkflowProcessor implements TransformerWorkflowProcessorInterf
             $fieldTransformerIndexType = $documentFieldOptions['index_type'];
 
             $fieldTransformer = $this->transformerManager->getFieldTransformer($dispatchTransformerName, $fieldTransformerName);
-
             if (!$fieldTransformer instanceof FieldTransformerInterface) {
                 continue;
             }
 
             $optionsResolver = new OptionsResolver();
             $requiredOptionsResolver = $fieldTransformer->configureOptions($optionsResolver);
-
-            if ($requiredOptionsResolver === false) {
-                $options = [];
-            } else {
-                $options = $optionsResolver->resolve($fieldTransformerOptions);
-            }
+            $options = $requiredOptionsResolver === false ? [] : $optionsResolver->resolve($fieldTransformerOptions);
 
             $fieldTransformerContainer = $fieldTransformer->transformData($options, $dispatchTransformerName, $transformedData);
-
             if (!$fieldTransformerContainer instanceof FieldContainerInterface) {
                 continue;
             }
@@ -157,7 +159,6 @@ class TransformerWorkflowProcessor implements TransformerWorkflowProcessorInterf
             $fieldTransformerContainer->setIndexType($fieldTransformerIndexType);
 
             $indexDocumentFields[] = $fieldTransformerContainer;
-
         }
 
         return $indexDocumentFields;

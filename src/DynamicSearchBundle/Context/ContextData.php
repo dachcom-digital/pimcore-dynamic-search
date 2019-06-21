@@ -13,6 +13,11 @@ class ContextData implements ContextDataInterface
     /**
      * @var string
      */
+    private $dispatchType;
+
+    /**
+     * @var string
+     */
     private $contextName;
 
     /**
@@ -23,16 +28,25 @@ class ContextData implements ContextDataInterface
     /**
      * @var array
      */
+    private $runtimeOptions;
+
+    /**
+     * @var array
+     */
     private $parsedContextOptions;
 
     /**
+     * @param string $dispatchType
      * @param string $contextName
      * @param array  $options
+     * @param array  $runtimeOptions
      */
-    public function __construct(string $contextName, array $options)
+    public function __construct(string $dispatchType, string $contextName, array $options, array $runtimeOptions = [])
     {
+        $this->dispatchType = $dispatchType;
         $this->contextName = $contextName;
         $this->rawContextOptions = $options;
+        $this->runtimeOptions = $runtimeOptions;
     }
 
     /**
@@ -41,6 +55,30 @@ class ContextData implements ContextDataInterface
     public function getName()
     {
         return $this->contextName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDispatchType()
+    {
+        return $this->dispatchType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateRuntimeOption(string $key, $value)
+    {
+        $this->runtimeOptions[$key] = $value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRuntimeOptions()
+    {
+        return $this->runtimeOptions;
     }
 
     /**

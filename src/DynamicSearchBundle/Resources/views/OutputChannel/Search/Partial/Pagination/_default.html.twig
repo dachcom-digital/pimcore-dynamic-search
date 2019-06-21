@@ -1,6 +1,6 @@
 {% spaceless %}
     {% if last_page > 1 %}
-        <nav>
+        <nav class="mb-4">
             <ul class="pagination dynamic-search-pagination-default">
                 {% if current_page > 1 %}
                     <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page-1})) }}">Previous</a></li>

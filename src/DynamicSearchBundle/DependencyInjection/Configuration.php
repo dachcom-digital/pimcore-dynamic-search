@@ -74,6 +74,12 @@ class Configuration implements ConfigurationInterface
                                 ->children()
 
                                     ->arrayNode('document')
+                                        ->validate()
+                                            ->ifTrue(function ($values) {
+                                                return !array_key_exists('id', $values);
+                                            })
+                                            ->thenInvalid('No "id" field for document defined. A ID-Field is required to allow further document modifications.')
+                                        ->end()
                                         ->useAttributeAsKey('name')
                                         ->arrayPrototype()
                                             ->children()
@@ -81,7 +87,6 @@ class Configuration implements ConfigurationInterface
                                                     ->defaultNull()
                                                 ->end()
                                                 ->arrayNode('field_transformer_options')
-                                                ->isRequired()
                                                     ->variablePrototype()->defaultValue([])->end()
                                                 ->end()
                                             ->end()
@@ -89,6 +94,12 @@ class Configuration implements ConfigurationInterface
                                     ->end()
 
                                     ->arrayNode('fields')
+                                        ->validate()
+                                            ->ifTrue(function ($values) {
+                                                return array_key_exists('id', $values);
+                                            })
+                                            ->thenInvalid('"id" is not reserved document field name.')
+                                        ->end()
                                         ->useAttributeAsKey('name')
                                         ->arrayPrototype()
                                             ->children()
@@ -99,7 +110,6 @@ class Configuration implements ConfigurationInterface
                                                     ->defaultNull()
                                                 ->end()
                                                 ->arrayNode('field_transformer_options')
-                                                ->isRequired()
                                                     ->variablePrototype()->defaultValue([])->end()
                                                 ->end()
 

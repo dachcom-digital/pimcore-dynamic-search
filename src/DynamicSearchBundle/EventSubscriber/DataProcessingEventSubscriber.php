@@ -6,6 +6,8 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\DynamicSearchEvents;
 use DynamicSearchBundle\Event\NewDataEvent;
+use DynamicSearchBundle\Exception\ProcessCancelledException;
+use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Exception\TransformerException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\TransformerManagerInterface;
@@ -67,15 +69,20 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DynamicSearchEvents::NEW_DATA_AVAILABLE => ['addDataToIndex'],
-            //DynamicSearchEvents::UPDATED_DATA_AVAILABLE => ['updateDataInIndex'],
-            //DynamicSearchEvents::REMOVED_DATA_AVAILABLE => ['deleteDataFromIndex']
+            DynamicSearchEvents::NEW_DATA_AVAILABLE => ['dispatchIndexProvider'],
         ];
     }
 
-    public function addDataToIndex(NewDataEvent $event)
+    /**
+     * @param NewDataEvent $event
+     *
+     * @throws TransformerException
+     * @throws ProcessCancelledException
+     * @throws ProviderException
+     */
+    public function dispatchIndexProvider(NewDataEvent $event)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($event->getContextName());
+        $contextDefinition = $this->configuration->getContextDefinition($event->getContextDispatchType(), $event->getContextName(), $event->getRuntimeOptions());
 
         $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
 
@@ -86,26 +93,18 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
         }
 
         if (!$indexDocument instanceof IndexDocument) {
+            $this->logger->error('Index Document invalid. Maybe there is no valid id field in document? Skipping...',
+                $contextDefinition->getIndexProviderName(), $event->getContextName());
             return;
         }
+
+        $contextDefinition->updateRuntimeOption('index_document', $indexDocument);
 
         $this->logger->debug(
             sprintf('Index Document with %d fields successfully generated. Used "%s" transformer',
                 count($indexDocument->getFields()), $indexDocument->getDispatchedTransformerName()
             ), $contextDefinition->getIndexProviderName(), $event->getContextName());
 
-        $indexProvider->executeInsert($contextDefinition, $indexDocument);
-
+        $indexProvider->execute($contextDefinition);
     }
-
-    public function updateDataInIndex(NewDataEvent $event)
-    {
-        //$indexProvider->executeUpdate($event->getContextData(), $indexDocument);
-    }
-
-    public function deleteDataFromIndex(NewDataEvent $event)
-    {
-        //$indexProvider->executeDelete($event->getContextData(), $indexDocument);
-    }
-
 }

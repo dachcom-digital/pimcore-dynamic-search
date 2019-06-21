@@ -47,6 +47,7 @@ class SearchFrontendController extends FrontendController
         $errorMessage = null;
         $paginator = null;
         $outputChannelResult = null;
+        $searchActive = false;
 
         $form = $this->get('form.factory')->createNamed('', SearchFormType::class, null, ['method' => 'GET']);
 
@@ -54,6 +55,7 @@ class SearchFrontendController extends FrontendController
 
         if ($form->isSubmitted()) {
             try {
+                $searchActive = true;
                 $outputChannelResult = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'search', ['request' => $request]);
             } catch (\Throwable $e) {
                 $hasError = true;
@@ -65,6 +67,16 @@ class SearchFrontendController extends FrontendController
             return $this->renderTemplate('@DynamicSearch/OutputChannel/Search/list.html.twig', [
                 'has_error'     => $hasError,
                 'error_message' => $errorMessage
+            ]);
+        }
+
+        if ($searchActive === false) {
+            return $this->renderTemplate('@DynamicSearch/OutputChannel/Search/list.html.twig', [
+                'has_error'     => $hasError,
+                'error_message' => $errorMessage,
+                'paginator'     => $paginator,
+                'search_active' => $searchActive,
+                'form'          => $form->createView(),
             ]);
         }
 
@@ -86,6 +98,7 @@ class SearchFrontendController extends FrontendController
             'has_error'        => $hasError,
             'error_message'    => $errorMessage,
             'paginator'        => $paginator,
+            'search_active'    => $searchActive,
             'current_page'     => $runtimeOptions->getCurrentPage(),
             'user_query'       => $runtimeOptions->getUserQuery(),
             'query_identifier' => $runtimeOptions->getQueryIdentifier(),

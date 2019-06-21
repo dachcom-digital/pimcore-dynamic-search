@@ -10,6 +10,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface ContextDataInterface
 {
+    const CONTEXT_DISPATCH_TYPE_FETCH = 'fetch';
+
+    const CONTEXT_DISPATCH_TYPE_INDEX = 'index';
+
+    const CONTEXT_DISPATCH_TYPE_INSERT = 'insert';
+
+    const CONTEXT_DISPATCH_TYPE_UPDATE = 'update';
+
+    const CONTEXT_DISPATCH_TYPE_DELETE = 'delete';
+
     const AVAILABLE_OUTPUT_CHANNEL_TYPES = [
         'autocomplete',
         'suggestions',
@@ -20,6 +30,24 @@ interface ContextDataInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * @return string
+     */
+    public function getDispatchType();
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    public function updateRuntimeOption(string $key, $value);
+
+    /**
+     * @return array
+     */
+    public function getRuntimeOptions();
 
     /**
      * @return string

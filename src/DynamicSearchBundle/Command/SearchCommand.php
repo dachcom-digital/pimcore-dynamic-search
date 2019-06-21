@@ -77,11 +77,10 @@ class SearchCommand extends Command
 
         try {
             if ($input->getOption('context') === null) {
-                $this->workflowProcessor->dispatchFullContextLoop();
+                $this->workflowProcessor->dispatchFullContextCreation();
             } else {
-                $this->workflowProcessor->dispatchSingleContextLoop($input->getOption('context'));
+                $this->workflowProcessor->dispatchSingleContextCreation($input->getOption('context'));
             }
-
         } catch (\Throwable $e) {
             $output->writeln(sprintf('<error>%s. (File: %s, Line: %s)</error>', $e->getMessage(), $e->getFile(), $e->getLine()));
         }

@@ -3,15 +3,9 @@
 namespace DynamicSearchBundle\Document;
 
 use DynamicSearchBundle\Transformer\Container\FieldContainerInterface;
-use Ramsey\Uuid\Uuid;
 
 class IndexDocument
 {
-    /**
-     * @var string
-     */
-    protected $uuid;
-
     /**
      * @var string
      */
@@ -27,24 +21,28 @@ class IndexDocument
     protected $fields;
 
     /**
-     * @param array  $options
-     * @param string $dispatchTransformerName
+     * @param array|FieldContainerInterface[] $options
+     * @param string                          $dispatchTransformerName
      *
      * @throws \Exception
      */
     public function __construct(array $options, string $dispatchTransformerName)
     {
-        $this->options = $options;
+        $documentOptions = [];
+        foreach ($options as $option) {
+            $documentOptions[$option->getName()] = $option->getData();
+        }
+
+        $this->options = $documentOptions;
         $this->dispatchTransformerName = $dispatchTransformerName;
-        $this->uuid = Uuid::uuid4()->toString();
     }
 
     /**
      * @return string
      */
-    public function getUUid()
+    public function getDocumentId()
     {
-        return $this->uuid;
+        return $this->getDocumentOption('id');
     }
 
     /**
@@ -60,7 +58,7 @@ class IndexDocument
      *
      * @return bool
      */
-    public function hasDocumentOptions($key)
+    public function hasDocumentOption($key)
     {
         return isset($this->options[$key]);
     }
@@ -70,7 +68,7 @@ class IndexDocument
      *
      * @return mixed
      */
-    public function getDocumentOptions($key)
+    public function getDocumentOption($key)
     {
         return $this->options[$key];
     }
