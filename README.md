@@ -1,6 +1,6 @@
 # Pimcore 5 - Dynamic Search
 
-![Dynamic Search Schema](https://user-images.githubusercontent.com/700119/59495255-3f997580-8e8f-11e9-94ef-eb5e4c6cc3dd.png)
+![Dynamic Search Schema](https://user-images.githubusercontent.com/700119/59977691-d9ba9580-95d4-11e9-8d25-c87308e5e48c.png)
 
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/dynamic-search.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/dynamic-search)
@@ -17,22 +17,19 @@ This bundle has no stable release yet and is allowed to introduce major changes 
 The Dynamic Search Bundle allows you to redefine your search strategy. It's based on several data- and index providers.
 
 ### Data Provider
-- WebCrawler (Spider)
-- Pimcore Data (Object, Asset, Document)
+- [WebCrawler (Spider)](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler)
+- [Trinity Data (Pimcore: Object, Asset, Document)](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity)
 
 ### Index Provider
-- Lucene Search
-- Elastic Search
-
-### Data Transformer
-- Http Response HTML Transformer
-- Http Response PDF Transformer
+- [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene)
+- _Elastic Search (coming soon)_
+- _apisearch.io (coming soon)_
 
 ### Installation  
 
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search" : "~1.0.0"
+    "dachcom-digital/dynamic-search" : "~0.1.0"
 }
 ```
 
