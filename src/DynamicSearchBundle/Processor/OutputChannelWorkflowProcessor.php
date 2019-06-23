@@ -107,7 +107,14 @@ class OutputChannelWorkflowProcessor implements OutputChannelWorkflowProcessorIn
             $result = $paginator;
         }
 
-        return new OutputChannelResult($contextName, $outputChannelServiceName, $outputChannelName, $outputChannelRuntimeOptionsProvider, $result, $documentFields);
+        return new OutputChannelResult(
+            $contextName,
+            $outputChannelServiceName,
+            $outputChannelName,
+            $outputChannelRuntimeOptionsProvider,
+            $result,
+            $documentFields
+        );
     }
 
     /**

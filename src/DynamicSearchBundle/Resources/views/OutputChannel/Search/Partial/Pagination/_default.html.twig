@@ -3,7 +3,9 @@
         <nav class="mb-4">
             <ul class="pagination dynamic-search-pagination-default">
                 {% if current_page > 1 %}
-                    <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page-1})) }}">Previous</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page-1})) }}">{{ 'dynamic_search.ui.pagination.previous'|trans }}</a>
+                    </li>
 
                     {% for i in range(1, extreme_pages_limit) if ( i < current_page - nearby_pages_limit ) %}
                         <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: i})) }}">{{ i }}</a></li>
@@ -17,7 +19,7 @@
                         <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: i})) }}">{{ i }}</a></li>
                     {% endfor %}
                 {% elseif show_always_first_and_last %}
-                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">{{ 'dynamic_search.ui.pagination.previous'|trans }}</a></li>
                 {% endif %}
 
                 <li class="page-item active"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({ page: current_page })) }}">{{ current_page }}</a></li>
@@ -35,9 +37,11 @@
                         <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: i})) }}">{{ i }}</a></li>
                     {% endfor %}
 
-                    <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page+1})) }}">Next</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page+1})) }}">{{ 'dynamic_search.ui.pagination.next'|trans }}</a>
+                    </li>
                 {% elseif show_always_first_and_last %}
-                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Next</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">{{ 'dynamic_search.ui.pagination.next'|trans }}</a></li>
                 {% endif %}
             </ul>
         </nav>

@@ -2,7 +2,9 @@
     {% if last_page > 1 and current_page < last_page %}
         <nav>
             <ul class="pagination dynamic-search-pagination-simple">
-                <li class="page-item"><a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page+1})) }}">more</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="{{ path(pagination_path, current_filters|merge({page: current_page+1})) }}">{{ 'dynamic_search.ui.pagination.more'|trans }}</a>
+                </li>
             </ul>
         </nav>
     {% endif %}

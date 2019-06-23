@@ -11,9 +11,13 @@
         {% if search_active == true %}
 
             <div class="list-group mb-4">
-                {% for document in paginator %}
-                    {% include '@DynamicSearch/OutputChannel/Search/Partial/_item.html.twig' with { document: document } only %}
-                {% endfor %}
+                {% if paginator.count() == 0 %}
+                    <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>
+                {% else %}
+                    {% for document in paginator %}
+                        {% include '@DynamicSearch/OutputChannel/Search/Partial/_item.html.twig' with { document: document } only %}
+                    {% endfor %}
+                {% endif %}
             </div>
 
             {% include '@DynamicSearch/OutputChannel/Search/Partial/Pagination/_default.html.twig' with {

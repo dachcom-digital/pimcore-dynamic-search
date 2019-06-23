@@ -67,7 +67,7 @@ class SearchController extends Controller
     {
         try {
             $data = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'suggestions', ['request' => $request]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->json(
                 ['error' => sprintf('Error while loading suggestions output channel for "%s" context. Error was: %s', $contextName, $e->getMessage())],
                 500,
