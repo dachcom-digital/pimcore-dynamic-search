@@ -5,6 +5,7 @@ namespace DynamicSearchBundle\Processor;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
+use DynamicSearchBundle\Exception\OutputChannelException;
 use DynamicSearchBundle\Factory\PaginatorFactoryInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Manager\OutputChannelManagerInterface;
@@ -12,6 +13,7 @@ use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelResult;
 use DynamicSearchBundle\OutputChannel\OutputChannelResultInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\Provider\IndexProviderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OutputChannelWorkflowProcessor implements OutputChannelWorkflowProcessorInterface
@@ -61,26 +63,26 @@ class OutputChannelWorkflowProcessor implements OutputChannelWorkflowProcessorIn
     {
         $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_FETCH, $contextName);
         if (!$contextDefinition instanceof ContextDataInterface) {
-            // throw
+            throw new OutputChannelException($outputChannelName, sprintf('could not load context data for context "%s"', $contextName));
         }
 
-        $indexManager = $this->indexManager->getIndexProvider($contextDefinition);
-        if (!$indexManager instanceof IndexManagerInterface) {
-            // throw
+        $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
+        if (!$indexProvider instanceof IndexProviderInterface) {
+            throw new OutputChannelException($outputChannelName, sprintf('could not load index manager for context "%s"', $contextName));
         }
 
         $outputChannelService = $this->outputChannelManager->getOutputChannel($contextDefinition, $outputChannelName);
         if (!$outputChannelService instanceof OutputChannelInterface) {
-            // throw
+            throw new OutputChannelException($outputChannelName, sprintf('could not load output channel for context "%s"', $contextName));
         }
 
         $outputChannelRuntimeOptionsProviderName = $contextDefinition->getOutputChannelRuntimeOptionsProvider($outputChannelName);
         $outputChannelRuntimeOptionsProvider = $this->outputChannelManager->getOutputChannelRuntimeOptionsProvider($outputChannelRuntimeOptionsProviderName);
         if (!$outputChannelRuntimeOptionsProvider instanceof RuntimeOptionsProviderInterface) {
-            // throw
+            throw new OutputChannelException($outputChannelName, sprintf('could not load runtime options provider for context "%s"', $contextName));
         }
 
-        $indexProviderOptions = $contextDefinition->getIndexProviderOptions($indexManager);
+        $indexProviderOptions = $contextDefinition->getIndexProviderOptions($indexProvider);
         $outputChannelServiceName = $contextDefinition->getOutputChannelServiceName($outputChannelName);
 
         $eventDispatcher = new OutputChannelModifierEventDispatcher($outputChannelServiceName, $outputChannelName, $contextDefinition, $this->outputChannelManager);

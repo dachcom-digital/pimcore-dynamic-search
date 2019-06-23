@@ -59,7 +59,7 @@ class SearchFrontendController extends FrontendController
                 $outputChannelResult = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'search', ['request' => $request]);
             } catch (\Throwable $e) {
                 $hasError = true;
-                $errorMessage = sprintf('Error while loading search output channel for "%s" context. Error was: %s', $contextName, $e->getTraceAsString());
+                $errorMessage = sprintf('Error while loading search output channel for "%s" context. Error was: %s', $contextName, $e->getMessage());
             }
         }
 
