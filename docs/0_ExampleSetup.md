@@ -1,7 +1,6 @@
 # Example Setup
 
 ### composer.json
-
 ```json
 "require" : {
     "dachcom-digital/dynamic-search": "~0.1.0",
@@ -11,8 +10,13 @@
 }
 ```
 
-### app/config/config.yml
+### app/config/routing.yml
+```yaml
+dynamic_search_frontend:
+    resource: '@DynamicSearchBundle/Resources/config/pimcore/routing/frontend_routing.yml'
+```
 
+### app/config/config.yml
 ```yaml
 dynamic_search:
 
