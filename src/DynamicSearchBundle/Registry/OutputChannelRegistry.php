@@ -69,9 +69,10 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     /**
      * @param        $service
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $action
      */
-    public function registerOutputChannelModifierAction($service, string $outputProvider, string $action)
+    public function registerOutputChannelModifierAction($service, string $outputProvider, string $outputChannel, string $action)
     {
         if (!in_array(OutputChannelModifierActionInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -83,19 +84,25 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
         if (!isset($this->outputChannelModifierAction[$outputProvider])) {
             $this->outputChannelModifierAction[$outputProvider] = [];
         }
-        if (!isset($this->outputChannelModifierAction[$outputProvider][$action])) {
-            $this->outputChannelModifierAction[$outputProvider][$action] = [];
+
+        if (!isset($this->outputChannelModifierAction[$outputProvider][$outputChannel])) {
+            $this->outputChannelModifierAction[$outputProvider][$outputChannel] = [];
         }
 
-        $this->outputChannelModifierAction[$outputProvider][$action][] = $service;
+        if (!isset($this->outputChannelModifierAction[$outputProvider][$outputChannel][$action])) {
+            $this->outputChannelModifierAction[$outputProvider][$outputChannel][$action] = [];
+        }
+
+        $this->outputChannelModifierAction[$outputProvider][$outputChannel][$action][] = $service;
     }
 
     /**
      * @param        $service
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $filter
      */
-    public function registerOutputChannelModifierFilter($service, string $outputProvider, string $filter)
+    public function registerOutputChannelModifierFilter($service, string $outputProvider, string $outputChannel, string $filter)
     {
         if (!in_array(OutputChannelModifierFilterInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -108,7 +115,11 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
             $this->outputChannelModifierFilter[$outputProvider] = [];
         }
 
-        $this->outputChannelModifierFilter[$outputProvider][$filter] = $service;
+        if (!isset($this->outputChannelModifierFilter[$outputProvider][$outputChannel])) {
+            $this->outputChannelModifierFilter[$outputProvider][$outputChannel] = [];
+        }
+
+        $this->outputChannelModifierFilter[$outputProvider][$filter][$outputChannel] = $service;
     }
 
     /**
@@ -146,34 +157,35 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasOutputChannelModifierAction(string $outputProvider, string $action)
+    public function hasOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action)
     {
-        return isset($this->outputChannelModifierAction[$outputProvider][$action]) &&
-            is_array($this->outputChannelModifierAction[$outputProvider][$action]) &&
-            count($this->outputChannelModifierAction[$outputProvider][$action]) > 0;
+        return isset($this->outputChannelModifierAction[$outputProvider][$outputChannel]) &&
+            isset($this->outputChannelModifierAction[$outputProvider][$outputChannel][$action]) &&
+            is_array($this->outputChannelModifierAction[$outputProvider][$outputChannel][$action]) &&
+            count($this->outputChannelModifierAction[$outputProvider][$outputChannel][$action]) > 0;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelModifierAction(string $outputProvider, string $action)
+    public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action)
     {
-        return $this->outputChannelModifierAction[$outputProvider][$action];
+        return $this->outputChannelModifierAction[$outputProvider][$outputChannel][$action];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasOutputChannelModifierFilter(string $outputProvider, string $filter)
+    public function hasOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter)
     {
-        return isset($this->outputChannelModifierFilter[$outputProvider][$filter]);
+        return isset($this->outputChannelModifierFilter[$outputProvider][$filter][$outputChannel]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelModifierFilter(string $outputProvider, string $filter)
+    public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter)
     {
-        return $this->outputChannelModifierFilter[$outputProvider][$filter];
+        return $this->outputChannelModifierFilter[$outputProvider][$filter][$outputChannel];
     }
 }

@@ -41,34 +41,38 @@ interface OutputChannelRegistryInterface
 
     /**
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $action
      *
      * @return bool
      */
-    public function hasOutputChannelModifierAction(string $outputProvider, string $action);
+    public function hasOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action);
 
     /**
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $action
      *
      * @return array|OutputChannelModifierActionInterface[]
      */
-    public function getOutputChannelModifierAction(string $outputProvider, string $action);
+    public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action);
 
     /**
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $filter
      *
      * @return bool
      */
-    public function hasOutputChannelModifierFilter(string $outputProvider, string $filter);
+    public function hasOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter);
 
     /**
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $filter
      *
      * @return OutputChannelModifierFilterInterface
      */
-    public function getOutputChannelModifierFilter(string $outputProvider, string $filter);
+    public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter);
 
 }

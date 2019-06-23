@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\DependencyInjection\Compiler;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Registry\OutputChannelRegistry;
+use http\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -46,11 +47,26 @@ final class OutputChannelPass implements CompilerPassInterface
         ## dynamic_search.output_channel.modifier.action
         ##
 
+        $validModifierChannels = array_merge(['all'], ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES);
+
         $outputChannelModifierActionServices = [];
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.modifier.action', true) as $id => $tags) {
             foreach ($tags as $attributes) {
                 $priority = isset($attributes['priority']) ? $attributes['priority'] : 0;
-                $outputChannelModifierActionServices[$priority][] = [new Reference($id), $attributes['output_provider'], $attributes['action']];
+                $outputChannel = isset($attributes['channel']) ? $attributes['channel'] : 'all';
+                if (!in_array($outputChannel, $validModifierChannels)) {
+                    throw new \InvalidArgumentException(
+                        sprintf('"%s" is an invalid output channel type for filter. Channel needs to be one of %s', $outputChannel, implode(', ', $validModifierChannels))
+                    );
+                }
+
+                if ($outputChannel === 'all') {
+                    foreach (ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES as $channelType) {
+                        $outputChannelModifierActionServices[$priority][] = [new Reference($id), $attributes['output_provider'], $channelType, $attributes['action']];
+                    }
+                } else {
+                    $outputChannelModifierActionServices[$priority][] = [new Reference($id), $attributes['output_provider'], $outputChannel, $attributes['action']];
+                }
             }
         }
 
@@ -66,18 +82,40 @@ final class OutputChannelPass implements CompilerPassInterface
         ## dynamic_search.output_channel.modifier.filter
         ##
 
-        $dispatchedFilter = [];
+        $outputChannelModifierFilterServices = [];
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.modifier.filter', true) as $id => $tags) {
             foreach ($tags as $attributes) {
+                $priority = isset($attributes['priority']) ? $attributes['priority'] : 0;
+                $outputChannel = isset($attributes['channel']) ? $attributes['channel'] : 'all';
+                if (!in_array($outputChannel, $validModifierChannels)) {
+                    throw new \InvalidArgumentException(
+                        sprintf('"%s" is an invalid output channel type for filter. Channel needs to be one of %s', $outputChannel, implode(', ', $validModifierChannels))
+                    );
+                }
 
-                // first filter wins.
-                $key = sprintf('%s_%s', $attributes['output_provider'], $attributes['filter']);
+                if ($outputChannel === 'all') {
+                    foreach (ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES as $channelType) {
+                        $outputChannelModifierFilterServices[$priority][] = [new Reference($id), $attributes['output_provider'], $channelType, $attributes['filter']];
+                    }
+                } else {
+                    $outputChannelModifierFilterServices[$priority][] = [new Reference($id), $attributes['output_provider'], $outputChannel, $attributes['filter']];
+                }
+            }
+        }
+
+        krsort($outputChannelModifierFilterServices);
+        if (count($outputChannelModifierFilterServices) > 0) {
+            $dispatchedFilter = [];
+            $outputChannelModifierFilterServices = \call_user_func_array('array_merge', $outputChannelModifierFilterServices);
+            foreach ($outputChannelModifierFilterServices as $serviceData) {
+
+                // highest priority filter wins.
+                $key = sprintf('%s_%s_%s', $serviceData[1], $serviceData[2], $serviceData[3]);
                 if (in_array($key, $dispatchedFilter)) {
                     continue;
                 }
-
                 $dispatchedFilter[] = $key;
-                $definition->addMethodCall('registerOutputChannelModifierFilter', [new Reference($id), $attributes['output_provider'], $attributes['filter']]);
+                $definition->addMethodCall('registerOutputChannelModifierFilter', $serviceData);
             }
         }
     }

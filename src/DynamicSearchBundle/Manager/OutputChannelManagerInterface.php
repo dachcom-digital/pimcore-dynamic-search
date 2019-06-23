@@ -29,17 +29,19 @@ interface OutputChannelManagerInterface
 
     /**
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $action
      *
      * @return array|OutputChannelModifierActionInterface[]
      */
-    public function getOutputChannelModifierAction(string $outputProvider, string $action);
+    public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action);
 
     /**
      * @param string $outputProvider
+     * @param string $outputChannel
      * @param string $filter
      *
      * @return null|OutputChannelModifierFilterInterface
      */
-    public function getOutputChannelModifierFilter(string $outputProvider, string $filter);
+    public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter);
 }

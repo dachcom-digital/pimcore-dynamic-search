@@ -81,24 +81,24 @@ class OutputChannelManager implements OutputChannelManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function getOutputChannelModifierAction(string $outputProvider, string $action)
+    public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action)
     {
-        if (!$this->outputChannelRegistry->hasOutputChannelModifierAction($outputProvider, $action)) {
+        if (!$this->outputChannelRegistry->hasOutputChannelModifierAction($outputProvider, $outputChannel, $action)) {
             return [];
         }
 
-        return $this->outputChannelRegistry->getOutputChannelModifierAction($outputProvider, $action);
+        return $this->outputChannelRegistry->getOutputChannelModifierAction($outputProvider, $outputChannel, $action);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getOutputChannelModifierFilter(string $outputProvider, string $filter)
+    public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter)
     {
-        if (!$this->outputChannelRegistry->hasOutputChannelModifierFilter($outputProvider, $filter)) {
+        if (!$this->outputChannelRegistry->hasOutputChannelModifierFilter($outputProvider, $outputChannel, $filter)) {
             return null;
         }
 
-        return $this->outputChannelRegistry->getOutputChannelModifierFilter($outputProvider, $filter);
+        return $this->outputChannelRegistry->getOutputChannelModifierFilter($outputProvider, $outputChannel, $filter);
     }
 }

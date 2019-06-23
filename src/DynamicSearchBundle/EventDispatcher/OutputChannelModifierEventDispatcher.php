@@ -53,7 +53,7 @@ class OutputChannelModifierEventDispatcher
     public function dispatchAction(string $action, array $options)
     {
         $event = new OutputModifierEvent($options);
-        $channelModifierAction = $this->outputChannelManager->getOutputChannelModifierAction($this->outputProvider, $action);
+        $channelModifierAction = $this->outputChannelManager->getOutputChannelModifierAction($this->outputProvider, $this->outputChannelName, $action);
 
         foreach ($channelModifierAction as $modifierAction) {
             $event = $modifierAction->dispatchAction($action, $this->outputChannelName, $event);
@@ -73,7 +73,7 @@ class OutputChannelModifierEventDispatcher
      */
     public function dispatchFilter(string $filterService, array $options = [])
     {
-        $channelModifierFilter = $this->outputChannelManager->getOutputChannelModifierFilter($this->outputProvider, $filterService);
+        $channelModifierFilter = $this->outputChannelManager->getOutputChannelModifierFilter($this->outputProvider, $this->outputChannelName, $filterService);
 
         if ($channelModifierFilter === null) {
             throw new \Exception(sprintf('output channel filter "%s" not found', $filterService));
