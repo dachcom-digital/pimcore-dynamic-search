@@ -1,4 +1,4 @@
-# Pimcore 5 - Dynamic Search
+# Pimcore 5/6 - Dynamic Search
 
 ![Dynamic Search Schema](https://user-images.githubusercontent.com/700119/59977691-d9ba9580-95d4-11e9-8d25-c87308e5e48c.png)
 
@@ -17,8 +17,8 @@ This bundle has no stable release yet and is allowed to introduce major changes 
 The Dynamic Search Bundle allows you to redefine your search strategy. It's based on several data- and index providers.
 
 ### Data Provider
-- [WebCrawler (Spider)](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler)
-- [Trinity Data (Pimcore: Object, Asset, Document)](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity)
+- [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) (Spider)
+- [Trinity Data](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity) (Pimcore: Object, Asset, Document)
 
 ### Index Provider
 - [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene)
@@ -51,6 +51,9 @@ After you have updated the Dynamic Search Bundle via composer:
 ### Migrate via CommandLine
 Does actually the same as the update command and preferred in CI-Workflow:
 - Execute: `$ bin/console pimcore:migrations:migrate -b DynamicSearchBundle`
+
+## Further Information
+- [Example Setup](docs/0_ExampleSetup.md)
 
 ## Copyright and License
 Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)  
