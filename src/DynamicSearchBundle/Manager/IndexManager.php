@@ -61,9 +61,10 @@ class IndexManager implements IndexManagerInterface
     public function getIndexProvider(ContextDataInterface $contextData)
     {
         $indexProviderName = $contextData->getIndexProviderName();
+        $cacheKey = sprintf('%s_%s', $contextData->getName(), $indexProviderName);
 
-        if (isset($this->validProviders[$indexProviderName])) {
-            return $this->validProviders[$indexProviderName];
+        if (isset($this->validProviders[$cacheKey])) {
+            return $this->validProviders[$cacheKey];
         }
 
         if (is_null($indexProviderName) || !$this->indexProviderRegistry->has($indexProviderName)) {
@@ -81,7 +82,7 @@ class IndexManager implements IndexManagerInterface
         $indexProvider->setLogger($this->logger);
         $indexProvider->setOptions($indexProviderOptions);
 
-        $this->validProviders[$indexProviderName] = $indexProvider;
+        $this->validProviders[$cacheKey] = $indexProvider;
 
         return $indexProvider;
 

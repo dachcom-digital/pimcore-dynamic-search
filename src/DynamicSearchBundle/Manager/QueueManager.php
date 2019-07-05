@@ -161,7 +161,7 @@ class QueueManager implements QueueManagerInterface
          * Filter Jobs:
          * -> first sort jobs by date (ASC) to receive latest entries first!
          * -> create sub array for each context and dispatch type: stack[ context ][ dispatch type ][]
-         * -> only add resource once per "context - resourceType - dispatchType - resourceId"
+         * -> only add resource once per "context - resourceType - resourceId"
          * -> only return envelope
          */
 

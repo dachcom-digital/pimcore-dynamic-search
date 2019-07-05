@@ -27,6 +27,11 @@ class DataManager implements DataManagerInterface
     protected $dataProviderRegistry;
 
     /**
+     * @var array
+     */
+    protected $validProviders;
+
+    /**
      * @param LoggerInterface               $logger
      * @param ConfigurationInterface        $configuration
      * @param DataProviderRegistryInterface $dataProviderRegistry
@@ -47,6 +52,11 @@ class DataManager implements DataManagerInterface
     public function getDataProvider(ContextDataInterface $contextData)
     {
         $dataProviderName = $contextData->getDataProviderName();
+        $cacheKey = sprintf('%s_%s', $contextData->getName(), $dataProviderName);
+
+        if (isset($this->validProviders[$cacheKey])) {
+            return $this->validProviders[$cacheKey];
+        }
 
         if (is_null($dataProviderName) || !$this->dataProviderRegistry->has($dataProviderName)) {
             throw new ProviderException('Invalid requested data provider', $dataProviderName);
@@ -62,6 +72,8 @@ class DataManager implements DataManagerInterface
 
         $dataProvider->setLogger($this->logger);
         $dataProvider->setOptions($dataProviderOptions);
+
+        $this->validProviders[$cacheKey] = $dataProvider;
 
         return $dataProvider;
     }
