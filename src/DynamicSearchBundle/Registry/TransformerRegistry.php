@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Registry;
 
-use DynamicSearchBundle\Transformer\DispatchTransformerInterface;
+use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
 use DynamicSearchBundle\Transformer\FieldTransformerInterface;
 
 class TransformerRegistry implements TransformerRegistryInterface
@@ -23,9 +23,9 @@ class TransformerRegistry implements TransformerRegistryInterface
      */
     public function registerDispatchTransformer($service, string $identifier)
     {
-        if (!in_array(DispatchTransformerInterface::class, class_implements($service), true)) {
+        if (!in_array(DocumentTransformerInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DispatchTransformerInterface::class, implode(', ', class_implements($service)))
+                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DocumentTransformerInterface::class, implode(', ', class_implements($service)))
             );
         }
 

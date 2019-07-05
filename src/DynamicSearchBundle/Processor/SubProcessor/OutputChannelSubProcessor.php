@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicSearchBundle\Processor;
+namespace DynamicSearchBundle\Processor\SubProcessor;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
@@ -16,7 +16,7 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInter
 use DynamicSearchBundle\Provider\IndexProviderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OutputChannelWorkflowProcessor implements OutputChannelWorkflowProcessorInterface
+class OutputChannelSubProcessor implements OutputChannelSubProcessorInterface
 {
     /**
      * @var ConfigurationInterface
@@ -98,7 +98,7 @@ class OutputChannelWorkflowProcessor implements OutputChannelWorkflowProcessorIn
         $contextOptions['event_dispatcher'] = $eventDispatcher;
         $result = $outputChannelService->execute($indexProviderOptions, $outputChannelOptions, $contextOptions);
 
-        $documentFields = $this->parseDocumentFieldsConfig($contextDefinition);
+        $documentFields = []; //$this->parseDocumentFieldsConfig($contextDefinition);
 
         if ($outputChannelService->needsPaginator()) {
             $paginator = $this->paginatorFactory->create($outputChannelService->getPaginatorAdapterClass(), $result);

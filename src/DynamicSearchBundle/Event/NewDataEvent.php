@@ -19,7 +19,7 @@ class NewDataEvent extends Event
     /**
      * @var array
      */
-    protected $runtimeOptions;
+    protected $runtimeValues;
 
     /**
      * @var mixed
@@ -30,13 +30,13 @@ class NewDataEvent extends Event
      * @param string $contextDispatchType
      * @param string $contextName
      * @param mixed  $data
-     * @param array  $runtimeOptions
+     * @param array  $runtimeValues
      */
-    public function __construct(string $contextDispatchType, string $contextName, $data, array $runtimeOptions = [])
+    public function __construct(string $contextDispatchType, string $contextName, $data, array $runtimeValues = [])
     {
         $this->contextDispatchType = $contextDispatchType;
         $this->contextName = $contextName;
-        $this->runtimeOptions = $runtimeOptions;
+        $this->runtimeValues = $runtimeValues;
         $this->data = $data;
     }
 
@@ -59,9 +59,9 @@ class NewDataEvent extends Event
     /**
      * @return array
      */
-    public function getRuntimeOptions()
+    public function getRuntimeValues()
     {
-        return $this->runtimeOptions;
+        return $this->runtimeValues;
     }
 
     /**

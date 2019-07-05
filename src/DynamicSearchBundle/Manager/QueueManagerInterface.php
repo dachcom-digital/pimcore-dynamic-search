@@ -3,19 +3,23 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Queue\Data\Envelope;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Tool\TmpStore;
 
 interface QueueManagerInterface
 {
     const QUEUE_IDENTIFIER = 'dynamic_search_index_queue';
 
-    const ALLOWED_DISPATCH_TYPES = ['insert', 'update', 'delete'];
+    const ALLOWED_QUEUE_TYPES = ['page', 'object', 'asset'];
 
     /**
      * @param string $contextName
      * @param string $dispatcher
+     * @param string $type
+     * @param int    $id
      * @param array  $options
      */
-    public function addToQueue(string $contextName, string $dispatcher, array $options);
+    public function addToQueue(string $contextName, string $dispatcher, string $type, int $id, array $options);
 
     /**
      * @return mixed
@@ -28,13 +32,26 @@ interface QueueManagerInterface
     public function hasActiveJobs();
 
     /**
-     * @return array|Envelope[]
+     * @return array|TmpStore[]
      */
     public function getActiveJobs();
+
+    /**
+     * @return array|Envelope[]
+     */
+    public function getActiveEnvelopes();
 
     /**
      * @param Envelope $envelope
      */
     public function deleteJob(Envelope $envelope);
+
+    /**
+     * @param string $resourceType
+     * @param int    $resourceId
+     *
+     * @return ElementInterface|null
+     */
+    public function getResource(string $resourceType, int $resourceId);
 
 }

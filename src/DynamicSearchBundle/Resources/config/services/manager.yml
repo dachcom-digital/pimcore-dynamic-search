@@ -13,4 +13,8 @@ services:
 
     DynamicSearchBundle\Manager\OutputChannelManager: ~
 
+    DynamicSearchBundle\Manager\IndexDocumentDefinitionManager: ~
+
+    DynamicSearchBundle\Manager\ResourceNormalizerManager: ~
+
     DynamicSearchBundle\Manager\QueueManager: ~

@@ -22,4 +22,10 @@ interface IndexFieldRegistryInterface
      */
     public function getForIndexProvider(string $indexProviderName, string $identifier);
 
+    /**
+     * @param string $indexProviderName
+     *
+     * @return IndexFieldInterface[]
+     */
+    public function getIndexFieldsOfIndexProvider(string $indexProviderName);
 }

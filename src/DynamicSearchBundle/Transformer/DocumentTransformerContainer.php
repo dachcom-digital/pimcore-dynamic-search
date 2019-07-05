@@ -2,11 +2,10 @@
 
 namespace DynamicSearchBundle\Transformer;
 
-class DispatchTransformerContainer implements DispatchTransformerContainerInterface
+class DocumentTransformerContainer implements DocumentTransformerContainerInterface
 {
-
     /**
-     * @var DispatchTransformerInterface
+     * @var DocumentTransformerInterface
      */
     protected $transformer;
 
@@ -16,10 +15,10 @@ class DispatchTransformerContainer implements DispatchTransformerContainerInterf
     protected $identifier;
 
     /**
-     * @param DispatchTransformerInterface $transformer
+     * @param DocumentTransformerInterface $transformer
      * @param string                       $identifier
      */
-    public function __construct(DispatchTransformerInterface $transformer, string $identifier)
+    public function __construct(DocumentTransformerInterface $transformer, string $identifier)
     {
         $this->transformer = $transformer;
         $this->identifier = $identifier;

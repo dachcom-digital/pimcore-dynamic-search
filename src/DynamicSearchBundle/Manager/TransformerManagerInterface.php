@@ -3,24 +3,26 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Transformer\DispatchTransformerContainerInterface;
+use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
+use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
 use DynamicSearchBundle\Transformer\FieldTransformerInterface;
 
 interface TransformerManagerInterface
 {
     /**
      * @param ContextDataInterface $contextData
-     * @param mixed                $data
+     * @param mixed                $resource
      *
-     * @returns null|DispatchTransformerContainerInterface
+     * @returns null|DocumentTransformerInterface
      */
-    public function getDispatchTransformer(ContextDataInterface $contextData, $data);
+    public function getDocumentTransformer(ContextDataInterface $contextData, $resource);
 
     /**
      * @param string $dispatchTransformerName
      * @param string $fieldTransformerName
+     * @param array  $transformerOptions
      *
      * @return null|FieldTransformerInterface
      */
-    public function getFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName);
+    public function getFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = []);
 }

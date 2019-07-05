@@ -2,22 +2,30 @@
 
 namespace DynamicSearchBundle\Queue;
 
+use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Document\IndexDocument;
+use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
-use DynamicSearchBundle\Processor\ContextWorkflowProcessorInterface;
+use DynamicSearchBundle\Processor\ContextProcessorInterface;
 use DynamicSearchBundle\Queue\Data\Envelope;
 use DynamicSearchBundle\Service\LockServiceInterface;
 
 class DataProcessor implements DataProcessorInterface
 {
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @var QueueManagerInterface
      */
     protected $queueManager;
 
     /**
-     * @var ContextWorkflowProcessorInterface
+     * @var ContextProcessorInterface
      */
-    protected $workflowProcessor;
+    protected $contextProcessor;
 
     /**
      * @var LockServiceInterface
@@ -25,17 +33,20 @@ class DataProcessor implements DataProcessorInterface
     protected $lockService;
 
     /**
-     * @param QueueManagerInterface             $queueManager
-     * @param ContextWorkflowProcessorInterface $workflowProcessor
-     * @param LockServiceInterface              $lockService
+     * @param LoggerInterface           $logger
+     * @param QueueManagerInterface     $queueManager
+     * @param ContextProcessorInterface $contextProcessor
+     * @param LockServiceInterface      $lockService
      */
     public function __construct(
+        LoggerInterface $logger,
         QueueManagerInterface $queueManager,
-        ContextWorkflowProcessorInterface $workflowProcessor,
+        ContextProcessorInterface $contextProcessor,
         LockServiceInterface $lockService
     ) {
+        $this->logger = $logger;
         $this->queueManager = $queueManager;
-        $this->workflowProcessor = $workflowProcessor;
+        $this->contextProcessor = $contextProcessor;
         $this->lockService = $lockService;
     }
 
@@ -61,7 +72,7 @@ class DataProcessor implements DataProcessorInterface
         try {
             $this->checkJobs();
         } catch (\Throwable $e) {
-            // fail silently
+            $this->logger->error(sprintf('Error while processing queue envelopes. Message was: %s', $e->getMessage()), 'queue', 'global');
         }
 
         $this->lockService->unlock(LockServiceInterface::QUEUE_INDEXING);
@@ -70,46 +81,123 @@ class DataProcessor implements DataProcessorInterface
 
     protected function checkJobs()
     {
-        $envelopes = $this->queueManager->getActiveJobs();
+        $envelopes = $this->queueManager->getActiveEnvelopes();
 
         if (empty($envelopes) || !is_array($envelopes)) {
             return;
         }
 
-        foreach ($envelopes as $envelope) {
+        foreach ($envelopes as $contextName => $contextDispatchEnvelopes) {
 
-            $method = $this->getDispatchMethod($envelope->getDispatcher());
-
-            if (!is_string($method)) {
+            if (!is_array($contextDispatchEnvelopes) || count($contextDispatchEnvelopes) === 0) {
                 continue;
             }
 
-            try {
-                call_user_func_array([$this->workflowProcessor, $method], [$envelope->getContextName(), $envelope->getOptions()]);
-            } catch (\Throwable $e) {
-                // test
-            }
+            foreach ($contextDispatchEnvelopes as $dispatchType => $dispatchEnvelopes) {
 
-            $this->queueManager->deleteJob($envelope);
+                if (!is_array($dispatchEnvelopes) || count($dispatchEnvelopes) === 0) {
+                    continue;
+                }
+
+                try {
+
+                    if ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
+                        $this->dispatchDeletionContext($contextName, $dispatchType, $dispatchEnvelopes);
+                    } else {
+                        $this->dispatchModificationContext($contextName, $dispatchType, $dispatchEnvelopes);
+                    }
+
+                } catch (\Throwable $e) {
+                    $this->logger->error(
+                        sprintf('Error dispatch queued context (%s). Message was: %s', $dispatchType, $e->getMessage()),
+                        'queue', $contextName
+                    );
+                }
+            }
         }
     }
 
     /**
-     * @param string $dispatcher
-     *
-     * @return string|null
+     * @param string $contextName
+     * @param string $dispatchType
+     * @param array  $dispatchEnvelopes
      */
-    protected function getDispatchMethod(string $dispatcher)
+    protected function dispatchDeletionContext(string $contextName, string $dispatchType, array $dispatchEnvelopes)
     {
-        switch ($dispatcher) {
-            case 'insert':
-                return 'dispatchInsert';
-            case 'update' :
-                return 'dispatchUpdate';
-            case  'delete':
-                return 'dispatchDeletion';
+        $envelopeResourceStack = [
+            'contextName'  => $contextName,
+            'dispatchType' => $dispatchType,
+            'resources'    => []
+        ];
+
+        $runtimeValues = [];
+
+        /** @var Envelope $envelope */
+        foreach ($dispatchEnvelopes as $envelope) {
+
+            $envelopeOptions = $envelope->getOptions();
+            if (!isset($envelopeOptions['removable_ids']) || !is_array($envelopeOptions['removable_ids'])) {
+
+                $this->logger->error(
+                    sprintf(
+                        'Unable to dispatch envelope "%s-%s deletion because of missing resource ids.',
+                        $envelope->getResourceType(), $envelope->getResourceId()
+                    ),
+                    'queue', $contextName
+                );
+
+                continue;
+
+            } else {
+                foreach ($envelopeOptions['removable_ids'] as $removableId) {
+                    $envelopeResourceStack['resources'][] = new IndexDocument($removableId, [], 'queue');
+                }
+            }
+
+            unset($envelopeOptions['removable_ids']);
+            $runtimeValues = $envelopeOptions;
+
+            $this->queueManager->deleteJob($envelope);
+
         }
 
-        return null;
+        $this->contextProcessor->dispatchContextModificationStack(
+            $envelopeResourceStack['contextName'],
+            $envelopeResourceStack['dispatchType'],
+            $envelopeResourceStack['resources'],
+            $runtimeValues
+        );
+
     }
+
+    /**
+     * @param string $contextName
+     * @param string $dispatchType
+     * @param array  $dispatchEnvelopes
+     */
+    protected function dispatchModificationContext(string $contextName, string $dispatchType, array $dispatchEnvelopes)
+    {
+        $envelopeResourceStack = [
+            'contextName'  => $contextName,
+            'dispatchType' => $dispatchType,
+            'resources'    => []
+        ];
+
+        $runtimeValues = [];
+
+        /** @var Envelope $envelope */
+        foreach ($dispatchEnvelopes as $envelope) {
+            $runtimeValues = $envelope->getOptions();
+            $envelopeResourceStack['resources'][] = $this->queueManager->getResource($envelope->getResourceType(), $envelope->getResourceId());
+            $this->queueManager->deleteJob($envelope);
+        }
+
+        $this->contextProcessor->dispatchContextModificationStack(
+            $envelopeResourceStack['contextName'],
+            $envelopeResourceStack['dispatchType'],
+            $envelopeResourceStack['resources'],
+            $runtimeValues
+        );
+    }
+
 }

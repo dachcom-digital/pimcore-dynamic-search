@@ -32,11 +32,11 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getContextDefinitions(string $dispatchType, array $runtimeOptions = [])
+    public function getContextDefinitions(string $dispatchType, array $runtimeValues = [])
     {
         $contextDefinitions = [];
         foreach ($this->config['context'] as $contextName => $context) {
-            $contextDefinitions[] = $this->getContextDefinition($dispatchType, $contextName, $runtimeOptions);
+            $contextDefinitions[] = $this->getContextDefinition($dispatchType, $contextName, $runtimeValues);
         }
 
         return $contextDefinitions;
@@ -45,12 +45,12 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeOptions = [])
+    public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeValues = [])
     {
         if (!isset($this->config['context'][$contextName]) || !is_array($this->config['context'][$contextName])) {
             return null;
         }
 
-        return new ContextData($dispatchType, $contextName, $this->config['context'][$contextName], $runtimeOptions);
+        return new ContextData($dispatchType, $contextName, $this->config['context'][$contextName], $runtimeValues);
     }
 }

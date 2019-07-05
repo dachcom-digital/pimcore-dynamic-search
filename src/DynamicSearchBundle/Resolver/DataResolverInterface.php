@@ -2,16 +2,17 @@
 
 namespace DynamicSearchBundle\Resolver;
 
-use DynamicSearchBundle\Exception\DispatchTransformerNotFoundException;
+use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
+use DynamicSearchBundle\Transformer\DocumentTransformerContainerInterface;
 
 interface DataResolverInterface
 {
     /**
-     * @param mixed $data
+     * @param mixed $resource
      *
-     * @return mixed
+     * @return DocumentTransformerContainerInterface
      *
-     * @throws DispatchTransformerNotFoundException
+     * @throws DocumentTransformerNotFoundException
      */
-    public function resolve($data);
+    public function resolve($resource);
 }

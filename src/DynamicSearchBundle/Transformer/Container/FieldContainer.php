@@ -58,7 +58,7 @@ class FieldContainer implements FieldContainerInterface
     /**
      * {@inheritDoc}
      */
-    public function setIndexType(string $indexType)
+    public function setIndexType(?string $indexType)
     {
         $this->indexType = $indexType;
     }

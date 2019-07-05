@@ -1,11 +1,11 @@
 <?php
 
-namespace DynamicSearchBundle\Processor;
+namespace DynamicSearchBundle\Processor\SubProcessor;
 
 use DynamicSearchBundle\Exception\OutputChannelException;
 use DynamicSearchBundle\OutputChannel\OutputChannelResultInterface;
 
-interface OutputChannelWorkflowProcessorInterface
+interface OutputChannelSubProcessorInterface
 {
     /**
      * @param string $contextName

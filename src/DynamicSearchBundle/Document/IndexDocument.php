@@ -7,9 +7,15 @@ use DynamicSearchBundle\Transformer\Container\FieldContainerInterface;
 class IndexDocument
 {
     /**
+     * @var mixed
+     */
+    protected $documentId;
+
+    /**
      * @var string
      */
     protected $dispatchTransformerName;
+
     /**
      * @var int
      */
@@ -21,28 +27,28 @@ class IndexDocument
     protected $fields;
 
     /**
+     * @param mixed                           $documentId
      * @param array|FieldContainerInterface[] $options
      * @param string                          $dispatchTransformerName
-     *
-     * @throws \Exception
      */
-    public function __construct(array $options, string $dispatchTransformerName)
+    public function __construct($documentId, array $options, string $dispatchTransformerName)
     {
         $documentOptions = [];
         foreach ($options as $option) {
             $documentOptions[$option->getName()] = $option->getData();
         }
 
+        $this->documentId = $documentId;
         $this->options = $documentOptions;
         $this->dispatchTransformerName = $dispatchTransformerName;
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getDocumentId()
     {
-        return $this->getDocumentOption('id');
+        return $this->documentId;
     }
 
     /**

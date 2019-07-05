@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Exception;
 
-final class DispatchTransformerNotFoundException extends \RuntimeException
+final class DocumentTransformerNotFoundException extends \RuntimeException
 {
     /**
      * {@inheritdoc}

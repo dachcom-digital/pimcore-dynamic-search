@@ -60,17 +60,17 @@ class IndexManager implements IndexManagerInterface
      */
     public function getIndexProvider(ContextDataInterface $contextData)
     {
-        $indexProviderToken = $contextData->getIndexProviderName();
+        $indexProviderName = $contextData->getIndexProviderName();
 
-        if (isset($this->validProviders[$indexProviderToken])) {
-            return $this->validProviders[$indexProviderToken];
+        if (isset($this->validProviders[$indexProviderName])) {
+            return $this->validProviders[$indexProviderName];
         }
 
-        if (is_null($indexProviderToken) || !$this->indexProviderRegistry->has($indexProviderToken)) {
-            throw new ProviderException('Invalid requested index provider', $indexProviderToken);
+        if (is_null($indexProviderName) || !$this->indexProviderRegistry->has($indexProviderName)) {
+            throw new ProviderException('Invalid requested index provider', $indexProviderName);
         }
 
-        $indexProvider = $this->indexProviderRegistry->get($indexProviderToken);
+        $indexProvider = $this->indexProviderRegistry->get($indexProviderName);
 
         try {
             $indexProviderOptions = $contextData->getIndexProviderOptions($indexProvider);
@@ -81,7 +81,7 @@ class IndexManager implements IndexManagerInterface
         $indexProvider->setLogger($this->logger);
         $indexProvider->setOptions($indexProviderOptions);
 
-        $this->validProviders[$indexProviderToken] = $indexProvider;
+        $this->validProviders[$indexProviderName] = $indexProvider;
 
         return $indexProvider;
 
@@ -98,5 +98,14 @@ class IndexManager implements IndexManagerInterface
         }
 
         return $this->indexFieldRegistry->getForIndexProvider($indexProviderName, $identifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndexFieldsOfIndexProvider(ContextDataInterface $contextData)
+    {
+        $indexProviderName = $contextData->getIndexProviderName();
+        return $this->indexFieldRegistry->getIndexFieldsOfIndexProvider($indexProviderName);
     }
 }

@@ -4,7 +4,7 @@ namespace DynamicSearchBundle\Command;
 
 use DynamicSearchBundle\Command\Traits\SignalWatchTrait;
 
-use DynamicSearchBundle\Processor\ContextWorkflowProcessorInterface;
+use DynamicSearchBundle\Processor\ContextProcessorInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,7 +16,7 @@ class SearchCommand extends Command
     use SignalWatchTrait;
 
     /**
-     * @var ContextWorkflowProcessorInterface
+     * @var ContextProcessorInterface
      */
     protected $workflowProcessor;
 
@@ -26,11 +26,11 @@ class SearchCommand extends Command
     protected $lockService;
 
     /**
-     * @param ContextWorkflowProcessorInterface $workflowProcessor
-     * @param LockServiceInterface              $lockService
+     * @param ContextProcessorInterface $workflowProcessor
+     * @param LockServiceInterface      $lockService
      */
     public function __construct(
-        ContextWorkflowProcessorInterface $workflowProcessor,
+        ContextProcessorInterface $workflowProcessor,
         LockServiceInterface $lockService
     ) {
         parent::__construct();

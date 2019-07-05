@@ -17,18 +17,18 @@ interface ConfigurationInterface
 
     /**
      * @param string $dispatchType
-     * @param array  $runtimeOptions
+     * @param array  $runtimeValues
      *
      * @return ContextData[]
      */
-    public function getContextDefinitions(string $dispatchType, array $runtimeOptions = []);
+    public function getContextDefinitions(string $dispatchType, array $runtimeValues = []);
 
     /**
      * @param string $contextName
      * @param string $dispatchType
-     * @param array  $runtimeOptions
+     * @param array  $runtimeValues
      *
      * @return ContextData
      */
-    public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeOptions = []);
+    public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeValues = []);
 }

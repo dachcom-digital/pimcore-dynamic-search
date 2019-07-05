@@ -11,11 +11,14 @@ use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\DataManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
+use DynamicSearchBundle\Processor\SubProcessor\IndexDeletionSubProcessorInterface;
+use DynamicSearchBundle\Processor\SubProcessor\IndexModificationSubProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
+use DynamicSearchBundle\Provider\IndexProviderInterface;
 use DynamicSearchBundle\Provider\ProviderInterface;
 use DynamicSearchBundle\Service\LongProcessServiceInterface;
 
-class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
+class ContextProcessor implements ContextProcessorInterface
 {
     /**
      * @var LoggerInterface
@@ -43,6 +46,16 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
     protected $queueManager;
 
     /**
+     * @var IndexModificationSubProcessorInterface
+     */
+    protected $indexModificationSubProcessor;
+
+    /**
+     * @var IndexDeletionSubProcessorInterface
+     */
+    protected $indexDeletionSubProcessor;
+
+    /**
      * @var LongProcessServiceInterface
      */
     protected $longProcessService;
@@ -53,12 +66,14 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
     protected $validProcessRunning;
 
     /**
-     * @param LoggerInterface             $logger
-     * @param ConfigurationInterface      $configuration
-     * @param DataManagerInterface        $dataManager
-     * @param IndexManagerInterface       $indexManager
-     * @param QueueManagerInterface       $queueManager
-     * @param LongProcessServiceInterface $longProcessService
+     * @param LoggerInterface                        $logger
+     * @param ConfigurationInterface                 $configuration
+     * @param DataManagerInterface                   $dataManager
+     * @param IndexManagerInterface                  $indexManager
+     * @param QueueManagerInterface                  $queueManager
+     * @param IndexModificationSubProcessorInterface $indexModificationSubProcessor
+     * @param IndexDeletionSubProcessorInterface     $indexDeletionSubProcessor
+     * @param LongProcessServiceInterface            $longProcessService
      */
     public function __construct(
         LoggerInterface $logger,
@@ -66,6 +81,8 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         DataManagerInterface $dataManager,
         IndexManagerInterface $indexManager,
         QueueManagerInterface $queueManager,
+        IndexModificationSubProcessorInterface $indexModificationSubProcessor,
+        IndexDeletionSubProcessorInterface $indexDeletionSubProcessor,
         LongProcessServiceInterface $longProcessService
     ) {
         $this->logger = $logger;
@@ -73,15 +90,17 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         $this->dataManager = $dataManager;
         $this->indexManager = $indexManager;
         $this->queueManager = $queueManager;
+        $this->indexModificationSubProcessor = $indexModificationSubProcessor;
+        $this->indexDeletionSubProcessor = $indexDeletionSubProcessor;
         $this->longProcessService = $longProcessService;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function dispatchFullContextCreation(array $runtimeOptions = [])
+    public function dispatchFullContextCreation(array $runtimeValues = [])
     {
-        $contextDefinitions = $this->configuration->getContextDefinitions(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX, $runtimeOptions);
+        $contextDefinitions = $this->configuration->getContextDefinitions(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX, $runtimeValues);
 
         if (count($contextDefinitions) === 0) {
             throw new RuntimeException('No context configuration found. Please add them to the "dynamic_search.context" configuration node');
@@ -102,9 +121,9 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
     /**
      * {@inheritDoc}
      */
-    public function dispatchSingleContextCreation(string $contextName, array $runtimeOptions = [])
+    public function dispatchSingleContextCreation(string $contextName, array $runtimeValues = [])
     {
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX, $contextName, $runtimeOptions);
+        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX, $contextName, $runtimeValues);
 
         if (!$contextDefinition instanceof ContextDataInterface) {
             throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
@@ -121,6 +140,41 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function dispatchContextModification(string $contextName, string $dispatchType, $resource, array $runtimeValues = [])
+    {
+        $this->dispatchContextModificationStack($contextName, $dispatchType, [$resource], $runtimeValues);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function dispatchContextModificationStack(string $contextName, string $dispatchType, array $resources, array $runtimeValues = [])
+    {
+        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+
+        if (!$contextDefinition instanceof ContextDataInterface) {
+            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
+        }
+
+        try {
+            $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
+        } catch (ProviderException $e) {
+            $this->logger->error(sprintf('Error while fetching provider. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
+            return;
+        }
+
+        $this->warmUpProvider($contextDefinition, [$indexProvider]);
+
+        foreach ($resources as $resource) {
+            $this->executeIndexSubProcessor($contextDefinition, $indexProvider, $resource);
+        }
+
+        $this->coolDownProvider($contextDefinition, [$indexProvider]);
+    }
+
+    /**
      * @param ContextDataInterface $contextDefinition
      */
     protected function dispatchContext(ContextDataInterface $contextDefinition)
@@ -131,7 +185,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
             $dataProvider = $this->dataManager->getDataProvider($contextDefinition);
             $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
         } catch (ProviderException $e) {
-            $this->logger->error(sprintf('Error while dispatching fail over. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
+            $this->logger->error(sprintf('Error while fetching provider. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
             return;
         }
 
@@ -140,87 +194,6 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         $this->executeProvider($contextDefinition, $dataProvider, [$dataProvider, $indexProvider]);
 
         $this->coolDownProvider($contextDefinition, [$dataProvider, $indexProvider]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function dispatchInsert(string $contextName, array $runtimeOptions = [])
-    {
-        $this->validProcessRunning = true;
-
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT, $contextName, $runtimeOptions);
-
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
-        }
-
-        try {
-            $dataProvider = $this->dataManager->getDataProvider($contextDefinition);
-        } catch (ProviderException $e) {
-            $this->logger->error(sprintf('Error while getting index provider. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
-            return;
-        }
-
-        $this->warmUpProvider($contextDefinition, [$dataProvider]);
-
-        $this->executeProvider($contextDefinition, $dataProvider, [$dataProvider]);
-
-        $this->coolDownProvider($contextDefinition, [$dataProvider]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function dispatchUpdate(string $contextName, array $runtimeOptions = [])
-    {
-        $this->validProcessRunning = true;
-
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE, $contextName, $runtimeOptions);
-
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
-        }
-
-        try {
-            $dataProvider = $this->dataManager->getDataProvider($contextDefinition);
-        } catch (ProviderException $e) {
-            $this->logger->error(sprintf('Error while getting data provider. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
-            return;
-        }
-
-        $this->warmUpProvider($contextDefinition, [$dataProvider]);
-
-        $this->executeProvider($contextDefinition, $dataProvider, [$dataProvider]);
-
-        $this->coolDownProvider($contextDefinition, [$dataProvider]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function dispatchDeletion(string $contextName, array $runtimeOptions = [])
-    {
-        $this->validProcessRunning = true;
-
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE, $contextName, $runtimeOptions);
-
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
-        }
-
-        try {
-            $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
-        } catch (ProviderException $e) {
-            $this->logger->error(sprintf('Error while getting index provider. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
-            return;
-        }
-
-        $this->warmUpProvider($contextDefinition, [$indexProvider]);
-
-        $this->executeProvider($contextDefinition, $indexProvider, [$indexProvider]);
-
-        $this->coolDownProvider($contextDefinition, [$indexProvider]);
     }
 
     /**
@@ -293,7 +266,7 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
         }
 
         $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
-        $this->logger->log('DEBUG', sprintf('execute provider for dispatch type "%s"', $contextData->getDispatchType()), $providerName, $contextData->getName());
+        $this->logger->log('DEBUG', sprintf('execute provider for dispatch type "%s"', $contextData->getContextDispatchType()), $providerName, $contextData->getName());
 
         try {
             $provider->execute($contextData);
@@ -305,6 +278,40 @@ class ContextWorkflowProcessor implements ContextWorkflowProcessorInterface
             $this->validProcessRunning = false;
             $errorMessage = sprintf('Error while executing data provider. Error was: %s. FailOver has been initiated', $e->getMessage());
             $this->dispatchFailOverToProviders($errorMessage, $contextData, $involvedProviders);
+        }
+    }
+
+    /**
+     * @param ContextDataInterface   $contextData
+     * @param IndexProviderInterface $indexProvider
+     * @param mixed                  $resource
+     */
+    protected function executeIndexSubProcessor(ContextDataInterface $contextData, IndexProviderInterface $indexProvider, $resource)
+    {
+        if ($this->validProcessRunning === false) {
+            return;
+        }
+
+        $this->logger->log('DEBUG', sprintf(
+            'execute index context processor for dispatch type "%s"',
+            $contextData->getContextDispatchType()),
+            $contextData->getIndexProviderName(),
+            $contextData->getName()
+        );
+
+        try {
+            if ($contextData->getContextDispatchType() === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
+                $this->indexDeletionSubProcessor->dispatch($contextData, $resource);
+            } else {
+                $this->indexModificationSubProcessor->dispatch($contextData, $resource);
+            }
+        } catch (\Throwable $e) {
+            $this->validProcessRunning = false;
+            $errorMessage = sprintf(
+                'Error while executing index %s processor. Error was: %s. FailOver has been initiated',
+                $contextData->getContextDispatchType(), $e->getMessage()
+            );
+            $this->dispatchFailOverToProviders($errorMessage, $contextData, [$indexProvider]);
         }
     }
 

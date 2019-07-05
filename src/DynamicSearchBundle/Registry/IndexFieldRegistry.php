@@ -47,4 +47,12 @@ class IndexFieldRegistry implements IndexFieldRegistryInterface
         return isset($this->fields[$indexProviderName]) && isset($this->fields[$indexProviderName][$identifier]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndexFieldsOfIndexProvider(string $indexProviderName)
+    {
+        return isset($this->fields[$indexProviderName]);
+    }
+
 }

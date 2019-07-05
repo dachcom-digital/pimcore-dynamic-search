@@ -14,3 +14,7 @@ services:
     DynamicSearchBundle\Registry\IndexFieldRegistry: ~
 
     DynamicSearchBundle\Registry\OutputChannelRegistry: ~
+
+    DynamicSearchBundle\Registry\DocumentDefinitionBuilderRegistry: ~
+
+    DynamicSearchBundle\Registry\ResourceNormalizerRegistry: ~

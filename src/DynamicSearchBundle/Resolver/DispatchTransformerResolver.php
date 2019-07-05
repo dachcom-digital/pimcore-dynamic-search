@@ -2,11 +2,10 @@
 
 namespace DynamicSearchBundle\Resolver;
 
-use DynamicSearchBundle\Exception\DispatchTransformerNotFoundException;
+use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
-use DynamicSearchBundle\Transformer\DispatchTransformerContainer;
-use DynamicSearchBundle\Transformer\DispatchTransformerContainerInterface;
-use DynamicSearchBundle\Transformer\DispatchTransformerInterface;
+use DynamicSearchBundle\Transformer\DocumentTransformerContainer;
+use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
 
 class DispatchTransformerResolver implements DataResolverInterface
 {
@@ -24,29 +23,25 @@ class DispatchTransformerResolver implements DataResolverInterface
     }
 
     /**
-     * @param mixed $data
-     *
-     * @return DispatchTransformerContainerInterface
-     *
-     * @throws DispatchTransformerNotFoundException
+     * {@inheritDoc}
      */
-    public function resolve($data)
+    public function resolve($resource)
     {
         $validTransformer = null;
         $validTransformerName = null;
 
         foreach ($this->dataTransformerRegistry->getAllDispatchTransformers() as $dataTransformerName => $dataTransformer) {
-            if ($dataTransformer->isApplicable($data) === true) {
+            if ($dataTransformer->isApplicable($resource) === true) {
                 $validTransformer = $dataTransformer;
                 $validTransformerName = $dataTransformerName;
                 break;
             }
         }
 
-        if ($validTransformer instanceof DispatchTransformerInterface) {
-            return new DispatchTransformerContainer($validTransformer, $validTransformerName);
+        if ($validTransformer instanceof DocumentTransformerInterface) {
+            return new DocumentTransformerContainer($validTransformer, $validTransformerName);
         }
 
-        throw new DispatchTransformerNotFoundException();
+        throw new DocumentTransformerNotFoundException();
     }
 }

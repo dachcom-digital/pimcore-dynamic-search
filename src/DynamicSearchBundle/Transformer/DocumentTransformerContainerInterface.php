@@ -2,10 +2,10 @@
 
 namespace DynamicSearchBundle\Transformer;
 
-interface DispatchTransformerContainerInterface
+interface DocumentTransformerContainerInterface
 {
     /**
-     * @return DispatchTransformerInterface
+     * @return DocumentTransformerInterface
      */
     public function getTransformer();
 

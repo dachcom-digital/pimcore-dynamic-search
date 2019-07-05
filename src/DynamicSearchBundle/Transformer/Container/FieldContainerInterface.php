@@ -10,9 +10,11 @@ interface FieldContainerInterface
     public function getData();
 
     /**
-     * @param string $indexType
+     * @param string|null $indexType
+     *
+     * @return mixed
      */
-    public function setIndexType(string $indexType);
+    public function setIndexType(?string $indexType);
 
     /**
      * @return string

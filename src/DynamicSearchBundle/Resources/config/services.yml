@@ -8,11 +8,13 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\Processor\ContextWorkflowProcessor: ~
+    DynamicSearchBundle\Processor\ContextProcessor: ~
 
-    DynamicSearchBundle\Processor\TransformerWorkflowProcessor: ~
+    DynamicSearchBundle\Processor\SubProcessor\OutputChannelSubProcessor: ~
 
-    DynamicSearchBundle\Processor\OutputChannelWorkflowProcessor: ~
+    DynamicSearchBundle\Processor\SubProcessor\IndexModificationSubProcessor: ~
+
+    DynamicSearchBundle\Processor\SubProcessor\IndexDeletionSubProcessor: ~
 
     DynamicSearchBundle\Service\LockService: ~
 

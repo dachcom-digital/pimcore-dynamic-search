@@ -11,5 +11,5 @@ interface DataCollectorInterface
      *
      * @return mixed
      */
-    public function addToQueue(string $contextName, string $dispatcher, array $options);
+    public function addToQueue(string $contextName, string $dispatcher, string $type, int $id, array $options = []);
 }

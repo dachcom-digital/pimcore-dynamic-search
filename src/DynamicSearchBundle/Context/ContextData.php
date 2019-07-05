@@ -2,7 +2,9 @@
 
 namespace DynamicSearchBundle\Context;
 
+use DynamicSearchBundle\Document\IndexDocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
+use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Provider\IndexProviderInterface;
@@ -28,7 +30,7 @@ class ContextData implements ContextDataInterface
     /**
      * @var array
      */
-    private $runtimeOptions;
+    private $runtimeValues;
 
     /**
      * @var array
@@ -39,14 +41,14 @@ class ContextData implements ContextDataInterface
      * @param string $dispatchType
      * @param string $contextName
      * @param array  $options
-     * @param array  $runtimeOptions
+     * @param array  $runtimeValues
      */
-    public function __construct(string $dispatchType, string $contextName, array $options, array $runtimeOptions = [])
+    public function __construct(string $dispatchType, string $contextName, array $options, array $runtimeValues = [])
     {
         $this->dispatchType = $dispatchType;
         $this->contextName = $contextName;
         $this->rawContextOptions = $options;
-        $this->runtimeOptions = $runtimeOptions;
+        $this->runtimeValues = $runtimeValues;
     }
 
     /**
@@ -60,7 +62,7 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getDispatchType()
+    public function getContextDispatchType()
     {
         return $this->dispatchType;
     }
@@ -68,17 +70,17 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function updateRuntimeOption(string $key, $value)
+    public function updateRuntimeValue(string $key, $value)
     {
-        $this->runtimeOptions[$key] = $value;
+        $this->runtimeValues[$key] = $value;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getRuntimeOptions()
+    public function getRuntimeValues()
     {
-        return $this->runtimeOptions;
+        return $this->runtimeValues;
     }
 
     /**
@@ -95,6 +97,30 @@ class ContextData implements ContextDataInterface
     public function getIndexProviderName()
     {
         return $this->rawContextOptions['index_provider']['service'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResourceNormalizerName()
+    {
+        return $this->rawContextOptions['resource']['normalizer_service'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResourceIdBuilderName()
+    {
+        return $this->rawContextOptions['resource']['id_builder_service'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndexDocumentDefinitionBuilderName()
+    {
+        return $this->rawContextOptions['index_document_definition']['service'];
     }
 
     /**
@@ -152,6 +178,58 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
+    public function getResourceOptions(ResourceNormalizerInterface $resourceNormalizer)
+    {
+        if (isset($this->parsedContextOptions['resource_normalizer_options'])) {
+            return $this->parsedContextOptions['resource_normalizer_options'];
+        }
+
+        $optionsResolver = new OptionsResolver();
+        $resourceNormalizer->configureOptions($optionsResolver);
+
+        $rawOptions = $this->rawContextOptions['resource']['options'];
+        if (!is_array($rawOptions)) {
+            $rawOptions = [];
+        }
+
+        try {
+            $this->parsedContextOptions['resource_normalizer_options'] = $optionsResolver->resolve($rawOptions);
+        } catch (\Throwable $e) {
+            throw new ContextConfigurationException('resource_normalizer_options', $e->getMessage());
+        }
+
+        return $this->parsedContextOptions['resource_normalizer_options'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIndexDocumentDefinitionOptions(IndexDocumentDefinitionBuilderInterface $indexDocumentDefinitionBuilder)
+    {
+        if (isset($this->parsedContextOptions['index_document_definition_options'])) {
+            return $this->parsedContextOptions['index_document_definition_options'];
+        }
+
+        $optionsResolver = new OptionsResolver();
+        $indexDocumentDefinitionBuilder->configureOptions($optionsResolver);
+
+        $rawOptions = $this->rawContextOptions['index_document_definition']['options'];
+        if (!is_array($rawOptions)) {
+            $rawOptions = [];
+        }
+
+        try {
+            $this->parsedContextOptions['index_document_definition_options'] = $optionsResolver->resolve($rawOptions);
+        } catch (\Throwable $e) {
+            throw new ContextConfigurationException('index_document_definition_options', $e->getMessage());
+        }
+
+        return $this->parsedContextOptions['index_document_definition_options'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getOutputChannelServiceName(string $outputChannelName)
     {
         if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
@@ -201,21 +279,5 @@ class ContextData implements ContextDataInterface
         }
 
         return $this->parsedContextOptions[$outputChannelName];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDocumentOptionsConfig()
-    {
-        return $this->rawContextOptions['data_transformer']['document'];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDocumentFieldsConfig()
-    {
-        return $this->rawContextOptions['data_transformer']['fields'];
     }
 }

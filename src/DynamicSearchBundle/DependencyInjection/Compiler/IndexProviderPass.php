@@ -16,10 +16,6 @@ final class IndexProviderPass implements CompilerPassInterface
     {
         $definition = $container->getDefinition(IndexProviderRegistry::class);
 
-        ##
-        ## dynamic_search.index_provider
-        ##
-
         foreach ($container->findTaggedServiceIds('dynamic_search.index_provider', true) as $id => $tags) {
             foreach ($tags as $attributes) {
                 $definition->addMethodCall('register', [new Reference($id), $attributes['identifier']]);

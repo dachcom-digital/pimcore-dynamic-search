@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Registry;
 
-use DynamicSearchBundle\Transformer\DispatchTransformerInterface;
+use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
 use DynamicSearchBundle\Transformer\FieldTransformerInterface;
 
 interface TransformerRegistryInterface
@@ -25,7 +25,7 @@ interface TransformerRegistryInterface
 
 
     /**
-     * @return array|DispatchTransformerInterface[]
+     * @return array|DocumentTransformerInterface[]
      */
     public function getAllDispatchTransformers();
 }

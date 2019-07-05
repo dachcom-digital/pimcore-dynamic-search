@@ -2,7 +2,9 @@
 
 namespace DynamicSearchBundle\Context;
 
+use DynamicSearchBundle\Document\IndexDocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
+use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Provider\IndexProviderInterface;
@@ -20,6 +22,8 @@ interface ContextDataInterface
 
     const CONTEXT_DISPATCH_TYPE_DELETE = 'delete';
 
+    const ALLOWED_QUEUE_DISPATCH_TYPES = ['insert', 'update', 'delete'];
+
     const AVAILABLE_OUTPUT_CHANNEL_TYPES = [
         'autocomplete',
         'suggestions',
@@ -34,7 +38,7 @@ interface ContextDataInterface
     /**
      * @return string
      */
-    public function getDispatchType();
+    public function getContextDispatchType();
 
     /**
      * @param string $key
@@ -42,12 +46,12 @@ interface ContextDataInterface
      *
      * @return mixed
      */
-    public function updateRuntimeOption(string $key, $value);
+    public function updateRuntimeValue(string $key, $value);
 
     /**
      * @return array
      */
-    public function getRuntimeOptions();
+    public function getRuntimeValues();
 
     /**
      * @return string
@@ -58,6 +62,21 @@ interface ContextDataInterface
      * @return string
      */
     public function getIndexProviderName();
+
+    /**
+     * @return string
+     */
+    public function getResourceNormalizerName();
+
+    /**
+     * @return string
+     */
+    public function getResourceIdBuilderName();
+
+    /**
+     * @return string
+     */
+    public function getIndexDocumentDefinitionBuilderName();
 
     /**
      * @param DataProviderInterface $dataProvider
@@ -74,6 +93,22 @@ interface ContextDataInterface
      * @throws ContextConfigurationException
      */
     public function getIndexProviderOptions(IndexProviderInterface $indexProvider);
+
+    /**
+     * @param ResourceNormalizerInterface $resourceNormalizer
+     *
+     * @return mixed
+     * @throws ContextConfigurationException
+     */
+    public function getResourceOptions(ResourceNormalizerInterface $resourceNormalizer);
+
+    /**
+     * @param IndexDocumentDefinitionBuilderInterface $indexDocumentDefinitionBuilder
+     *
+     * @return mixed
+     * @throws ContextConfigurationException
+     */
+    public function getIndexDocumentDefinitionOptions(IndexDocumentDefinitionBuilderInterface $indexDocumentDefinitionBuilder);
 
     /**
      * @param string $outputChannelName
@@ -98,14 +133,4 @@ interface ContextDataInterface
      * @throws ContextConfigurationException
      */
     public function getOutputChannelOptions(string $outputChannelName, OutputChannelInterface $outputChannel, ?OptionsResolver $optionsResolver = null);
-
-    /**
-     * @return array
-     */
-    public function getDocumentOptionsConfig();
-
-    /**
-     * @return array
-     */
-    public function getDocumentFieldsConfig();
 }

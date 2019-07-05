@@ -20,6 +20,16 @@ class Envelope
     protected $dispatcher;
 
     /**
+     * @var string
+     */
+    protected $resourceType;
+
+    /**
+     * @var int
+     */
+    protected $resourceId;
+
+    /**
      * @var array
      */
     protected $options;
@@ -28,13 +38,17 @@ class Envelope
      * @param string $id
      * @param string $contextName
      * @param string $dispatcher
+     * @param string $resourceType
+     * @param int    $resourceId
      * @param array  $options
      */
-    public function __construct(string $id, string $contextName, string $dispatcher, array $options)
+    public function __construct(string $id, string $contextName, string $dispatcher, string $resourceType, int $resourceId, array $options)
     {
         $this->id = $id;
         $this->contextName = $contextName;
         $this->dispatcher = $dispatcher;
+        $this->resourceType = $resourceType;
+        $this->resourceId = $resourceId;
         $this->options = $options;
     }
 
@@ -60,6 +74,22 @@ class Envelope
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResourceType()
+    {
+        return $this->resourceType;
+    }
+
+    /**
+     * @return int
+     */
+    public function getResourceId()
+    {
+        return $this->resourceId;
     }
 
     /**

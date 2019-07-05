@@ -46,13 +46,13 @@ class DataManager implements DataManagerInterface
      */
     public function getDataProvider(ContextDataInterface $contextData)
     {
-        $dataProviderToken = $contextData->getDataProviderName();
+        $dataProviderName = $contextData->getDataProviderName();
 
-        if (is_null($dataProviderToken) || !$this->dataProviderRegistry->has($dataProviderToken)) {
-            throw new ProviderException('Invalid requested data provider', $dataProviderToken);
+        if (is_null($dataProviderName) || !$this->dataProviderRegistry->has($dataProviderName)) {
+            throw new ProviderException('Invalid requested data provider', $dataProviderName);
         }
 
-        $dataProvider = $this->dataProviderRegistry->get($dataProviderToken);
+        $dataProvider = $this->dataProviderRegistry->get($dataProviderName);
 
         try {
             $dataProviderOptions = $contextData->getDataProviderOptions($dataProvider);

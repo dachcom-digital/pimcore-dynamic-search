@@ -32,8 +32,8 @@ class DataCollector implements DataCollectorInterface
     /**
      * {@inheritDoc}
      */
-    public function addToQueue(string $contextName, string $dispatcher, array $options)
+    public function addToQueue(string $contextName, string $dispatcher, string $type, int $id, array $options = [])
     {
-        $this->queueManager->addToQueue($contextName, $dispatcher, $options);
+        $this->queueManager->addToQueue($contextName, $dispatcher, $type, $id, $options);
     }
 }

@@ -4,11 +4,12 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\DispatchTransformerNotFoundException;
+use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
 use DynamicSearchBundle\Resolver\DataResolverInterface;
-use DynamicSearchBundle\Transformer\DispatchTransformerContainerInterface;
+use DynamicSearchBundle\Transformer\DocumentTransformerContainerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TransformerManager implements TransformerManagerInterface
 {
@@ -53,18 +54,18 @@ class TransformerManager implements TransformerManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function getDispatchTransformer(ContextDataInterface $contextData, $data)
+    public function getDocumentTransformer(ContextDataInterface $contextData, $resource)
     {
         $dataTransformerContainer = null;
         $dataProviderName = $contextData->getDataProviderName();
 
         try {
-            $dataTransformerContainer = $this->transformerResolver->resolve($data);
-        } catch (DispatchTransformerNotFoundException $e) {
+            $dataTransformerContainer = $this->transformerResolver->resolve($resource);
+        } catch (DocumentTransformerNotFoundException $e) {
             // fail silently
         }
 
-        if (!$dataTransformerContainer instanceof DispatchTransformerContainerInterface) {
+        if (!$dataTransformerContainer instanceof DocumentTransformerContainerInterface) {
             $this->logger->error('No DispatchTransformer found for new data', $dataProviderName, $contextData->getName());
             return null;
         }
@@ -77,13 +78,21 @@ class TransformerManager implements TransformerManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function getFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName)
+    public function getFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = [])
     {
         if (!$this->transformerRegistry->hasFieldTransformer($dispatchTransformerName, $fieldTransformerName)) {
             return null;
         }
 
-        return $this->transformerRegistry->getFieldTransformer($dispatchTransformerName, $fieldTransformerName);
+        $fieldTransformer = $this->transformerRegistry->getFieldTransformer($dispatchTransformerName, $fieldTransformerName);
+
+        $optionsResolver = new OptionsResolver();
+        $requiredOptionsResolver = $fieldTransformer->configureOptions($optionsResolver);
+        $options = $requiredOptionsResolver === false ? [] : $optionsResolver->resolve($transformerOptions);
+
+        $fieldTransformer->setOptions($options);
+
+        return $fieldTransformer;
 
     }
 }

@@ -24,4 +24,11 @@ interface IndexManagerInterface
      * @return IndexFieldInterface|null
      */
     public function getIndexField(ContextDataInterface $contextData, string $identifier);
+
+    /**
+     * @param ContextDataInterface $contextData
+     *
+     * @return IndexFieldInterface[]
+     */
+    public function getIndexFieldsOfIndexProvider(ContextDataInterface $contextData);
 }
