@@ -2,8 +2,7 @@
 
 namespace DynamicSearchBundle\Transformer;
 
-use DynamicSearchBundle\Transformer\Container\DocumentContainerInterface;
-use DynamicSearchBundle\Transformer\Container\FieldContainerInterface;
+use DynamicSearchBundle\Transformer\Container\ResourceContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface FieldTransformerInterface
@@ -26,9 +25,9 @@ interface FieldTransformerInterface
 
     /**
      * @param string                     $dispatchTransformerName
-     * @param DocumentContainerInterface $transformedData
+     * @param ResourceContainerInterface $resourceContainer
      *
-     * @return FieldContainerInterface|null
+     * @return mixed|null
      */
-    public function transformData(string $dispatchTransformerName, DocumentContainerInterface $transformedData): ?FieldContainerInterface;
+    public function transformData(string $dispatchTransformerName, ResourceContainerInterface $resourceContainer);
 }

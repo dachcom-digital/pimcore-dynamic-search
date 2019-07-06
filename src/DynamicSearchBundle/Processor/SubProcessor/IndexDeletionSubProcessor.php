@@ -56,7 +56,7 @@ class IndexDeletionSubProcessor implements IndexDeletionSubProcessorInterface
             $contextData->updateRuntimeValue('index_document', $indexDocument);
             $indexProvider->execute($contextData);
         } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Unable to store index document. Error was: "%s".', $e->getMessage()));
+            throw new RuntimeException(sprintf('Error while executing index deletion. Error was: "%s".', $e->getMessage()));
         }
     }
 }

@@ -2,14 +2,14 @@
 
 namespace DynamicSearchBundle\Normalizer\Resource;
 
-use DynamicSearchBundle\Transformer\Container\DocumentContainerInterface;
+use DynamicSearchBundle\Transformer\Container\ResourceContainerInterface;
 
 class NormalizedDataResource implements NormalizedDataResourceInterface
 {
     /**
-     * @var DocumentContainerInterface
+     * @var ResourceContainerInterface
      */
-    public $documentContainer;
+    public $resourceContainer;
 
     /**
      * @var mixed
@@ -22,13 +22,13 @@ class NormalizedDataResource implements NormalizedDataResourceInterface
     public $options;
 
     /**
-     * @param DocumentContainerInterface|null $documentContainer
+     * @param ResourceContainerInterface|null $resourceContainer
      * @param                                 $resourceId
      * @param array                           $options
      */
-    public function __construct(?DocumentContainerInterface $documentContainer, $resourceId, array $options = [])
+    public function __construct(?ResourceContainerInterface $resourceContainer, $resourceId, array $options = [])
     {
-        $this->documentContainer = $documentContainer;
+        $this->resourceContainer = $resourceContainer;
         $this->resourceId = $resourceId;
         $this->options = $options;
     }
@@ -36,9 +36,9 @@ class NormalizedDataResource implements NormalizedDataResourceInterface
     /**
      * {@inheritDoc}
      */
-    public function getDocumentContainer()
+    public function getResourceContainer()
     {
-        return $this->documentContainer;
+        return $this->resourceContainer;
     }
 
     /**

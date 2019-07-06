@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Transformer\Container;
 
-class FieldContainer implements FieldContainerInterface
+class OptionFieldContainer implements OptionFieldContainerInterface
 {
     /**
      * @var mixed
@@ -24,10 +24,12 @@ class FieldContainer implements FieldContainerInterface
     protected $indexType;
 
     /**
-     * @param $data
+     * @param string $name
+     * @param mixed  $data
      */
-    public function __construct($data)
+    public function __construct(string $name, $data)
     {
+        $this->name = $name;
         $this->data = $data;
     }
 
@@ -42,32 +44,8 @@ class FieldContainer implements FieldContainerInterface
     /**
      * {@inheritDoc}
      */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setIndexType(?string $indexType)
-    {
-        $this->indexType = $indexType;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIndexType()
-    {
-        return $this->indexType;
     }
 }

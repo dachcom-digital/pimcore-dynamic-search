@@ -2,14 +2,14 @@
 
 namespace DynamicSearchBundle\Normalizer\Resource;
 
-use DynamicSearchBundle\Transformer\Container\DocumentContainerInterface;
+use DynamicSearchBundle\Transformer\Container\ResourceContainerInterface;
 
 interface NormalizedDataResourceInterface
 {
     /**
-     * @return DocumentContainerInterface|null
+     * @return ResourceContainerInterface|null
      */
-    public function getDocumentContainer();
+    public function getResourceContainer();
 
     /**
      * @return mixed

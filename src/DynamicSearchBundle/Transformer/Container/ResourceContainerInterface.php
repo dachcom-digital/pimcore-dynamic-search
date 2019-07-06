@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Transformer\Container;
 
-interface DocumentContainerInterface
+interface ResourceContainerInterface
 {
     /**
      * @return bool

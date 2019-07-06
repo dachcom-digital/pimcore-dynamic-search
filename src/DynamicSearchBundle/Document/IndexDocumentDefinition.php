@@ -2,24 +2,63 @@
 
 namespace DynamicSearchBundle\Document;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 class IndexDocumentDefinition implements IndexDocumentDefinitionInterface
 {
     /**
      * @var array
      */
-    protected $documentDefinitions;
+    protected $documentConfiguration;
 
     /**
      * @var array
      */
-    protected $fieldDefinitions;
+    protected $optionFieldDefinitions;
+
+    /**
+     * @var array
+     */
+    protected $indexFieldDefinitions;
 
     /**
      * {@inheritDoc}
      */
-    public function addDocumentDefinition(array $definition)
+    public function setDocumentConfiguration(array $documentConfiguration)
     {
-        $this->documentDefinitions[] = $definition;
+        $this->documentConfiguration = $documentConfiguration;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDocumentConfiguration()
+    {
+        return empty($this->documentConfiguration) ? [] : $this->documentConfiguration;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addOptionFieldDefinition(array $definition)
+    {
+        $resolver = new OptionsResolver();
+
+        $resolver->setRequired(['name', 'data_transformer']);
+        $resolver->setAllowedTypes('name', ['string']);
+        $resolver->setAllowedTypes('data_transformer', ['array']);
+
+        $options = $resolver->resolve($definition);
+
+        if (!isset($options['data_transformer']['type'])) {
+            $options['data_transformer']['type'] = null;
+        }
+
+        if (!isset($options['data_transformer']['configuration'])) {
+            $options['data_transformer']['configuration'] = [];
+        }
+
+        $this->optionFieldDefinitions[] = $options;
 
         return $this;
     }
@@ -27,17 +66,42 @@ class IndexDocumentDefinition implements IndexDocumentDefinitionInterface
     /**
      * {@inheritDoc}
      */
-    public function getDocumentDefinitions(): array
+    public function getOptionFieldDefinition(): array
     {
-        return !is_array($this->documentDefinitions) ? [] : $this->documentDefinitions;
+        return !is_array($this->optionFieldDefinitions) ? [] : $this->optionFieldDefinitions;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function addFieldDefinition(array $definition)
+    public function addIndexFieldDefinition(array $definition)
     {
-        $this->fieldDefinitions[] = $definition;
+        $resolver = new OptionsResolver();
+
+        $resolver->setRequired(['name', 'index_transformer', 'data_transformer']);
+        $resolver->setAllowedTypes('name', ['string']);
+        $resolver->setAllowedTypes('index_transformer', ['array']);
+        $resolver->setAllowedTypes('data_transformer', ['array']);
+
+        $options = $resolver->resolve($definition);
+
+        if (!isset($options['index_transformer']['type'])) {
+            $options['index_transformer']['type'] = null;
+        }
+
+        if (!isset($options['index_transformer']['configuration'])) {
+            $options['index_transformer']['configuration'] = [];
+        }
+
+        if (!isset($options['data_transformer']['type'])) {
+            $options['data_transformer']['type'] = null;
+        }
+
+        if (!isset($options['data_transformer']['configuration'])) {
+            $options['data_transformer']['configuration'] = [];
+        }
+
+        $this->indexFieldDefinitions[] = $options;
 
         return $this;
     }
@@ -45,9 +109,9 @@ class IndexDocumentDefinition implements IndexDocumentDefinitionInterface
     /**
      * {@inheritDoc}
      */
-    public function getFieldDefinitions(): array
+    public function getIndexFieldDefinition(): array
     {
-        return !is_array($this->fieldDefinitions) ? [] : $this->fieldDefinitions;
+        return !is_array($this->indexFieldDefinitions) ? [] : $this->indexFieldDefinitions;
     }
 
 }

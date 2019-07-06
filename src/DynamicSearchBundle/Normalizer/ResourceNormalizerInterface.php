@@ -4,7 +4,7 @@ namespace DynamicSearchBundle\Normalizer;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
-use DynamicSearchBundle\Transformer\Container\DocumentContainerInterface;
+use DynamicSearchBundle\Transformer\Container\ResourceContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface ResourceNormalizerInterface
@@ -21,9 +21,9 @@ interface ResourceNormalizerInterface
 
     /***
      * @param ContextDataInterface       $contextData
-     * @param DocumentContainerInterface $documentContainer
+     * @param ResourceContainerInterface $resourceContainer
      *
      * @return array|NormalizedDataResourceInterface[]
      */
-    public function normalizeToResourceStack(ContextDataInterface $contextData, DocumentContainerInterface $documentContainer): array;
+    public function normalizeToResourceStack(ContextDataInterface $contextData, ResourceContainerInterface $resourceContainer): array;
 }

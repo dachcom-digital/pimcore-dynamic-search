@@ -7,11 +7,10 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\Queue\Data\Envelope;
-use DynamicSearchBundle\Transformer\Container\DocumentContainer;
+use DynamicSearchBundle\Transformer\Container\ResourceContainer;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
 
 class QueueManager implements QueueManagerInterface
@@ -290,8 +289,8 @@ class QueueManager implements QueueManagerInterface
         }
 
         $resource = $this->getResource($resourceType, $resourceId);
-        $transformedDocumentContainer = new DocumentContainer($resource);
-        $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextDefinition, $transformedDocumentContainer);
+        $transformedResourceContainer = new ResourceContainer($resource);
+        $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextDefinition, $transformedResourceContainer);
 
         $indexIds = [];
         foreach ($normalizedResourceStack as $normalizedResource) {

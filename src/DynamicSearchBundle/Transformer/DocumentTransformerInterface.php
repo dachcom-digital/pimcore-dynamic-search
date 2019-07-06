@@ -4,7 +4,6 @@ namespace DynamicSearchBundle\Transformer;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Transformer\Container\DocumentContainerInterface;
 
 interface DocumentTransformerInterface
 {
@@ -24,8 +23,8 @@ interface DocumentTransformerInterface
      * @param ContextDataInterface $contextData
      * @param mixed                $resource
      *
-     * @return DocumentContainerInterface|null
+     * @return array
      */
-    public function transformData(ContextDataInterface $contextData, $resource): ?DocumentContainerInterface;
+    public function transformData(ContextDataInterface $contextData, $resource): array;
 
 }

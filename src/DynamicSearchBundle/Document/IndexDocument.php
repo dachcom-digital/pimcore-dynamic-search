@@ -2,7 +2,8 @@
 
 namespace DynamicSearchBundle\Document;
 
-use DynamicSearchBundle\Transformer\Container\FieldContainerInterface;
+use DynamicSearchBundle\Transformer\Container\IndexFieldContainerInterface;
+use DynamicSearchBundle\Transformer\Container\OptionFieldContainerInterface;
 
 class IndexDocument
 {
@@ -12,34 +13,34 @@ class IndexDocument
     protected $documentId;
 
     /**
+     * @var array
+     */
+    protected $documentConfiguration;
+
+    /**
      * @var string
      */
     protected $dispatchTransformerName;
 
     /**
-     * @var int
+     * @var array
      */
-    protected $options;
+    protected $optionFields;
 
     /**
      * @var array
      */
-    protected $fields;
+    protected $indexFields;
 
     /**
-     * @param mixed                           $documentId
-     * @param array|FieldContainerInterface[] $options
-     * @param string                          $dispatchTransformerName
+     * @param mixed  $documentId
+     * @param array  $documentConfiguration
+     * @param string $dispatchTransformerName
      */
-    public function __construct($documentId, array $options, string $dispatchTransformerName)
+    public function __construct($documentId, array $documentConfiguration, string $dispatchTransformerName)
     {
-        $documentOptions = [];
-        foreach ($options as $option) {
-            $documentOptions[$option->getName()] = $option->getData();
-        }
-
         $this->documentId = $documentId;
-        $this->options = $documentOptions;
+        $this->documentConfiguration = $documentConfiguration;
         $this->dispatchTransformerName = $dispatchTransformerName;
     }
 
@@ -52,6 +53,14 @@ class IndexDocument
     }
 
     /**
+     * @return array
+     */
+    public function getDocumentConfiguration()
+    {
+        return $this->documentConfiguration;
+    }
+
+    /**
      * @return string
      */
     public function getDispatchedTransformerName()
@@ -60,47 +69,50 @@ class IndexDocument
     }
 
     /**
-     * @param mixed $key
-     *
+     * @param OptionFieldContainerInterface $fieldContainer
+     */
+    public function addOptionField(OptionFieldContainerInterface $fieldContainer)
+    {
+        $this->optionFields[] = $fieldContainer;
+    }
+
+    /**
+     * @param IndexFieldContainerInterface $fieldContainer
+     */
+    public function addIndexField(IndexFieldContainerInterface $fieldContainer)
+    {
+        $this->indexFields[] = $fieldContainer;
+    }
+
+    /**
      * @return bool
      */
-    public function hasDocumentOption($key)
+    public function hasIndexFields()
     {
-        return isset($this->options[$key]);
+        return is_array($this->indexFields) && count($this->indexFields) > 0;
     }
 
     /**
-     * @param mixed $key
-     *
-     * @return mixed
+     * @return array|IndexFieldContainerInterface[]
      */
-    public function getDocumentOption($key)
+    public function getIndexFields()
     {
-        return $this->options[$key];
+        return !$this->hasIndexFields() ? [] : $this->indexFields;
     }
 
     /**
-     * @param mixed                   $indexField
-     * @param FieldContainerInterface $fieldContainer
+     * @return bool
      */
-    public function addField($indexField, FieldContainerInterface $fieldContainer)
+    public function hasOptionFields()
     {
-        $this->fields[] = [
-            'indexField'     => $indexField,
-            'fieldContainer' => $fieldContainer
-        ];
-    }
-
-    public function hasFields()
-    {
-        return is_array($this->fields) && count($this->fields) > 0;
+        return is_array($this->optionFields) && count($this->optionFields) > 0;
     }
 
     /**
-     * @return array
+     * @return array|OptionFieldContainerInterface[]
      */
-    public function getFields()
+    public function getOptionFields()
     {
-        return !$this->hasFields() ? [] : $this->fields;
+        return !$this->hasOptionFields() ? [] : $this->optionFields;
     }
 }

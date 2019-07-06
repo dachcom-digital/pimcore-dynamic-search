@@ -2,14 +2,14 @@
 
 namespace DynamicSearchBundle\Index;
 
-use DynamicSearchBundle\Transformer\Container\FieldContainerInterface;
-
 interface IndexFieldInterface
 {
     /**
-     * @param FieldContainerInterface $fieldContainer
+     * @param string $name
+     * @param mixed  $data
+     * @param array  $configuration
      *
      * @return mixed
      */
-    public function build(FieldContainerInterface $fieldContainer);
+    public function build(string $name, $data, array $configuration = []);
 }

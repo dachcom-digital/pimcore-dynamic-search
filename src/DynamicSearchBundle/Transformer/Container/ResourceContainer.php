@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Transformer\Container;
 
-class DocumentContainer implements DocumentContainerInterface
+class ResourceContainer implements ResourceContainerInterface
 {
     /**
      * @var mixed
