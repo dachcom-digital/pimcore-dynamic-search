@@ -110,14 +110,6 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getResourceIdBuilderName()
-    {
-        return $this->rawContextOptions['resource']['id_builder_service'];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getIndexDocumentDefinitionBuilderName()
     {
         return $this->rawContextOptions['index_document_definition']['service'];

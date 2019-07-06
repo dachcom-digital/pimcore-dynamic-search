@@ -19,16 +19,6 @@ interface ResourceNormalizerInterface
      */
     public function setOptions(array $options);
 
-    /**
-     * @param ResourceIdBuilderInterface $resourceIdBuilder
-     */
-    public function setIdBuilder(ResourceIdBuilderInterface $resourceIdBuilder);
-
-    /**
-     * @return ResourceIdBuilderInterface
-     */
-    public function getIdBuilder();
-
     /***
      * @param ContextDataInterface       $contextData
      * @param DocumentContainerInterface $documentContainer

@@ -37,7 +37,6 @@ class ResourceNormalizerManager implements ResourceNormalizerManagerInterface
     public function getResourceNormalizer(ContextDataInterface $contextData)
     {
         $normalizerName = $contextData->getResourceNormalizerName();
-        $resourceIdBuilderName = $contextData->getResourceIdBuilderName();
         $dataProviderName = $contextData->getDataProviderName();
 
         if (is_null($dataProviderName)) {
@@ -49,7 +48,6 @@ class ResourceNormalizerManager implements ResourceNormalizerManagerInterface
         }
 
         $normalizer = $this->resourceNormalizerRegistry->getNormalizerForDataProvider($dataProviderName, $normalizerName);
-        $idBuilder = $this->resourceNormalizerRegistry->getIdBuilderForDataProvider($dataProviderName, $resourceIdBuilderName);
 
         try {
             $dataProviderOptions = $contextData->getResourceOptions($normalizer);
@@ -57,9 +55,6 @@ class ResourceNormalizerManager implements ResourceNormalizerManagerInterface
             return null;
         }
 
-        $idBuilder->setOptions($dataProviderOptions);
-
-        $normalizer->setIdBuilder($idBuilder);
         $normalizer->setOptions($dataProviderOptions);
 
         return $normalizer;

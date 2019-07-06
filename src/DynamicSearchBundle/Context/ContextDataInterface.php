@@ -71,11 +71,6 @@ interface ContextDataInterface
     /**
      * @return string
      */
-    public function getResourceIdBuilderName();
-
-    /**
-     * @return string
-     */
     public function getIndexDocumentDefinitionBuilderName();
 
     /**

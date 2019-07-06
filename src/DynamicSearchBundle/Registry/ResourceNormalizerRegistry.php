@@ -2,7 +2,6 @@
 
 namespace DynamicSearchBundle\Registry;
 
-use DynamicSearchBundle\Normalizer\ResourceIdBuilderInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 
 class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
@@ -38,26 +37,6 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     }
 
     /**
-     * @param        $service
-     * @param string $identifier
-     * @param string $dataProviderName
-     */
-    public function registerIdBuilder($service, string $identifier, string $dataProviderName)
-    {
-        if (!in_array(ResourceIdBuilderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ResourceIdBuilderInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        if (!isset($this->idBuilder[$dataProviderName])) {
-            $this->idBuilder[$dataProviderName] = [];
-        }
-
-        $this->idBuilder[$dataProviderName][$identifier] = $service;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getNormalizerForDataProvider(string $dataProviderName, string $identifier)
@@ -71,21 +50,5 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     public function hasNormalizerForDataProvider(string $dataProviderName, string $identifier)
     {
         return isset($this->normalizer[$dataProviderName]) && isset($this->normalizer[$dataProviderName][$identifier]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getIdBuilderForDataProvider(string $dataProviderName, string $identifier)
-    {
-        return $this->idBuilder[$dataProviderName][$identifier];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function hasIdBuilderForDataProvider(string $dataProviderName, string $identifier)
-    {
-        return isset($this->idBuilder[$dataProviderName]) && isset($this->idBuilder[$dataProviderName][$identifier]);
     }
 }
