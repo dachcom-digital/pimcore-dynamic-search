@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Processor\SubProcessor;
 
 use DynamicSearchBundle\Exception\OutputChannelException;
-use DynamicSearchBundle\OutputChannel\OutputChannelResultInterface;
+use DynamicSearchBundle\OutputChannel\Result\OutputChannelResultInterface;
 
 interface OutputChannelSubProcessorInterface
 {
@@ -15,5 +15,5 @@ interface OutputChannelSubProcessorInterface
      * @return OutputChannelResultInterface
      * @throws OutputChannelException
      */
-    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName, array $options): OutputChannelResultInterface;
+    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName, array $options = []): OutputChannelResultInterface;
 }

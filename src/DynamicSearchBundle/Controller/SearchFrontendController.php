@@ -4,8 +4,8 @@ namespace DynamicSearchBundle\Controller;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Form\Type\SearchFormType;
-use DynamicSearchBundle\OutputChannel\OutputChannelResultInterface;
-use DynamicSearchBundle\Paginator\PaginatorInterface;
+use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResultInterface;
+use DynamicSearchBundle\OutputChannel\Result\OutputChannelResultInterface;
 use DynamicSearchBundle\Processor\SubProcessor\OutputChannelSubProcessorInterface;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +45,6 @@ class SearchFrontendController extends FrontendController
     {
         $hasError = false;
         $errorMessage = null;
-        $paginator = null;
         $outputChannelResult = null;
         $searchActive = false;
 
@@ -74,7 +73,7 @@ class SearchFrontendController extends FrontendController
             return $this->renderTemplate('@DynamicSearch/OutputChannel/Search/list.html.twig', [
                 'has_error'     => $hasError,
                 'error_message' => $errorMessage,
-                'paginator'     => $paginator,
+                'paginator'     => null,
                 'search_active' => $searchActive,
                 'form'          => $form->createView(),
             ]);
@@ -87,17 +86,17 @@ class SearchFrontendController extends FrontendController
             ]);
         }
 
-        $data = $outputChannelResult->getResult();
         $runtimeOptions = $outputChannelResult->getRuntimeOptionsProvider();
 
-        if ($data instanceof PaginatorInterface) {
-            $paginator = $data;
+        $data = null;
+        if ($outputChannelResult instanceof OutputChannelPaginatorResultInterface) {
+            $data = $outputChannelResult->getPaginator();
         }
 
         return $this->renderTemplate('@DynamicSearch/OutputChannel/Search/list.html.twig', [
             'has_error'        => $hasError,
             'error_message'    => $errorMessage,
-            'paginator'        => $paginator,
+            'paginator'        => $data,
             'search_active'    => $searchActive,
             'current_page'     => $runtimeOptions->getCurrentPage(),
             'user_query'       => $runtimeOptions->getUserQuery(),

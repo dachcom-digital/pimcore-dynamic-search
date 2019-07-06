@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Context;
 
-use DynamicSearchBundle\Document\IndexDocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
@@ -110,7 +110,7 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getIndexDocumentDefinitionBuilderName()
+    public function getDocumentDefinitionBuilderName()
     {
         return $this->rawContextOptions['index_document_definition']['service'];
     }
@@ -196,14 +196,14 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getIndexDocumentDefinitionOptions(IndexDocumentDefinitionBuilderInterface $indexDocumentDefinitionBuilder)
+    public function getDocumentDefinitionOptions(DocumentDefinitionBuilderInterface $documentDefinitionBuilder)
     {
         if (isset($this->parsedContextOptions['index_document_definition_options'])) {
             return $this->parsedContextOptions['index_document_definition_options'];
         }
 
         $optionsResolver = new OptionsResolver();
-        $indexDocumentDefinitionBuilder->configureOptions($optionsResolver);
+        $documentDefinitionBuilder->configureOptions($optionsResolver);
 
         $rawOptions = $this->rawContextOptions['index_document_definition']['options'];
         if (!is_array($rawOptions)) {

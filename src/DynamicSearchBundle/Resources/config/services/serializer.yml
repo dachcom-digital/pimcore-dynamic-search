@@ -5,6 +5,6 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\Serializer\OutputChannelResultNormalizer:
+    DynamicSearchBundle\Serializer\OutputChannelDocumentNormalizer:
         tags:
             - {name: 'serializer.normalizer', priority: 500 }

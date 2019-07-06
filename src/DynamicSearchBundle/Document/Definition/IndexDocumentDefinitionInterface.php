@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicSearchBundle\Document;
+namespace DynamicSearchBundle\Document\Definition;
 
 interface IndexDocumentDefinitionInterface
 {
@@ -24,7 +24,7 @@ interface IndexDocumentDefinitionInterface
     /**
      * @return array
      */
-    public function getOptionFieldDefinition(): array;
+    public function getOptionFieldDefinitions(): array;
 
     /**
      * @param array $definition
@@ -36,5 +36,5 @@ interface IndexDocumentDefinitionInterface
     /**
      * @return array
      */
-    public function getIndexFieldDefinition(): array;
+    public function getIndexFieldDefinitions(): array;
 }

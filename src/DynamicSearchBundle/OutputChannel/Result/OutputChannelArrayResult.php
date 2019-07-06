@@ -1,14 +1,12 @@
 <?php
 
-namespace DynamicSearchBundle\OutputChannel;
+namespace DynamicSearchBundle\OutputChannel\Result;
 
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
 
-class OutputChannelResult implements OutputChannelResultInterface
+class OutputChannelArrayResult implements OutputChannelArrayResultInterface
 {
     protected $contextName;
-
-    protected $outputChannelServiceName;
 
     protected $outputChannelName;
 
@@ -16,30 +14,22 @@ class OutputChannelResult implements OutputChannelResultInterface
 
     protected $result;
 
-    protected $documentFields;
-
     /**
      * @param string                          $contextName
-     * @param string                          $outputChannelServiceName
      * @param string                          $outputChannelName
-     * @param mixed                           $result
+     * @param array                           $result
      * @param RuntimeOptionsProviderInterface $runtimeOptionsProvider
-     * @param array                           $documentFields
      */
     public function __construct(
-        $contextName,
-        $outputChannelServiceName,
-        $outputChannelName,
+        string $contextName,
+        string $outputChannelName,
         RuntimeOptionsProviderInterface $runtimeOptionsProvider,
-        $result,
-        $documentFields
+        array $result
     ) {
         $this->contextName = $contextName;
-        $this->outputChannelServiceName = $outputChannelServiceName;
         $this->outputChannelName = $outputChannelName;
         $this->runtimeOptionsProvider = $runtimeOptionsProvider;
         $this->result = $result;
-        $this->documentFields = $documentFields;
     }
 
     /**
@@ -48,14 +38,6 @@ class OutputChannelResult implements OutputChannelResultInterface
     public function getContextName()
     {
         return $this->contextName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOutputChannelServiceName()
-    {
-        return $this->outputChannelServiceName;
     }
 
     /**
@@ -80,13 +62,5 @@ class OutputChannelResult implements OutputChannelResultInterface
     public function getRuntimeOptionsProvider()
     {
         return $this->runtimeOptionsProvider;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDataTransformerFieldDefinitions()
-    {
-        return $this->documentFields;
     }
 }

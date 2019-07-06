@@ -2,15 +2,25 @@
 
 namespace DynamicSearchBundle\Factory;
 
-use Zend\Paginator\Paginator;
+use DynamicSearchBundle\Document\Definition\OutputDocumentDefinitionInterface;
+use DynamicSearchBundle\Paginator\Paginator;
 
 interface PaginatorFactoryInterface
 {
     /**
-     * @param string $adapterClass
-     * @param mixed  $adapterData
+     * @param mixed                             $adapterData
+     * @param string                            $adapterClass
+     * @param string                            $contextName
+     * @param string                            $outputChannelName
+     * @param OutputDocumentDefinitionInterface $outputDocumentDefinition
      *
      * @return Paginator
      */
-    public function create(string $adapterClass, $adapterData);
+    public function create(
+        $adapterData,
+        string $adapterClass,
+        string $contextName,
+        string $outputChannelName,
+        OutputDocumentDefinitionInterface $outputDocumentDefinition
+    );
 }

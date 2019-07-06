@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle;
 
 use DynamicSearchBundle\DependencyInjection\Compiler\DataProviderPass;
-use DynamicSearchBundle\DependencyInjection\Compiler\IndexDocumentDefinitionBuilderPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\DocumentDefinitionBuilderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexFieldPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\OutputChannelPass;
@@ -29,7 +29,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle
 
         $container->addCompilerPass(new DataProviderPass());
         $container->addCompilerPass(new IndexProviderPass());
-        $container->addCompilerPass(new IndexDocumentDefinitionBuilderPass());
+        $container->addCompilerPass(new DocumentDefinitionBuilderPass());
         $container->addCompilerPass(new ResourceNormalizerPass());
         $container->addCompilerPass(new TransformerPass());
         $container->addCompilerPass(new IndexFieldPass());

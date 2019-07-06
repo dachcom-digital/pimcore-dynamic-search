@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Context;
 
-use DynamicSearchBundle\Document\IndexDocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
@@ -71,7 +71,7 @@ interface ContextDataInterface
     /**
      * @return string
      */
-    public function getIndexDocumentDefinitionBuilderName();
+    public function getDocumentDefinitionBuilderName();
 
     /**
      * @param DataProviderInterface $dataProvider
@@ -98,12 +98,12 @@ interface ContextDataInterface
     public function getResourceOptions(ResourceNormalizerInterface $resourceNormalizer);
 
     /**
-     * @param IndexDocumentDefinitionBuilderInterface $indexDocumentDefinitionBuilder
+     * @param DocumentDefinitionBuilderInterface $documentDefinitionBuilder
      *
      * @return mixed
      * @throws ContextConfigurationException
      */
-    public function getIndexDocumentDefinitionOptions(IndexDocumentDefinitionBuilderInterface $indexDocumentDefinitionBuilder);
+    public function getDocumentDefinitionOptions(DocumentDefinitionBuilderInterface $documentDefinitionBuilder);
 
     /**
      * @param string $outputChannelName

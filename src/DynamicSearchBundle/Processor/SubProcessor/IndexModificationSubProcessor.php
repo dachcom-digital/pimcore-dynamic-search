@@ -5,12 +5,13 @@ namespace DynamicSearchBundle\Processor\SubProcessor;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Document\IndexDocument;
-use DynamicSearchBundle\Document\IndexDocumentDefinitionBuilderInterface;
-use DynamicSearchBundle\Document\IndexDocumentDefinitionInterface;
+use DynamicSearchBundle\Document\Definition\IndexDocumentDefinition;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\IndexDocumentDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Index\IndexFieldInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Manager\IndexDocumentDefinitionManagerInterface;
+use DynamicSearchBundle\Manager\DocumentDefinitionManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Manager\ResourceNormalizerManagerInterface;
 use DynamicSearchBundle\Manager\TransformerManagerInterface;
@@ -51,9 +52,9 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
     protected $resourceNormalizerManager;
 
     /**
-     * @var IndexDocumentDefinitionManagerInterface
+     * @var DocumentDefinitionManagerInterface
      */
-    protected $indexDocumentDefinitionManager;
+    protected $documentDefinitionManager;
 
     /**
      * @var bool
@@ -61,12 +62,12 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
     protected $validProcessRunning;
 
     /**
-     * @param LoggerInterface                         $logger
-     * @param ConfigurationInterface                  $configuration
-     * @param TransformerManagerInterface             $transformerManager
-     * @param IndexManagerInterface                   $indexManager
-     * @param ResourceNormalizerManagerInterface      $resourceNormalizerManager
-     * @param IndexDocumentDefinitionManagerInterface $indexDocumentDefinitionManager
+     * @param LoggerInterface                    $logger
+     * @param ConfigurationInterface             $configuration
+     * @param TransformerManagerInterface        $transformerManager
+     * @param IndexManagerInterface              $indexManager
+     * @param ResourceNormalizerManagerInterface $resourceNormalizerManager
+     * @param DocumentDefinitionManagerInterface $documentDefinitionManager
      */
     public function __construct(
         LoggerInterface $logger,
@@ -74,14 +75,14 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
         TransformerManagerInterface $transformerManager,
         IndexManagerInterface $indexManager,
         ResourceNormalizerManagerInterface $resourceNormalizerManager,
-        IndexDocumentDefinitionManagerInterface $indexDocumentDefinitionManager
+        DocumentDefinitionManagerInterface $documentDefinitionManager
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->transformerManager = $transformerManager;
         $this->indexManager = $indexManager;
         $this->resourceNormalizerManager = $resourceNormalizerManager;
-        $this->indexDocumentDefinitionManager = $indexDocumentDefinitionManager;
+        $this->documentDefinitionManager = $documentDefinitionManager;
     }
 
     /**
@@ -156,12 +157,12 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                 continue;
             }
 
-            $indexDocumentDefinitionBuilder = $this->indexDocumentDefinitionManager->getIndexDocumentDefinitionBuilder($contextData);
-            if (!$indexDocumentDefinitionBuilder instanceof IndexDocumentDefinitionBuilderInterface) {
+            $documentDefinitionBuilder = $this->documentDefinitionManager->getDocumentDefinitionBuilder($contextData);
+            if (!$documentDefinitionBuilder instanceof DocumentDefinitionBuilderInterface) {
                 $this->logger->error(
                     sprintf(
                         'No index document definition builder for identifier "%s" found. Skipping...',
-                        $contextData->getIndexDocumentDefinitionBuilderName()
+                        $contextData->getDocumentDefinitionBuilderName()
                     ),
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
@@ -169,12 +170,13 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
             }
 
             try {
-                $indexDocumentDefinition = $indexDocumentDefinitionBuilder->buildDefinition($normalizedResource);
+                $definition = new IndexDocumentDefinition();
+                $indexDocumentDefinition = $documentDefinitionBuilder->buildInputDefinition($definition, $normalizedResource);
             } catch (\Throwable $e) {
                 $this->logger->error(
                     sprintf(
                         'Error while building index document definition with "%s". Error was: %s. Skipping...',
-                        $contextData->getIndexDocumentDefinitionBuilderName(),
+                        $contextData->getDocumentDefinitionBuilderName(),
                         $e->getMessage()
                     ),
                     $contextData->getIndexProviderName(), $contextData->getName()
@@ -237,7 +239,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
 
         $indexDocument = new IndexDocument($normalizedDataResource->getResourceId(), $indexDocumentDefinition->getDocumentConfiguration(), $dispatchTransformerName);
 
-        foreach ($indexDocumentDefinition->getOptionFieldDefinition() as $documentDefinitionOptions) {
+        foreach ($indexDocumentDefinition->getOptionFieldDefinitions() as $documentDefinitionOptions) {
 
             $fieldName = $documentDefinitionOptions['name'];
             $dataTransformerOptions = $documentDefinitionOptions['data_transformer'];
@@ -252,7 +254,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
             $indexDocument->addOptionField($optionFieldContainer);
         }
 
-        foreach ($indexDocumentDefinition->getIndexFieldDefinition() as $fieldDefinitionOptions) {
+        foreach ($indexDocumentDefinition->getIndexFieldDefinitions() as $fieldDefinitionOptions) {
 
             $fieldName = $fieldDefinitionOptions['name'];
             $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];

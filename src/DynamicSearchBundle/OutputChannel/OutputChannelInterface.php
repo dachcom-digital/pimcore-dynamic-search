@@ -38,8 +38,8 @@ interface OutputChannelInterface
      * @param array $options
      * @param array $contextOptions
      *
-     * @return mixed
+     * @return array
      */
-    public function execute(array $indexProviderOptions, array $options = [], array $contextOptions = []);
+    public function execute(array $indexProviderOptions, array $options = [], array $contextOptions = []): array;
 
 }

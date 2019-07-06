@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\Factory;
 
+use DynamicSearchBundle\Document\Definition\OutputDocumentDefinitionInterface;
 use DynamicSearchBundle\Paginator\AdapterInterface;
 use DynamicSearchBundle\Paginator\PaginatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -25,18 +26,22 @@ class PaginatorFactory implements PaginatorFactoryInterface
     {
         $this->serializer = $serializer;
         $this->paginatorClass = $paginatorClass;
+
     }
 
     /**
      * {@inheritDoc}
      */
-    public function create(string $adapterClass, $adapterData)
+    public function create($adapterData, string $adapterClass, string $contextName, string $outputChannelName, OutputDocumentDefinitionInterface $outputDocumentDefinition)
     {
         $paginatorClassName = $this->paginatorClass;
 
         /** @var AdapterInterface $adapter */
         $adapter = new $adapterClass($adapterData);
         $adapter->setSerializer($this->serializer);
+        $adapter->setContextName($contextName);
+        $adapter->setOutputChannelName($outputChannelName);
+        $adapter->setOutputDocumentDefinition($outputDocumentDefinition);
 
         /** @var PaginatorInterface $paginator */
         $paginator = new $paginatorClassName($adapter);

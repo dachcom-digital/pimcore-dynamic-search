@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Registry;
 
-use DynamicSearchBundle\Document\IndexDocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 
 interface DocumentDefinitionBuilderRegistryInterface
 {
@@ -16,7 +16,7 @@ interface DocumentDefinitionBuilderRegistryInterface
     /**
      * @param string $identifier
      *
-     * @return IndexDocumentDefinitionBuilderInterface
+     * @return DocumentDefinitionBuilderInterface
      */
     public function get(string $identifier);
 }

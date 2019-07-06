@@ -7,7 +7,7 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Registry\DocumentDefinitionBuilderRegistryInterface;
 
-class IndexDocumentDefinitionManager implements IndexDocumentDefinitionManagerInterface
+class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
 {
     /**
      * @var ConfigurationInterface
@@ -34,9 +34,9 @@ class IndexDocumentDefinitionManager implements IndexDocumentDefinitionManagerIn
     /**
      * {@inheritDoc}
      */
-    public function getIndexDocumentDefinitionBuilder(ContextDataInterface $contextData)
+    public function getDocumentDefinitionBuilder(ContextDataInterface $contextData)
     {
-        $definitionBuilderName = $contextData->getIndexDocumentDefinitionBuilderName();
+        $definitionBuilderName = $contextData->getDocumentDefinitionBuilderName();
 
         if (is_null($definitionBuilderName)) {
             return null;
@@ -49,7 +49,7 @@ class IndexDocumentDefinitionManager implements IndexDocumentDefinitionManagerIn
         $definitionBuilder = $this->documentDefinitionBuilderRegistry->get($definitionBuilderName);
 
         try {
-            $dataProviderOptions = $contextData->getIndexDocumentDefinitionOptions($definitionBuilder);
+            $dataProviderOptions = $contextData->getDocumentDefinitionOptions($definitionBuilder);
         } catch (ContextConfigurationException $e) {
             return null;
         }

@@ -41,7 +41,7 @@ class SearchController extends Controller
     public function autoCompleteAction(Request $request, string $contextName)
     {
         try {
-            $data = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'autocomplete', ['request' => $request]);
+            $data = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'autocomplete');
         } catch (\Throwable $e) {
             return $this->json(
                 ['error' => sprintf('Error while loading auto complete output channel for "%s" context. Error was: %s', $contextName, $e->getMessage())],
@@ -53,7 +53,7 @@ class SearchController extends Controller
             );
         }
 
-        return $this->json($data);
+        return $this->json($data->getResult());
 
     }
 
@@ -66,7 +66,7 @@ class SearchController extends Controller
     public function suggestionsAction(Request $request, string $contextName)
     {
         try {
-            $data = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'suggestions', ['request' => $request]);
+            $data = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, 'suggestions');
         } catch (\Throwable $e) {
             return $this->json(
                 ['error' => sprintf('Error while loading suggestions output channel for "%s" context. Error was: %s', $contextName, $e->getMessage())],
@@ -78,6 +78,6 @@ class SearchController extends Controller
             );
         }
 
-        return $this->json($data);
+        return $this->json($data->getResult());
     }
 }

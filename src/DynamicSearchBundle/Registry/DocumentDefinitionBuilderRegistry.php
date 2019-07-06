@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Registry;
 
-use DynamicSearchBundle\Document\IndexDocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 
 class DocumentDefinitionBuilderRegistry implements DocumentDefinitionBuilderRegistryInterface
 {
@@ -17,9 +17,9 @@ class DocumentDefinitionBuilderRegistry implements DocumentDefinitionBuilderRegi
      */
     public function register($service, string $identifier)
     {
-        if (!in_array(IndexDocumentDefinitionBuilderInterface::class, class_implements($service), true)) {
+        if (!in_array(DocumentDefinitionBuilderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), IndexDocumentDefinitionBuilderInterface::class,
+                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DocumentDefinitionBuilderInterface::class,
                     implode(', ', class_implements($service)))
             );
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicSearchBundle\Document;
+namespace DynamicSearchBundle\Document\Definition;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -66,7 +66,7 @@ class IndexDocumentDefinition implements IndexDocumentDefinitionInterface
     /**
      * {@inheritDoc}
      */
-    public function getOptionFieldDefinition(): array
+    public function getOptionFieldDefinitions(): array
     {
         return !is_array($this->optionFieldDefinitions) ? [] : $this->optionFieldDefinitions;
     }
@@ -109,7 +109,7 @@ class IndexDocumentDefinition implements IndexDocumentDefinitionInterface
     /**
      * {@inheritDoc}
      */
-    public function getIndexFieldDefinition(): array
+    public function getIndexFieldDefinitions(): array
     {
         return !is_array($this->indexFieldDefinitions) ? [] : $this->indexFieldDefinitions;
     }

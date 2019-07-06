@@ -1,7 +1,8 @@
 <?php
 
-namespace DynamicSearchBundle\OutputChannel;
+namespace DynamicSearchBundle\OutputChannel\Result;
 
+use DynamicSearchBundle\OutputChannel\Result\Document\DocumentInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
 
 interface OutputChannelResultInterface
@@ -14,15 +15,10 @@ interface OutputChannelResultInterface
     /**
      * @return string
      */
-    public function getOutputChannelServiceName();
-
-    /**
-     * @return string
-     */
     public function getOutputChannelName();
 
     /**
-     * @return mixed
+     * @return array|DocumentInterface[]
      */
     public function getResult();
 
@@ -30,9 +26,4 @@ interface OutputChannelResultInterface
      * @return RuntimeOptionsProviderInterface
      */
     public function getRuntimeOptionsProvider();
-
-    /**
-     * @return array
-     */
-    public function getDataTransformerFieldDefinitions();
 }
