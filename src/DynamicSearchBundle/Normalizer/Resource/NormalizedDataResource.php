@@ -9,27 +9,27 @@ class NormalizedDataResource implements NormalizedDataResourceInterface
     /**
      * @var ResourceContainerInterface
      */
-    public $resourceContainer;
+    protected $resourceContainer;
 
     /**
-     * @var mixed
+     * @var ResourceMetaInterface
      */
-    public $resourceId;
+    protected $resourceMeta;
 
     /**
      * @var array
      */
-    public $options;
+    protected $options;
 
     /**
      * @param ResourceContainerInterface|null $resourceContainer
-     * @param                                 $resourceId
+     * @param ResourceMetaInterface           $resourceMeta
      * @param array                           $options
      */
-    public function __construct(?ResourceContainerInterface $resourceContainer, $resourceId, array $options = [])
+    public function __construct(?ResourceContainerInterface $resourceContainer, $resourceMeta, array $options = [])
     {
         $this->resourceContainer = $resourceContainer;
-        $this->resourceId = $resourceId;
+        $this->resourceMeta = $resourceMeta;
         $this->options = $options;
     }
 
@@ -44,9 +44,9 @@ class NormalizedDataResource implements NormalizedDataResourceInterface
     /**
      * {@inheritDoc}
      */
-    public function getResourceId()
+    public function getResourceMeta()
     {
-        return $this->resourceId;
+        return $this->resourceMeta;
     }
 
     /**

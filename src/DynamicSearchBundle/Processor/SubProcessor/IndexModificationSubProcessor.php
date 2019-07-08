@@ -5,15 +5,15 @@ namespace DynamicSearchBundle\Processor\SubProcessor;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Document\IndexDocument;
-use DynamicSearchBundle\Document\Definition\IndexDocumentDefinition;
+use DynamicSearchBundle\Document\Definition\DocumentDefinition;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
-use DynamicSearchBundle\Document\Definition\IndexDocumentDefinitionInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Index\IndexFieldInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\DocumentDefinitionManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
-use DynamicSearchBundle\Manager\ResourceNormalizerManagerInterface;
+use DynamicSearchBundle\Manager\NormalizerManagerInterface;
 use DynamicSearchBundle\Manager\TransformerManagerInterface;
 use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
@@ -47,9 +47,9 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
     protected $indexManager;
 
     /**
-     * @var ResourceNormalizerManagerInterface
+     * @var NormalizerManagerInterface
      */
-    protected $resourceNormalizerManager;
+    protected $normalizerManager;
 
     /**
      * @var DocumentDefinitionManagerInterface
@@ -66,7 +66,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
      * @param ConfigurationInterface             $configuration
      * @param TransformerManagerInterface        $transformerManager
      * @param IndexManagerInterface              $indexManager
-     * @param ResourceNormalizerManagerInterface $resourceNormalizerManager
+     * @param NormalizerManagerInterface         $normalizerManager
      * @param DocumentDefinitionManagerInterface $documentDefinitionManager
      */
     public function __construct(
@@ -74,14 +74,14 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
         ConfigurationInterface $configuration,
         TransformerManagerInterface $transformerManager,
         IndexManagerInterface $indexManager,
-        ResourceNormalizerManagerInterface $resourceNormalizerManager,
+        NormalizerManagerInterface $normalizerManager,
         DocumentDefinitionManagerInterface $documentDefinitionManager
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->transformerManager = $transformerManager;
         $this->indexManager = $indexManager;
-        $this->resourceNormalizerManager = $resourceNormalizerManager;
+        $this->normalizerManager = $normalizerManager;
         $this->documentDefinitionManager = $documentDefinitionManager;
     }
 
@@ -108,7 +108,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
         $transformedDocumentData = $documentTransformerContainer->getTransformer()->transformData($contextData, $resource);
         $transformedResourceContainer = new ResourceContainer($resource, $transformedDocumentData);
 
-        $resourceNormalizer = $this->resourceNormalizerManager->getResourceNormalizer($contextData);
+        $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextData);
         if (!$resourceNormalizer instanceof ResourceNormalizerInterface) {
             $this->logger->error(
                 'No resource normalizer found. Skipping...',
@@ -132,8 +132,8 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
         }
 
         if (count($normalizedResourceStack) === 0) {
-            $this->logger->error(
-                sprintf('No normalized resources generated. Skipping...'),
+            $this->logger->debug(
+                sprintf('No normalized resources generated. Used resource normalizer: %s. Skipping...', $contextData->getResourceNormalizerName()),
                 $contextData->getIndexProviderName(), $contextData->getName()
             );
             return;
@@ -149,9 +149,9 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                 continue;
             }
 
-            if (empty($normalizedResource->getResourceId())) {
+            if (empty($normalizedResource->getResourceMeta()->getDocumentId())) {
                 $this->logger->error(
-                    'Unable to generate index document: No resource id found. Skipping...',
+                    'Unable to generate index document: No document id given. Skipping...',
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
                 continue;
@@ -170,8 +170,8 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
             }
 
             try {
-                $definition = new IndexDocumentDefinition();
-                $indexDocumentDefinition = $documentDefinitionBuilder->buildInputDefinition($definition, $normalizedResource);
+                $documentDefinition = new DocumentDefinition($normalizedResource->getResourceMeta(), $normalizedResource->getOptions());
+                $documentDefinitionBuilder->buildDefinition($documentDefinition);
             } catch (\Throwable $e) {
                 $this->logger->error(
                     sprintf(
@@ -187,7 +187,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
             $indexDocument = $this->generateIndexDocument(
                 $contextData,
                 $normalizedResource,
-                $indexDocumentDefinition,
+                $documentDefinition,
                 $documentTransformerContainer->getIdentifier()
             );
 
@@ -223,30 +223,34 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
     }
 
     /**
-     * @param ContextDataInterface             $contextData
-     * @param NormalizedDataResourceInterface  $normalizedDataResource
-     * @param IndexDocumentDefinitionInterface $indexDocumentDefinition
-     * @param string                           $dispatchTransformerName
+     * @param ContextDataInterface            $contextData
+     * @param NormalizedDataResourceInterface $normalizedDataResource
+     * @param DocumentDefinitionInterface     $documentDefinition
+     * @param string                          $dispatchTransformerName
      *
      * @return IndexDocument
      */
     protected function generateIndexDocument(
         ContextDataInterface $contextData,
         NormalizedDataResourceInterface $normalizedDataResource,
-        IndexDocumentDefinitionInterface $indexDocumentDefinition,
+        DocumentDefinitionInterface $documentDefinition,
         string $dispatchTransformerName
     ) {
 
-        $indexDocument = new IndexDocument($normalizedDataResource->getResourceId(), $indexDocumentDefinition->getDocumentConfiguration(), $dispatchTransformerName);
+        $indexDocument = new IndexDocument(
+            $normalizedDataResource->getResourceMeta(),
+            $documentDefinition->getDocumentConfiguration(),
+            $dispatchTransformerName
+        );
 
-        foreach ($indexDocumentDefinition->getOptionFieldDefinitions() as $documentDefinitionOptions) {
+        foreach ($documentDefinition->getOptionFieldDefinitions() as $documentDefinitionOptions) {
 
             $fieldName = $documentDefinitionOptions['name'];
             $dataTransformerOptions = $documentDefinitionOptions['data_transformer'];
             $transformedData = $this->dispatchDataTransformer($dataTransformerOptions, $dispatchTransformerName, $normalizedDataResource->getResourceContainer());
 
             if ($transformedData === null) {
-                // error?
+                // no error: transformer is allowed to refuse data
                 continue;
             }
 
@@ -254,7 +258,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
             $indexDocument->addOptionField($optionFieldContainer);
         }
 
-        foreach ($indexDocumentDefinition->getIndexFieldDefinitions() as $fieldDefinitionOptions) {
+        foreach ($documentDefinition->getDocumentFieldDefinitions() as $fieldDefinitionOptions) {
 
             $fieldName = $fieldDefinitionOptions['name'];
             $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
@@ -262,13 +266,13 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
 
             $transformedData = $this->dispatchDataTransformer($dataTransformerOptions, $dispatchTransformerName, $normalizedDataResource->getResourceContainer());
             if ($transformedData === null) {
-                // error?
+                // no error: transformer is allowed to refuse data
                 continue;
             }
 
             $transformedIndexData = $this->dispatchIndexTransformer($contextData, $fieldName, $indexTransformerOptions, $transformedData);
             if ($transformedIndexData === null) {
-                // error?
+                // no error?
                 continue;
             }
 

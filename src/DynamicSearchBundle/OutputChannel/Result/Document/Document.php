@@ -2,8 +2,6 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result\Document;
 
-use DynamicSearchBundle\Document\Definition\OutputDocumentDefinitionInterface;
-
 class Document implements DocumentInterface
 {
     /**
@@ -22,26 +20,18 @@ class Document implements DocumentInterface
     protected $outputChannelName;
 
     /**
-     * @var OutputDocumentDefinitionInterface
-     */
-    protected $outputDocumentDefinition;
-
-    /**
-     * @param mixed                             $hit
-     * @param string                            $contextName
-     * @param string                            $outputChannelName
-     * @param OutputDocumentDefinitionInterface $outputDocumentDefinition
+     * @param mixed  $hit
+     * @param string $contextName
+     * @param string $outputChannelName
      */
     public function __construct(
         $hit,
         string $contextName,
-        string $outputChannelName,
-        OutputDocumentDefinitionInterface $outputDocumentDefinition
+        string $outputChannelName
     ) {
         $this->hit = $hit;
         $this->contextName = $contextName;
         $this->outputChannelName = $outputChannelName;
-        $this->outputDocumentDefinition = $outputDocumentDefinition;
     }
 
     /**
@@ -67,13 +57,4 @@ class Document implements DocumentInterface
     {
         return $this->outputChannelName;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOutputDocumentDefinition()
-    {
-        return $this->outputDocumentDefinition;
-    }
-
 }

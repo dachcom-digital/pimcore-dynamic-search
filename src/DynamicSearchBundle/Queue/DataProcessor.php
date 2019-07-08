@@ -3,7 +3,6 @@
 namespace DynamicSearchBundle\Queue;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Processor\ContextProcessorInterface;
@@ -136,7 +135,7 @@ class DataProcessor implements DataProcessorInterface
         foreach ($dispatchEnvelopes as $envelope) {
 
             $envelopeOptions = $envelope->getOptions();
-            if (!isset($envelopeOptions['removable_ids']) || !is_array($envelopeOptions['removable_ids'])) {
+            if (!isset($envelopeOptions['removable_documents']) || !is_array($envelopeOptions['removable_documents'])) {
 
                 $this->logger->error(
                     sprintf(
@@ -149,12 +148,12 @@ class DataProcessor implements DataProcessorInterface
                 continue;
 
             } else {
-                foreach ($envelopeOptions['removable_ids'] as $removableId) {
-                    $envelopeResourceStack['resources'][] = new IndexDocument($removableId, [], 'queue');
+                foreach ($envelopeOptions['removable_documents'] as $resourceMeta) {
+                    $envelopeResourceStack['resources'][] = $resourceMeta;
                 }
             }
 
-            unset($envelopeOptions['removable_ids']);
+            unset($envelopeOptions['removable_documents']);
             $runtimeValues = $envelopeOptions;
 
             $this->queueManager->deleteJob($envelope);

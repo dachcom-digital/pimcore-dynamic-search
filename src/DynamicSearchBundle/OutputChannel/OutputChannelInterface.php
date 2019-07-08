@@ -24,16 +24,6 @@ interface OutputChannelInterface
     public function configureOptions(OptionsResolver $resolver);
 
     /**
-     * @return bool
-     */
-    public function needsPaginator(): bool;
-
-    /**
-     * @return string|null
-     */
-    public function getPaginatorAdapterClass(): ?string;
-
-    /**
      * @param array $indexProviderOptions
      * @param array $options
      * @param array $contextOptions

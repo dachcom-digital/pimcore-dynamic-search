@@ -4,7 +4,6 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Registry\DocumentDefinitionBuilderRegistryInterface;
 
 class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
@@ -47,14 +46,6 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
         }
 
         $definitionBuilder = $this->documentDefinitionBuilderRegistry->get($definitionBuilderName);
-
-        try {
-            $dataProviderOptions = $contextData->getDocumentDefinitionOptions($definitionBuilder);
-        } catch (ContextConfigurationException $e) {
-            return null;
-        }
-
-        $definitionBuilder->setOptions($dataProviderOptions);
 
         return $definitionBuilder;
     }

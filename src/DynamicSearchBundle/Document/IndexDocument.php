@@ -2,15 +2,16 @@
 
 namespace DynamicSearchBundle\Document;
 
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Transformer\Container\IndexFieldContainerInterface;
 use DynamicSearchBundle\Transformer\Container\OptionFieldContainerInterface;
 
 class IndexDocument
 {
     /**
-     * @var mixed
+     * @var ResourceMetaInterface
      */
-    protected $documentId;
+    protected $resourceMeta;
 
     /**
      * @var array
@@ -33,13 +34,13 @@ class IndexDocument
     protected $indexFields;
 
     /**
-     * @param mixed  $documentId
-     * @param array  $documentConfiguration
-     * @param string $dispatchTransformerName
+     * @param ResourceMetaInterface $resourceMeta
+     * @param array                 $documentConfiguration
+     * @param string                $dispatchTransformerName
      */
-    public function __construct($documentId, array $documentConfiguration, string $dispatchTransformerName)
+    public function __construct(ResourceMetaInterface $resourceMeta, array $documentConfiguration, string $dispatchTransformerName)
     {
-        $this->documentId = $documentId;
+        $this->resourceMeta = $resourceMeta;
         $this->documentConfiguration = $documentConfiguration;
         $this->dispatchTransformerName = $dispatchTransformerName;
     }
@@ -49,7 +50,15 @@ class IndexDocument
      */
     public function getDocumentId()
     {
-        return $this->documentId;
+        return $this->resourceMeta->getDocumentId();
+    }
+
+    /**
+     * @return ResourceMetaInterface
+     */
+    public function getResourceMeta()
+    {
+        return $this->resourceMeta;
     }
 
     /**

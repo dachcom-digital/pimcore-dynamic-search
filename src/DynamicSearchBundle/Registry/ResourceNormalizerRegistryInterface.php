@@ -12,7 +12,7 @@ interface ResourceNormalizerRegistryInterface
      *
      * @return bool
      */
-    public function hasNormalizerForDataProvider(string $dataProviderName, string $identifier);
+    public function hasResourceNormalizerForDataProvider(string $dataProviderName, string $identifier);
 
     /**
      * @param string $dataProviderName
@@ -20,6 +20,21 @@ interface ResourceNormalizerRegistryInterface
      *
      * @return ResourceNormalizerInterface
      */
-    public function getNormalizerForDataProvider(string $dataProviderName, string $identifier);
+    public function getResourceNormalizerForDataProvider(string $dataProviderName, string $identifier);
 
+    /**
+     * @param string $indexProviderName
+     * @param string $identifier
+     *
+     * @return ResourceNormalizerInterface
+     */
+    public function getDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier);
+
+    /**
+     * @param string $indexProviderName
+     * @param string $identifier
+     *
+     * @return ResourceNormalizerInterface
+     */
+    public function hasDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier);
 }

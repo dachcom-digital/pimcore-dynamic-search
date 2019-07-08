@@ -17,15 +17,16 @@ final class ResourceNormalizerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('dynamic_search.resource_normalizer', true) as $id => $tags) {
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('registerNormalizer', [new Reference($id), $attributes['identifier'], $attributes['data_provider']]);
+                $definition->addMethodCall('registerResourceNormalizer', [new Reference($id), $attributes['identifier'], $attributes['data_provider']]);
             }
         }
 
-        foreach ($container->findTaggedServiceIds('dynamic_search.resource_id_builder', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds('dynamic_search.document_normalizer', true) as $id => $tags) {
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('registerIdBuilder', [new Reference($id), $attributes['identifier'], $attributes['data_provider']]);
+                $definition->addMethodCall('registerDocumentNormalizer', [new Reference($id), $attributes['identifier'], $attributes['index_provider']]);
             }
         }
+
     }
 }

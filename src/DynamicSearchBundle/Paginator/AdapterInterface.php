@@ -2,20 +2,15 @@
 
 namespace DynamicSearchBundle\Paginator;
 
-use DynamicSearchBundle\Document\Definition\OutputDocumentDefinitionInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 
 interface AdapterInterface extends \Zend\Paginator\Adapter\AdapterInterface
 {
     /**
-     * @param SerializerInterface $serializer
+     * @param ContextDataInterface $context
      */
-    public function setSerializer(SerializerInterface $serializer);
-
-    /**
-     * @param string $contextName
-     */
-    public function setContextName(string $contextName);
+    public function setContext(ContextDataInterface $context);
 
     /**
      * @param string $outputChannelName
@@ -23,7 +18,7 @@ interface AdapterInterface extends \Zend\Paginator\Adapter\AdapterInterface
     public function setOutputChannelName(string $outputChannelName);
 
     /**
-     * @param OutputDocumentDefinitionInterface $outputDocumentDefinition
+     * @param DocumentNormalizerInterface $documentNormalizer
      */
-    public function setOutputDocumentDefinition(OutputDocumentDefinitionInterface $outputDocumentDefinition);
+    public function setDocumentNormalizer(?DocumentNormalizerInterface $documentNormalizer);
 }

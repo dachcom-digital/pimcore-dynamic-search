@@ -10,16 +10,16 @@ interface QueueManagerInterface
 {
     const QUEUE_IDENTIFIER = 'dynamic_search_index_queue';
 
-    const ALLOWED_QUEUE_TYPES = ['page', 'object', 'asset'];
+    const ALLOWED_QUEUE_TYPES = ['document', 'object', 'asset'];
 
     /**
      * @param string $contextName
      * @param string $dispatcher
-     * @param string $type
-     * @param int    $id
+     * @param string $resourceType
+     * @param int    $resourceId
      * @param array  $options
      */
-    public function addToQueue(string $contextName, string $dispatcher, string $type, int $id, array $options);
+    public function addToQueue(string $contextName, string $dispatcher, string $resourceType, int $resourceId, array $options);
 
     /**
      * @return mixed

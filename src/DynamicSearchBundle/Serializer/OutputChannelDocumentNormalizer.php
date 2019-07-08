@@ -21,9 +21,8 @@ class OutputChannelDocumentNormalizer extends AbstractNormalizer
         $context = array_merge($context, [
             'dynamic_search_context'         => true,
             'dynamic_search_context_options' => [
-                'context_name'        => $document->getContextName(),
-                'output_channel'      => $document->getOutputChannelName(),
-                'document_definition' => $document->getOutputDocumentDefinition()
+                'context_name'   => $document->getContextName(),
+                'output_channel' => $document->getOutputChannelName()
             ]
         ]);
 

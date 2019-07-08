@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Context;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
+use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
@@ -12,18 +13,42 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface ContextDataInterface
 {
-    const CONTEXT_DISPATCH_TYPE_FETCH = 'fetch';
-
+    /*
+     * Index: Complete data indexing
+     * (full context indexing for example)
+     */
     const CONTEXT_DISPATCH_TYPE_INDEX = 'index';
 
+    /*
+     * Insert: Add single resource to index
+     */
     const CONTEXT_DISPATCH_TYPE_INSERT = 'insert';
 
+    /*
+     * Update: Update single resource in index
+     */
     const CONTEXT_DISPATCH_TYPE_UPDATE = 'update';
 
+    /*
+     * Delete: Remove single resource from index
+     */
     const CONTEXT_DISPATCH_TYPE_DELETE = 'delete';
 
+    /*
+     * Load data from index
+     * and pass query data to output channel
+     */
+    const CONTEXT_DISPATCH_TYPE_FETCH = 'fetch';
+
+    /*
+     * Allowed dispatch types for queue
+     */
     const ALLOWED_QUEUE_DISPATCH_TYPES = ['insert', 'update', 'delete'];
 
+    /*
+     * Available Output Channels
+     * to fetch query data from index
+     */
     const AVAILABLE_OUTPUT_CHANNEL_TYPES = [
         'autocomplete',
         'suggestions',
@@ -76,7 +101,7 @@ interface ContextDataInterface
     /**
      * @param DataProviderInterface $dataProvider
      *
-     * @return mixed
+     * @return array
      * @throws ContextConfigurationException
      */
     public function getDataProviderOptions(DataProviderInterface $dataProvider);
@@ -84,7 +109,7 @@ interface ContextDataInterface
     /**
      * @param IndexProviderInterface $indexProvider
      *
-     * @return mixed
+     * @return array
      * @throws ContextConfigurationException
      */
     public function getIndexProviderOptions(IndexProviderInterface $indexProvider);
@@ -92,18 +117,26 @@ interface ContextDataInterface
     /**
      * @param ResourceNormalizerInterface $resourceNormalizer
      *
-     * @return mixed
+     * @return array
      * @throws ContextConfigurationException
      */
-    public function getResourceOptions(ResourceNormalizerInterface $resourceNormalizer);
+    public function getResourceNormalizerOptions(ResourceNormalizerInterface $resourceNormalizer);
 
     /**
-     * @param DocumentDefinitionBuilderInterface $documentDefinitionBuilder
+     * @param DocumentNormalizerInterface $documentNormalizer
+     * @param string                      $outputChannelName
      *
-     * @return mixed
+     * @return array
      * @throws ContextConfigurationException
      */
-    public function getDocumentDefinitionOptions(DocumentDefinitionBuilderInterface $documentDefinitionBuilder);
+    public function getOutputChannelDocumentNormalizerOptions(DocumentNormalizerInterface $documentNormalizer, string $outputChannelName);
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return string|null
+     */
+    public function getOutputChannelNormalizerName(string $outputChannelName);
 
     /**
      * @param string $outputChannelName

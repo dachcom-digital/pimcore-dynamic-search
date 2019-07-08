@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Context;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
+use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
@@ -104,7 +105,7 @@ class ContextData implements ContextDataInterface
      */
     public function getResourceNormalizerName()
     {
-        return $this->rawContextOptions['resource']['normalizer_service'];
+        return $this->rawContextOptions['data_provider']['normalizer']['service'];
     }
 
     /**
@@ -112,7 +113,7 @@ class ContextData implements ContextDataInterface
      */
     public function getDocumentDefinitionBuilderName()
     {
-        return $this->rawContextOptions['index_document_definition']['service'];
+        return $this->rawContextOptions['document_definition']['service'];
     }
 
     /**
@@ -170,53 +171,57 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getResourceOptions(ResourceNormalizerInterface $resourceNormalizer)
+    public function getResourceNormalizerOptions(ResourceNormalizerInterface $resourceNormalizer)
     {
-        if (isset($this->parsedContextOptions['resource_normalizer_options'])) {
-            return $this->parsedContextOptions['resource_normalizer_options'];
-        }
-
         $optionsResolver = new OptionsResolver();
         $resourceNormalizer->configureOptions($optionsResolver);
 
-        $rawOptions = $this->rawContextOptions['resource']['options'];
+        $rawOptions = $this->rawContextOptions['data_provider']['normalizer']['options'];
         if (!is_array($rawOptions)) {
             $rawOptions = [];
         }
 
         try {
-            $this->parsedContextOptions['resource_normalizer_options'] = $optionsResolver->resolve($rawOptions);
+            $options = $optionsResolver->resolve($rawOptions);
         } catch (\Throwable $e) {
             throw new ContextConfigurationException('resource_normalizer_options', $e->getMessage());
         }
 
-        return $this->parsedContextOptions['resource_normalizer_options'];
+        return $options;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getDocumentDefinitionOptions(DocumentDefinitionBuilderInterface $documentDefinitionBuilder)
+    public function getOutputChannelDocumentNormalizerOptions(DocumentNormalizerInterface $documentNormalizer, string $outputChannelName)
     {
-        if (isset($this->parsedContextOptions['index_document_definition_options'])) {
-            return $this->parsedContextOptions['index_document_definition_options'];
-        }
-
         $optionsResolver = new OptionsResolver();
-        $documentDefinitionBuilder->configureOptions($optionsResolver);
+        $documentNormalizer->configureOptions($optionsResolver);
 
-        $rawOptions = $this->rawContextOptions['index_document_definition']['options'];
+        $rawOptions = $this->rawContextOptions['output_channels'][$outputChannelName]['normalizer']['options'];
         if (!is_array($rawOptions)) {
             $rawOptions = [];
         }
 
         try {
-            $this->parsedContextOptions['index_document_definition_options'] = $optionsResolver->resolve($rawOptions);
+            $options = $optionsResolver->resolve($rawOptions);
         } catch (\Throwable $e) {
-            throw new ContextConfigurationException('index_document_definition_options', $e->getMessage());
+            throw new ContextConfigurationException('document_normalizer_options', $e->getMessage());
         }
 
-        return $this->parsedContextOptions['index_document_definition_options'];
+        return $options;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOutputChannelNormalizerName(string $outputChannelName)
+    {
+        if (!isset($this->rawContextOptions['output_channels'][$outputChannelName]['normalizer']['service'])) {
+            return null;
+        }
+
+        return $this->rawContextOptions['output_channels'][$outputChannelName]['normalizer']['service'];
     }
 
     /**
@@ -265,7 +270,11 @@ class ContextData implements ContextDataInterface
         }
 
         try {
-            $this->parsedContextOptions[$outputChannelName] = $optionsResolver->resolve($rawOptions);
+            $options = $optionsResolver->resolve($rawOptions);
+            // append paginator options
+            $options['paginator'] = $this->rawContextOptions['output_channels'][$outputChannelName]['paginator'];
+
+            $this->parsedContextOptions[$outputChannelName] = $options;
         } catch (\Throwable $e) {
             throw new ContextConfigurationException($outputChannelName, $e->getMessage());
         }

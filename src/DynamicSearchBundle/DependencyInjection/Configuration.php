@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\DependencyInjection;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Paginator\Adapter\DynamicSearchAdapter;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -23,26 +24,10 @@ class Configuration implements ConfigurationInterface
                     ->arrayPrototype()
                         ->children()
 
-                            ->arrayNode('resource')
-                                ->children()
-                                    ->scalarNode('normalizer_service')
-                                        ->defaultNull()
-                                    ->end()
-                                    ->arrayNode('options')
-                                    ->isRequired()
-                                        ->variablePrototype()->defaultValue([])->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-
-                            ->arrayNode('index_document_definition')
+                            ->arrayNode('document_definition')
                                 ->children()
                                     ->scalarNode('service')
                                         ->defaultNull()
-                                    ->end()
-                                    ->arrayNode('options')
-                                    ->isRequired()
-                                        ->variablePrototype()->defaultValue([])->end()
                                     ->end()
                                 ->end()
                             ->end()
@@ -56,6 +41,7 @@ class Configuration implements ConfigurationInterface
                                     ->isRequired()
                                         ->variablePrototype()->defaultValue([])->end()
                                     ->end()
+
                                 ->end()
                             ->end()
 
@@ -64,13 +50,23 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('service')
                                         ->defaultNull()
                                     ->end()
-                                    ->scalarNode('resource_normalizer')
-                                        ->defaultNull()
-                                    ->end()
                                     ->arrayNode('options')
                                     ->isRequired()
                                         ->variablePrototype()->defaultValue([])->end()
                                     ->end()
+
+                                    ->arrayNode('normalizer')
+                                        ->children()
+                                            ->scalarNode('service')
+                                                ->isRequired()
+                                                ->defaultNull()
+                                            ->end()
+                                            ->arrayNode('options')
+                                                ->variablePrototype()->defaultValue([])->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+
                                 ->end()
                             ->end()
 
@@ -93,6 +89,29 @@ class Configuration implements ConfigurationInterface
                                         ->arrayNode('options')
                                             ->variablePrototype()->defaultValue([])->end()
                                         ->end()
+                                        ->arrayNode('paginator')
+                                            ->children()
+                                                ->booleanNode('enabled')
+                                                    ->defaultFalse()
+                                                ->end()
+                                                ->scalarNode('adapter_class')
+                                                    ->defaultValue(DynamicSearchAdapter::class)
+                                                ->end()
+                                            ->end()
+                                        ->end()
+
+                                        ->arrayNode('normalizer')
+                                            ->addDefaultsIfNotSet()
+                                            ->children()
+                                                ->scalarNode('service')
+                                                    ->defaultNull()
+                                                ->end()
+                                                ->arrayNode('options')
+                                                    ->variablePrototype()->defaultValue([])->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+
                                     ->end()
                                 ->end()
                             ->end()

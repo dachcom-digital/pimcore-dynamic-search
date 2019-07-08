@@ -2,46 +2,44 @@
 
 namespace DynamicSearchBundle\Factory;
 
-use DynamicSearchBundle\Document\Definition\OutputDocumentDefinitionInterface;
+use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Paginator\AdapterInterface;
 use DynamicSearchBundle\Paginator\PaginatorInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class PaginatorFactory implements PaginatorFactoryInterface
 {
-    /**
-     * @var SerializerInterface
-     */
-    protected $serializer;
+
     /**
      * @var string
      */
     protected $paginatorClass;
 
     /**
-     * @param SerializerInterface $serializer
-     * @param string              $paginatorClass
+     * @param string $paginatorClass
      */
-    public function __construct(SerializerInterface $serializer, string $paginatorClass)
+    public function __construct(string $paginatorClass)
     {
-        $this->serializer = $serializer;
         $this->paginatorClass = $paginatorClass;
-
     }
 
     /**
      * {@inheritDoc}
      */
-    public function create($adapterData, string $adapterClass, string $contextName, string $outputChannelName, OutputDocumentDefinitionInterface $outputDocumentDefinition)
-    {
+    public function create(
+        $adapterData,
+        string $adapterClass,
+        string $outputChannelName,
+        ContextDataInterface $contextData,
+        ?DocumentNormalizerInterface $documentNormalizer
+    ) {
         $paginatorClassName = $this->paginatorClass;
 
         /** @var AdapterInterface $adapter */
         $adapter = new $adapterClass($adapterData);
-        $adapter->setSerializer($this->serializer);
-        $adapter->setContextName($contextName);
+        $adapter->setContext($contextData);
         $adapter->setOutputChannelName($outputChannelName);
-        $adapter->setOutputDocumentDefinition($outputDocumentDefinition);
+        $adapter->setDocumentNormalizer($documentNormalizer);
 
         /** @var PaginatorInterface $paginator */
         $paginator = new $paginatorClassName($adapter);

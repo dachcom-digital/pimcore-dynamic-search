@@ -15,6 +15,6 @@ services:
 
     DynamicSearchBundle\Manager\DocumentDefinitionManager: ~
 
-    DynamicSearchBundle\Manager\ResourceNormalizerManager: ~
+    DynamicSearchBundle\Manager\NormalizerManager: ~
 
     DynamicSearchBundle\Manager\QueueManager: ~

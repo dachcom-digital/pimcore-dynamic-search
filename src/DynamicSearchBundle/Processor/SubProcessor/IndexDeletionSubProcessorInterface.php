@@ -3,13 +3,13 @@
 namespace DynamicSearchBundle\Processor\SubProcessor;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Document\IndexDocument;
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 interface IndexDeletionSubProcessorInterface
 {
     /**
-     * @param ContextDataInterface $contextData
-     * @param IndexDocument        $indexDocument
+     * @param ContextDataInterface  $contextData
+     * @param ResourceMetaInterface $resourceMeta
      */
-    public function dispatch(ContextDataInterface $contextData, IndexDocument $indexDocument);
+    public function dispatch(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta);
 }

@@ -2,8 +2,6 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result\Document;
 
-use DynamicSearchBundle\Document\Definition\OutputDocumentDefinitionInterface;
-
 interface DocumentInterface
 {
     /**
@@ -20,9 +18,4 @@ interface DocumentInterface
      * @return string
      */
     public function getOutputChannelName();
-
-    /**
-     * @return OutputDocumentDefinitionInterface
-     */
-    public function getOutputDocumentDefinition();
 }

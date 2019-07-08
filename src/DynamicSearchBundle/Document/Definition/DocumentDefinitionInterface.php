@@ -2,8 +2,20 @@
 
 namespace DynamicSearchBundle\Document\Definition;
 
-interface IndexDocumentDefinitionInterface
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
+
+interface DocumentDefinitionInterface
 {
+    /**
+     * @return ResourceMetaInterface
+     */
+    public function getResourceMeta();
+
+    /**
+     * @return array
+     */
+    public function getOptions();
+
     /**
      * @param array $documentConfiguration
      */
@@ -31,10 +43,10 @@ interface IndexDocumentDefinitionInterface
      *
      * @return $this
      */
-    public function addIndexFieldDefinition(array $definition);
+    public function addDocumentFieldDefinition(array $definition);
 
     /**
      * @return array
      */
-    public function getIndexFieldDefinitions(): array;
+    public function getDocumentFieldDefinitions(): array;
 }

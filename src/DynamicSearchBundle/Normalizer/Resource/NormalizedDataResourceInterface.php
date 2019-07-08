@@ -12,9 +12,9 @@ interface NormalizedDataResourceInterface
     public function getResourceContainer();
 
     /**
-     * @return mixed
+     * @return ResourceMetaInterface
      */
-    public function getResourceId();
+    public function getResourceMeta();
 
     /**
      * @return array

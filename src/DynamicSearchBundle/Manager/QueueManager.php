@@ -5,6 +5,7 @@ namespace DynamicSearchBundle\Manager;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\Queue\Data\Envelope;
 use DynamicSearchBundle\Transformer\Container\ResourceContainer;
@@ -26,29 +27,29 @@ class QueueManager implements QueueManagerInterface
     protected $configuration;
 
     /**
-     * @var ResourceNormalizerManagerInterface
+     * @var NormalizerManagerInterface
      */
-    protected $resourceNormalizerManager;
+    protected $normalizerManager;
 
     /**
-     * @param LoggerInterface                    $logger
-     * @param ConfigurationInterface             $configuration
-     * @param ResourceNormalizerManagerInterface $resourceNormalizerManager
+     * @param LoggerInterface            $logger
+     * @param ConfigurationInterface     $configuration
+     * @param NormalizerManagerInterface $normalizerManager
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
-        ResourceNormalizerManagerInterface $resourceNormalizerManager
+        NormalizerManagerInterface $normalizerManager
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
-        $this->resourceNormalizerManager = $resourceNormalizerManager;
+        $this->normalizerManager = $normalizerManager;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function addToQueue(string $contextName, string $dispatcher, string $type, int $id, array $options)
+    public function addToQueue(string $contextName, string $dispatcher, string $resourceType, int $resourceId, array $options)
     {
         $envelope = null;
 
@@ -61,7 +62,7 @@ class QueueManager implements QueueManagerInterface
             return;
         }
 
-        if (!in_array($type, self::ALLOWED_QUEUE_TYPES)) {
+        if (!in_array($resourceType, self::ALLOWED_QUEUE_TYPES)) {
             $this->logger->error(
                 sprintf('Wrong queue type "%s" for queue. Allowed queue types are: %s', $dispatcher, join(', ', self::ALLOWED_QUEUE_TYPES)),
                 'queue',
@@ -71,7 +72,7 @@ class QueueManager implements QueueManagerInterface
         }
 
         try {
-            $envelope = $this->generateJob($contextName, $dispatcher, $type, $id, $options);
+            $envelope = $this->generateJob($contextName, $dispatcher, $resourceType, $resourceId, $options);
         } catch (\Exception $e) {
             $this->logger->error(
                 sprintf('Error while adding data to queue. Message was: %s', $e->getMessage()),
@@ -227,7 +228,7 @@ class QueueManager implements QueueManagerInterface
             case 'asset':
                 $object = Asset::getById($resourceId);
                 break;
-            case 'page':
+            case 'document':
                 $object = Document::getById($resourceId);
                 break;
             case 'object':
@@ -252,8 +253,8 @@ class QueueManager implements QueueManagerInterface
         $jobId = $this->getJobId();
 
         if ($dispatcher === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
-            $removableResourceIds = $this->assertRemovableIds($contextName, $resourceType, $resourceId);
-            if (count($removableResourceIds) === 0) {
+            $removableDocuments = $this->assertRemovableDocuments($contextName, $resourceType, $resourceId);
+            if (count($removableDocuments) === 0) {
                 $this->logger->error(
                     sprintf('unable to assert resource ids for pimcore element "%s-%s" no queue job will be generated.',
                         $resourceType, $resourceId),
@@ -261,7 +262,7 @@ class QueueManager implements QueueManagerInterface
                 );
                 return null;
             } else {
-                $options['removable_ids'] = $removableResourceIds;
+                $options['removable_documents'] = $removableDocuments;
             }
         }
 
@@ -279,11 +280,11 @@ class QueueManager implements QueueManagerInterface
      *
      * @return array
      */
-    protected function assertRemovableIds(string $contextName, string $resourceType, int $resourceId)
+    protected function assertRemovableDocuments(string $contextName, string $resourceType, int $resourceId)
     {
         $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE, $contextName);
 
-        $resourceNormalizer = $this->resourceNormalizerManager->getResourceNormalizer($contextDefinition);
+        $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextDefinition);
         if (!$resourceNormalizer instanceof ResourceNormalizerInterface) {
             $this->logger->error(sprintf('Could not load resource normalizer to determinate deletion ids'), 'queue', $contextName);
         }
@@ -292,20 +293,22 @@ class QueueManager implements QueueManagerInterface
         $transformedResourceContainer = new ResourceContainer($resource);
         $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextDefinition, $transformedResourceContainer);
 
-        $indexIds = [];
+        $resourceMeta = [];
         foreach ($normalizedResourceStack as $normalizedResource) {
-            $indexIds[] = $normalizedResource->getResourceId();
+            $resourceMeta[] = $normalizedResource->getResourceMeta();
         }
 
-        if (count($indexIds) > 0) {
+        if (count($resourceMeta) > 0) {
             $this->logger->debug(
                 sprintf('preparing pimcore element pimcore element "%s-%s" with resource ids "%s" for deletion',
-                    $resourceType, $resourceId, join(', ', $indexIds)),
+                    $resourceType, $resourceId, join(', ', array_map(function (ResourceMetaInterface $el) {
+                        return $el->getDocumentId();
+                    }, $resourceMeta))),
                 'queue', $contextName
             );
         }
 
-        return $indexIds;
+        return $resourceMeta;
     }
 
     /**
