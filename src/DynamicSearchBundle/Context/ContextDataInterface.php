@@ -94,11 +94,6 @@ interface ContextDataInterface
     public function getResourceNormalizerName();
 
     /**
-     * @return string
-     */
-    public function getDocumentDefinitionBuilderName();
-
-    /**
      * @param DataProviderInterface $dataProvider
      *
      * @return array

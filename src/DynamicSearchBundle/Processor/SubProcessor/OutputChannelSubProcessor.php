@@ -5,6 +5,7 @@ namespace DynamicSearchBundle\Processor\SubProcessor;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
+use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Exception\OutputChannelException;
 use DynamicSearchBundle\Factory\PaginatorFactoryInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
@@ -134,7 +135,16 @@ class OutputChannelSubProcessor implements OutputChannelSubProcessorInterface
             );
         }
 
-        $documentNormalizer = $this->normalizerManager->getDocumentNormalizerForOutputChannel($contextDefinition, $outputChannelName);
+        try {
+            $documentNormalizer = $this->normalizerManager->getDocumentNormalizerForOutputChannel($contextDefinition, $outputChannelName);
+        } catch (NormalizerException $e) {
+            throw new OutputChannelException($outputChannelName,
+                sprintf('Unable to load resource normalizer "%s". Error was: Error was: %s',
+                    $contextDefinition->getOutputChannelNormalizerName($outputChannelName),
+                    $e->getMessage()
+                )
+            );
+        }
 
         $outputChannelService->setEventDispatcher($eventDispatcher);
         $outputChannelService->setRuntimeParameterProvider($outputChannelRuntimeOptionsProvider);

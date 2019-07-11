@@ -27,5 +27,5 @@ interface TransformerRegistryInterface
     /**
      * @return array|DocumentTransformerInterface[]
      */
-    public function getAllDispatchTransformers();
+    public function getAllDocumentTransformers();
 }

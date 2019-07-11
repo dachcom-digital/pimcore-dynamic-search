@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\Registry;
 
+use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 
 interface ResourceNormalizerRegistryInterface
@@ -26,7 +27,7 @@ interface ResourceNormalizerRegistryInterface
      * @param string $indexProviderName
      * @param string $identifier
      *
-     * @return ResourceNormalizerInterface
+     * @return DocumentNormalizerInterface
      */
     public function getDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier);
 
@@ -34,7 +35,7 @@ interface ResourceNormalizerRegistryInterface
      * @param string $indexProviderName
      * @param string $identifier
      *
-     * @return ResourceNormalizerInterface
+     * @return DocumentNormalizerInterface
      */
     public function hasDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier);
 }

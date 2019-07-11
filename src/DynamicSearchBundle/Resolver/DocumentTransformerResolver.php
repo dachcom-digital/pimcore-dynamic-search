@@ -7,19 +7,19 @@ use DynamicSearchBundle\Registry\TransformerRegistryInterface;
 use DynamicSearchBundle\Transformer\DocumentTransformerContainer;
 use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
 
-class DispatchTransformerResolver implements DataResolverInterface
+class DocumentTransformerResolver implements DocumentTransformerResolverInterface
 {
     /**
      * @var TransformerRegistryInterface
      */
-    protected $dataTransformerRegistry;
+    protected $transformerRegistry;
 
     /**
-     * @param TransformerRegistryInterface $dataTransformerRegistry
+     * @param TransformerRegistryInterface $transformerRegistry
      */
-    public function __construct(TransformerRegistryInterface $dataTransformerRegistry)
+    public function __construct(TransformerRegistryInterface $transformerRegistry)
     {
-        $this->dataTransformerRegistry = $dataTransformerRegistry;
+        $this->transformerRegistry = $transformerRegistry;
     }
 
     /**
@@ -30,7 +30,7 @@ class DispatchTransformerResolver implements DataResolverInterface
         $validTransformer = null;
         $validTransformerName = null;
 
-        foreach ($this->dataTransformerRegistry->getAllDispatchTransformers() as $dataTransformerName => $dataTransformer) {
+        foreach ($this->transformerRegistry->getAllDocumentTransformers() as $dataTransformerName => $dataTransformer) {
             if ($dataTransformer->isApplicable($resource) === true) {
                 $validTransformer = $dataTransformer;
                 $validTransformerName = $dataTransformerName;

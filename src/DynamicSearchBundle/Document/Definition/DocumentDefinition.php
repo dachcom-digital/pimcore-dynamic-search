@@ -2,12 +2,15 @@
 
 namespace DynamicSearchBundle\Document\Definition;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DocumentDefinition implements DocumentDefinitionInterface
 {
+    /**
+     * @var string
+     */
+    protected $dataNormalizerIdentifier;
+
     /**
      * @var array
      */
@@ -24,39 +27,19 @@ class DocumentDefinition implements DocumentDefinitionInterface
     protected $indexFieldDefinitions;
 
     /**
-     * @var ResourceMetaInterface
+     * @param string $dataNormalizerIdentifier
      */
-    public $resourceMeta;
-
-    /**
-     * @var array
-     */
-    public $options;
-
-    /**
-     * @param ResourceMetaInterface $resourceMeta
-     * @param array                 $options
-     */
-    public function __construct(ResourceMetaInterface $resourceMeta, array $options = [])
+    public function __construct(string $dataNormalizerIdentifier)
     {
-        $this->resourceMeta = $resourceMeta;
-        $this->options = $options;
+        $this->dataNormalizerIdentifier = $dataNormalizerIdentifier;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getResourceMeta()
+    public function getDataNormalizerIdentifier()
     {
-        return $this->resourceMeta;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOptions()
-    {
-        return $this->options;
+        return $this->dataNormalizerIdentifier;
     }
 
     /**
@@ -116,13 +99,10 @@ class DocumentDefinition implements DocumentDefinitionInterface
     {
         $resolver = new OptionsResolver();
 
-        $resolver->setRequired(['name', 'index_transformer', 'data_transformer', 'normalizer']);
+        $resolver->setRequired(['name', 'index_transformer', 'data_transformer']);
         $resolver->setAllowedTypes('name', ['string']);
         $resolver->setAllowedTypes('index_transformer', ['array']);
         $resolver->setAllowedTypes('data_transformer', ['array']);
-        $resolver->setAllowedTypes('normalizer', ['array']);
-
-        $resolver->setDefault('normalizer', []);
 
         $options = $resolver->resolve($definition);
 
@@ -141,18 +121,6 @@ class DocumentDefinition implements DocumentDefinitionInterface
         if (!isset($options['data_transformer']['configuration'])) {
             $options['data_transformer']['configuration'] = [];
         }
-
-        $channelVisibility = [];
-        foreach (ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES as $channel) {
-            $channelVisibility[$channel] = true;
-        }
-
-        if (!isset($options['normalizer']['channel_visibility'])) {
-            $options['normalizer']['channel_visibility'] = $channelVisibility;
-        }
-
-        $options['normalizer']['channel_visibility'] = array_merge($channelVisibility, $options['normalizer']['channel_visibility']);
-
 
         $this->indexFieldDefinitions[] = $options;
 

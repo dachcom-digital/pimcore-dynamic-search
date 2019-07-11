@@ -8,6 +8,8 @@ use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Document\Definition\DocumentDefinition;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
+use DynamicSearchBundle\Exception\NormalizerException;
+use DynamicSearchBundle\Exception\OmitResourceException;
 use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Index\IndexFieldInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
@@ -93,7 +95,12 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
         try {
             $indexProvider = $this->indexManager->getIndexProvider($contextData);
         } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Unable to load index provider "%s".', $contextData->getIndexProviderName()));
+            throw new RuntimeException(
+                sprintf(
+                    'Unable to load index provider "%s". Error was: %s',
+                    $contextData->getIndexProviderName(), $e->getMessage()
+                )
+            );
         }
 
         $documentTransformerContainer = $this->transformerManager->getDocumentTransformer($contextData, $resource);
@@ -102,24 +109,46 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                 'No document transformer has been found. Skipping...',
                 $contextData->getIndexProviderName(), $contextData->getName()
             );
+
             return;
         }
 
         $transformedDocumentData = $documentTransformerContainer->getTransformer()->transformData($contextData, $resource);
         $transformedResourceContainer = new ResourceContainer($resource, $transformedDocumentData);
 
-        $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextData);
+        try {
+            $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextData);
+        } catch (NormalizerException $e) {
+            $this->logger->error(
+                sprintf(
+                    'Unable to load resource normalizer "%s". Error was: %s. Skipping...',
+                    $contextData->getResourceNormalizerName(), $e->getMessage()
+                ), $contextData->getIndexProviderName(), $contextData->getName()
+            );
+
+            return;
+        }
+
         if (!$resourceNormalizer instanceof ResourceNormalizerInterface) {
             $this->logger->error(
-                'No resource normalizer found. Skipping...',
+                sprintf(
+                    'No resource normalizer "%s" found. Skipping...',
+                    $contextData->getResourceNormalizerName()
+                ),
                 $contextData->getIndexProviderName(), $contextData->getName()
             );
+
             return;
         }
 
         try {
             $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextData, $transformedResourceContainer);
-        } catch (\Throwable $e) {
+        } catch (OmitResourceException $e) {
+            // fail silently because resource normalizes has been omitted intentionally.
+
+            return;
+
+        } catch (NormalizerException $e) {
             $this->logger->error(
                 sprintf(
                     'Error while generating normalized resource stack with identifier "%s". Error was: %s. Skipping...',
@@ -128,6 +157,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                 ),
                 $contextData->getIndexProviderName(), $contextData->getName()
             );
+
             return;
         }
 
@@ -136,6 +166,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                 sprintf('No normalized resources generated. Used resource normalizer: %s. Skipping...', $contextData->getResourceNormalizerName()),
                 $contextData->getIndexProviderName(), $contextData->getName()
             );
+
             return;
         }
 
@@ -146,6 +177,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                     sprintf('Normalized resource needs to be instance of %s. Skipping...', NormalizedDataResourceInterface::class),
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
+
                 continue;
             }
 
@@ -154,33 +186,26 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                     'Unable to generate index document: No document id given. Skipping...',
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
+
                 continue;
             }
 
-            $documentDefinitionBuilder = $this->documentDefinitionManager->getDocumentDefinitionBuilder($contextData);
-            if (!$documentDefinitionBuilder instanceof DocumentDefinitionBuilderInterface) {
+            $documentDefinition = $this->documentDefinitionManager->generateDocumentDefinition($contextData, $normalizedResource->getResourceMeta());
+            if (!$documentDefinition instanceof DocumentDefinitionInterface) {
                 $this->logger->error(
-                    sprintf(
-                        'No index document definition builder for identifier "%s" found. Skipping...',
-                        $contextData->getDocumentDefinitionBuilderName()
-                    ),
+                    sprintf('No document definition generated. Probably no applicable document definition builder was found. Skipping...'),
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
+
                 continue;
             }
 
-            try {
-                $documentDefinition = new DocumentDefinition($normalizedResource->getResourceMeta(), $normalizedResource->getOptions());
-                $documentDefinitionBuilder->buildDefinition($documentDefinition);
-            } catch (\Throwable $e) {
+            if (count($documentDefinition->getDocumentFieldDefinitions()) === 0) {
                 $this->logger->error(
-                    sprintf(
-                        'Error while building index document definition with "%s". Error was: %s. Skipping...',
-                        $contextData->getDocumentDefinitionBuilderName(),
-                        $e->getMessage()
-                    ),
+                    sprintf('Document Definition does not have any defined field. Skipping...'),
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
+
                 continue;
             }
 
@@ -196,6 +221,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                     sprintf('Index Document needs to be instance of %s. Skipping...', IndexDocument::class),
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
+
                 continue;
             }
 
@@ -204,6 +230,7 @@ class IndexModificationSubProcessor implements IndexModificationSubProcessorInte
                     sprintf('Index Document does not have any index fields. Skip Indexing...'),
                     $contextData->getIndexProviderName(), $contextData->getName()
                 );
+
                 continue;
             }
 

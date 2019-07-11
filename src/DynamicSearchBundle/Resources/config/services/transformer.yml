@@ -5,4 +5,6 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\Resolver\DispatchTransformerResolver: ~
+    DynamicSearchBundle\Resolver\DocumentDefinitionResolver: ~
+
+    DynamicSearchBundle\Resolver\DocumentTransformerResolver: ~

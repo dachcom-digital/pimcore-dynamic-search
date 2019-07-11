@@ -26,7 +26,7 @@ final class TransformerPass implements CompilerPassInterface
         $transformerRegistryDefinition = $container->getDefinition(TransformerRegistry::class);
 
         $services = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.transformer.dispatcher', true) as $serviceId => $attributes) {
+        foreach ($container->findTaggedServiceIds('dynamic_search.transformer.document', true) as $serviceId => $attributes) {
             $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
             $identifier = isset($attributes[0]['identifier']) ? $attributes[0]['identifier'] : 0;
             $services[$priority][] = [new Reference($serviceId), $identifier];
@@ -40,7 +40,7 @@ final class TransformerPass implements CompilerPassInterface
         $services = \call_user_func_array('array_merge', $services);
 
         foreach ($services as $service) {
-            $transformerRegistryDefinition->addMethodCall('registerDispatchTransformer', [$service[0], $service[1]]);
+            $transformerRegistryDefinition->addMethodCall('registerDocumentTransformer', [$service[0], $service[1]]);
         }
     }
 

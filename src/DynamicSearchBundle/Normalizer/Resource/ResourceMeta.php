@@ -4,11 +4,15 @@ namespace DynamicSearchBundle\Normalizer\Resource;
 
 class ResourceMeta implements ResourceMetaInterface
 {
-
     /**
      * @var mixed
      */
     public $documentId;
+
+    /**
+     * @var mixed
+     */
+    public $resourceId;
 
     /**
      * @var mixed
@@ -21,26 +25,29 @@ class ResourceMeta implements ResourceMetaInterface
     public $resourceType;
 
     /**
-     * @var mixed
+     * @var array
      */
-    public $resourceId;
+    public $resourceOptions;
 
     /**
      * @param mixed  $documentId
      * @param string $resourceCollectionType
      * @param string $resourceType
      * @param mixed  $resourceId
+     * @param array  $resourceOptions
      */
     public function __construct(
         $documentId,
         $resourceId,
         string $resourceCollectionType,
-        string $resourceType
+        string $resourceType,
+        array $resourceOptions = []
     ) {
         $this->documentId = $documentId;
         $this->resourceId = $resourceId;
         $this->resourceCollectionType = $resourceCollectionType;
         $this->resourceType = $resourceType;
+        $this->resourceOptions = $resourceOptions;
     }
 
     /**
@@ -73,5 +80,21 @@ class ResourceMeta implements ResourceMetaInterface
     public function getResourceId()
     {
         return $this->resourceId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasResourceOption(string $option)
+    {
+        return isset($this->resourceOptions[$option]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResourceOption(string $option)
+    {
+        return $this->resourceOptions[$option];
     }
 }

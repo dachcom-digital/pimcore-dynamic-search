@@ -5,6 +5,7 @@ namespace DynamicSearchBundle\Manager;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
+use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Registry\ResourceNormalizerRegistryInterface;
 
 class NormalizerManager implements NormalizerManagerInterface
@@ -56,7 +57,7 @@ class NormalizerManager implements NormalizerManagerInterface
         try {
             $resourceOptions = $contextData->getResourceNormalizerOptions($normalizer);
         } catch (ContextConfigurationException $e) {
-            return null;
+            throw new NormalizerException($normalizerName, $e->getMessage(), $e);
         }
 
         $normalizer->setOptions($resourceOptions);
@@ -89,7 +90,7 @@ class NormalizerManager implements NormalizerManagerInterface
         try {
             $resourceOptions = $contextData->getOutputChannelDocumentNormalizerOptions($normalizer, $outputChannelName);
         } catch (ContextConfigurationException $e) {
-            return null;
+            throw new NormalizerException($normalizerName, $e->getMessage(), $e);
         }
 
         $normalizer->setOptions($resourceOptions);

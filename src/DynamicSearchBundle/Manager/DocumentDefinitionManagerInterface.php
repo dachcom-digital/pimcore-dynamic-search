@@ -3,14 +3,16 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinition;
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 interface DocumentDefinitionManagerInterface
 {
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDataInterface  $contextData
+     * @param ResourceMetaInterface $resourceMeta
      *
-     * @return DocumentDefinitionBuilderInterface|null
+     * @return DocumentDefinition|null
      */
-    public function getDocumentDefinitionBuilder(ContextDataInterface $contextData);
+    public function generateDocumentDefinition(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta);
 }

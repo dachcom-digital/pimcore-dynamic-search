@@ -10,7 +10,7 @@ class TransformerRegistry implements TransformerRegistryInterface
     /**
      * @var array
      */
-    protected $dispatchTransformer;
+    protected $documentTransformer;
 
     /**
      * @var array
@@ -21,7 +21,7 @@ class TransformerRegistry implements TransformerRegistryInterface
      * @param        $service
      * @param string $identifier
      */
-    public function registerDispatchTransformer($service, string $identifier)
+    public function registerDocumentTransformer($service, string $identifier)
     {
         if (!in_array(DocumentTransformerInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -29,7 +29,7 @@ class TransformerRegistry implements TransformerRegistryInterface
             );
         }
 
-        $this->dispatchTransformer[$identifier] = $service;
+        $this->documentTransformer[$identifier] = $service;
     }
 
     /**
@@ -71,8 +71,8 @@ class TransformerRegistry implements TransformerRegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function getAllDispatchTransformers()
+    public function getAllDocumentTransformers()
     {
-        return $this->dispatchTransformer;
+        return $this->documentTransformer;
     }
 }

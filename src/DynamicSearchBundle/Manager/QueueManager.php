@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
@@ -284,14 +285,40 @@ class QueueManager implements QueueManagerInterface
     {
         $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE, $contextName);
 
-        $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextDefinition);
+        try {
+            $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextDefinition);
+        } catch (NormalizerException $e) {
+            $this->logger->debug(
+                sprintf(
+                    'Unable to load resource normalizer "%s". Error was: %s. Skipping...',
+                    $contextDefinition->getResourceNormalizerName(), $e->getMessage()
+                ), 'queue', $contextName
+            );
+
+            return [];
+        }
+
         if (!$resourceNormalizer instanceof ResourceNormalizerInterface) {
             $this->logger->error(sprintf('Could not load resource normalizer to determinate deletion ids'), 'queue', $contextName);
         }
 
         $resource = $this->getResource($resourceType, $resourceId);
         $transformedResourceContainer = new ResourceContainer($resource);
-        $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextDefinition, $transformedResourceContainer);
+
+        try {
+            $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextDefinition, $transformedResourceContainer);
+        } catch (NormalizerException $e) {
+            $this->logger->error(
+                sprintf(
+                    'Error while generating normalized resource stack with identifier "%s". Error was: %s. Skipping...',
+                    $contextDefinition->getResourceNormalizerName(),
+                    $e->getMessage()
+                ),
+                'queue', $contextName
+            );
+
+            return [];
+        }
 
         $resourceMeta = [];
         foreach ($normalizedResourceStack as $normalizedResource) {

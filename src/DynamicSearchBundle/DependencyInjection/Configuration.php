@@ -24,14 +24,6 @@ class Configuration implements ConfigurationInterface
                     ->arrayPrototype()
                         ->children()
 
-                            ->arrayNode('document_definition')
-                                ->children()
-                                    ->scalarNode('service')
-                                        ->defaultNull()
-                                    ->end()
-                                ->end()
-                            ->end()
-
                             ->arrayNode('index_provider')
                                 ->children()
                                     ->scalarNode('service')

@@ -23,4 +23,19 @@ interface ResourceMetaInterface
      * @return mixed
      */
     public function getResourceId();
+
+    /**
+     * @param string $option
+     *
+     * @return bool
+     */
+    public function hasResourceOption(string $option);
+
+    /**
+     * @param string $option
+     *
+     * @return mixed
+     */
+    public function getResourceOption(string $option);
+
 }

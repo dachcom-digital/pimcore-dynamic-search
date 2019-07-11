@@ -2,19 +2,12 @@
 
 namespace DynamicSearchBundle\Document\Definition;
 
-use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
-
 interface DocumentDefinitionInterface
 {
     /**
-     * @return ResourceMetaInterface
+     * @return string
      */
-    public function getResourceMeta();
-
-    /**
-     * @return array
-     */
-    public function getOptions();
+    public function getDataNormalizerIdentifier();
 
     /**
      * @param array $documentConfiguration

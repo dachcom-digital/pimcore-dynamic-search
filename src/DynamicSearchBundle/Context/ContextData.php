@@ -111,14 +111,6 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getDocumentDefinitionBuilderName()
-    {
-        return $this->rawContextOptions['document_definition']['service'];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getDataProviderOptions(DataProviderInterface $dataProvider)
     {
         if (isset($this->parsedContextOptions['data_provider_options'])) {

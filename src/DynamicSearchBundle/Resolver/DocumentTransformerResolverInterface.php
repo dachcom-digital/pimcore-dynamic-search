@@ -5,7 +5,7 @@ namespace DynamicSearchBundle\Resolver;
 use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
 use DynamicSearchBundle\Transformer\DocumentTransformerContainerInterface;
 
-interface DataResolverInterface
+interface DocumentTransformerResolverInterface
 {
     /**
      * @param mixed $resource

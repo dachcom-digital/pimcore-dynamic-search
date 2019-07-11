@@ -9,7 +9,6 @@ use DynamicSearchBundle\Paginator\PaginatorInterface;
 
 class PaginatorFactory implements PaginatorFactoryInterface
 {
-
     /**
      * @var string
      */

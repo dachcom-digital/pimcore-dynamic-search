@@ -7,7 +7,7 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
-use DynamicSearchBundle\Resolver\DataResolverInterface;
+use DynamicSearchBundle\Resolver\DocumentTransformerResolverInterface;
 use DynamicSearchBundle\Transformer\DocumentTransformerContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,9 +24,9 @@ class TransformerManager implements TransformerManagerInterface
     protected $configuration;
 
     /**
-     * @var DataResolverInterface
+     * @var DocumentTransformerResolverInterface
      */
-    protected $transformerResolver;
+    protected $documentTransformerResolver;
 
     /**
      * @var TransformerRegistryInterface
@@ -34,20 +34,20 @@ class TransformerManager implements TransformerManagerInterface
     protected $transformerRegistry;
 
     /**
-     * @param LoggerInterface              $logger
-     * @param ConfigurationInterface       $configuration
-     * @param DataResolverInterface        $transformerResolver
-     * @param TransformerRegistryInterface $transformerRegistry
+     * @param LoggerInterface                      $logger
+     * @param ConfigurationInterface               $configuration
+     * @param DocumentTransformerResolverInterface $documentTransformerResolver
+     * @param TransformerRegistryInterface         $transformerRegistry
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
-        DataResolverInterface $transformerResolver,
+        DocumentTransformerResolverInterface $documentTransformerResolver,
         TransformerRegistryInterface $transformerRegistry
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
-        $this->transformerResolver = $transformerResolver;
+        $this->documentTransformerResolver = $documentTransformerResolver;
         $this->transformerRegistry = $transformerRegistry;
     }
 
@@ -56,23 +56,23 @@ class TransformerManager implements TransformerManagerInterface
      */
     public function getDocumentTransformer(ContextDataInterface $contextData, $resource)
     {
-        $dataTransformerContainer = null;
+        $documentTransformerContainer = null;
         $dataProviderName = $contextData->getDataProviderName();
 
         try {
-            $dataTransformerContainer = $this->transformerResolver->resolve($resource);
+            $documentTransformerContainer = $this->documentTransformerResolver->resolve($resource);
         } catch (DocumentTransformerNotFoundException $e) {
             // fail silently
         }
 
-        if (!$dataTransformerContainer instanceof DocumentTransformerContainerInterface) {
+        if (!$documentTransformerContainer instanceof DocumentTransformerContainerInterface) {
             $this->logger->error('No DispatchTransformer found for new data', $dataProviderName, $contextData->getName());
             return null;
         }
 
-        $dataTransformerContainer->getTransformer()->setLogger($this->logger);
+        $documentTransformerContainer->getTransformer()->setLogger($this->logger);
 
-        return $dataTransformerContainer;
+        return $documentTransformerContainer;
     }
 
     /**

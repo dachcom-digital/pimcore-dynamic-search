@@ -4,7 +4,9 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Registry\DocumentDefinitionBuilderRegistryInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinition;
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
+use DynamicSearchBundle\Resolver\DocumentDefinitionResolverInterface;
 
 class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
 {
@@ -14,39 +16,39 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
     protected $configuration;
 
     /**
-     * @var DocumentDefinitionBuilderRegistryInterface
+     * @var DocumentDefinitionResolverInterface
      */
-    protected $documentDefinitionBuilderRegistry;
+    protected $documentDefinitionResolver;
 
     /**
-     * @param ConfigurationInterface                     $configuration
-     * @param DocumentDefinitionBuilderRegistryInterface $documentDefinitionBuilderRegistry
+     * @param ConfigurationInterface              $configuration
+     * @param DocumentDefinitionResolverInterface $documentDefinitionResolver
      */
     public function __construct(
         ConfigurationInterface $configuration,
-        DocumentDefinitionBuilderRegistryInterface $documentDefinitionBuilderRegistry
+        DocumentDefinitionResolverInterface $documentDefinitionResolver
     ) {
         $this->configuration = $configuration;
-        $this->documentDefinitionBuilderRegistry = $documentDefinitionBuilderRegistry;
+        $this->documentDefinitionResolver = $documentDefinitionResolver;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getDocumentDefinitionBuilder(ContextDataInterface $contextData)
+    public function generateDocumentDefinition(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta)
     {
-        $definitionBuilderName = $contextData->getDocumentDefinitionBuilderName();
+        $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolve($contextData->getName(), $resourceMeta);
 
-        if (is_null($definitionBuilderName)) {
+        if (count($documentDefinitionBuilderStack) === 0) {
             return null;
         }
 
-        if (!$this->documentDefinitionBuilderRegistry->has($definitionBuilderName)) {
-            return null;
+        $documentDefinition = new DocumentDefinition($contextData->getResourceNormalizerName());
+
+        foreach ($documentDefinitionBuilderStack as $documentDefinitionBuilder) {
+            $documentDefinitionBuilder->buildDefinition($documentDefinition);
         }
 
-        $definitionBuilder = $this->documentDefinitionBuilderRegistry->get($definitionBuilderName);
-
-        return $definitionBuilder;
+        return $documentDefinition;
     }
 }

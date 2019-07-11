@@ -12,10 +12,9 @@ class DocumentDefinitionBuilderRegistry implements DocumentDefinitionBuilderRegi
     protected $definitionBuilder;
 
     /**
-     * @param        $service
-     * @param string $identifier
+     * @param DocumentDefinitionBuilderInterface $service
      */
-    public function register($service, string $identifier)
+    public function register($service)
     {
         if (!in_array(DocumentDefinitionBuilderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -24,26 +23,14 @@ class DocumentDefinitionBuilderRegistry implements DocumentDefinitionBuilderRegi
             );
         }
 
-        $this->definitionBuilder[$identifier] = $service;
+        $this->definitionBuilder[] = $service;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function has(string $identifier)
+    public function getAllDocumentDefinitionBuilder()
     {
-        return isset($this->definitionBuilder[$identifier]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function get(string $identifier)
-    {
-        if (!$this->has($identifier)) {
-            throw new \Exception('"' . $identifier . '" Index Document Definition Builder does not exist');
-        }
-
-        return $this->definitionBuilder[$identifier];
+        return !is_array($this->definitionBuilder) ? [] : $this->definitionBuilder;
     }
 }

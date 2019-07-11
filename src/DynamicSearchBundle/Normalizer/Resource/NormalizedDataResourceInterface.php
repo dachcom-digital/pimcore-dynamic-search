@@ -15,9 +15,4 @@ interface NormalizedDataResourceInterface
      * @return ResourceMetaInterface
      */
     public function getResourceMeta();
-
-    /**
-     * @return array
-     */
-    public function getOptions();
 }
