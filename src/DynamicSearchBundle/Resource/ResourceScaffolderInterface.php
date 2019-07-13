@@ -14,7 +14,7 @@ interface ResourceScaffolderInterface
     public function isApplicable($resource): bool;
 
     /**
-     * @param $resource
+     * @param mixed $resource
      *
      * @return bool
      */

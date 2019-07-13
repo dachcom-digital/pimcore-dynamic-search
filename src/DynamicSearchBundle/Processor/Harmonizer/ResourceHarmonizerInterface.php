@@ -10,7 +10,7 @@ interface ResourceHarmonizerInterface
 {
     /**
      * @param ContextDataInterface $contextData
-     * @param                      $resource
+     * @param mixed                $resource
      *
      * @return array|NormalizedDataResourceInterface[]|null
      */
@@ -18,7 +18,7 @@ interface ResourceHarmonizerInterface
 
     /**
      * @param ContextDataInterface $contextData
-     * @param                      $resource
+     * @param mixed                $resource
      *
      * @return null|ResourceContainerInterface
      */

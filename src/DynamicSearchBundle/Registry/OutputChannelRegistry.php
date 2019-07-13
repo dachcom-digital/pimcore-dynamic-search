@@ -30,9 +30,9 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     protected $outputChannelModifierFilter;
 
     /**
-     * @param        $service
-     * @param string $type
-     * @param string $identifier
+     * @param OutputChannelInterface $service
+     * @param string                 $type
+     * @param string                 $identifier
      */
     public function registerOutputChannel($service, string $type, string $identifier)
     {
@@ -55,8 +55,8 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     }
 
     /**
-     * @param        $service
-     * @param string $identifier
+     * @param RuntimeOptionsProviderInterface $service
+     * @param string                          $identifier
      */
     public function registerOutputChannelRuntimeOptionsProvider($service, string $identifier)
     {
@@ -75,10 +75,10 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     }
 
     /**
-     * @param        $service
-     * @param string $outputProvider
-     * @param string $outputChannel
-     * @param string $action
+     * @param OutputChannelModifierActionInterface $service
+     * @param string                               $outputProvider
+     * @param string                               $outputChannel
+     * @param string                               $action
      */
     public function registerOutputChannelModifierAction($service, string $outputProvider, string $outputChannel, string $action)
     {
@@ -109,10 +109,10 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     }
 
     /**
-     * @param        $service
-     * @param string $outputProvider
-     * @param string $outputChannel
-     * @param string $filter
+     * @param OutputChannelModifierFilterInterface $service
+     * @param string                               $outputProvider
+     * @param string                               $outputChannel
+     * @param string                               $filter
      */
     public function registerOutputChannelModifierFilter($service, string $outputProvider, string $outputChannel, string $filter)
     {

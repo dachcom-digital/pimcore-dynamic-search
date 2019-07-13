@@ -13,9 +13,9 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     protected $normalizer;
 
     /**
-     * @param        $service
-     * @param string $identifier
-     * @param string $dataProviderName
+     * @param ResourceNormalizerInterface $service
+     * @param string                      $identifier
+     * @param string                      $dataProviderName
      */
     public function registerResourceNormalizer($service, string $identifier, string $dataProviderName)
     {
@@ -37,9 +37,9 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     }
 
     /**
-     * @param        $service
-     * @param string $identifier
-     * @param string $indexProviderName
+     * @param DocumentNormalizerInterface $service
+     * @param string                      $identifier
+     * @param string                      $indexProviderName
      */
     public function registerDocumentNormalizer($service, string $identifier, string $indexProviderName)
     {

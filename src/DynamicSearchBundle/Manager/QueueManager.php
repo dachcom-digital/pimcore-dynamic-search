@@ -304,7 +304,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * @param $processId
+     * @param string $processId
      *
      * @return TmpStore|null
      */

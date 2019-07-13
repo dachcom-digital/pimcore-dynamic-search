@@ -18,8 +18,8 @@ class OutputModifierEvent
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed  $value
      */
     public function setParameter($key, $value)
     {
@@ -27,7 +27,7 @@ class OutputModifierEvent
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
@@ -37,7 +37,7 @@ class OutputModifierEvent
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      */

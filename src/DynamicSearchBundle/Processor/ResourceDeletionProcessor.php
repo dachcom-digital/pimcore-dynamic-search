@@ -33,12 +33,12 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     protected $indexManager;
 
     /**
-     * @var ResourceHarmonizerInterface
+     * @var NormalizerManagerInterface
      */
     protected $normalizerManager;
 
     /**
-     * @var NormalizerManagerInterface
+     * @var ResourceHarmonizerInterface
      */
     protected $resourceHarmonizer;
 

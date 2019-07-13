@@ -18,9 +18,9 @@ class TransformerRegistry implements TransformerRegistryInterface
     protected $resourceFieldTransformer;
 
     /**
-     * @param        $service
-     * @param string $identifier
-     * @param string $dataProvider
+     * @param ResourceScaffolderInterface $service
+     * @param string                      $identifier
+     * @param string                      $dataProvider
      */
     public function registerResourceScaffolder($service, string $identifier, string $dataProvider)
     {
@@ -38,9 +38,9 @@ class TransformerRegistry implements TransformerRegistryInterface
     }
 
     /**
-     * @param        $service
-     * @param string $identifier
-     * @param string $resourceScaffolder
+     * @param FieldTransformerInterface $service
+     * @param string                    $identifier
+     * @param string                    $resourceScaffolder
      */
     public function registerResourceFieldTransformer($service, string $identifier, string $resourceScaffolder)
     {

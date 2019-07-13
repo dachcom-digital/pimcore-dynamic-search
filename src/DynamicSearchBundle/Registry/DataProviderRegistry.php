@@ -12,8 +12,8 @@ class DataProviderRegistry implements DataProviderRegistryInterface
     protected $provider;
 
     /**
-     * @param $service
-     * @param $identifier
+     * @param DataProviderInterface $service
+     * @param string                $identifier
      */
     public function register($service, $identifier)
     {

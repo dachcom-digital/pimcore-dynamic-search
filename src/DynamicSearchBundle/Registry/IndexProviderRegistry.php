@@ -12,8 +12,8 @@ class IndexProviderRegistry implements IndexProviderRegistryInterface
     protected $provider;
 
     /**
-     * @param        $service
-     * @param string $identifier
+     * @param IndexProviderInterface $service
+     * @param string                 $identifier
      */
     public function register($service, string $identifier)
     {

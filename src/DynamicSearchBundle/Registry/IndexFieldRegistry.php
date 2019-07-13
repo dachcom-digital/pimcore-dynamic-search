@@ -12,9 +12,9 @@ class IndexFieldRegistry implements IndexFieldRegistryInterface
     protected $fields;
 
     /**
-     * @param        $service
-     * @param string $identifier
-     * @param string $indexProviderName
+     * @param IndexFieldInterface $service
+     * @param string              $identifier
+     * @param string              $indexProviderName
      */
     public function register($service, string $identifier, string $indexProviderName)
     {
