@@ -26,7 +26,6 @@ class DocumentDefinitionResolver implements DocumentDefinitionResolverInterface
     public function resolve(string $contextName, ResourceMetaInterface $resourceMeta)
     {
         $builder = [];
-
         foreach ($this->documentDefinitionBuilderRegistry->getAllDocumentDefinitionBuilder() as $documentDefinitionBuilder) {
             if ($documentDefinitionBuilder->isApplicable($contextName, $resourceMeta) === true) {
                 $builder[] = $documentDefinitionBuilder;

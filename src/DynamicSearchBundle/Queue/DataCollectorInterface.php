@@ -6,12 +6,11 @@ interface DataCollectorInterface
 {
     /**
      * @param string $contextName
-     * @param string $dispatcher
-     * @param string $type
-     * @param int    $id
+     * @param string $dispatchType
+     * @param mixed  $resource
      * @param array  $options
      *
      * @return mixed
      */
-    public function addToQueue(string $contextName, string $dispatcher, string $type, int $id, array $options = []);
+    public function addToQueue(string $contextName, string $dispatchType, $resource, array $options = []);
 }

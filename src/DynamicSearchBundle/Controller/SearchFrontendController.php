@@ -6,7 +6,7 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Form\Type\SearchFormType;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResultInterface;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelResultInterface;
-use DynamicSearchBundle\Processor\SubProcessor\OutputChannelSubProcessorInterface;
+use DynamicSearchBundle\Processor\OutputChannelProcessorInterface;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,17 +19,17 @@ class SearchFrontendController extends FrontendController
     protected $configuration;
 
     /**
-     * @var OutputChannelSubProcessorInterface
+     * @var OutputChannelProcessorInterface
      */
     protected $outputChannelWorkflowProcessor;
 
     /**
-     * @param ConfigurationInterface             $configuration
-     * @param OutputChannelSubProcessorInterface $outputChannelWorkflowProcessor
+     * @param ConfigurationInterface          $configuration
+     * @param OutputChannelProcessorInterface $outputChannelWorkflowProcessor
      */
     public function __construct(
         ConfigurationInterface $configuration,
-        OutputChannelSubProcessorInterface $outputChannelWorkflowProcessor
+        OutputChannelProcessorInterface $outputChannelWorkflowProcessor
     ) {
         $this->configuration = $configuration;
         $this->outputChannelWorkflowProcessor = $outputChannelWorkflowProcessor;

@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Controller;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Processor\SubProcessor\OutputChannelSubProcessorInterface;
+use DynamicSearchBundle\Processor\OutputChannelProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,17 +16,17 @@ class SearchController extends Controller
     protected $configuration;
 
     /**
-     * @var OutputChannelSubProcessorInterface
+     * @var OutputChannelProcessorInterface
      */
     protected $outputChannelWorkflowProcessor;
 
     /**
-     * @param ConfigurationInterface             $configuration
-     * @param OutputChannelSubProcessorInterface $outputChannelWorkflowProcessor
+     * @param ConfigurationInterface          $configuration
+     * @param OutputChannelProcessorInterface $outputChannelWorkflowProcessor
      */
     public function __construct(
         ConfigurationInterface $configuration,
-        OutputChannelSubProcessorInterface $outputChannelWorkflowProcessor
+        OutputChannelProcessorInterface $outputChannelWorkflowProcessor
     ) {
         $this->configuration = $configuration;
         $this->outputChannelWorkflowProcessor = $outputChannelWorkflowProcessor;

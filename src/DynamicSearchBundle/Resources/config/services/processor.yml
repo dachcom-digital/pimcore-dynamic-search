@@ -1,0 +1,14 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizer: ~
+
+    DynamicSearchBundle\Processor\ResourceModificationProcessor: ~
+
+    DynamicSearchBundle\Processor\ResourceDeletionProcessor: ~
+
+    DynamicSearchBundle\Processor\OutputChannelProcessor: ~

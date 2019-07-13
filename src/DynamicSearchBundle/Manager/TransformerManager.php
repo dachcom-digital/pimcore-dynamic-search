@@ -7,8 +7,8 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
-use DynamicSearchBundle\Resolver\DocumentTransformerResolverInterface;
-use DynamicSearchBundle\Transformer\DocumentTransformerContainerInterface;
+use DynamicSearchBundle\Resolver\ResourceScaffolderResolverInterface;
+use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TransformerManager implements TransformerManagerInterface
@@ -24,7 +24,7 @@ class TransformerManager implements TransformerManagerInterface
     protected $configuration;
 
     /**
-     * @var DocumentTransformerResolverInterface
+     * @var ResourceScaffolderResolverInterface
      */
     protected $documentTransformerResolver;
 
@@ -34,15 +34,15 @@ class TransformerManager implements TransformerManagerInterface
     protected $transformerRegistry;
 
     /**
-     * @param LoggerInterface                      $logger
-     * @param ConfigurationInterface               $configuration
-     * @param DocumentTransformerResolverInterface $documentTransformerResolver
-     * @param TransformerRegistryInterface         $transformerRegistry
+     * @param LoggerInterface                     $logger
+     * @param ConfigurationInterface              $configuration
+     * @param ResourceScaffolderResolverInterface $documentTransformerResolver
+     * @param TransformerRegistryInterface        $transformerRegistry
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
-        DocumentTransformerResolverInterface $documentTransformerResolver,
+        ResourceScaffolderResolverInterface $documentTransformerResolver,
         TransformerRegistryInterface $transformerRegistry
     ) {
         $this->logger = $logger;
@@ -54,37 +54,35 @@ class TransformerManager implements TransformerManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function getDocumentTransformer(ContextDataInterface $contextData, $resource)
+    public function getResourceScaffolder(ContextDataInterface $contextData, $resource)
     {
-        $documentTransformerContainer = null;
+        $resourceScaffolderContainer = null;
         $dataProviderName = $contextData->getDataProviderName();
 
         try {
-            $documentTransformerContainer = $this->documentTransformerResolver->resolve($resource);
+            $resourceScaffolderContainer = $this->documentTransformerResolver->resolve($contextData->getDataProviderName(), $resource);
         } catch (DocumentTransformerNotFoundException $e) {
             // fail silently
         }
 
-        if (!$documentTransformerContainer instanceof DocumentTransformerContainerInterface) {
+        if (!$resourceScaffolderContainer instanceof ResourceScaffolderContainerInterface) {
             $this->logger->error('No DispatchTransformer found for new data', $dataProviderName, $contextData->getName());
             return null;
         }
 
-        $documentTransformerContainer->getTransformer()->setLogger($this->logger);
-
-        return $documentTransformerContainer;
+        return $resourceScaffolderContainer;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = [])
+    public function getResourceFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = [])
     {
-        if (!$this->transformerRegistry->hasFieldTransformer($dispatchTransformerName, $fieldTransformerName)) {
+        if (!$this->transformerRegistry->hasResourceFieldTransformer($dispatchTransformerName, $fieldTransformerName)) {
             return null;
         }
 
-        $fieldTransformer = $this->transformerRegistry->getFieldTransformer($dispatchTransformerName, $fieldTransformerName);
+        $fieldTransformer = $this->transformerRegistry->getResourceFieldTransformer($dispatchTransformerName, $fieldTransformerName);
 
         $optionsResolver = new OptionsResolver();
         $requiredOptionsResolver = $fieldTransformer->configureOptions($optionsResolver);

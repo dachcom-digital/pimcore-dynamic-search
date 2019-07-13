@@ -2,11 +2,13 @@
 
 namespace DynamicSearchBundle\Queue;
 
+use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
-use DynamicSearchBundle\Processor\ContextProcessorInterface;
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Queue\Data\Envelope;
+use DynamicSearchBundle\Runner\ResourceRunnerInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
 
 class DataProcessor implements DataProcessorInterface
@@ -17,14 +19,14 @@ class DataProcessor implements DataProcessorInterface
     protected $logger;
 
     /**
+     * @var ConfigurationInterface
+     */
+    protected $configuration;
+
+    /**
      * @var QueueManagerInterface
      */
     protected $queueManager;
-
-    /**
-     * @var ContextProcessorInterface
-     */
-    protected $contextProcessor;
 
     /**
      * @var LockServiceInterface
@@ -32,21 +34,29 @@ class DataProcessor implements DataProcessorInterface
     protected $lockService;
 
     /**
-     * @param LoggerInterface           $logger
-     * @param QueueManagerInterface     $queueManager
-     * @param ContextProcessorInterface $contextProcessor
-     * @param LockServiceInterface      $lockService
+     * @var ResourceRunnerInterface
+     */
+    protected $resourceRunner;
+
+    /**
+     * @param LoggerInterface         $logger
+     * @param ConfigurationInterface  $configuration
+     * @param QueueManagerInterface   $queueManager
+     * @param LockServiceInterface    $lockService
+     * @param ResourceRunnerInterface $resourceRunner
      */
     public function __construct(
         LoggerInterface $logger,
+        ConfigurationInterface $configuration,
         QueueManagerInterface $queueManager,
-        ContextProcessorInterface $contextProcessor,
-        LockServiceInterface $lockService
+        LockServiceInterface $lockService,
+        ResourceRunnerInterface $resourceRunner
     ) {
         $this->logger = $logger;
+        $this->configuration = $configuration;
         $this->queueManager = $queueManager;
-        $this->contextProcessor = $contextProcessor;
         $this->lockService = $lockService;
+        $this->resourceRunner = $resourceRunner;
     }
 
     /**
@@ -80,13 +90,13 @@ class DataProcessor implements DataProcessorInterface
 
     protected function checkJobs()
     {
-        $envelopes = $this->queueManager->getActiveEnvelopes();
+        $envelopeData = $this->queueManager->getActiveEnvelopes();
 
-        if (empty($envelopes) || !is_array($envelopes)) {
+        if (empty($envelopeData) || !is_array($envelopeData)) {
             return;
         }
 
-        foreach ($envelopes as $contextName => $contextDispatchEnvelopes) {
+        foreach ($envelopeData as $contextName => $contextDispatchEnvelopes) {
 
             if (!is_array($contextDispatchEnvelopes) || count($contextDispatchEnvelopes) === 0) {
                 continue;
@@ -98,17 +108,13 @@ class DataProcessor implements DataProcessorInterface
                     continue;
                 }
 
+                $contextData = $this->configuration->getContextDefinition($dispatchType, $contextName);
+
                 try {
-
-                    if ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
-                        $this->dispatchDeletionContext($contextName, $dispatchType, $dispatchEnvelopes);
-                    } else {
-                        $this->dispatchModificationContext($contextName, $dispatchType, $dispatchEnvelopes);
-                    }
-
+                    $this->dispatchResourceRunner($contextData, $dispatchType, $dispatchEnvelopes);
                 } catch (\Throwable $e) {
                     $this->logger->error(
-                        sprintf('Error dispatch queued context (%s). Message was: %s', $dispatchType, $e->getMessage()),
+                        sprintf('Error dispatch resource runner (%s). Message was: %s', $dispatchType, $e->getMessage()),
                         'queue', $contextName
                     );
                 }
@@ -117,86 +123,31 @@ class DataProcessor implements DataProcessorInterface
     }
 
     /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param array  $dispatchEnvelopes
+     * @param ContextDataInterface $contextData
+     * @param string               $dispatchType
+     * @param array                $dispatchEnvelopes
      */
-    protected function dispatchDeletionContext(string $contextName, string $dispatchType, array $dispatchEnvelopes)
+    protected function dispatchResourceRunner(ContextDataInterface $contextData, string $dispatchType, array $dispatchEnvelopes)
     {
-        $envelopeResourceStack = [
-            'contextName'  => $contextName,
-            'dispatchType' => $dispatchType,
-            'resources'    => []
-        ];
+        foreach ($dispatchEnvelopes as $envelopeData) {
 
-        $runtimeValues = [];
-
-        /** @var Envelope $envelope */
-        foreach ($dispatchEnvelopes as $envelope) {
-
+            /** @var Envelope $envelope */
+            $envelope = $envelopeData['envelope'];
+            /** @var ResourceMetaInterface $resourceMeta */
+            $resourceMeta = $envelopeData['resourceMeta'];
+            /** @var array $envelopeOptions */
             $envelopeOptions = $envelope->getOptions();
-            if (!isset($envelopeOptions['removable_documents']) || !is_array($envelopeOptions['removable_documents'])) {
 
-                $this->logger->error(
-                    sprintf(
-                        'Unable to dispatch envelope "%s-%s deletion because of missing resource ids.',
-                        $envelope->getResourceType(), $envelope->getResourceId()
-                    ),
-                    'queue', $contextName
-                );
+            // @todo: implement stack dispatcher in resource runner!
 
-                continue;
-
-            } else {
-                foreach ($envelopeOptions['removable_documents'] as $resourceMeta) {
-                    $envelopeResourceStack['resources'][] = $resourceMeta;
-                }
+            if ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT) {
+                $this->resourceRunner->runInsert($contextData, $resourceMeta);
+            } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
+                $this->resourceRunner->runUpdate($contextData, $resourceMeta);
+            } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
+                $this->resourceRunner->runDelete($contextData, $resourceMeta);
             }
 
-            unset($envelopeOptions['removable_documents']);
-            $runtimeValues = $envelopeOptions;
-
-            $this->queueManager->deleteJob($envelope);
-
         }
-
-        $this->contextProcessor->dispatchContextModificationStack(
-            $envelopeResourceStack['contextName'],
-            $envelopeResourceStack['dispatchType'],
-            $envelopeResourceStack['resources'],
-            $runtimeValues
-        );
-
     }
-
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param array  $dispatchEnvelopes
-     */
-    protected function dispatchModificationContext(string $contextName, string $dispatchType, array $dispatchEnvelopes)
-    {
-        $envelopeResourceStack = [
-            'contextName'  => $contextName,
-            'dispatchType' => $dispatchType,
-            'resources'    => []
-        ];
-
-        $runtimeValues = [];
-
-        /** @var Envelope $envelope */
-        foreach ($dispatchEnvelopes as $envelope) {
-            $runtimeValues = $envelope->getOptions();
-            $envelopeResourceStack['resources'][] = $this->queueManager->getResource($envelope->getResourceType(), $envelope->getResourceId());
-            $this->queueManager->deleteJob($envelope);
-        }
-
-        $this->contextProcessor->dispatchContextModificationStack(
-            $envelopeResourceStack['contextName'],
-            $envelopeResourceStack['dispatchType'],
-            $envelopeResourceStack['resources'],
-            $runtimeValues
-        );
-    }
-
 }

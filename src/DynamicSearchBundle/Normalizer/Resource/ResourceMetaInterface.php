@@ -38,4 +38,9 @@ interface ResourceMetaInterface
      */
     public function getResourceOption(string $option);
 
+    /**
+     * @return array
+     */
+    public function getResourceOptions();
+
 }

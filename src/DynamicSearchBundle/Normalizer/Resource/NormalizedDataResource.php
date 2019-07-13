@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Normalizer\Resource;
 
-use DynamicSearchBundle\Transformer\Container\ResourceContainerInterface;
+use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 
 class NormalizedDataResource implements NormalizedDataResourceInterface
 {

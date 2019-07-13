@@ -6,7 +6,8 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\DynamicSearchEvents;
 use DynamicSearchBundle\Event\NewDataEvent;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Processor\SubProcessor\IndexModificationSubProcessorInterface;
+use DynamicSearchBundle\Processor\ResourceModificationProcessorInterface;
+use DynamicSearchBundle\Provider\DataProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DataProcessingEventSubscriber implements EventSubscriberInterface
@@ -22,23 +23,23 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     protected $configuration;
 
     /**
-     * @var IndexModificationSubProcessorInterface
+     * @var ResourceModificationProcessorInterface
      */
-    protected $indexModificationSubProcessor;
+    protected $resourceModificationProcessor;
 
     /**
      * @param LoggerInterface                        $logger
      * @param ConfigurationInterface                 $configuration
-     * @param IndexModificationSubProcessorInterface $indexModificationSubProcessor
+     * @param ResourceModificationProcessorInterface $resourceModificationProcessor
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
-        IndexModificationSubProcessorInterface $indexModificationSubProcessor
+        ResourceModificationProcessorInterface $resourceModificationProcessor
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
-        $this->indexModificationSubProcessor = $indexModificationSubProcessor;
+        $this->resourceModificationProcessor = $resourceModificationProcessor;
     }
 
     /**
@@ -47,17 +48,23 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DynamicSearchEvents::NEW_DATA_AVAILABLE => ['dispatchIndexProviderInsert'],
+            DynamicSearchEvents::NEW_DATA_AVAILABLE => ['dispatchResourceModification'],
         ];
     }
 
     /**
      * @param NewDataEvent $event
      */
-    public function dispatchIndexProviderInsert(NewDataEvent $event)
+    public function dispatchResourceModification(NewDataEvent $event)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($event->getContextDispatchType(), $event->getContextName(), $event->getRuntimeValues());
+        $contextDefinition = $this->configuration->getContextDefinition($event->getContextDispatchType(), $event->getContextName());
 
-        $this->indexModificationSubProcessor->dispatch($contextDefinition, $event->getData());
+        if ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH) {
+            $this->resourceModificationProcessor->process($contextDefinition, $event->getData());
+        } elseif ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH) {
+            $this->resourceModificationProcessor->processByResourceMeta($contextDefinition, $event->getResourceMeta(), $event->getData());
+        } else {
+            $this->logger->error(sprintf('Invalid provider behaviour "%s". Cannot dispatch', $event->getProviderBehaviour()), 'web_crawler', $event->getContextName());
+        }
     }
 }

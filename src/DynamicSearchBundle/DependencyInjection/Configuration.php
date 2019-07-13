@@ -33,7 +33,6 @@ class Configuration implements ConfigurationInterface
                                     ->isRequired()
                                         ->variablePrototype()->defaultValue([])->end()
                                     ->end()
-
                                 ->end()
                             ->end()
 
@@ -43,10 +42,18 @@ class Configuration implements ConfigurationInterface
                                         ->defaultNull()
                                     ->end()
                                     ->arrayNode('options')
-                                    ->isRequired()
-                                        ->variablePrototype()->defaultValue([])->end()
+                                        ->children()
+                                            ->arrayNode('always')
+                                                ->variablePrototype()->defaultValue([])->end()
+                                            ->end()
+                                            ->arrayNode('full_dispatch')
+                                                ->variablePrototype()->defaultValue([])->end()
+                                            ->end()
+                                            ->arrayNode('single_dispatch')
+                                                ->variablePrototype()->defaultValue([])->end()
+                                            ->end()
+                                        ->end()
                                     ->end()
-
                                     ->arrayNode('normalizer')
                                         ->children()
                                             ->scalarNode('service')
@@ -91,7 +98,6 @@ class Configuration implements ConfigurationInterface
                                                 ->end()
                                             ->end()
                                         ->end()
-
                                         ->arrayNode('normalizer')
                                             ->addDefaultsIfNotSet()
                                             ->children()
@@ -103,7 +109,6 @@ class Configuration implements ConfigurationInterface
                                                 ->end()
                                             ->end()
                                         ->end()
-
                                     ->end()
                                 ->end()
                             ->end()

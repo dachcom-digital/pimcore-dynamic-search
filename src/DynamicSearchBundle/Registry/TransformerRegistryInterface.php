@@ -2,30 +2,31 @@
 
 namespace DynamicSearchBundle\Registry;
 
-use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
-use DynamicSearchBundle\Transformer\FieldTransformerInterface;
+use DynamicSearchBundle\Resource\FieldTransformerInterface;
+use DynamicSearchBundle\Resource\ResourceScaffolderInterface;
 
 interface TransformerRegistryInterface
 {
     /**
-     * @param string $dispatchTransformerName
+     * @param string $resourceScaffolderName
      * @param string $identifier
      *
      * @return bool
      */
-    public function hasFieldTransformer(string $dispatchTransformerName, string $identifier);
+    public function hasResourceFieldTransformer(string $resourceScaffolderName, string $identifier);
 
     /**
-     * @param string $dispatchTransformerName
+     * @param string $resourceScaffolderName
      * @param string $identifier
      *
      * @return FieldTransformerInterface
      */
-    public function getFieldTransformer(string $dispatchTransformerName, string $identifier);
-
+    public function getResourceFieldTransformer(string $resourceScaffolderName, string $identifier);
 
     /**
-     * @return array|DocumentTransformerInterface[]
+     * @param string $dataProviderName
+     *
+     * @return array|ResourceScaffolderInterface[]
      */
-    public function getAllDocumentTransformers();
+    public function getAllResourceScaffolderForDataProvider(string $dataProviderName);
 }

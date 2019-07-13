@@ -2,42 +2,47 @@
 
 namespace DynamicSearchBundle\Registry;
 
-use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
-use DynamicSearchBundle\Transformer\FieldTransformerInterface;
+use DynamicSearchBundle\Resource\ResourceScaffolderInterface;
+use DynamicSearchBundle\Resource\FieldTransformerInterface;
 
 class TransformerRegistry implements TransformerRegistryInterface
 {
     /**
      * @var array
      */
-    protected $documentTransformer;
+    protected $resourceScaffolder;
 
     /**
      * @var array
      */
-    protected $fieldTransformer;
+    protected $resourceFieldTransformer;
 
     /**
      * @param        $service
      * @param string $identifier
+     * @param string $dataProvider
      */
-    public function registerDocumentTransformer($service, string $identifier)
+    public function registerResourceScaffolder($service, string $identifier, string $dataProvider)
     {
-        if (!in_array(DocumentTransformerInterface::class, class_implements($service), true)) {
+        if (!in_array(ResourceScaffolderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DocumentTransformerInterface::class, implode(', ', class_implements($service)))
+                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ResourceScaffolderInterface::class, implode(', ', class_implements($service)))
             );
         }
 
-        $this->documentTransformer[$identifier] = $service;
+        if (!isset($this->resourceScaffolder[$dataProvider])) {
+            $this->resourceScaffolder[$dataProvider] = [];
+        }
+
+        $this->resourceScaffolder[$dataProvider][$identifier] = $service;
     }
 
     /**
      * @param        $service
      * @param string $identifier
-     * @param string $dataTransformer
+     * @param string $resourceScaffolder
      */
-    public function registerFieldTransformer($service, string $identifier, string $dataTransformer)
+    public function registerResourceFieldTransformer($service, string $identifier, string $resourceScaffolder)
     {
         if (!in_array(FieldTransformerInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -45,34 +50,34 @@ class TransformerRegistry implements TransformerRegistryInterface
             );
         }
 
-        if (!isset($this->fieldTransformer[$dataTransformer])) {
-            $this->fieldTransformer[$dataTransformer] = [];
+        if (!isset($this->resourceFieldTransformer[$resourceScaffolder])) {
+            $this->resourceFieldTransformer[$resourceScaffolder] = [];
         }
 
-        $this->fieldTransformer[$dataTransformer][$identifier] = $service;
+        $this->resourceFieldTransformer[$resourceScaffolder][$identifier] = $service;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasFieldTransformer(string $dispatchTransformerName, string $identifier)
+    public function hasResourceFieldTransformer(string $resourceScaffolderName, string $identifier)
     {
-        return isset($this->fieldTransformer[$dispatchTransformerName]) && isset($this->fieldTransformer[$dispatchTransformerName][$identifier]);
+        return isset($this->resourceFieldTransformer[$resourceScaffolderName]) && isset($this->resourceFieldTransformer[$resourceScaffolderName][$identifier]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFieldTransformer(string $dispatchTransformerName, string $identifier)
+    public function getResourceFieldTransformer(string $resourceScaffolderName, string $identifier)
     {
-        return $this->fieldTransformer[$dispatchTransformerName][$identifier];
+        return $this->resourceFieldTransformer[$resourceScaffolderName][$identifier];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAllDocumentTransformers()
+    public function getAllResourceScaffolderForDataProvider(string $dataProviderName)
     {
-        return $this->documentTransformer;
+        return isset($this->resourceScaffolder[$dataProviderName]) ? $this->resourceScaffolder[$dataProviderName] : [];
     }
 }

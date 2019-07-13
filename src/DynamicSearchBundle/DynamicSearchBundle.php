@@ -8,7 +8,7 @@ use DynamicSearchBundle\DependencyInjection\Compiler\IndexFieldPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\OutputChannelPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\ResourceNormalizerPass;
-use DynamicSearchBundle\DependencyInjection\Compiler\TransformerPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\ResourceTransformerPass;
 use DynamicSearchBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
@@ -31,7 +31,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new IndexProviderPass());
         $container->addCompilerPass(new DocumentDefinitionBuilderPass());
         $container->addCompilerPass(new ResourceNormalizerPass());
-        $container->addCompilerPass(new TransformerPass());
+        $container->addCompilerPass(new ResourceTransformerPass());
         $container->addCompilerPass(new IndexFieldPass());
         $container->addCompilerPass(new OutputChannelPass());
     }

@@ -3,8 +3,8 @@
 namespace DynamicSearchBundle\Document;
 
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
-use DynamicSearchBundle\Transformer\Container\IndexFieldContainerInterface;
-use DynamicSearchBundle\Transformer\Container\OptionFieldContainerInterface;
+use DynamicSearchBundle\Resource\Container\IndexFieldContainerInterface;
+use DynamicSearchBundle\Resource\Container\OptionFieldContainerInterface;
 
 class IndexDocument
 {
@@ -19,11 +19,6 @@ class IndexDocument
     protected $documentConfiguration;
 
     /**
-     * @var string
-     */
-    protected $dispatchTransformerName;
-
-    /**
      * @var array
      */
     protected $optionFields;
@@ -36,13 +31,11 @@ class IndexDocument
     /**
      * @param ResourceMetaInterface $resourceMeta
      * @param array                 $documentConfiguration
-     * @param string                $dispatchTransformerName
      */
-    public function __construct(ResourceMetaInterface $resourceMeta, array $documentConfiguration, string $dispatchTransformerName)
+    public function __construct(ResourceMetaInterface $resourceMeta, array $documentConfiguration = [])
     {
         $this->resourceMeta = $resourceMeta;
         $this->documentConfiguration = $documentConfiguration;
-        $this->dispatchTransformerName = $dispatchTransformerName;
     }
 
     /**
@@ -67,14 +60,6 @@ class IndexDocument
     public function getDocumentConfiguration()
     {
         return $this->documentConfiguration;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDispatchedTransformerName()
-    {
-        return $this->dispatchTransformerName;
     }
 
     /**

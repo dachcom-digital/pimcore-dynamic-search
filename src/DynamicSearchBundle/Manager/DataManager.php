@@ -6,16 +6,10 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Exception\ProviderException;
-use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\DataProviderRegistryInterface;
 
 class DataManager implements DataManagerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
     /**
      * @var ConfigurationInterface
      */
@@ -32,16 +26,13 @@ class DataManager implements DataManagerInterface
     protected $validProviders;
 
     /**
-     * @param LoggerInterface               $logger
      * @param ConfigurationInterface        $configuration
      * @param DataProviderRegistryInterface $dataProviderRegistry
      */
     public function __construct(
-        LoggerInterface $logger,
         ConfigurationInterface $configuration,
         DataProviderRegistryInterface $dataProviderRegistry
     ) {
-        $this->logger = $logger;
         $this->configuration = $configuration;
         $this->dataProviderRegistry = $dataProviderRegistry;
     }
@@ -49,7 +40,7 @@ class DataManager implements DataManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function getDataProvider(ContextDataInterface $contextData)
+    public function getDataProvider(ContextDataInterface $contextData, string $providerBehaviour, array $predefinedOptions = [])
     {
         $dataProviderName = $contextData->getDataProviderName();
         $cacheKey = sprintf('%s_%s', $contextData->getName(), $dataProviderName);
@@ -65,12 +56,11 @@ class DataManager implements DataManagerInterface
         $dataProvider = $this->dataProviderRegistry->get($dataProviderName);
 
         try {
-            $dataProviderOptions = $contextData->getDataProviderOptions($dataProvider);
+            $dataProviderOptions = $contextData->getDataProviderOptions($dataProvider, $providerBehaviour, $predefinedOptions);
         } catch (ContextConfigurationException $e) {
             throw new ProviderException($e->getMessage(), $contextData->getDataProviderName(), $e);
         }
 
-        $dataProvider->setLogger($this->logger);
         $dataProvider->setOptions($dataProviderOptions);
 
         $this->validProviders[$cacheKey] = $dataProvider;

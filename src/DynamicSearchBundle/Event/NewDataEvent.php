@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\Event;
 
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class NewDataEvent extends Event
@@ -17,35 +18,34 @@ class NewDataEvent extends Event
     protected $contextName;
 
     /**
-     * @var array
-     */
-    protected $runtimeValues;
-
-    /**
      * @var mixed
      */
     protected $data;
 
     /**
-     * @param string $contextDispatchType
-     * @param string $contextName
-     * @param mixed  $data
-     * @param array  $runtimeValues
+     * @var string
      */
-    public function __construct(string $contextDispatchType, string $contextName, $data, array $runtimeValues = [])
+    protected $providerBehaviour;
+
+    /**
+     * @var ResourceMetaInterface
+     */
+    protected $resourceMeta;
+
+    /**
+     * @param string                     $contextDispatchType
+     * @param string                     $contextName
+     * @param mixed                      $data
+     * @param string                     $providerBehaviour
+     * @param ResourceMetaInterface|null $resourceMeta
+     */
+    public function __construct(string $contextDispatchType, string $contextName, $data, string $providerBehaviour, ?ResourceMetaInterface $resourceMeta)
     {
         $this->contextDispatchType = $contextDispatchType;
         $this->contextName = $contextName;
-        $this->runtimeValues = $runtimeValues;
         $this->data = $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getContextName()
-    {
-        return $this->contextName;
+        $this->providerBehaviour = $providerBehaviour;
+        $this->resourceMeta = $resourceMeta;
     }
 
     /**
@@ -57,11 +57,11 @@ class NewDataEvent extends Event
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getRuntimeValues()
+    public function getContextName()
     {
-        return $this->runtimeValues;
+        return $this->contextName;
     }
 
     /**
@@ -71,4 +71,21 @@ class NewDataEvent extends Event
     {
         return $this->data;
     }
+
+    /**
+     * @return string
+     */
+    public function getProviderBehaviour()
+    {
+        return $this->providerBehaviour;
+    }
+
+    /**
+     * @return ResourceMetaInterface|null
+     */
+    public function getResourceMeta()
+    {
+        return $this->resourceMeta;
+    }
+
 }

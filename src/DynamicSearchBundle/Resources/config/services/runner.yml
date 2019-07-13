@@ -1,0 +1,13 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Runner\ContextRunner: ~
+
+    DynamicSearchBundle\Runner\ResourceRunner: ~
+
+    DynamicSearchBundle\Runner\SimpleRunner: ~
+

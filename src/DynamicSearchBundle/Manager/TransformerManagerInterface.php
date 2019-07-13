@@ -3,9 +3,8 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
-use DynamicSearchBundle\Transformer\DocumentTransformerInterface;
-use DynamicSearchBundle\Transformer\FieldTransformerInterface;
+use DynamicSearchBundle\Resource\FieldTransformerInterface;
+use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 
 interface TransformerManagerInterface
 {
@@ -13,9 +12,9 @@ interface TransformerManagerInterface
      * @param ContextDataInterface $contextData
      * @param mixed                $resource
      *
-     * @returns null|DocumentTransformerInterface
+     * @returns null|ResourceScaffolderContainerInterface
      */
-    public function getDocumentTransformer(ContextDataInterface $contextData, $resource);
+    public function getResourceScaffolder(ContextDataInterface $contextData, $resource);
 
     /**
      * @param string $dispatchTransformerName
@@ -24,5 +23,5 @@ interface TransformerManagerInterface
      *
      * @return null|FieldTransformerInterface
      */
-    public function getFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = []);
+    public function getResourceFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = []);
 }

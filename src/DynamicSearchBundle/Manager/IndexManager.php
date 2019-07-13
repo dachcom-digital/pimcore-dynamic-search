@@ -6,17 +6,11 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Exception\ProviderException;
-use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\IndexFieldRegistryInterface;
 use DynamicSearchBundle\Registry\IndexProviderRegistryInterface;
 
 class IndexManager implements IndexManagerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
     /**
      * @var ConfigurationInterface
      */
@@ -38,18 +32,15 @@ class IndexManager implements IndexManagerInterface
     protected $validProviders;
 
     /**
-     * @param LoggerInterface                $logger
      * @param ConfigurationInterface         $configuration
      * @param IndexProviderRegistryInterface $indexProviderRegistry
      * @param IndexFieldRegistryInterface    $indexFieldRegistry
      */
     public function __construct(
-        LoggerInterface $logger,
         ConfigurationInterface $configuration,
         IndexProviderRegistryInterface $indexProviderRegistry,
         IndexFieldRegistryInterface $indexFieldRegistry
     ) {
-        $this->logger = $logger;
         $this->configuration = $configuration;
         $this->indexProviderRegistry = $indexProviderRegistry;
         $this->indexFieldRegistry = $indexFieldRegistry;
@@ -79,7 +70,6 @@ class IndexManager implements IndexManagerInterface
             throw new ProviderException($e->getMessage(), $contextData->getIndexProviderName(), $e);
         }
 
-        $indexProvider->setLogger($this->logger);
         $indexProvider->setOptions($indexProviderOptions);
 
         $this->validProviders[$cacheKey] = $indexProvider;

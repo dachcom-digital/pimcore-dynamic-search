@@ -2,6 +2,8 @@
 
 namespace DynamicSearchBundle\Queue\Data;
 
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
+
 class Envelope
 {
     /**
@@ -17,12 +19,12 @@ class Envelope
     /**
      * @var string
      */
-    protected $dispatcher;
+    protected $dispatchType;
 
     /**
-     * @var string
+     * @var ResourceMetaInterface[]
      */
-    protected $resourceType;
+    protected $resourceMetaStack;
 
     /**
      * @var int
@@ -37,18 +39,16 @@ class Envelope
     /**
      * @param string $id
      * @param string $contextName
-     * @param string $dispatcher
-     * @param string $resourceType
-     * @param int    $resourceId
+     * @param string $dispatchType
+     * @param array  $resourceMetaStack
      * @param array  $options
      */
-    public function __construct(string $id, string $contextName, string $dispatcher, string $resourceType, int $resourceId, array $options)
+    public function __construct(string $id, string $contextName, string $dispatchType, array $resourceMetaStack, array $options)
     {
         $this->id = $id;
         $this->contextName = $contextName;
-        $this->dispatcher = $dispatcher;
-        $this->resourceType = $resourceType;
-        $this->resourceId = $resourceId;
+        $this->dispatchType = $dispatchType;
+        $this->resourceMetaStack = $resourceMetaStack;
         $this->options = $options;
     }
 
@@ -71,17 +71,17 @@ class Envelope
     /**
      * @return string
      */
-    public function getDispatcher()
+    public function getDispatchType()
     {
-        return $this->dispatcher;
+        return $this->dispatchType;
     }
 
     /**
-     * @return string
+     * @return array|ResourceMetaInterface[]
      */
-    public function getResourceType()
+    public function getResourceMetaStack()
     {
-        return $this->resourceType;
+        return $this->resourceMetaStack;
     }
 
     /**

@@ -97,4 +97,12 @@ class ResourceMeta implements ResourceMetaInterface
     {
         return $this->resourceOptions[$option];
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResourceOptions()
+    {
+        return $this->resourceOptions;
+    }
 }

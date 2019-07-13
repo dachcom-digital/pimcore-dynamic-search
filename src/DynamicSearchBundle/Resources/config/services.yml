@@ -8,14 +8,6 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\Processor\ContextProcessor: ~
-
-    DynamicSearchBundle\Processor\SubProcessor\OutputChannelSubProcessor: ~
-
-    DynamicSearchBundle\Processor\SubProcessor\IndexModificationSubProcessor: ~
-
-    DynamicSearchBundle\Processor\SubProcessor\IndexDeletionSubProcessor: ~
-
     DynamicSearchBundle\Service\LockService: ~
 
     DynamicSearchBundle\Service\LongProcessService: ~

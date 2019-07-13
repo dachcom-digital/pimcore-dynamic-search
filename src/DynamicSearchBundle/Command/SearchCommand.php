@@ -4,7 +4,7 @@ namespace DynamicSearchBundle\Command;
 
 use DynamicSearchBundle\Command\Traits\SignalWatchTrait;
 
-use DynamicSearchBundle\Processor\ContextProcessorInterface;
+use DynamicSearchBundle\Runner\ContextRunnerInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,9 +16,9 @@ class SearchCommand extends Command
     use SignalWatchTrait;
 
     /**
-     * @var ContextProcessorInterface
+     * @var ContextRunnerInterface
      */
-    protected $workflowProcessor;
+    protected $contextRunner;
 
     /**
      * @var LockServiceInterface
@@ -26,16 +26,14 @@ class SearchCommand extends Command
     protected $lockService;
 
     /**
-     * @param ContextProcessorInterface $workflowProcessor
-     * @param LockServiceInterface      $lockService
+     * @param ContextRunnerInterface $contextRunner
+     * @param LockServiceInterface   $lockService
      */
-    public function __construct(
-        ContextProcessorInterface $workflowProcessor,
-        LockServiceInterface $lockService
-    ) {
+    public function __construct(ContextRunnerInterface $contextRunner, LockServiceInterface $lockService)
+    {
         parent::__construct();
 
-        $this->workflowProcessor = $workflowProcessor;
+        $this->contextRunner = $contextRunner;
         $this->lockService = $lockService;
     }
 
@@ -84,9 +82,9 @@ class SearchCommand extends Command
 
         try {
             if ($input->getOption('context') === null) {
-                $this->workflowProcessor->dispatchFullContextCreation();
+                $this->contextRunner->runFullContextCreation();
             } else {
-                $this->workflowProcessor->dispatchSingleContextCreation($input->getOption('context'));
+                $this->contextRunner->runSingleContextCreation($input->getOption('context'));
             }
         } catch (\Throwable $e) {
             $output->writeln(sprintf('<error>%s. (File: %s, Line: %s)</error>', $e->getMessage(), $e->getFile(), $e->getLine()));

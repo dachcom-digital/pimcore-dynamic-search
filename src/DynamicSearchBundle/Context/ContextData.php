@@ -2,7 +2,6 @@
 
 namespace DynamicSearchBundle\Context;
 
-use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
@@ -111,27 +110,34 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritDoc}
      */
-    public function getDataProviderOptions(DataProviderInterface $dataProvider)
+    public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour, array $predefinedOptions = [])
     {
-        if (isset($this->parsedContextOptions['data_provider_options'])) {
-            return $this->parsedContextOptions['data_provider_options'];
+        $cKey = sprintf('data_provider_options_%s', $providerBehaviour);
+
+        if (isset($this->parsedContextOptions[$cKey])) {
+            return $this->parsedContextOptions[$cKey];
         }
 
         $optionsResolver = new OptionsResolver();
-        $dataProvider->configureOptions($optionsResolver);
+        $dataProvider->configureOptions($optionsResolver, $providerBehaviour);
 
-        $rawOptions = $this->rawContextOptions['data_provider']['options'];
+        $rawAlwaysOptions = $this->rawContextOptions['data_provider']['options']['always'];
+
+        $rawOptions = $this->rawContextOptions['data_provider']['options'][$providerBehaviour];
         if (!is_array($rawOptions)) {
             $rawOptions = [];
         }
 
+        $rawOptions = array_merge($rawAlwaysOptions, $rawOptions);
+        $rawOptions = array_merge($predefinedOptions, $rawOptions);
+
         try {
-            $this->parsedContextOptions['data_provider_options'] = $optionsResolver->resolve($rawOptions);
+            $this->parsedContextOptions[$cKey] = $optionsResolver->resolve($rawOptions);
         } catch (\Throwable $e) {
             throw new ContextConfigurationException('data_provider_options', $e->getMessage());
         }
 
-        return $this->parsedContextOptions['data_provider_options'];
+        return $this->parsedContextOptions[$cKey];
     }
 
     /**

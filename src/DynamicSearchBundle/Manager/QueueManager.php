@@ -4,15 +4,11 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
-use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
+use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
+use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Queue\Data\Envelope;
-use DynamicSearchBundle\Transformer\Container\ResourceContainer;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
 
 class QueueManager implements QueueManagerInterface
@@ -33,39 +29,38 @@ class QueueManager implements QueueManagerInterface
     protected $normalizerManager;
 
     /**
-     * @param LoggerInterface            $logger
-     * @param ConfigurationInterface     $configuration
-     * @param NormalizerManagerInterface $normalizerManager
+     * @var ResourceHarmonizerInterface
+     */
+    protected $resourceHarmonizer;
+
+    /**
+     * @param LoggerInterface             $logger
+     * @param ConfigurationInterface      $configuration
+     * @param NormalizerManagerInterface  $normalizerManager
+     * @param ResourceHarmonizerInterface $resourceHarmonizer
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
-        NormalizerManagerInterface $normalizerManager
+        NormalizerManagerInterface $normalizerManager,
+        ResourceHarmonizerInterface $resourceHarmonizer
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->normalizerManager = $normalizerManager;
+        $this->resourceHarmonizer = $resourceHarmonizer;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function addToQueue(string $contextName, string $dispatcher, string $resourceType, int $resourceId, array $options)
+    public function addToQueue(string $contextName, string $dispatchType, $resource, array $options)
     {
         $envelope = null;
 
-        if (!in_array($dispatcher, ContextDataInterface::ALLOWED_QUEUE_DISPATCH_TYPES)) {
+        if (!in_array($dispatchType, ContextDataInterface::ALLOWED_QUEUE_DISPATCH_TYPES)) {
             $this->logger->error(
-                sprintf('Wrong dispatch type "%s" for queue. Allowed types are: %s', $dispatcher, join(', ', ContextDataInterface::ALLOWED_QUEUE_DISPATCH_TYPES)),
-                'queue',
-                $contextName
-            );
-            return;
-        }
-
-        if (!in_array($resourceType, self::ALLOWED_QUEUE_TYPES)) {
-            $this->logger->error(
-                sprintf('Wrong queue type "%s" for queue. Allowed queue types are: %s', $dispatcher, join(', ', self::ALLOWED_QUEUE_TYPES)),
+                sprintf('Wrong dispatch type "%s" for queue. Allowed types are: %s', $dispatchType, join(', ', ContextDataInterface::ALLOWED_QUEUE_DISPATCH_TYPES)),
                 'queue',
                 $contextName
             );
@@ -73,7 +68,7 @@ class QueueManager implements QueueManagerInterface
         }
 
         try {
-            $envelope = $this->generateJob($contextName, $dispatcher, $resourceType, $resourceId, $options);
+            $envelope = $this->generateJob($contextName, $dispatchType, $resource, $options);
         } catch (\Exception $e) {
             $this->logger->error(
                 sprintf('Error while adding data to queue. Message was: %s', $e->getMessage()),
@@ -156,14 +151,19 @@ class QueueManager implements QueueManagerInterface
         $jobs = $this->getActiveJobs();
 
         $existingKeys = [];
-        $filteredEnvelopes = [];
+        $filteredResourceStack = [];
 
         /*
+         *
+         * A resource can be added multiple times (saving an pimcore document 3 or more times in short intervals for example).
+         * Only the latest resource of its kind should be used in index processing to improve performance.
+         *
          * Filter Jobs:
+         *
          * -> first sort jobs by date (ASC) to receive latest entries first!
-         * -> create sub array for each context and dispatch type: stack[ context ][ dispatch type ][]
-         * -> only add resource once per "context - resourceType - resourceId"
-         * -> only return envelope
+         * -> create sub array for each context and dispatch type: stack[ context ][ dispatch_type ][]
+         * -> only add resource once per "context_name - document_id"
+         * -> only return [ resource_meta, corresponding envelope ]
          */
 
         usort($jobs, function ($a, $b) {
@@ -184,27 +184,38 @@ class QueueManager implements QueueManagerInterface
             /** @var Envelope $envelope */
             $envelope = $job->getData();
             $contextName = $envelope->getContextName();
-            $dispatcher = $envelope->getDispatcher();
+            $dispatchType = $envelope->getDispatchType();
+            $resourceMetaStack = $envelope->getResourceMetaStack();
 
-            $key = sprintf('%s_%s_%s', $contextName, $envelope->getResourceType(), $envelope->getResourceId());
-
-            if (in_array($key, $existingKeys, true)) {
-                $this->deleteJob($envelope);
-                continue;
+            if (!isset($filteredResourceStack[$contextName])) {
+                $filteredResourceStack[$contextName] = [];
+            }
+            if (!isset($filteredResourceStack[$contextName])) {
+                $filteredResourceStack[$contextName][$dispatchType] = [];
             }
 
-            if (!isset($filteredEnvelopes[$contextName])) {
-                $filteredEnvelopes[$contextName] = [];
-            }
-            if (!isset($filteredEnvelopes[$contextName])) {
-                $filteredEnvelopes[$contextName][$dispatcher] = [];
+            foreach ($resourceMetaStack as $resourceMeta) {
+
+                $key = sprintf('%s_%s', $contextName, $resourceMeta->getDocumentId());
+
+                if (in_array($key, $existingKeys, true)) {
+                    continue;
+                }
+
+                $filteredResourceStack[$contextName][$dispatchType][] = [
+                    'resourceMeta' => $resourceMeta,
+                    'envelope'     => $envelope
+                ];
+
+                $existingKeys[] = $key;
+
             }
 
-            $filteredEnvelopes[$contextName][$dispatcher][] = $envelope;
-            $existingKeys[] = $key;
+            $this->deleteJob($envelope);
+
         }
 
-        return $filteredEnvelopes;
+        return $filteredResourceStack;
     }
 
     /**
@@ -220,54 +231,53 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function getResource(string $resourceType, int $resourceId)
-    {
-        $object = null;
-        switch ($resourceType) {
-            case 'asset':
-                $object = Asset::getById($resourceId);
-                break;
-            case 'document':
-                $object = Document::getById($resourceId);
-                break;
-            case 'object':
-                $object = DataObject::getById($resourceId);
-                break;
-        }
-
-        return $object;
-    }
-
-    /**
      * @param string $contextName
-     * @param string $dispatcher
-     * @param string $resourceType
-     * @param int    $resourceId
+     * @param string $dispatchType
+     * @param mixed  $resource
      * @param array  $options
      *
      * @return Envelope
      */
-    protected function generateJob(string $contextName, string $dispatcher, string $resourceType, int $resourceId, array $options)
+    protected function generateJob(string $contextName, string $dispatchType, $resource, array $options)
     {
         $jobId = $this->getJobId();
 
-        if ($dispatcher === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
-            $removableDocuments = $this->assertRemovableDocuments($contextName, $resourceType, $resourceId);
-            if (count($removableDocuments) === 0) {
-                $this->logger->error(
-                    sprintf('unable to assert resource ids for pimcore element "%s-%s" no queue job will be generated.',
-                        $resourceType, $resourceId),
-                    'queue', $contextName
-                );
-                return null;
-            } else {
-                $options['removable_documents'] = $removableDocuments;
-            }
+        $normalizedResourceStack = $this->generateResourceMeta($contextName, $dispatchType, $resource);
+
+        if ($resource instanceof ElementInterface) {
+            $resourceType = sprintf('%s-%s', $resource->getType(), $resource->getId());
+        } elseif (is_object($resource)) {
+            $resourceType = get_class($resource);
+        } else {
+            $resourceType = gettype($resource);
         }
 
-        $envelope = new Envelope($jobId, $contextName, $dispatcher, $resourceType, $resourceId, $options);
+        if (count($normalizedResourceStack) === 0) {
+            $this->logger->error(
+                sprintf('unable to assert stack for resource "%s" no queue job will be generated.', $resourceType),
+                'queue', $contextName
+            );
+            return null;
+        }
+
+        $metaResources = [];
+        foreach ($normalizedResourceStack as $normalizedDataResource) {
+
+            $resourceMeta = $normalizedDataResource->getResourceMeta();
+
+            if (empty($resourceMeta->getDocumentId())) {
+                $this->logger->error(
+                    sprintf('No valid document id for resource "%s" given. Skipping...', $resourceType),
+                    'queue', $contextName
+                );
+
+                continue;
+            }
+
+            $metaResources[] = $resourceMeta;
+        }
+
+        $envelope = new Envelope($jobId, $contextName, $dispatchType, $metaResources, $options);
 
         TmpStore::add($jobId, $envelope, self::QUEUE_IDENTIFIER);
 
@@ -276,66 +286,23 @@ class QueueManager implements QueueManagerInterface
 
     /**
      * @param string $contextName
-     * @param string $resourceType
-     * @param int    $resourceId
+     * @param string $dispatchType
+     * @param mixed  $resource
      *
-     * @return array
+     * @return array|NormalizedDataResourceInterface[]
      */
-    protected function assertRemovableDocuments(string $contextName, string $resourceType, int $resourceId)
+    protected function generateResourceMeta(string $contextName, string $dispatchType, $resource)
     {
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE, $contextName);
+        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
 
-        try {
-            $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextDefinition);
-        } catch (NormalizerException $e) {
-            $this->logger->debug(
-                sprintf(
-                    'Unable to load resource normalizer "%s". Error was: %s. Skipping...',
-                    $contextDefinition->getResourceNormalizerName(), $e->getMessage()
-                ), 'queue', $contextName
-            );
+        $normalizedResourceStack = $this->resourceHarmonizer->harmonizeUntilNormalizedResourceStack($contextDefinition, $resource);
 
+        if ($normalizedResourceStack === null) {
+            // nothing to log: done by harmonizer.
             return [];
         }
 
-        if (!$resourceNormalizer instanceof ResourceNormalizerInterface) {
-            $this->logger->error(sprintf('Could not load resource normalizer to determinate deletion ids'), 'queue', $contextName);
-        }
-
-        $resource = $this->getResource($resourceType, $resourceId);
-        $transformedResourceContainer = new ResourceContainer($resource);
-
-        try {
-            $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextDefinition, $transformedResourceContainer);
-        } catch (NormalizerException $e) {
-            $this->logger->error(
-                sprintf(
-                    'Error while generating normalized resource stack with identifier "%s". Error was: %s. Skipping...',
-                    $contextDefinition->getResourceNormalizerName(),
-                    $e->getMessage()
-                ),
-                'queue', $contextName
-            );
-
-            return [];
-        }
-
-        $resourceMeta = [];
-        foreach ($normalizedResourceStack as $normalizedResource) {
-            $resourceMeta[] = $normalizedResource->getResourceMeta();
-        }
-
-        if (count($resourceMeta) > 0) {
-            $this->logger->debug(
-                sprintf('preparing pimcore element pimcore element "%s-%s" with resource ids "%s" for deletion',
-                    $resourceType, $resourceId, join(', ', array_map(function (ResourceMetaInterface $el) {
-                        return $el->getDocumentId();
-                    }, $resourceMeta))),
-                'queue', $contextName
-            );
-        }
-
-        return $resourceMeta;
+        return $normalizedResourceStack;
     }
 
     /**
