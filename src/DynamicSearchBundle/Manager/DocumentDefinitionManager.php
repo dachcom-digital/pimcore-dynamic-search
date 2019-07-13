@@ -46,7 +46,7 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
         $documentDefinition = new DocumentDefinition($contextData->getResourceNormalizerName());
 
         foreach ($documentDefinitionBuilderStack as $documentDefinitionBuilder) {
-            $documentDefinitionBuilder->buildDefinition($documentDefinition);
+            $documentDefinitionBuilder->buildDefinition($documentDefinition, $resourceMeta->getNormalizerOptions());
         }
 
         return $documentDefinition;

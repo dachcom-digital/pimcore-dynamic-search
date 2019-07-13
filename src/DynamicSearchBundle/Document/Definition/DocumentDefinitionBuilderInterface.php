@@ -16,9 +16,10 @@ interface DocumentDefinitionBuilderInterface
 
     /**
      * @param DocumentDefinitionInterface $definition
+     * @param array                       $normalizerOptions
      *
      * @return DocumentDefinitionInterface
      */
-    public function buildDefinition(DocumentDefinitionInterface $definition);
+    public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions);
 
 }

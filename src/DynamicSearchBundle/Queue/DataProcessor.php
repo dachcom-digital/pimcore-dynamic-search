@@ -2,7 +2,6 @@
 
 namespace DynamicSearchBundle\Queue;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
@@ -17,11 +16,6 @@ class DataProcessor implements DataProcessorInterface
      * @var LoggerInterface
      */
     protected $logger;
-
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
 
     /**
      * @var QueueManagerInterface
@@ -40,20 +34,17 @@ class DataProcessor implements DataProcessorInterface
 
     /**
      * @param LoggerInterface         $logger
-     * @param ConfigurationInterface  $configuration
      * @param QueueManagerInterface   $queueManager
      * @param LockServiceInterface    $lockService
      * @param ResourceRunnerInterface $resourceRunner
      */
     public function __construct(
         LoggerInterface $logger,
-        ConfigurationInterface $configuration,
         QueueManagerInterface $queueManager,
         LockServiceInterface $lockService,
         ResourceRunnerInterface $resourceRunner
     ) {
         $this->logger = $logger;
-        $this->configuration = $configuration;
         $this->queueManager = $queueManager;
         $this->lockService = $lockService;
         $this->resourceRunner = $resourceRunner;
@@ -108,10 +99,8 @@ class DataProcessor implements DataProcessorInterface
                     continue;
                 }
 
-                $contextData = $this->configuration->getContextDefinition($dispatchType, $contextName);
-
                 try {
-                    $this->dispatchResourceRunner($contextData, $dispatchType, $dispatchEnvelopes);
+                    $this->dispatchResourceRunner($contextName, $dispatchType, $dispatchEnvelopes);
                 } catch (\Throwable $e) {
                     $this->logger->error(
                         sprintf('Error dispatch resource runner (%s). Message was: %s', $dispatchType, $e->getMessage()),
@@ -123,11 +112,11 @@ class DataProcessor implements DataProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param string               $dispatchType
-     * @param array                $dispatchEnvelopes
+     * @param string $contextName
+     * @param string $dispatchType
+     * @param array  $dispatchEnvelopes
      */
-    protected function dispatchResourceRunner(ContextDataInterface $contextData, string $dispatchType, array $dispatchEnvelopes)
+    protected function dispatchResourceRunner(string $contextName, string $dispatchType, array $dispatchEnvelopes)
     {
         foreach ($dispatchEnvelopes as $envelopeData) {
 
@@ -141,11 +130,11 @@ class DataProcessor implements DataProcessorInterface
             // @todo: implement stack dispatcher in resource runner!
 
             if ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT) {
-                $this->resourceRunner->runInsert($contextData, $resourceMeta);
+                $this->resourceRunner->runInsert($contextName, $resourceMeta);
             } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
-                $this->resourceRunner->runUpdate($contextData, $resourceMeta);
+                $this->resourceRunner->runUpdate($contextName, $resourceMeta);
             } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
-                $this->resourceRunner->runDelete($contextData, $resourceMeta);
+                $this->resourceRunner->runDelete($contextName, $resourceMeta);
             }
 
         }

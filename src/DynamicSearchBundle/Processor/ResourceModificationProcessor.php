@@ -269,7 +269,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
 
         if (count($indexDocument->getIndexFields()) === 0) {
             $this->logger->error(
-                sprintf('Index Document does not have any index fields. Skip Indexing...'),
+                sprintf('Index Document "%s" does not have any index fields. Skip Indexing...', $indexDocument->getDocumentId()),
                 $contextData->getIndexProviderName(), $contextData->getName()
             );
 
