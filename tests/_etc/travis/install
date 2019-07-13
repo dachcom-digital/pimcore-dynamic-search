@@ -44,12 +44,6 @@ cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc/bundle_configurat
 cp -r $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_etc $DACHCOM_BUNDLE_HOME/_etc
 chmod -R +x $DACHCOM_BUNDLE_HOME/_etc
 
-
-## create download dir
-
-mkdir $DACHCOM_BUNDLE_HOME/lib/$DACHCOM_BUNDLE_NAME/tests/_data/downloads
-
-
 ## add config templates
 
 mkdir -p $DACHCOM_BUNDLE_HOME/var/config
@@ -60,14 +54,6 @@ for K in "${!DACHCOM_INSTALL_CONFIG_FILES[@]}"
 do
     cp $K ${DACHCOM_INSTALL_CONFIG_FILES[$K]};
 done
-
-
-## load GeoLite2
-
-wget http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
-gzip -d GeoLite2-City.mmdb.gz
-mv -nv GeoLite2-City.mmdb var/config/
-
 
 ##  install composer dependencies
 

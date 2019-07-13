@@ -2,7 +2,8 @@ sudo: true
 language: php
 addons:
     mariadb: '10.2'
-
+services:
+    - mysql
 env:
     global:
         - PIMCORE_ENVIRONMENT=test
