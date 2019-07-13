@@ -52,7 +52,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addToQueue(string $contextName, string $dispatchType, $resource, array $options)
     {
@@ -64,6 +64,7 @@ class QueueManager implements QueueManagerInterface
                 'queue',
                 $contextName
             );
+
             return;
         }
 
@@ -89,7 +90,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function clearQueue()
     {
@@ -105,7 +106,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasActiveJobs()
     {
@@ -119,7 +120,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getActiveJobs()
     {
@@ -131,7 +132,6 @@ class QueueManager implements QueueManagerInterface
 
         $jobs = [];
         foreach ($activeJobs as $processId) {
-
             $process = $this->getJob($processId);
             if (!$process instanceof TmpStore) {
                 continue;
@@ -144,7 +144,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getActiveEnvelopes()
     {
@@ -168,8 +168,8 @@ class QueueManager implements QueueManagerInterface
 
         usort($jobs, function ($a, $b) {
             /**
-             * @var $a TmpStore
-             * @var $b TmpStore
+             * @var TmpStore
+             * @var $b       TmpStore
              */
             if ($a->getDate() === $b->getDate()) {
                 return 0;
@@ -180,7 +180,6 @@ class QueueManager implements QueueManagerInterface
 
         /** @var TmpStore $job */
         foreach ($jobs as $job) {
-
             /** @var Envelope $envelope */
             $envelope = $job->getData();
             $contextName = $envelope->getContextName();
@@ -195,7 +194,6 @@ class QueueManager implements QueueManagerInterface
             }
 
             foreach ($resourceMetaStack as $resourceMeta) {
-
                 $key = sprintf('%s_%s', $contextName, $resourceMeta->getDocumentId());
 
                 if (in_array($key, $existingKeys, true)) {
@@ -208,18 +206,16 @@ class QueueManager implements QueueManagerInterface
                 ];
 
                 $existingKeys[] = $key;
-
             }
 
             $this->deleteJob($envelope);
-
         }
 
         return $filteredResourceStack;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function deleteJob(Envelope $envelope)
     {
@@ -255,20 +251,22 @@ class QueueManager implements QueueManagerInterface
         if (count($normalizedResourceStack) === 0) {
             $this->logger->error(
                 sprintf('unable to assert stack for resource "%s" no queue job will be generated.', $resourceType),
-                'queue', $contextName
+                'queue',
+                $contextName
             );
+
             return null;
         }
 
         $metaResources = [];
         foreach ($normalizedResourceStack as $normalizedDataResource) {
-
             $resourceMeta = $normalizedDataResource->getResourceMeta();
 
             if (empty($resourceMeta->getDocumentId())) {
                 $this->logger->error(
                     sprintf('No valid document id for resource "%s" given. Skipping...', $resourceType),
-                    'queue', $contextName
+                    'queue',
+                    $contextName
                 );
 
                 continue;
@@ -313,6 +311,7 @@ class QueueManager implements QueueManagerInterface
     protected function getJob($processId)
     {
         $job = null;
+
         try {
             $job = TmpStore::get($processId);
         } catch (\Exception $e) {
@@ -329,5 +328,4 @@ class QueueManager implements QueueManagerInterface
     {
         return uniqid('dynamic-search-envelope-');
     }
-
 }

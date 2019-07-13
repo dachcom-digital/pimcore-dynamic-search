@@ -33,7 +33,7 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function generateDocumentDefinition(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta)
     {

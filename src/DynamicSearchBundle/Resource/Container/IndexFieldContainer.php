@@ -36,7 +36,7 @@ class IndexFieldContainer implements IndexFieldContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -44,7 +44,7 @@ class IndexFieldContainer implements IndexFieldContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -52,7 +52,7 @@ class IndexFieldContainer implements IndexFieldContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexType()
     {

@@ -18,8 +18,12 @@ class DocumentDefinitionBuilderRegistry implements DocumentDefinitionBuilderRegi
     {
         if (!in_array(DocumentDefinitionBuilderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DocumentDefinitionBuilderInterface::class,
-                    implode(', ', class_implements($service)))
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    DocumentDefinitionBuilderInterface::class,
+                    implode(', ', class_implements($service))
+                )
             );
         }
 

@@ -27,5 +27,4 @@ interface ResourceScaffolderInterface
      * @return array
      */
     public function setup(ContextDataInterface $contextData, $resource): array;
-
 }

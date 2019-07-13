@@ -18,7 +18,7 @@ final class SearchFormType extends AbstractType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'csrf_protection' => false,
+            'csrf_protection'   => false,
             'validation_groups' => false,
         ]);
     }

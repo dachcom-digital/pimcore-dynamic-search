@@ -24,13 +24,13 @@ class DefaultRuntimeOptionsProvider implements RuntimeOptionsProviderInterface
         $this->requestStack = $requestStack;
     }
 
-     public function setDefaultOptions(array $options = [])
-     {
-         $this->defaultOptions = $options;
-     }
+    public function setDefaultOptions(array $options = [])
+    {
+        $this->defaultOptions = $options;
+    }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getUserQuery()
     {
@@ -38,7 +38,7 @@ class DefaultRuntimeOptionsProvider implements RuntimeOptionsProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getQueryIdentifier()
     {
@@ -46,7 +46,7 @@ class DefaultRuntimeOptionsProvider implements RuntimeOptionsProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCurrentPage()
     {
@@ -54,7 +54,7 @@ class DefaultRuntimeOptionsProvider implements RuntimeOptionsProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMaxPerPage()
     {
@@ -62,7 +62,7 @@ class DefaultRuntimeOptionsProvider implements RuntimeOptionsProviderInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getAdditionalParameter()
     {

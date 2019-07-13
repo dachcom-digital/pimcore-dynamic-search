@@ -54,10 +54,11 @@ final class ResourceTransformerPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds('dynamic_search.resource.field_transformer', true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $transformerRegistryDefinition->addMethodCall('registerResourceFieldTransformer',
-                    [new Reference($id), $attributes['identifier'], $attributes['resource_scaffolder']]);
+                $transformerRegistryDefinition->addMethodCall(
+                    'registerResourceFieldTransformer',
+                    [new Reference($id), $attributes['identifier'], $attributes['resource_scaffolder']]
+                );
             }
         }
     }
-
 }

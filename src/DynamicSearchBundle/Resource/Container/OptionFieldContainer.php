@@ -34,7 +34,7 @@ class OptionFieldContainer implements OptionFieldContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -42,7 +42,7 @@ class OptionFieldContainer implements OptionFieldContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {

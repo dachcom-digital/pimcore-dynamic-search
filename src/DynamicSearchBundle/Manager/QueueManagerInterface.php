@@ -41,5 +41,4 @@ interface QueueManagerInterface
      * @param Envelope $envelope
      */
     public function deleteJob(Envelope $envelope);
-
 }

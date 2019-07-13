@@ -41,7 +41,7 @@ class OutputChannelManager implements OutputChannelManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannel(ContextDataInterface $contextData, string $outputChannel)
     {
@@ -63,11 +63,10 @@ class OutputChannelManager implements OutputChannelManagerInterface
         $outputChannel = $this->outputChannelRegistry->getOutputChannel($outputChannel, $outputChannelServiceName);
 
         return $outputChannel;
-
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelRuntimeOptionsProvider(string $provider)
     {
@@ -79,7 +78,7 @@ class OutputChannelManager implements OutputChannelManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action)
     {
@@ -91,7 +90,7 @@ class OutputChannelManager implements OutputChannelManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter)
     {

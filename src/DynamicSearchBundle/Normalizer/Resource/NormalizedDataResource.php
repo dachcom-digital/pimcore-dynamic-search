@@ -27,7 +27,7 @@ class NormalizedDataResource implements NormalizedDataResourceInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceContainer()
     {
@@ -35,7 +35,7 @@ class NormalizedDataResource implements NormalizedDataResourceInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceMeta()
     {

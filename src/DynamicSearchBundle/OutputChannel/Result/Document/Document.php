@@ -35,7 +35,7 @@ class Document implements DocumentInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getHit()
     {
@@ -43,7 +43,7 @@ class Document implements DocumentInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContextName()
     {
@@ -51,7 +51,7 @@ class Document implements DocumentInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelName()
     {

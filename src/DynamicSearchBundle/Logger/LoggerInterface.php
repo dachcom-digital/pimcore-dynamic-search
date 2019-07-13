@@ -12,7 +12,7 @@ interface LoggerInterface
      * ERROR (400)
      * CRITICAL (500)
      * ALERT (550)
-     * EMERGENCY (600)
+     * EMERGENCY (600).
      *
      * @param string $level
      * @param string $message

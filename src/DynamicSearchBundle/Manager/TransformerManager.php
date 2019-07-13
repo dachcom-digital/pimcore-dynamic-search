@@ -52,7 +52,7 @@ class TransformerManager implements TransformerManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceScaffolder(ContextDataInterface $contextData, $resource)
     {
@@ -67,6 +67,7 @@ class TransformerManager implements TransformerManagerInterface
 
         if (!$resourceScaffolderContainer instanceof ResourceScaffolderContainerInterface) {
             $this->logger->error('No DispatchTransformer found for new data', $dataProviderName, $contextData->getName());
+
             return null;
         }
 
@@ -74,7 +75,7 @@ class TransformerManager implements TransformerManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = [])
     {
@@ -91,6 +92,5 @@ class TransformerManager implements TransformerManagerInterface
         $fieldTransformer->setOptions($options);
 
         return $fieldTransformer;
-
     }
 }

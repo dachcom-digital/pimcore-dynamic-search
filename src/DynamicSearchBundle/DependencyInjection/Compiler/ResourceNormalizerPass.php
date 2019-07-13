@@ -27,6 +27,5 @@ final class ResourceNormalizerPass implements CompilerPassInterface
                 $definition->addMethodCall('registerDocumentNormalizer', [new Reference($id), $attributes['identifier'], $attributes['index_provider']]);
             }
         }
-
     }
 }

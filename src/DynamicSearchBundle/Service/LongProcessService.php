@@ -36,5 +36,4 @@ class LongProcessService implements LongProcessServiceInterface
     {
         $this->keepAlive->detach();
     }
-
 }

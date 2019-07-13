@@ -38,8 +38,12 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     {
         if (!in_array(OutputChannelInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), OutputChannelInterface::class,
-                    implode(', ', class_implements($service)))
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    OutputChannelInterface::class,
+                    implode(', ', class_implements($service))
+                )
             );
         }
 
@@ -58,8 +62,12 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     {
         if (!in_array(RuntimeOptionsProviderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), RuntimeOptionsProviderInterface::class,
-                    implode(', ', class_implements($service)))
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    RuntimeOptionsProviderInterface::class,
+                    implode(', ', class_implements($service))
+                )
             );
         }
 
@@ -76,8 +84,12 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     {
         if (!in_array(OutputChannelModifierActionInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), OutputChannelModifierActionInterface::class,
-                    implode(', ', class_implements($service)))
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    OutputChannelModifierActionInterface::class,
+                    implode(', ', class_implements($service))
+                )
             );
         }
 
@@ -106,8 +118,12 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     {
         if (!in_array(OutputChannelModifierFilterInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), OutputChannelModifierFilterInterface::class,
-                    implode(', ', class_implements($service)))
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    OutputChannelModifierFilterInterface::class,
+                    implode(', ', class_implements($service))
+                )
             );
         }
 

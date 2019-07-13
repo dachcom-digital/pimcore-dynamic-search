@@ -4,7 +4,6 @@ namespace DynamicSearchBundle\DependencyInjection\Compiler;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Registry\OutputChannelRegistry;
-use http\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -18,24 +17,26 @@ final class OutputChannelPass implements CompilerPassInterface
     {
         $definition = $container->getDefinition(OutputChannelRegistry::class);
 
-        ##
-        ## dynamic_search.output_channel
-        ##
+        //#
+        //# dynamic_search.output_channel
+        //#
 
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel', true) as $id => $tags) {
             foreach ($tags as $attributes) {
                 if (!in_array($attributes['type'], ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES)) {
-                    throw new \InvalidArgumentException(sprintf('"%s" is an invalid output channel type. Channel needs to be one of %s', $attributes['type'],
-                        implode(', ', ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES)));
-
+                    throw new \InvalidArgumentException(sprintf(
+                        '"%s" is an invalid output channel type. Channel needs to be one of %s',
+                        $attributes['type'],
+                        implode(', ', ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES)
+                    ));
                 }
                 $definition->addMethodCall('registerOutputChannel', [new Reference($id), $attributes['type'], $attributes['identifier']]);
             }
         }
 
-        ##
-        ## dynamic_search.output_channel.runtime_options_provider
-        ##
+        //#
+        //# dynamic_search.output_channel.runtime_options_provider
+        //#
 
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.runtime_options_provider', true) as $id => $tags) {
             foreach ($tags as $attributes) {
@@ -43,9 +44,9 @@ final class OutputChannelPass implements CompilerPassInterface
             }
         }
 
-        ##
-        ## dynamic_search.output_channel.modifier.action
-        ##
+        //#
+        //# dynamic_search.output_channel.modifier.action
+        //#
 
         $validModifierChannels = array_merge(['all'], ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES);
 
@@ -78,9 +79,9 @@ final class OutputChannelPass implements CompilerPassInterface
             }
         }
 
-        ##
-        ## dynamic_search.output_channel.modifier.filter
-        ##
+        //#
+        //# dynamic_search.output_channel.modifier.filter
+        //#
 
         $outputChannelModifierFilterServices = [];
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.modifier.filter', true) as $id => $tags) {
@@ -108,7 +109,6 @@ final class OutputChannelPass implements CompilerPassInterface
             $dispatchedFilter = [];
             $outputChannelModifierFilterServices = \call_user_func_array('array_merge', $outputChannelModifierFilterServices);
             foreach ($outputChannelModifierFilterServices as $serviceData) {
-
                 // highest priority filter wins.
                 $key = sprintf('%s_%s_%s', $serviceData[1], $serviceData[2], $serviceData[3]);
                 if (in_array($key, $dispatchedFilter)) {

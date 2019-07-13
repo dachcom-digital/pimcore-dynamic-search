@@ -13,6 +13,7 @@ interface OutputChannelProcessorInterface
      * @param array  $options
      *
      * @return OutputChannelResultInterface
+     *
      * @throws OutputChannelException
      */
     public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName, array $options = []): OutputChannelResultInterface;

@@ -69,7 +69,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName, $options = []): OutputChannelResultInterface
     {
@@ -81,20 +81,24 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         try {
             $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
         } catch (\Throwable $e) {
-            throw new OutputChannelException($outputChannelName,
+            throw new OutputChannelException(
+                $outputChannelName,
                 sprintf('could not load index manager "%s" for context "%s". Error was: %s', $contextDefinition->getIndexProviderName(), $contextName, $e->getMessage())
             );
         }
 
         if (!$indexProvider instanceof IndexProviderInterface) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('could not load index manager "%s" for context "%s"', $contextDefinition->getIndexProviderName(), $contextName));
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf('could not load index manager "%s" for context "%s"', $contextDefinition->getIndexProviderName(), $contextName)
+            );
         }
 
         try {
             $outputChannelService = $this->outputChannelManager->getOutputChannel($contextDefinition, $outputChannelName);
         } catch (\Throwable $e) {
-            throw new OutputChannelException($outputChannelName,
+            throw new OutputChannelException(
+                $outputChannelName,
                 sprintf('could not load output channel "%s" for context "%s". Error was: %s', $outputChannelName, $contextName, $e->getMessage())
             );
         }
@@ -117,8 +121,10 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         try {
             $indexProviderOptions = $contextDefinition->getIndexProviderOptions($indexProvider);
         } catch (\Throwable $e) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('could not determinate index provider options for "%s" for context "%s". Error was: %s',
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf(
+                    'could not determinate index provider options for "%s" for context "%s". Error was: %s',
                     $contextDefinition->getIndexProviderName(),
                     $contextName,
                     $e->getMessage()
@@ -130,7 +136,8 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             $outputChannelOptions = $contextDefinition->getOutputChannelOptions($outputChannelName, $outputChannelService, $eventData->getParameter('optionsResolver'));
             $outputChannelRuntimeOptionsProvider->setDefaultOptions($outputChannelOptions);
         } catch (\Throwable $e) {
-            throw new OutputChannelException($outputChannelName,
+            throw new OutputChannelException(
+                $outputChannelName,
                 sprintf('could not determinate output channel options for "%s" for context "%s". Error was: %s', $outputChannelName, $contextName, $e->getMessage())
             );
         }
@@ -138,8 +145,10 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         try {
             $documentNormalizer = $this->normalizerManager->getDocumentNormalizerForOutputChannel($contextDefinition, $outputChannelName);
         } catch (NormalizerException $e) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('Unable to load resource normalizer "%s". Error was: Error was: %s',
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf(
+                    'Unable to load resource normalizer "%s". Error was: Error was: %s',
                     $contextDefinition->getOutputChannelNormalizerName($outputChannelName),
                     $e->getMessage()
                 )
@@ -152,7 +161,6 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $result = $outputChannelService->execute($indexProviderOptions, $outputChannelOptions, $options);
 
         if ($outputChannelOptions['paginator']['enabled'] === true) {
-
             $paginator = $this->paginatorFactory->create(
                 $result,
                 $outputChannelOptions['paginator']['adapter_class'],

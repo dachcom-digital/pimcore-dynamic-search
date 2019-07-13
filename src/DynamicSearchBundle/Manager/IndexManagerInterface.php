@@ -13,6 +13,7 @@ interface IndexManagerInterface
      * @param ContextDataInterface $contextData
      *
      * @return IndexProviderInterface
+     *
      * @throws ProviderException
      */
     public function getIndexProvider(ContextDataInterface $contextData);

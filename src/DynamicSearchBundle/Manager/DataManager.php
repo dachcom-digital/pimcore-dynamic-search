@@ -38,7 +38,7 @@ class DataManager implements DataManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDataProvider(ContextDataInterface $contextData, string $providerBehaviour, array $predefinedOptions = [])
     {

@@ -18,7 +18,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function log($level, $message, string $provider, string $contextName)
     {
@@ -26,7 +26,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function debug($message, string $provider, string $contextName)
     {
@@ -34,7 +34,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function info($message, string $provider, string $contextName)
     {
@@ -42,7 +42,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function warning($message, string $provider, string $contextName)
     {
@@ -50,7 +50,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function error($message, string $provider, string $contextName)
     {

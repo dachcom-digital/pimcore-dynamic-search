@@ -23,6 +23,7 @@ interface DocumentNormalizerInterface
      * @param mixed                $data
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function normalize(ContextDataInterface $contextData, string $outputChannelName, $data);

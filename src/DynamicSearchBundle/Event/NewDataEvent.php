@@ -87,5 +87,4 @@ class NewDataEvent extends Event
     {
         return $this->resourceMeta;
     }
-
 }

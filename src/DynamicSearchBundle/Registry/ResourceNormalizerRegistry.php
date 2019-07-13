@@ -61,7 +61,7 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceNormalizerForDataProvider(string $dataProviderName, string $identifier)
     {
@@ -69,7 +69,7 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasResourceNormalizerForDataProvider(string $dataProviderName, string $identifier)
     {
@@ -77,7 +77,7 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier)
     {
@@ -85,7 +85,7 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier)
     {

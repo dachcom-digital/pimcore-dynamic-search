@@ -59,7 +59,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDocumentId()
     {
@@ -67,7 +67,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceCollectionType()
     {
@@ -75,7 +75,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceType()
     {
@@ -83,7 +83,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceId()
     {
@@ -91,7 +91,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceOptions()
     {
@@ -99,7 +99,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasNormalizerOption(string $option)
     {
@@ -107,7 +107,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getNormalizerOption(string $option)
     {
@@ -115,7 +115,7 @@ class ResourceMeta implements ResourceMetaInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getNormalizerOptions()
     {

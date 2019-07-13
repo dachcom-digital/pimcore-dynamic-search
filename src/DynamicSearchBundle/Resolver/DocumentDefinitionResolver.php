@@ -21,7 +21,7 @@ class DocumentDefinitionResolver implements DocumentDefinitionResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function resolve(string $contextName, ResourceMetaInterface $resourceMeta)
     {

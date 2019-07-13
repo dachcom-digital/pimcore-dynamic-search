@@ -74,5 +74,4 @@ interface OutputChannelRegistryInterface
      * @return OutputChannelModifierFilterInterface
      */
     public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter);
-
 }

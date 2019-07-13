@@ -52,7 +52,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -60,7 +60,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContextDispatchType()
     {
@@ -68,7 +68,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function updateRuntimeValue(string $key, $value)
     {
@@ -76,7 +76,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRuntimeValues()
     {
@@ -84,7 +84,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDataProviderName()
     {
@@ -92,7 +92,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexProviderName()
     {
@@ -100,7 +100,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceNormalizerName()
     {
@@ -108,7 +108,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour, array $predefinedOptions = [])
     {
@@ -141,7 +141,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexProviderOptions(IndexProviderInterface $indexProvider)
     {
@@ -167,7 +167,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceNormalizerOptions(ResourceNormalizerInterface $resourceNormalizer)
     {
@@ -189,7 +189,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelDocumentNormalizerOptions(DocumentNormalizerInterface $documentNormalizer, string $outputChannelName)
     {
@@ -211,7 +211,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelNormalizerName(string $outputChannelName)
     {
@@ -223,7 +223,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelServiceName(string $outputChannelName)
     {
@@ -235,7 +235,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelRuntimeOptionsProvider(string $outputChannelName)
     {
@@ -247,7 +247,7 @@ class ContextData implements ContextDataInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelOptions(string $outputChannelName, OutputChannelInterface $outputChannel, ?OptionsResolver $optionsResolver = null)
     {

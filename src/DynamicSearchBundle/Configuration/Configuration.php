@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContextDefinitions(string $dispatchType, array $runtimeValues = [])
     {
@@ -43,7 +43,7 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeValues = [])
     {

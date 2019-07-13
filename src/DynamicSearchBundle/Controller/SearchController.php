@@ -54,7 +54,6 @@ class SearchController extends Controller
         }
 
         return $this->json($data->getResult());
-
     }
 
     /**

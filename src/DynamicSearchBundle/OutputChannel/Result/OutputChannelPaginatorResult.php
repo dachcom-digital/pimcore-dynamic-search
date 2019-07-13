@@ -34,7 +34,7 @@ class OutputChannelPaginatorResult implements OutputChannelPaginatorResultInterf
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContextName()
     {
@@ -42,7 +42,7 @@ class OutputChannelPaginatorResult implements OutputChannelPaginatorResultInterf
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelName()
     {
@@ -50,7 +50,7 @@ class OutputChannelPaginatorResult implements OutputChannelPaginatorResultInterf
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResult()
     {
@@ -58,7 +58,7 @@ class OutputChannelPaginatorResult implements OutputChannelPaginatorResultInterf
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPaginator()
     {
@@ -66,11 +66,10 @@ class OutputChannelPaginatorResult implements OutputChannelPaginatorResultInterf
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRuntimeOptionsProvider()
     {
         return $this->runtimeOptionsProvider;
     }
-
 }

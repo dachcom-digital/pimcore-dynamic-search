@@ -21,5 +21,4 @@ interface DocumentDefinitionBuilderInterface
      * @return DocumentDefinitionInterface
      */
     public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions);
-
 }

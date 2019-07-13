@@ -83,7 +83,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(ContextDataInterface $contextData, $resource)
     {
@@ -96,11 +96,11 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         foreach ($normalizedResourceStack as $normalizedResource) {
-
             if (!$normalizedResource instanceof NormalizedDataResourceInterface) {
                 $this->logger->error(
                     sprintf('Normalized resource needs to be instance of %s. Skipping...', NormalizedDataResourceInterface::class),
-                    $contextData->getIndexProviderName(), $contextData->getName()
+                    $contextData->getIndexProviderName(),
+                    $contextData->getName()
                 );
 
                 continue;
@@ -110,7 +110,8 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             if (empty($resourceMeta->getDocumentId())) {
                 $this->logger->error(
                     'Unable to generate index document: No document id given. Skipping...',
-                    $contextData->getIndexProviderName(), $contextData->getName()
+                    $contextData->getIndexProviderName(),
+                    $contextData->getName()
                 );
 
                 continue;
@@ -134,7 +135,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function processByResourceMeta(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta, $resource)
     {
@@ -149,7 +150,8 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (empty($resourceMeta->getDocumentId())) {
             $this->logger->error(
                 'Unable to generate index document: No document id given. Skipping...',
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return;
@@ -182,7 +184,8 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (!$documentDefinition instanceof DocumentDefinitionInterface) {
             $this->logger->error(
                 sprintf('No document definition generated. Probably no applicable document definition builder was found. Skipping...'),
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -191,7 +194,8 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (count($documentDefinition->getDocumentFieldDefinitions()) === 0) {
             $this->logger->error(
                 sprintf('Document Definition does not have any defined field. Skipping...'),
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -214,13 +218,11 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         ResourceMetaInterface $resourceMeta,
         DocumentDefinitionInterface $documentDefinition
     ) {
-
         $resourceScaffolderName = $resourceContainer->getResourceScaffolderIdentifier();
 
         $indexDocument = new IndexDocument($resourceMeta, $documentDefinition->getDocumentConfiguration());
 
         foreach ($documentDefinition->getOptionFieldDefinitions() as $documentDefinitionOptions) {
-
             $fieldName = $documentDefinitionOptions['name'];
             $dataTransformerOptions = $documentDefinitionOptions['data_transformer'];
             $transformedData = $this->dispatchResourceFieldTransformer($dataTransformerOptions, $resourceScaffolderName, $resourceContainer);
@@ -235,7 +237,6 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         foreach ($documentDefinition->getDocumentFieldDefinitions() as $fieldDefinitionOptions) {
-
             $fieldName = $fieldDefinitionOptions['name'];
             $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
             $indexTransformerOptions = $fieldDefinitionOptions['index_transformer'];
@@ -255,13 +256,13 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
 
             $indexFieldContainer = new IndexFieldContainer($fieldName, $indexTransformerOptions['type'], $transformedIndexData);
             $indexDocument->addIndexField($indexFieldContainer);
-
         }
 
         if (!$indexDocument instanceof IndexDocument) {
             $this->logger->error(
                 sprintf('Index Document needs to be instance of %s. Skipping...', IndexDocument::class),
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -270,7 +271,8 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (count($indexDocument->getIndexFields()) === 0) {
             $this->logger->error(
                 sprintf('Index Document "%s" does not have any index fields. Skip Indexing...', $indexDocument->getDocumentId()),
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -343,7 +345,8 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             throw new RuntimeException(
                 sprintf(
                     'Unable to load index provider "%s". Error was: %s',
-                    $contextData->getIndexProviderName(), $e->getMessage()
+                    $contextData->getIndexProviderName(),
+                    $e->getMessage()
                 )
             );
         }
@@ -364,11 +367,15 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         string $resourceScaffolderName
     ) {
         $this->logger->debug(
-            sprintf('Index Document with %d fields successfully generated. Used "%s" as resource scaffolder and "%s" as data normalizer.',
+            sprintf(
+                'Index Document with %d fields successfully generated. Used "%s" as resource scaffolder and "%s" as data normalizer.',
                 count($indexDocument->getIndexFields()),
                 $resourceScaffolderName,
                 $contextData->getResourceNormalizerName()
-            ), $contextData->getIndexProviderName(), $contextData->getName());
+            ),
+            $contextData->getIndexProviderName(),
+            $contextData->getName()
+        );
 
         try {
             $indexProvider->processDocument($contextData, $indexDocument);
@@ -376,5 +383,4 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             throw new RuntimeException(sprintf('Error while executing index modification. Error was: "%s".', $e->getMessage()));
         }
     }
-
 }

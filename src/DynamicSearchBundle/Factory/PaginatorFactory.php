@@ -23,7 +23,7 @@ class PaginatorFactory implements PaginatorFactoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function create(
         $adapterData,
@@ -44,6 +44,5 @@ class PaginatorFactory implements PaginatorFactoryInterface
         $paginator = new $paginatorClassName($adapter);
 
         return $paginator;
-
     }
 }

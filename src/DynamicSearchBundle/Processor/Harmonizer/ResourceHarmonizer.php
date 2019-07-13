@@ -45,7 +45,7 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function harmonizeUntilNormalizedResourceStack(ContextDataInterface $contextData, $resource)
     {
@@ -62,8 +62,11 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
             $this->logger->error(
                 sprintf(
                     'Unable to load resource normalizer "%s". Error was: %s. Skipping...',
-                    $contextData->getResourceNormalizerName(), $e->getMessage()
-                ), $contextData->getIndexProviderName(), $contextData->getName()
+                    $contextData->getResourceNormalizerName(),
+                    $e->getMessage()
+                ),
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -75,7 +78,8 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
                     'No resource normalizer "%s" found. Skipping...',
                     $contextData->getResourceNormalizerName()
                 ),
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -90,7 +94,8 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
                     $contextData->getResourceNormalizerName(),
                     $e->getMessage()
                 ),
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -99,7 +104,8 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
         if (count($normalizedResourceStack) === 0) {
             $this->logger->debug(
                 sprintf('No normalized resources generated. Used resource normalizer: %s. Skipping...', $contextData->getResourceNormalizerName()),
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;
@@ -109,7 +115,7 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function harmonizeUntilResourceContainer(ContextDataInterface $contextData, $resource)
     {
@@ -117,7 +123,8 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
         if (!$resourceScaffolderContainer instanceof ResourceScaffolderContainerInterface) {
             $this->logger->error(
                 'No resource scaffolder has been found. Skipping...',
-                $contextData->getIndexProviderName(), $contextData->getName()
+                $contextData->getIndexProviderName(),
+                $contextData->getName()
             );
 
             return null;

@@ -62,7 +62,7 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runInsert(string $contextName, $resource)
     {
@@ -70,7 +70,7 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runUpdate(string $contextName, $resource)
     {
@@ -78,7 +78,7 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runDelete(string $contextName, $resource)
     {
@@ -89,7 +89,6 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
         }
 
         $this->resourceDeletionProcessor->process($contextDefinition, $resource);
-
     }
 
     protected function runModification(string $contextName, string $contextDispatchType, $resource)
@@ -116,13 +115,13 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
         }
 
         foreach ($normalizedResourceStack as $normalizedDataResource) {
-
             $resourceMeta = $normalizedDataResource->getResourceMeta();
 
             if (empty($resourceMeta->getDocumentId())) {
                 $this->logger->error(
                     sprintf('No valid document id for resource "%s" given. Skipping...', $resourceType),
-                    'queue', $contextName
+                    'queue',
+                    $contextName
                 );
 
                 continue;
@@ -136,11 +135,11 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
                 );
             } catch (ProviderException $e) {
                 $this->logger->error(sprintf('Error while fetching data provider. Error was: %s.', $e->getMessage()), 'resource_runner', $contextDefinition->getName());
+
                 continue;
             }
 
             $dataProvider->provideSingle($contextDefinition, $resourceMeta);
-
         }
     }
 }

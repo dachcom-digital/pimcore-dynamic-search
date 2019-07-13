@@ -47,7 +47,7 @@ class IndexManager implements IndexManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexProvider(ContextDataInterface $contextData)
     {
@@ -75,11 +75,10 @@ class IndexManager implements IndexManagerInterface
         $this->validProviders[$cacheKey] = $indexProvider;
 
         return $indexProvider;
-
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexField(ContextDataInterface $contextData, string $identifier)
     {
@@ -92,11 +91,12 @@ class IndexManager implements IndexManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexFieldsOfIndexProvider(ContextDataInterface $contextData)
     {
         $indexProviderName = $contextData->getIndexProviderName();
+
         return $this->indexFieldRegistry->getIndexFieldsOfIndexProvider($indexProviderName);
     }
 }

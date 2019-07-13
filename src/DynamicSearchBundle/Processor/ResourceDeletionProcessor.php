@@ -72,7 +72,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function process(ContextDataInterface $contextData, $resource)
     {
@@ -85,11 +85,11 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
         }
 
         foreach ($normalizedResourceStack as $normalizedResource) {
-
             if (!$normalizedResource instanceof NormalizedDataResourceInterface) {
                 $this->logger->error(
                     sprintf('Normalized resource needs to be instance of %s. Skipping...', NormalizedDataResourceInterface::class),
-                    $contextData->getIndexProviderName(), $contextData->getName()
+                    $contextData->getIndexProviderName(),
+                    $contextData->getName()
                 );
 
                 continue;
@@ -99,7 +99,8 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
             if (empty($resourceMeta->getDocumentId())) {
                 $this->logger->error(
                     'Unable to generate index document: No document id given. Skipping...',
-                    $contextData->getIndexProviderName(), $contextData->getName()
+                    $contextData->getIndexProviderName(),
+                    $contextData->getName()
                 );
 
                 continue;
@@ -112,7 +113,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function processByResourceMeta(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta)
     {
@@ -136,7 +137,8 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
             throw new RuntimeException(
                 sprintf(
                     'Unable to load index provider "%s". Error was: %s',
-                    $contextData->getIndexProviderName(), $e->getMessage()
+                    $contextData->getIndexProviderName(),
+                    $e->getMessage()
                 )
             );
         }
@@ -152,10 +154,14 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     protected function sendIndexDocumentToIndexProvider(ContextDataInterface $contextData, IndexProviderInterface $indexProvider, IndexDocument $indexDocument)
     {
         $this->logger->debug(
-            sprintf('Index Document with id "%s" successfully generated. Used "%s" as data normalizer.',
+            sprintf(
+                'Index Document with id "%s" successfully generated. Used "%s" as data normalizer.',
                 $indexDocument->getDocumentId(),
                 $contextData->getResourceNormalizerName()
-            ), $contextData->getIndexProviderName(), $contextData->getName());
+            ),
+            $contextData->getIndexProviderName(),
+            $contextData->getName()
+        );
 
         try {
             $indexProvider->processDocument($contextData, $indexDocument);

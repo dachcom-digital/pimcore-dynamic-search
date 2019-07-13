@@ -32,7 +32,7 @@ class IndexFieldRegistry implements IndexFieldRegistryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getForIndexProvider(string $indexProviderName, string $identifier)
     {
@@ -40,7 +40,7 @@ class IndexFieldRegistry implements IndexFieldRegistryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasForIndexProvider(string $indexProviderName, string $identifier)
     {
@@ -48,11 +48,10 @@ class IndexFieldRegistry implements IndexFieldRegistryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexFieldsOfIndexProvider(string $indexProviderName)
     {
         return isset($this->fields[$indexProviderName]);
     }
-
 }

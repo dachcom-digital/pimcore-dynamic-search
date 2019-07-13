@@ -30,7 +30,7 @@ class DataCollector implements DataCollectorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addToQueue(string $contextName, string $dispatchType, $resource, array $options = [])
     {

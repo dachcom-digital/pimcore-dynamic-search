@@ -21,7 +21,6 @@ abstract class AbstractRunner
     protected function warmUpProvider(ContextDataInterface $contextData, array $providers)
     {
         foreach ($providers as $provider) {
-
             $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('warm up provider'), $providerName, $contextData->getName());
 
@@ -44,7 +43,6 @@ abstract class AbstractRunner
     protected function coolDownProvider(ContextDataInterface $contextData, array $providers)
     {
         foreach ($providers as $provider) {
-
             $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('cooling down provider'), $providerName, $contextData->getName());
 
@@ -76,8 +74,11 @@ abstract class AbstractRunner
             try {
                 $provider->cancelledShutdown($contextData);
             } catch (\Throwable $e) {
-                $this->logger->error(sprintf('Error while dispatching cancelled process. Error was: %s.', $e->getMessage()), get_class($provider),
-                    $contextData->getName());
+                $this->logger->error(
+                    sprintf('Error while dispatching cancelled process. Error was: %s.', $e->getMessage()),
+                    get_class($provider),
+                    $contextData->getName()
+                );
             }
         }
     }
@@ -102,5 +103,4 @@ abstract class AbstractRunner
             }
         }
     }
-
 }

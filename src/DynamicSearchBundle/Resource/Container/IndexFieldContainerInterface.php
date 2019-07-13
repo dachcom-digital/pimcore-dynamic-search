@@ -18,6 +18,4 @@ interface IndexFieldContainerInterface
      * @return string
      */
     public function getIndexType();
-
-
 }

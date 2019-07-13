@@ -15,13 +15,13 @@ class QueuedDataTask implements TaskInterface
     /**
      * @param DataProcessorInterface $dataProcessor
      */
-    public function __construct( DataProcessorInterface $dataProcessor)
+    public function __construct(DataProcessorInterface $dataProcessor)
     {
         $this->dataProcessor = $dataProcessor;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function execute()
     {

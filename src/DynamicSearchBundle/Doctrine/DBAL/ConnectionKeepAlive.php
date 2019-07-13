@@ -28,7 +28,7 @@ class ConnectionKeepAlive
     }
 
     /**
-     * Detach Kick Event
+     * Detach Kick Event.
      */
     public function detach()
     {
@@ -37,14 +37,16 @@ class ConnectionKeepAlive
     }
 
     /**
-     * Attach Kick Event
+     * Attach Kick Event.
      */
     public function attach()
     {
         if ($this->isAttached || register_tick_function([$this, 'kick'])) {
             $this->isAttached = true;
+
             return;
         }
+
         throw new \RuntimeException('Unable to attach keep alive to the system');
     }
 

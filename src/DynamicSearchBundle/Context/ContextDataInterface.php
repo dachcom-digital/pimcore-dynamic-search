@@ -2,7 +2,6 @@
 
 namespace DynamicSearchBundle\Context;
 
-use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
@@ -99,6 +98,7 @@ interface ContextDataInterface
      * @param array                 $predefinedOptions
      *
      * @return array
+     *
      * @throws ContextConfigurationException
      */
     public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour, array $predefinedOptions = []);
@@ -107,6 +107,7 @@ interface ContextDataInterface
      * @param IndexProviderInterface $indexProvider
      *
      * @return array
+     *
      * @throws ContextConfigurationException
      */
     public function getIndexProviderOptions(IndexProviderInterface $indexProvider);
@@ -115,6 +116,7 @@ interface ContextDataInterface
      * @param ResourceNormalizerInterface $resourceNormalizer
      *
      * @return array
+     *
      * @throws ContextConfigurationException
      */
     public function getResourceNormalizerOptions(ResourceNormalizerInterface $resourceNormalizer);
@@ -124,6 +126,7 @@ interface ContextDataInterface
      * @param string                      $outputChannelName
      *
      * @return array
+     *
      * @throws ContextConfigurationException
      */
     public function getOutputChannelDocumentNormalizerOptions(DocumentNormalizerInterface $documentNormalizer, string $outputChannelName);
@@ -155,6 +158,7 @@ interface ContextDataInterface
      * @param OptionsResolver|null   $optionsResolver
      *
      * @return mixed
+     *
      * @throws ContextConfigurationException
      */
     public function getOutputChannelOptions(string $outputChannelName, OutputChannelInterface $outputChannel, ?OptionsResolver $optionsResolver = null);

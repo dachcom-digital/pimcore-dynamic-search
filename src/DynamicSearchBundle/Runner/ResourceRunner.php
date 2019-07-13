@@ -53,7 +53,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runInsert(string $contextName, ResourceMetaInterface $resourceMeta)
     {
@@ -69,6 +69,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
             $dataProvider = $this->dataManager->getDataProvider($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH, $predefinedOptions);
         } catch (ProviderException $e) {
             $this->logger->error(sprintf('Error while fetching data provider. Error was: %s.', $e->getMessage()), 'resource_runner', $contextDefinition->getName());
+
             return;
         }
 
@@ -76,7 +77,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runUpdate(string $contextName, ResourceMetaInterface $resourceMeta)
     {
@@ -90,6 +91,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
             $dataProvider = $this->dataManager->getDataProvider($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH, $resourceMeta->getResourceOptions());
         } catch (ProviderException $e) {
             $this->logger->error(sprintf('Error while fetching data provider. Error was: %s.', $e->getMessage()), 'resource_runner', $contextDefinition->getName());
+
             return;
         }
 
@@ -97,7 +99,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runDelete(string $contextName, ResourceMetaInterface $resourceMeta)
     {
@@ -109,5 +111,4 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
 
         $this->resourceDeletionProcessor->processByResourceMeta($contextDefinition, $resourceMeta);
     }
-
 }

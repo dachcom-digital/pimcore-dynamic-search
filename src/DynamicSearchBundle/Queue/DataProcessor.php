@@ -76,7 +76,6 @@ class DataProcessor implements DataProcessorInterface
         }
 
         $this->lockService->unlock(LockServiceInterface::QUEUE_INDEXING);
-
     }
 
     protected function checkJobs()
@@ -88,13 +87,11 @@ class DataProcessor implements DataProcessorInterface
         }
 
         foreach ($envelopeData as $contextName => $contextDispatchEnvelopes) {
-
             if (!is_array($contextDispatchEnvelopes) || count($contextDispatchEnvelopes) === 0) {
                 continue;
             }
 
             foreach ($contextDispatchEnvelopes as $dispatchType => $dispatchEnvelopes) {
-
                 if (!is_array($dispatchEnvelopes) || count($dispatchEnvelopes) === 0) {
                     continue;
                 }
@@ -104,7 +101,8 @@ class DataProcessor implements DataProcessorInterface
                 } catch (\Throwable $e) {
                     $this->logger->error(
                         sprintf('Error dispatch resource runner (%s). Message was: %s', $dispatchType, $e->getMessage()),
-                        'queue', $contextName
+                        'queue',
+                        $contextName
                     );
                 }
             }
@@ -119,7 +117,6 @@ class DataProcessor implements DataProcessorInterface
     protected function dispatchResourceRunner(string $contextName, string $dispatchType, array $dispatchEnvelopes)
     {
         foreach ($dispatchEnvelopes as $envelopeData) {
-
             /** @var Envelope $envelope */
             $envelope = $envelopeData['envelope'];
             /** @var ResourceMetaInterface $resourceMeta */
@@ -136,7 +133,6 @@ class DataProcessor implements DataProcessorInterface
             } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
                 $this->resourceRunner->runDelete($contextName, $resourceMeta);
             }
-
         }
     }
 }

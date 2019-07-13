@@ -3,7 +3,6 @@
 namespace DynamicSearchBundle\Command;
 
 use DynamicSearchBundle\Command\Traits\SignalWatchTrait;
-
 use DynamicSearchBundle\Runner\ContextRunnerInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
 use Symfony\Component\Console\Command\Command;
@@ -46,9 +45,12 @@ class SearchCommand extends Command
             ->setName('dynamic-search:run')
             ->setDescription('Run Dynamic Search')
             ->addOption('context', 'c', InputOption::VALUE_REQUIRED, 'Only perform on specific context')
-            ->addOption('force', 'f',
+            ->addOption(
+                'force',
+                'f',
                 InputOption::VALUE_NONE,
-                'Force Crawl Start');
+                'Force Crawl Start'
+            );
     }
 
     /**
@@ -68,7 +70,6 @@ class SearchCommand extends Command
         $this->watchSignalWithLockKey(LockServiceInterface::CONTEXT_INDEXING);
 
         if ($this->lockService->isLocked(LockServiceInterface::CONTEXT_INDEXING)) {
-
             if ($input->getOption('force') === false) {
                 $output->writeln(sprintf('<error>%s</error>', $this->lockService->getLockMessage(LockServiceInterface::CONTEXT_INDEXING)));
 
@@ -91,6 +92,5 @@ class SearchCommand extends Command
         }
 
         $this->lockService->unlock(LockServiceInterface::CONTEXT_INDEXING);
-
     }
 }

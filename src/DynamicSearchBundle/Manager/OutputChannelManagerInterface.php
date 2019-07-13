@@ -16,6 +16,7 @@ interface OutputChannelManagerInterface
      * @param string               $type
      *
      * @return OutputChannelInterface|null
+     *
      * @throws ProviderException
      */
     public function getOutputChannel(ContextDataInterface $contextData, string $type);

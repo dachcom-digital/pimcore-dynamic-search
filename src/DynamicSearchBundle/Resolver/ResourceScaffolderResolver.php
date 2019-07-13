@@ -23,7 +23,7 @@ class ResourceScaffolderResolver implements ResourceScaffolderResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function resolve(string $dataProviderName, $resource)
     {
@@ -34,6 +34,7 @@ class ResourceScaffolderResolver implements ResourceScaffolderResolverInterface
             if ($resourceScaffolder->isApplicable($resource) === true) {
                 $validScaffolder = $resourceScaffolder;
                 $validScaffolderName = $scaffolderName;
+
                 break;
             }
         }

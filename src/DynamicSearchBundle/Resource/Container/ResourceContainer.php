@@ -39,7 +39,7 @@ class ResourceContainer implements ResourceContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasResource()
     {
@@ -47,7 +47,7 @@ class ResourceContainer implements ResourceContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isBaseResource()
     {
@@ -55,7 +55,7 @@ class ResourceContainer implements ResourceContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResource()
     {
@@ -63,7 +63,7 @@ class ResourceContainer implements ResourceContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceScaffolderIdentifier()
     {
@@ -71,7 +71,7 @@ class ResourceContainer implements ResourceContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasAttribute($attribute)
     {
@@ -79,7 +79,7 @@ class ResourceContainer implements ResourceContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getAttribute($attribute)
     {
@@ -87,7 +87,7 @@ class ResourceContainer implements ResourceContainerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getAttributes()
     {

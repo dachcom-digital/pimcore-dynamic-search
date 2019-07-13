@@ -23,5 +23,4 @@ interface ResourceRunnerInterface
      * @param ResourceMetaInterface $resourceMeta
      */
     public function runDelete(string $contextName, ResourceMetaInterface $resourceMeta);
-
 }

@@ -13,5 +13,4 @@ interface OptionFieldContainerInterface
      * @return mixed
      */
     public function getData();
-
 }

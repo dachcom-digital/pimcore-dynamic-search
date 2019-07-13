@@ -25,7 +25,7 @@ class ResourceScaffolderContainer implements ResourceScaffolderContainerInterfac
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getScaffolder()
     {
@@ -33,7 +33,7 @@ class ResourceScaffolderContainer implements ResourceScaffolderContainerInterfac
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {

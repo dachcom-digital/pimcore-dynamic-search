@@ -35,7 +35,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDataNormalizerIdentifier()
     {
@@ -43,7 +43,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setDocumentConfiguration(array $documentConfiguration)
     {
@@ -51,7 +51,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDocumentConfiguration()
     {
@@ -59,7 +59,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addOptionFieldDefinition(array $definition)
     {
@@ -85,7 +85,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOptionFieldDefinitions(): array
     {
@@ -93,7 +93,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addDocumentFieldDefinition(array $definition)
     {
@@ -128,11 +128,10 @@ class DocumentDefinition implements DocumentDefinitionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDocumentFieldDefinitions(): array
     {
         return !is_array($this->indexFieldDefinitions) ? [] : $this->indexFieldDefinitions;
     }
-
 }

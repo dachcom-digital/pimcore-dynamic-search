@@ -24,14 +24,14 @@ class DynamicSearchAdapter implements AdapterInterface
     protected $documentNormalizer;
 
     /**
-     * array
+     * array.
      *
      * @var array
      */
     protected $array = null;
 
     /**
-     * Item count
+     * Item count.
      *
      * @var int
      */
@@ -47,7 +47,7 @@ class DynamicSearchAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setContext(ContextDataInterface $contextData)
     {
@@ -55,7 +55,7 @@ class DynamicSearchAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setOutputChannelName(string $outputChannelName)
     {
@@ -63,7 +63,7 @@ class DynamicSearchAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setDocumentNormalizer(?DocumentNormalizerInterface $documentNormalizer)
     {
@@ -75,6 +75,7 @@ class DynamicSearchAdapter implements AdapterInterface
      * @param int $itemCountPerPage Number of items per page
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function getItems($offset, $itemCountPerPage)

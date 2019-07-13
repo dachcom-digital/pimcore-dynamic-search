@@ -31,5 +31,4 @@ interface OutputChannelInterface
      * @return array
      */
     public function execute(array $indexProviderOptions, array $options = [], array $contextOptions = []): array;
-
 }

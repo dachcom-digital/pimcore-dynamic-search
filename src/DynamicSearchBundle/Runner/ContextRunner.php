@@ -76,7 +76,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runFullContextCreation(array $runtimeValues = [])
     {
@@ -95,11 +95,10 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         }
 
         $this->longProcessService->shutdown();
-
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function runSingleContextCreation(string $contextName, array $runtimeValues = [])
     {
@@ -116,7 +115,6 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         $this->dispatchContext($contextDefinition);
 
         $this->longProcessService->shutdown();
-
     }
 
     /**
@@ -131,6 +129,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
             $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
         } catch (ProviderException $e) {
             $this->logger->error(sprintf('Error while fetching provider. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
+
             return;
         }
 

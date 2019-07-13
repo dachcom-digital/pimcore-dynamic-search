@@ -33,7 +33,7 @@ class NormalizerManager implements NormalizerManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResourceNormalizer(ContextDataInterface $contextData)
     {
@@ -66,7 +66,7 @@ class NormalizerManager implements NormalizerManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDocumentNormalizerForOutputChannel(ContextDataInterface $contextData, string $outputChannelName)
     {

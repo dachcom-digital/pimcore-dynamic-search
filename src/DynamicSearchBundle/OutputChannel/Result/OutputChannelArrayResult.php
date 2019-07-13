@@ -33,7 +33,7 @@ class OutputChannelArrayResult implements OutputChannelArrayResultInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContextName()
     {
@@ -41,7 +41,7 @@ class OutputChannelArrayResult implements OutputChannelArrayResultInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelName()
     {
@@ -49,7 +49,7 @@ class OutputChannelArrayResult implements OutputChannelArrayResultInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getResult()
     {
@@ -57,7 +57,7 @@ class OutputChannelArrayResult implements OutputChannelArrayResultInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRuntimeOptionsProvider()
     {
