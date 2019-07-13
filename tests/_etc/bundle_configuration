@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 export DACHCOM_BUNDLE_HOME=$TRAVIS_BUILD_DIR
-export DACHCOM_BUNDLE_NAME="SearchBundle"
-export DACHCOM_BUNDLE_REPO_NAME="search"
+export DACHCOM_BUNDLE_NAME="DynamicSearchBundle"
+export DACHCOM_BUNDLE_REPO_NAME="dynamic-search"
 export DACHCOM_BUNDLE_COMMIT=$TRAVIS_COMMIT
 export DACHCOM_BUNDLE_BRANCH=$TRAVIS_BRANCH
 
-export DACHCOM_BUNDLE_CLASS='SearchBundle\SearchBundle'
-export DACHCOM_BUNDLE_INSTALLER_CLASS='SearchBundle\Tool\Install'
+export DACHCOM_BUNDLE_CLASS='DynamicSearchBundle\DynamicSearchBundle'
+export DACHCOM_BUNDLE_INSTALLER_CLASS='DynamicSearchBundle\Tool\Install'
 
 declare -A DACHCOM_INSTALL_CONFIG_FILES=(
  # system files
