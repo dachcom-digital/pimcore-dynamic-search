@@ -152,8 +152,8 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     protected function sendIndexDocumentToIndexProvider(ContextDataInterface $contextData, IndexProviderInterface $indexProvider, IndexDocument $indexDocument)
     {
         $this->logger->debug(
-            sprintf('Index Document with %d fields successfully generated. Used "%s" as data normalizer.',
-                count($indexDocument->getIndexFields()),
+            sprintf('Index Document with id "%s" successfully generated. Used "%s" as data normalizer.',
+                $indexDocument->getDocumentId(),
                 $contextData->getResourceNormalizerName()
             ), $contextData->getIndexProviderName(), $contextData->getName());
 
