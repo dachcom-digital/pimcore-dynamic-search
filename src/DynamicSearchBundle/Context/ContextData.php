@@ -110,7 +110,7 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour, array $predefinedOptions = [])
+    public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour)
     {
         $cKey = sprintf('data_provider_options_%s', $providerBehaviour);
 
@@ -129,7 +129,6 @@ class ContextData implements ContextDataInterface
         }
 
         $rawOptions = array_merge($rawAlwaysOptions, $rawOptions);
-        $rawOptions = array_merge($predefinedOptions, $rawOptions);
 
         try {
             $this->parsedContextOptions[$cKey] = $optionsResolver->resolve($rawOptions);

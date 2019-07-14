@@ -17,26 +17,6 @@ use DynamicSearchBundle\Service\LongProcessServiceInterface;
 class ContextRunner extends AbstractRunner implements ContextRunnerInterface
 {
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
-
-    /**
-     * @var DataManagerInterface
-     */
-    protected $dataManager;
-
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
      * @var QueueManagerInterface
      */
     protected $queueManager;
@@ -52,25 +32,13 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     protected $validProcessRunning;
 
     /**
-     * @param LoggerInterface             $logger
-     * @param ConfigurationInterface      $configuration
-     * @param DataManagerInterface        $dataManager
-     * @param IndexManagerInterface       $indexManager
      * @param QueueManagerInterface       $queueManager
      * @param LongProcessServiceInterface $longProcessService
      */
     public function __construct(
-        LoggerInterface $logger,
-        ConfigurationInterface $configuration,
-        DataManagerInterface $dataManager,
-        IndexManagerInterface $indexManager,
         QueueManagerInterface $queueManager,
         LongProcessServiceInterface $longProcessService
     ) {
-        $this->logger = $logger;
-        $this->configuration = $configuration;
-        $this->dataManager = $dataManager;
-        $this->indexManager = $indexManager;
         $this->queueManager = $queueManager;
         $this->longProcessService = $longProcessService;
     }
@@ -78,9 +46,9 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     /**
      * {@inheritdoc}
      */
-    public function runFullContextCreation(array $runtimeValues = [])
+    public function runFullContextCreation()
     {
-        $contextDefinitions = $this->configuration->getContextDefinitions(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX, $runtimeValues);
+        $contextDefinitions = $this->configuration->getContextDefinitions(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
         if (count($contextDefinitions) === 0) {
             throw new RuntimeException('No context configuration found. Please add them to the "dynamic_search.context" configuration node');
@@ -100,13 +68,9 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     /**
      * {@inheritdoc}
      */
-    public function runSingleContextCreation(string $contextName, array $runtimeValues = [])
+    public function runSingleContextCreation(string $contextName)
     {
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX, $contextName, $runtimeValues);
-
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
-        }
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
         $this->queueManager->clearQueue();
 
@@ -124,16 +88,13 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     {
         $this->validProcessRunning = true;
 
-        try {
-            $dataProvider = $this->dataManager->getDataProvider($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);
-            $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
-        } catch (ProviderException $e) {
-            $this->logger->error(sprintf('Error while fetching provider. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
+        $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);
 
+        if ($providers === null) {
             return;
         }
 
-        $this->warmUpProvider($contextDefinition, [$dataProvider, $indexProvider]);
+        $this->warmUpProvider($contextDefinition, $providers);
 
         $this->logger->log(
             'DEBUG',
@@ -142,16 +103,11 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
             $contextDefinition->getName()
         );
 
-        try {
-            $dataProvider->provideAll($contextDefinition);
-        } catch (ProcessCancelledException $e) {
-            $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated', $e->getMessage());
-            $this->dispatchCancelledProcessToProviders($errorMessage, $contextDefinition, [$indexProvider, $dataProvider]);
-        } catch (\Throwable $e) {
-            $errorMessage = sprintf('Error while executing data provider. Error was: %s. FailOver has been initiated', $e->getMessage());
-            $this->dispatchFailOverToProviders($errorMessage, $contextDefinition, [$indexProvider, $dataProvider]);
-        }
+        /** @var DataProviderInterface $dataProvider */
+        $dataProvider = $providers['dataProvider'];
 
-        $this->coolDownProvider($contextDefinition, [$dataProvider, $indexProvider]);
+        $this->callSaveMethod($contextDefinition, $dataProvider, 'provideAll', [$contextDefinition], $providers);
+
+        $this->coolDownProvider($contextDefinition, $providers);
     }
 }

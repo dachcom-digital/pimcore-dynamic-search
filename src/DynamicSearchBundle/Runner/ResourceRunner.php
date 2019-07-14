@@ -2,53 +2,24 @@
 
 namespace DynamicSearchBundle\Runner;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\ProviderException;
-use DynamicSearchBundle\Exception\RuntimeException;
-use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Manager\DataManagerInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Processor\ResourceDeletionProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
+use DynamicSearchBundle\Provider\IndexProviderInterface;
 
 class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
-
-    /**
-     * @var DataManagerInterface
-     */
-    protected $dataManager;
-
     /**
      * @var ResourceDeletionProcessorInterface
      */
     protected $resourceDeletionProcessor;
 
     /**
-     * @param LoggerInterface                    $logger
-     * @param ConfigurationInterface             $configuration
-     * @param DataManagerInterface               $dataManager
      * @param ResourceDeletionProcessorInterface $resourceDeletionProcessor
      */
-    public function __construct(
-        LoggerInterface $logger,
-        ConfigurationInterface $configuration,
-        DataManagerInterface $dataManager,
-        ResourceDeletionProcessorInterface $resourceDeletionProcessor
-    ) {
-        $this->logger = $logger;
-        $this->configuration = $configuration;
-        $this->dataManager = $dataManager;
+    public function __construct(ResourceDeletionProcessorInterface $resourceDeletionProcessor)
+    {
         $this->resourceDeletionProcessor = $resourceDeletionProcessor;
     }
 
@@ -57,23 +28,39 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runInsert(string $contextName, ResourceMetaInterface $resourceMeta)
     {
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT, $contextName);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT);
 
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
+        $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
+
+        $this->warmUpProvider($contextDefinition, $providers);
+
+        /** @var DataProviderInterface $dataProvider */
+        $dataProvider = $providers['dataProvider'];
+
+        $this->callSaveMethod($contextDefinition, $dataProvider, 'provideSingle', [$contextDefinition, $resourceMeta], $providers);
+
+        $this->coolDownProvider($contextDefinition, $providers);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function runInsertStack(string $contextName, array $resourceMetaStack)
+    {
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT);
+
+        $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
+
+        $this->warmUpProvider($contextDefinition, $providers);
+
+        /** @var DataProviderInterface $dataProvider */
+        $dataProvider = $providers['dataProvider'];
+
+        foreach ($resourceMetaStack as $resourceMeta) {
+            $this->callSaveMethod($contextDefinition, $dataProvider, 'provideSingle', [$contextDefinition, $resourceMeta], $providers);
         }
 
-        $predefinedOptions = $resourceMeta->getResourceOptions();
-
-        try {
-            $dataProvider = $this->dataManager->getDataProvider($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH, $predefinedOptions);
-        } catch (ProviderException $e) {
-            $this->logger->error(sprintf('Error while fetching data provider. Error was: %s.', $e->getMessage()), 'resource_runner', $contextDefinition->getName());
-
-            return;
-        }
-
-        $dataProvider->provideSingle($contextDefinition, $resourceMeta);
+        $this->coolDownProvider($contextDefinition, $providers);
     }
 
     /**
@@ -81,21 +68,39 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runUpdate(string $contextName, ResourceMetaInterface $resourceMeta)
     {
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE, $contextName);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE);
 
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
+        $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
+
+        $this->warmUpProvider($contextDefinition, $providers);
+
+        /** @var DataProviderInterface $dataProvider */
+        $dataProvider = $providers['dataProvider'];
+
+        $this->callSaveMethod($contextDefinition, $dataProvider, 'provideSingle', [$contextDefinition, $resourceMeta], $providers);
+
+        $this->coolDownProvider($contextDefinition, $providers);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function runUpdateStack(string $contextName, array $resourceMetaStack)
+    {
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE);
+
+        $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
+
+        $this->warmUpProvider($contextDefinition, $providers);
+
+        /** @var DataProviderInterface $dataProvider */
+        $dataProvider = $providers['dataProvider'];
+
+        foreach ($resourceMetaStack as $resourceMeta) {
+            $this->callSaveMethod($contextDefinition, $dataProvider, 'provideSingle', [$contextDefinition, $resourceMeta], $providers);
         }
 
-        try {
-            $dataProvider = $this->dataManager->getDataProvider($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH, $resourceMeta->getResourceOptions());
-        } catch (ProviderException $e) {
-            $this->logger->error(sprintf('Error while fetching data provider. Error was: %s.', $e->getMessage()), 'resource_runner', $contextDefinition->getName());
-
-            return;
-        }
-
-        $dataProvider->provideSingle($contextDefinition, $resourceMeta);
+        $this->coolDownProvider($contextDefinition, $providers);
     }
 
     /**
@@ -103,12 +108,35 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runDelete(string $contextName, ResourceMetaInterface $resourceMeta)
     {
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE, $contextName);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE);
 
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
+        $indexProvider = $this->setupIndexProvider($contextDefinition);
+        if (!$indexProvider instanceof IndexProviderInterface) {
+            return;
         }
 
-        $this->resourceDeletionProcessor->processByResourceMeta($contextDefinition, $resourceMeta);
+        $this->warmUpProvider($contextDefinition, [$indexProvider]);
+
+        $this->callSaveMethod($contextDefinition, $this->resourceDeletionProcessor, 'processByResourceMeta', [$contextDefinition, $resourceMeta], [$indexProvider]);
+
+        $this->coolDownProvider($contextDefinition, [$indexProvider]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function runDeleteStack(string $contextName, array $resourceMetaStack)
+    {
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE);
+
+        $indexProvider = $this->setupIndexProvider($contextDefinition);
+
+        $this->warmUpProvider($contextDefinition, [$indexProvider]);
+
+        foreach ($resourceMetaStack as $resourceMeta) {
+            $this->callSaveMethod($contextDefinition, $this->resourceDeletionProcessor, 'processByResourceMeta', [$contextDefinition, $resourceMeta], [$indexProvider]);
+        }
+
+        $this->coolDownProvider($contextDefinition, [$indexProvider]);
     }
 }

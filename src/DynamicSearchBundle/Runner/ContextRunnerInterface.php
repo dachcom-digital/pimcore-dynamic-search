@@ -4,7 +4,7 @@ namespace DynamicSearchBundle\Runner;
 
 interface ContextRunnerInterface
 {
-    public function runFullContextCreation(array $runtimeValues = []);
+    public function runFullContextCreation();
 
-    public function runSingleContextCreation(string $contextName, array $runtimeValues = []);
+    public function runSingleContextCreation(string $contextName);
 }

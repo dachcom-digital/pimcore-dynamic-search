@@ -11,11 +11,10 @@ interface DataManagerInterface
     /**
      * @param ContextDataInterface $contextData
      * @param string               $providerBehaviour
-     * @param array                $predefinedOptions
      *
      * @return DataProviderInterface
      *
      * @throws ProviderException
      */
-    public function getDataProvider(ContextDataInterface $contextData, string $providerBehaviour, array $predefinedOptions = []);
+    public function getDataProvider(ContextDataInterface $contextData, string $providerBehaviour);
 }

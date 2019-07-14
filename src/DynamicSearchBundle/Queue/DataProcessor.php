@@ -116,6 +116,7 @@ class DataProcessor implements DataProcessorInterface
      */
     protected function dispatchResourceRunner(string $contextName, string $dispatchType, array $dispatchEnvelopes)
     {
+        $resourceMetaStack = [];
         foreach ($dispatchEnvelopes as $envelopeData) {
             /** @var Envelope $envelope */
             $envelope = $envelopeData['envelope'];
@@ -124,15 +125,15 @@ class DataProcessor implements DataProcessorInterface
             /** @var array $envelopeOptions */
             $envelopeOptions = $envelope->getOptions();
 
-            // @todo: implement stack dispatcher in resource runner!
+            $resourceMetaStack[] = $resourceMeta;
+        }
 
-            if ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT) {
-                $this->resourceRunner->runInsert($contextName, $resourceMeta);
-            } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
-                $this->resourceRunner->runUpdate($contextName, $resourceMeta);
-            } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
-                $this->resourceRunner->runDelete($contextName, $resourceMeta);
-            }
+        if ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT) {
+            $this->resourceRunner->runInsertStack($contextName, $resourceMetaStack);
+        } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
+            $this->resourceRunner->runUpdateStack($contextName, $resourceMetaStack);
+        } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
+            $this->resourceRunner->runDeleteStack($contextName, $resourceMetaStack);
         }
     }
 }

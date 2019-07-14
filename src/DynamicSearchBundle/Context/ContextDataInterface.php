@@ -95,13 +95,12 @@ interface ContextDataInterface
     /**
      * @param DataProviderInterface $dataProvider
      * @param string                $providerBehaviour
-     * @param array                 $predefinedOptions
      *
      * @return array
      *
      * @throws ContextConfigurationException
      */
-    public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour, array $predefinedOptions = []);
+    public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour);
 
     /**
      * @param IndexProviderInterface $indexProvider

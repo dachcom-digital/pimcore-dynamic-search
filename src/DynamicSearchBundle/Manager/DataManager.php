@@ -40,7 +40,7 @@ class DataManager implements DataManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataProvider(ContextDataInterface $contextData, string $providerBehaviour, array $predefinedOptions = [])
+    public function getDataProvider(ContextDataInterface $contextData, string $providerBehaviour)
     {
         $dataProviderName = $contextData->getDataProviderName();
         $cacheKey = sprintf('%s_%s', $contextData->getName(), $dataProviderName);
@@ -56,7 +56,7 @@ class DataManager implements DataManagerInterface
         $dataProvider = $this->dataProviderRegistry->get($dataProviderName);
 
         try {
-            $dataProviderOptions = $contextData->getDataProviderOptions($dataProvider, $providerBehaviour, $predefinedOptions);
+            $dataProviderOptions = $contextData->getDataProviderOptions($dataProvider, $providerBehaviour);
         } catch (ContextConfigurationException $e) {
             throw new ProviderException($e->getMessage(), $contextData->getDataProviderName(), $e);
         }

@@ -1,13 +1,29 @@
 services:
 
-    _defaults:
+    DynamicSearchBundle\Runner\AbstractRunner:
+        public: false
+        abstract: true
+        calls:
+            - [setLogger, ['@DynamicSearchBundle\Logger\Logger']]
+            - [setConfiguration, ['@DynamicSearchBundle\Configuration\Configuration']]
+            - [setDataManager, ['@DynamicSearchBundle\Manager\DataManager']]
+            - [setIndexManager, ['@DynamicSearchBundle\Manager\IndexManager']]
+
+    DynamicSearchBundle\Runner\ContextRunner:
+        parent: DynamicSearchBundle\Runner\AbstractRunner
         autowire: true
-        autoconfigure: true
+        autoconfigure: false
         public: false
 
-    DynamicSearchBundle\Runner\ContextRunner: ~
+    DynamicSearchBundle\Runner\ResourceRunner:
+        parent: DynamicSearchBundle\Runner\AbstractRunner
+        autowire: true
+        autoconfigure: false
+        public: false
 
-    DynamicSearchBundle\Runner\ResourceRunner: ~
-
-    DynamicSearchBundle\Runner\SimpleRunner: ~
+    DynamicSearchBundle\Runner\SimpleRunner:
+        parent: DynamicSearchBundle\Runner\AbstractRunner
+        autowire: true
+        autoconfigure: false
+        public: false
 
