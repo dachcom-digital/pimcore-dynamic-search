@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Resolver;
 
-use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
+use DynamicSearchBundle\Exception\ResourceScaffolderNotFoundException;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
 use DynamicSearchBundle\Resource\ResourceScaffolderContainer;
 use DynamicSearchBundle\Resource\ResourceScaffolderInterface;
@@ -43,6 +43,6 @@ class ResourceScaffolderResolver implements ResourceScaffolderResolverInterface
             return new ResourceScaffolderContainer($validScaffolder, $validScaffolderName);
         }
 
-        throw new DocumentTransformerNotFoundException();
+        throw new ResourceScaffolderNotFoundException();
     }
 }

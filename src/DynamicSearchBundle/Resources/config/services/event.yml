@@ -10,3 +10,7 @@ services:
     DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber: ~
 
     DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher: ~
+
+    DynamicSearchBundle\EventListener\PimcoreElementListener:
+        tags:
+            - { name: kernel.event_subscriber }

@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Guard\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
@@ -34,27 +35,54 @@ class QueueManager implements QueueManagerInterface
     protected $resourceHarmonizer;
 
     /**
+     * @var ResourceValidatorInterface
+     */
+    protected $resourceValidator;
+
+    /**
      * @param LoggerInterface             $logger
      * @param ConfigurationInterface      $configuration
      * @param NormalizerManagerInterface  $normalizerManager
      * @param ResourceHarmonizerInterface $resourceHarmonizer
+     * @param ResourceValidatorInterface  $resourceValidator
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
         NormalizerManagerInterface $normalizerManager,
-        ResourceHarmonizerInterface $resourceHarmonizer
+        ResourceHarmonizerInterface $resourceHarmonizer,
+        ResourceValidatorInterface $resourceValidator
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->normalizerManager = $normalizerManager;
         $this->resourceHarmonizer = $resourceHarmonizer;
+        $this->resourceValidator = $resourceValidator;
+    }
+
+    public function addToGlobalQueue(string $dispatchType, $resource, array $options)
+    {
+        $contextDefinitions = $this->configuration->getContextDefinitions(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX);
+
+        if (count($contextDefinitions) === 0) {
+            $this->logger->error(
+                'No context configuration found. Please add them to the "dynamic_search.context" configuration nod',
+                'queue', 'global'
+            );
+
+            return;
+        }
+
+        /** @var ContextDataInterface $contextDefinition */
+        foreach ($contextDefinitions as $contextDefinition) {
+            $this->addToContextQueue($contextDefinition->getName(), $dispatchType, $resource, $options);
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addToQueue(string $contextName, string $dispatchType, $resource, array $options)
+    public function addToContextQueue(string $contextName, string $dispatchType, $resource, array $options)
     {
         $envelope = null;
 
@@ -83,7 +111,7 @@ class QueueManager implements QueueManagerInterface
         }
 
         $this->logger->debug(
-            sprintf('Envelope with id %s successfully added to queue', $envelope->getId()),
+            sprintf('Envelope with id %s successfully added to queue ("%s" context)', $envelope->getId(), $contextName),
             'queue',
             $contextName
         );
@@ -154,7 +182,6 @@ class QueueManager implements QueueManagerInterface
         $filteredResourceStack = [];
 
         /*
-         *
          * A resource can be added multiple times (saving an pimcore document 3 or more times in short intervals for example).
          * Only the latest resource of its kind should be used in index processing to improve performance.
          *
@@ -168,8 +195,8 @@ class QueueManager implements QueueManagerInterface
 
         usort($jobs, function ($a, $b) {
             /**
-             * @var TmpStore
-             * @var $b       TmpStore
+             * @var TmpStore $a
+             * @var TmpStore $b
              */
             if ($a->getDate() === $b->getDate()) {
                 return 0;
@@ -232,13 +259,11 @@ class QueueManager implements QueueManagerInterface
      * @param mixed  $resource
      * @param array  $options
      *
-     * @return Envelope
+     * @return Envelope|null
      */
     protected function generateJob(string $contextName, string $dispatchType, $resource, array $options)
     {
         $jobId = $this->getJobId();
-
-        $normalizedResourceStack = $this->generateResourceMeta($contextName, $dispatchType, $resource);
 
         if ($resource instanceof ElementInterface) {
             $resourceType = sprintf('%s-%s', $resource->getType(), $resource->getId());
@@ -247,6 +272,8 @@ class QueueManager implements QueueManagerInterface
         } else {
             $resourceType = gettype($resource);
         }
+
+        $normalizedResourceStack = $this->generateResourceMeta($contextName, $dispatchType, $resource);
 
         if (count($normalizedResourceStack) === 0) {
             $this->logger->error(
@@ -259,6 +286,8 @@ class QueueManager implements QueueManagerInterface
         }
 
         $metaResources = [];
+        $validationFailed = false;
+
         foreach ($normalizedResourceStack as $normalizedDataResource) {
             $resourceMeta = $normalizedDataResource->getResourceMeta();
 
@@ -272,7 +301,26 @@ class QueueManager implements QueueManagerInterface
                 continue;
             }
 
+            $isValid = $this->resourceValidator->validate($contextName, $dispatchType, $resourceMeta, $resource);
+
+            if ($isValid === false) {
+                $validationFailed = true;
+                continue;
+            }
+
             $metaResources[] = $resourceMeta;
+        }
+
+        if ($validationFailed === true) {
+            $this->logger->debug(
+                sprintf('Resource has been dismissed by context (%s) guard. Skipping...', $contextName),
+                'queue',
+                $contextName
+            );
+        }
+
+        if (count($metaResources) === 0) {
+            return null;
         }
 
         $envelope = new Envelope($jobId, $contextName, $dispatchType, $metaResources, $options);

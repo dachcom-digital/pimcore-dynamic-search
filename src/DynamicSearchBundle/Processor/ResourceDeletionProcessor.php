@@ -6,6 +6,7 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Exception\RuntimeException;
+use DynamicSearchBundle\Guard\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Manager\DocumentDefinitionManagerInterface;
@@ -43,6 +44,11 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     protected $resourceHarmonizer;
 
     /**
+     * @var ResourceValidatorInterface
+     */
+    protected $resourceValidator;
+
+    /**
      * @var DocumentDefinitionManagerInterface
      */
     protected $documentDefinitionManager;
@@ -53,6 +59,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
      * @param IndexManagerInterface              $indexManager
      * @param NormalizerManagerInterface         $normalizerManager
      * @param ResourceHarmonizerInterface        $resourceHarmonizer
+     * @param ResourceValidatorInterface         $resourceValidator
      * @param DocumentDefinitionManagerInterface $documentDefinitionManager
      */
     public function __construct(
@@ -61,6 +68,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
         IndexManagerInterface $indexManager,
         NormalizerManagerInterface $normalizerManager,
         ResourceHarmonizerInterface $resourceHarmonizer,
+        ResourceValidatorInterface $resourceValidator,
         DocumentDefinitionManagerInterface $documentDefinitionManager
     ) {
         $this->logger = $logger;
@@ -68,6 +76,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
         $this->indexManager = $indexManager;
         $this->normalizerManager = $normalizerManager;
         $this->resourceHarmonizer = $resourceHarmonizer;
+        $this->resourceValidator = $resourceValidator;
         $this->documentDefinitionManager = $documentDefinitionManager;
     }
 
@@ -103,6 +112,17 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
                     $contextData->getName()
                 );
 
+                continue;
+            }
+
+            $isValid = $this->resourceValidator->validate($contextData->getname(), $contextData->getContextDispatchType(), $resourceMeta, $resource);
+
+            if ($isValid === false) {
+                $this->logger->debug(
+                    sprintf('Resource has been dismissed by context guard. Skipping...'),
+                    $contextData->getIndexProviderName(),
+                    $contextData->getName()
+                );
                 continue;
             }
 

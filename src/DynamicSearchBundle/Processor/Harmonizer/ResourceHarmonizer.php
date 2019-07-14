@@ -121,7 +121,7 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
     {
         $resourceScaffolderContainer = $this->transformerManager->getResourceScaffolder($contextData, $resource);
         if (!$resourceScaffolderContainer instanceof ResourceScaffolderContainerInterface) {
-            $this->logger->error(
+            $this->logger->debug(
                 'No resource scaffolder has been found. Skipping...',
                 $contextData->getIndexProviderName(),
                 $contextData->getName()

@@ -18,3 +18,5 @@ services:
     DynamicSearchBundle\Registry\DocumentDefinitionBuilderRegistry: ~
 
     DynamicSearchBundle\Registry\ResourceNormalizerRegistry: ~
+
+    DynamicSearchBundle\Registry\ContextGuardRegistry: ~

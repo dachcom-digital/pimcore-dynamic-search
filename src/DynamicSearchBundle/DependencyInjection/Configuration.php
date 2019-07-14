@@ -18,6 +18,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->booleanNode('enable_pimcore_element_listener')->defaultFalse()->end()
                 ->arrayNode('context')
 
                     ->useAttributeAsKey('name')

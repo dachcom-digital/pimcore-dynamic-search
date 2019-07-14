@@ -4,7 +4,7 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
+use DynamicSearchBundle\Exception\ResourceScaffolderNotFoundException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
 use DynamicSearchBundle\Resolver\ResourceScaffolderResolverInterface;
@@ -61,12 +61,12 @@ class TransformerManager implements TransformerManagerInterface
 
         try {
             $resourceScaffolderContainer = $this->documentTransformerResolver->resolve($contextData->getDataProviderName(), $resource);
-        } catch (DocumentTransformerNotFoundException $e) {
+        } catch (ResourceScaffolderNotFoundException $e) {
             // fail silently
         }
 
         if (!$resourceScaffolderContainer instanceof ResourceScaffolderContainerInterface) {
-            $this->logger->error('No DispatchTransformer found for new data', $dataProviderName, $contextData->getName());
+            $this->logger->error('No Resource Scaffolder found for new data', $dataProviderName, $contextData->getName());
 
             return null;
         }

@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Resolver;
 
-use DynamicSearchBundle\Exception\DocumentTransformerNotFoundException;
+use DynamicSearchBundle\Exception\ResourceScaffolderNotFoundException;
 use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 
 interface ResourceScaffolderResolverInterface
@@ -13,7 +13,7 @@ interface ResourceScaffolderResolverInterface
      *
      * @return ResourceScaffolderContainerInterface
      *
-     * @throws DocumentTransformerNotFoundException
+     * @throws ResourceScaffolderNotFoundException
      */
     public function resolve(string $dataProviderName, $resource);
 }

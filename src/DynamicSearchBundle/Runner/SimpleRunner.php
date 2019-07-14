@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\Runner;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Guard\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Processor\ResourceDeletionProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
@@ -16,19 +17,27 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
     protected $resourceHarmonizer;
 
     /**
+     * @var ResourceValidatorInterface
+     */
+    protected $resourceValidator;
+
+    /**
      * @var ResourceDeletionProcessorInterface
      */
     protected $resourceDeletionProcessor;
 
     /**
      * @param ResourceHarmonizerInterface        $resourceHarmonizer
+     * @param ResourceValidatorInterface         $resourceValidator
      * @param ResourceDeletionProcessorInterface $resourceDeletionProcessor
      */
     public function __construct(
         ResourceHarmonizerInterface $resourceHarmonizer,
+        ResourceValidatorInterface $resourceValidator,
         ResourceDeletionProcessorInterface $resourceDeletionProcessor
     ) {
         $this->resourceHarmonizer = $resourceHarmonizer;
+        $this->resourceValidator = $resourceValidator;
         $this->resourceDeletionProcessor = $resourceDeletionProcessor;
     }
 
@@ -99,6 +108,17 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
                     $contextName
                 );
 
+                continue;
+            }
+
+            $isValid = $this->resourceValidator->validate($contextDefinition->getname(), $contextDefinition->getContextDispatchType(), $resourceMeta, $resource);
+
+            if ($isValid === false) {
+                $this->logger->debug(
+                    sprintf('Resource has been dismissed by context guard. Skipping...'),
+                    $contextDefinition->getDataProviderName(),
+                    $contextDefinition->getName()
+                );
                 continue;
             }
 

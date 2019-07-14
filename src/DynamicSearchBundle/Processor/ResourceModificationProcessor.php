@@ -7,6 +7,7 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
+use DynamicSearchBundle\Guard\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Index\IndexFieldInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\DocumentDefinitionManagerInterface;
@@ -49,6 +50,11 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
     protected $resourceHarmonizer;
 
     /**
+     * @var ResourceValidatorInterface
+     */
+    protected $resourceValidator;
+
+    /**
      * @var DocumentDefinitionManagerInterface
      */
     protected $documentDefinitionManager;
@@ -64,6 +70,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
      * @param TransformerManagerInterface        $transformerManager
      * @param IndexManagerInterface              $indexManager
      * @param ResourceHarmonizerInterface        $resourceHarmonizer
+     * @param ResourceValidatorInterface         $resourceValidator
      * @param DocumentDefinitionManagerInterface $documentDefinitionManager
      */
     public function __construct(
@@ -72,6 +79,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         TransformerManagerInterface $transformerManager,
         IndexManagerInterface $indexManager,
         ResourceHarmonizerInterface $resourceHarmonizer,
+        ResourceValidatorInterface $resourceValidator,
         DocumentDefinitionManagerInterface $documentDefinitionManager
     ) {
         $this->logger = $logger;
@@ -79,6 +87,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         $this->transformerManager = $transformerManager;
         $this->indexManager = $indexManager;
         $this->resourceHarmonizer = $resourceHarmonizer;
+        $this->resourceValidator = $resourceValidator;
         $this->documentDefinitionManager = $documentDefinitionManager;
     }
 
@@ -99,7 +108,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             if (!$normalizedResource instanceof NormalizedDataResourceInterface) {
                 $this->logger->error(
                     sprintf('Normalized resource needs to be instance of %s. Skipping...', NormalizedDataResourceInterface::class),
-                    $contextData->getIndexProviderName(),
+                    $contextData->getDataProviderName(),
                     $contextData->getName()
                 );
 
@@ -110,10 +119,21 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             if (empty($resourceMeta->getDocumentId())) {
                 $this->logger->error(
                     'Unable to generate index document: No document id given. Skipping...',
-                    $contextData->getIndexProviderName(),
+                    $contextData->getDataProviderName(),
                     $contextData->getName()
                 );
 
+                continue;
+            }
+
+            $isValid = $this->resourceValidator->validate($contextData->getname(), $contextData->getContextDispatchType(), $resourceMeta, $resource);
+
+            if ($isValid === false) {
+                $this->logger->debug(
+                    sprintf('Resource has been dismissed by context guard. Skipping...'),
+                    $contextData->getDataProviderName(),
+                    $contextData->getName()
+                );
                 continue;
             }
 
