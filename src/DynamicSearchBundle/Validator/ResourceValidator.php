@@ -6,7 +6,6 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Manager\DataManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
-use DynamicSearchBundle\Registry\ContextGuardRegistryInterface;
 
 class ResourceValidator implements ResourceValidatorInterface
 {
@@ -21,23 +20,15 @@ class ResourceValidator implements ResourceValidatorInterface
     protected $dataManager;
 
     /**
-     * @var ContextGuardRegistryInterface
-     */
-    protected $contextGuardRegistry;
-
-    /**
-     * @param ConfigurationInterface        $configuration
-     * @param DataManagerInterface          $dataManager
-     * @param ContextGuardRegistryInterface $contextGuardRegistry
+     * @param ConfigurationInterface $configuration
+     * @param DataManagerInterface   $dataManager
      */
     public function __construct(
         ConfigurationInterface $configuration,
-        DataManagerInterface $dataManager,
-        ContextGuardRegistryInterface $contextGuardRegistry
+        DataManagerInterface $dataManager
     ) {
         $this->configuration = $configuration;
         $this->dataManager = $dataManager;
-        $this->contextGuardRegistry = $contextGuardRegistry;
     }
 
     /**

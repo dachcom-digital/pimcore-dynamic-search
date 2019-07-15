@@ -1,6 +1,6 @@
 # Pimcore - Dynamic Search
 
-![Dynamic Search Schema](https://user-images.githubusercontent.com/700119/59977691-d9ba9580-95d4-11e9-8d25-c87308e5e48c.png)
+![Dynamic Search Schema](https://user-images.githubusercontent.com/700119/61217991-3c550c00-a711-11e9-9f62-6f1fb4ff0e3e.png)
 
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/dynamic-search.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/dynamic-search)
