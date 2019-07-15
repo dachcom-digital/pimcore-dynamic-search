@@ -49,7 +49,7 @@ class PimcoreBundleCore extends Module
         $bundleName = getenv('DACHCOM_BUNDLE_NAME');
         $installerClass = getenv('DACHCOM_BUNDLE_INSTALLER_CLASS');
 
-        if ($installerClass === false) {
+        if ($installerClass === 'false') {
             return;
         }
 

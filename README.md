@@ -1,4 +1,4 @@
-# Pimcore 5/6 - Dynamic Search
+# Pimcore - Dynamic Search
 
 ![Dynamic Search Schema](https://user-images.githubusercontent.com/700119/59977691-d9ba9580-95d4-11e9-8d25-c87308e5e48c.png)
 
@@ -7,11 +7,8 @@
 [![Travis](https://img.shields.io/travis/com/dachcom-digital/pimcore-dynamic-search/master.svg?style=flat-square)](https://travis-ci.com/dachcom-digital/pimcore-dynamic-search)
 [![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat-square)](#)
 
-# Attention!
-This bundle has no stable release yet and is allowed to introduce major changes without any further warnings.
-
 ## Requirements
-* Pimcore >= 5.4.0
+* Pimcore >= 5.8.0
 
 ## Introduction
 The Dynamic Search Bundle allows you to redefine your search strategy. It's based on several data- and index providers.
@@ -29,9 +26,13 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search" : "~0.1.0"
+    "dachcom-digital/dynamic-search" : "~0.3.0"
 }
 ```
+
+## Further Information
+- [Example Setup](docs/0_ExampleSetup.md)
+- [Context Guard](#)
 
 ### Installation via Extension Manager
 After you have installed the Dynamic Search Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
@@ -52,8 +53,6 @@ After you have updated the Dynamic Search Bundle via composer:
 Does actually the same as the update command and preferred in CI-Workflow:
 - Execute: `$ bin/console pimcore:migrations:migrate -b DynamicSearchBundle`
 
-## Further Information
-- [Example Setup](docs/0_ExampleSetup.md)
 
 ## Copyright and License
 Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)  

@@ -3,10 +3,9 @@
 ### composer.json
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search": "~0.1.0",
-    "dachcom-digital/dynamic-search-data-provider-crawler": "~0.1.0",
-    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.1.0",
-    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.1.0",
+    "dachcom-digital/dynamic-search": "~0.3.0",
+    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.3.0",
+    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.3.0",
 }
 ```
 
@@ -18,145 +17,117 @@ dynamic_search_frontend:
 
 ### app/config/config.yml
 ```yaml
+
+services:
+
+    AppBundle\DynamicSearch\IndexDefinition\Trinity\Definition:
+        tags:
+            - { name: dynamic_search.document_definition_builder }
+            
 dynamic_search:
 
     context:
 
-        ecommerce:
-
-            index_provider:
-                service: 'lucene'
-                options:
-                    database_name: 'ecommerce'
-
-            data_provider:
-                service: 'trinityData'
-                options:
-                    index_object: true
-                    object_class_names:
-                        - TestClass
-                    index_document: true
-                    index_asset: true
-
-            output_channels:
-                autocomplete:
-                    service: 'lucene'
-                suggestions:
-                    service: 'lucene'
-                    options:
-                        restrict_search_fields:
-                            - 'sku'
-                search:
-                    service: 'lucene'
-                    options:
-                        max_per_page: 4
-
-            data_transformer:
-
-                document:
-                    id:
-                        field_transformer: 'element_id_extractor'
-
-                fields:
-
-                    sku:
-                        index_type: 'keyword'
-                        field_transformer: 'object_getter_extractor'
-                        field_transformer_options:
-                            argument: 'getSku'
-
-                    title:
-                        index_type: 'text'
-                        field_transformer: 'object_getter_extractor'
-                        field_transformer_options:
-                            argument: 'getTitle'
-
-                    image:
-                        index_type: 'text'
-                        field_transformer: 'object_getter_extractor'
-                        field_transformer_options:
-                            argument: 'getImage'
-
         default:
 
+            data_provider:
+                service: 'trinity_data'
+                options:
+                    always:
+                        index_object: true
+                        object_class_names:
+                            - MyTestClass
+                        index_document: true
+                        index_asset: false
+                    full_dispatch:
+                        object_limit: 20
+                        document_limit: 10
+
+                normalizer:
+                    service: 'trinity_localized_resource_normalizer'
+
             index_provider:
                 service: 'lucene'
                 options:
-                    database_name: 'default'
-
-            data_provider:
-                service: 'webCrawler'
-                options:
-                    seed: 'http://dev-site.test/de'
-                    valid_links:
-                        - '@^http://dev-site.test.*@i'
-                    user_invalid_links:
-                        - '@^http://dev-site.test\/members.*@i'
+                    database_name: 'my_index_database'
 
             output_channels:
                 autocomplete:
                     service: 'lucene'
-                    runtime_options_provider: 'my-special-runtime-options-provider'
                 suggestions:
                     service: 'lucene'
-                    options:
-                        restrict_search_fields:
-                            - 'main_headline'
+                    #options:
+                    #    restrict_search_fields:
+                    #        - 'sku'
+                    normalizer:
+                        service: 'lucene_document_key_value_normalizer'
+                        #options:
+                        #    skip_fields: ['title']
                 search:
                     service: 'lucene'
                     options:
                         max_per_page: 4
+                    normalizer:
+                        service: 'lucene_document_key_value_normalizer'
+                        #options:
+                        #    skip_fields: ['title']
 
-            data_transformer:
+```
 
-                document:
-                    id:
-                        field_transformer: 'resource_document_id_extractor'
-                    boost:
-                        field_transformer: 'resource_meta_extractor'
-                        field_transformer_options:
-                            name: 'boost'
+### AppBundle\DynamicSearch\IndexDefinition\Trinity\Definition.php
+```php
+<?php
 
-                fields:
+namespace AppBundle\Ds\IndexDefinition\Trinity;
 
-                    uri:
-                        index_type: 'keyword'
-                        field_transformer: 'resource_uri_extractor'
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
-                    host:
-                        index_type: 'keyword'
-                        field_transformer: 'resource_host_extractor'
+class Definition implements DocumentDefinitionBuilderInterface
+{
+    /**
+     * {@inheritDoc}
+     */
+    public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta)
+    {
+        if ($contextName !== 'default') {
+            return false;
+        }
 
-                    language:
-                        index_type: 'keyword'
-                        field_transformer: 'resource_language_extractor'
+        if ($resourceMeta->getResourceCollectionType() !== 'object') {
+            return false;
+        }
 
-                    title:
-                        index_type: 'text'
-                        field_transformer: 'resource_title_extractor'
+        return true;
+    }
 
-                    main_headline:
-                        index_type: 'text'
-                        field_transformer: 'resource_html_tag_content_extractor'
-                        field_transformer_options:
-                            tag: 'h1'
-                            return_multiple: false
-
-                    meta_description:
-                        index_type: 'text'
-                        field_transformer: 'resource_meta_extractor'
-                        field_transformer_options:
-                            name: 'description'
-
-                    content:
-                        index_type: 'text'
-                        field_transformer: 'resource_text_extractor'
-                        field_transformer_options:
-                            content_start_indicator: '<!-- main-content -->'
-                            content_end_indicator: '<!-- /main-content -->'
-                            # content_exclude_start_indicator: ''
-                            # content_exclude_end_indicator: ''
-                        output_channel:
-                            visibility:
-                                suggestions: false
+    /**
+     * {@inheritDoc}
+     */
+    public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions)
+    {
+        $definition
+            ->addDocumentFieldDefinition([
+                'name'              => 'sku',
+                'index_transformer' => [
+                    'type' => 'keyword',
+                ],
+                'data_transformer'  => [
+                    'type'          => 'object_getter_extractor',
+                    'configuration' => ['method' => 'getSku']
+                ]
+            ])
+            ->addDocumentFieldDefinition([
+                'name'              => 'title',
+                'index_transformer' => [
+                    'type' => 'keyword',
+                ],
+                'data_transformer'  => [
+                    'type'          => 'object_getter_extractor',
+                    'configuration' => ['method' => 'getTitle']
+                ]
+            ]);
+    }
+}
 ```
