@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Resolver;
 
-use DynamicSearchBundle\Exception\ResourceScaffolderNotFoundException;
+use DynamicSearchBundle\Exception\Resolver\ResourceScaffolderNotFoundException;
 use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 
 interface ResourceScaffolderResolverInterface

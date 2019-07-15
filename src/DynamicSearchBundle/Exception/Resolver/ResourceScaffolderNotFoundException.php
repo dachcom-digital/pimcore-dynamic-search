@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicSearchBundle\Exception;
+namespace DynamicSearchBundle\Exception\Resolver;
 
 final class ResourceScaffolderNotFoundException extends \RuntimeException
 {
@@ -9,6 +9,6 @@ final class ResourceScaffolderNotFoundException extends \RuntimeException
      */
     public function __construct($message = null)
     {
-        parent::__construct($message ?: 'No valid ResourceScaffolder has been found to apply');
+        parent::__construct($message ?: 'No valid resource scaffolder has been found to apply');
     }
 }

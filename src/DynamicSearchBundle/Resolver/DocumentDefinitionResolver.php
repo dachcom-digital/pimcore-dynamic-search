@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\Resolver;
 
+use DynamicSearchBundle\Exception\Resolver\DocumentDefinitionNotFoundException;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Registry\DocumentDefinitionBuilderRegistryInterface;
 
@@ -30,6 +31,10 @@ class DocumentDefinitionResolver implements DocumentDefinitionResolverInterface
             if ($documentDefinitionBuilder->isApplicable($contextName, $resourceMeta) === true) {
                 $builder[] = $documentDefinitionBuilder;
             }
+        }
+
+        if (count($builder) === 0) {
+            throw new DocumentDefinitionNotFoundException();
         }
 
         return $builder;
