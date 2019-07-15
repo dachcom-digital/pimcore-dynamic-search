@@ -179,5 +179,4 @@ class PimcoreElementListener implements EventSubscriberInterface
             $event->getAsset()
         );
     }
-
 }

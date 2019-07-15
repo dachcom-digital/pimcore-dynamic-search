@@ -2,14 +2,8 @@
 
 namespace DynamicSearchBundle\Runner;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\ProcessCancelledException;
-use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Exception\RuntimeException;
-use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Manager\DataManagerInterface;
-use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Service\LongProcessServiceInterface;

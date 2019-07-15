@@ -72,6 +72,7 @@ abstract class AbstractRunner
      * @param string               $dataProviderBehaviour
      *
      * @return array
+     *
      * @throws RuntimeException
      */
     protected function setupProviders(ContextDataInterface $contextDefinition, string $dataProviderBehaviour)
@@ -120,6 +121,7 @@ abstract class AbstractRunner
      * @param string $dispatchType
      *
      * @return ContextDataInterface
+     *
      * @throws RuntimeException
      */
     protected function setupContextDefinition(string $contextName, string $dispatchType)

@@ -18,5 +18,4 @@ interface DataCollectorInterface
      * @param array  $options
      */
     public function addToContextQueue(string $contextName, string $dispatchType, $resource, array $options = []);
-
 }

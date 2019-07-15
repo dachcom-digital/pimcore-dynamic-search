@@ -92,6 +92,7 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
                 $contextDefinition->getDataProviderName(),
                 $contextDefinition->getName()
             );
+
             return;
         }
 
@@ -123,7 +124,6 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
             }
 
             $this->callSaveMethod($contextDefinition, $dataProvider, 'provideSingle', [$contextDefinition, $resourceMeta], $providers);
-
         }
 
         $this->coolDownProvider($contextDefinition, $providers);

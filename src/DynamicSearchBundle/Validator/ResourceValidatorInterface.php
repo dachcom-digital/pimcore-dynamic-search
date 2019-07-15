@@ -5,9 +5,9 @@ namespace DynamicSearchBundle\Validator;
 interface ResourceValidatorInterface
 {
     /**
-     * @param string                $contextName
-     * @param string                $dispatchType
-     * @param mixed                 $resource
+     * @param string $contextName
+     * @param string $dispatchType
+     * @param mixed  $resource
      *
      * @return mixed
      */

@@ -54,6 +54,5 @@ class ResourceValidator implements ResourceValidatorInterface
         }
 
         return $dataProvider->validateUntrustedResource($contextDefinition, $resource);
-
     }
 }

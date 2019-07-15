@@ -78,7 +78,8 @@ class DataCollector implements DataCollectorInterface
         if (count($contextDefinitions) === 0) {
             $this->logger->error(
                 'No context configuration found. Please add them to the "dynamic_search.context" configuration nod',
-                'queue', 'global'
+                'queue',
+                'global'
             );
 
             return;
@@ -116,7 +117,6 @@ class DataCollector implements DataCollectorInterface
                 $contextName
             );
         }
-
     }
 
     /**

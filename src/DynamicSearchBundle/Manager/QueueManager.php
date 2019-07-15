@@ -59,11 +59,7 @@ class QueueManager implements QueueManagerInterface
          * -> only return [ resource_meta, corresponding envelope ]
          */
 
-        usort($jobs, function ($a, $b) {
-            /**
-             * @var TmpStore $a
-             * @var TmpStore $b
-             */
+        usort($jobs, function (TmpStore $a, TmpStore $b) {
             if ($a->getDate() === $b->getDate()) {
                 return 0;
             }
@@ -184,5 +180,4 @@ class QueueManager implements QueueManagerInterface
 
         return $job;
     }
-
 }

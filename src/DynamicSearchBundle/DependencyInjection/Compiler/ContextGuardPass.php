@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class ContextGuardPass implements CompilerPassInterface
 {
-     use PriorityTaggedServiceTrait;
+    use PriorityTaggedServiceTrait;
 
     /**
      * {@inheritdoc}
