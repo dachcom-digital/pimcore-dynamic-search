@@ -80,7 +80,7 @@ class DataProcessor implements DataProcessorInterface
 
     protected function checkJobs()
     {
-        $envelopeData = $this->queueManager->getActiveEnvelopes();
+        $envelopeData = $this->queueManager->getQueuedEnvelopes();
 
         if (empty($envelopeData) || !is_array($envelopeData)) {
             return;

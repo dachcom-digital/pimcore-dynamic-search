@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Runner;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Guard\Validator\ResourceValidatorInterface;
+use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Processor\ResourceDeletionProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
@@ -84,6 +84,17 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
             $resourceType = gettype($resource);
         }
 
+        $resourcedIsValid = $this->resourceValidator->validateUntrustedResource($contextDefinition->getName(), $contextDefinition->getContextDispatchType(), $resource);
+
+        if ($resourcedIsValid === false) {
+            $this->logger->debug(
+                sprintf('Resource has been marked as untrusted. Skipping...'),
+                $contextDefinition->getDataProviderName(),
+                $contextDefinition->getName()
+            );
+            return;
+        }
+
         $normalizedResourceStack = $this->resourceHarmonizer->harmonizeUntilNormalizedResourceStack($contextDefinition, $resource);
 
         if ($normalizedResourceStack === null) {
@@ -108,17 +119,6 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
                     $contextName
                 );
 
-                continue;
-            }
-
-            $isValid = $this->resourceValidator->validate($contextDefinition->getname(), $contextDefinition->getContextDispatchType(), $resourceMeta, $resource);
-
-            if ($isValid === false) {
-                $this->logger->debug(
-                    sprintf('Resource has been dismissed by context guard. Skipping...'),
-                    $contextDefinition->getDataProviderName(),
-                    $contextDefinition->getName()
-                );
                 continue;
             }
 

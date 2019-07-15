@@ -7,7 +7,6 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
-use DynamicSearchBundle\Guard\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Index\IndexFieldInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\DocumentDefinitionManagerInterface;
@@ -17,6 +16,7 @@ use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Provider\IndexProviderInterface;
+use DynamicSearchBundle\Registry\ContextGuardRegistryInterface;
 use DynamicSearchBundle\Resource\Container\OptionFieldContainer;
 use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 use DynamicSearchBundle\Resource\Container\IndexFieldContainer;
@@ -50,14 +50,14 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
     protected $resourceHarmonizer;
 
     /**
-     * @var ResourceValidatorInterface
-     */
-    protected $resourceValidator;
-
-    /**
      * @var DocumentDefinitionManagerInterface
      */
     protected $documentDefinitionManager;
+
+    /**
+     * @var ContextGuardRegistryInterface
+     */
+    protected $contextGuardRegistry;
 
     /**
      * @var bool
@@ -70,8 +70,8 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
      * @param TransformerManagerInterface        $transformerManager
      * @param IndexManagerInterface              $indexManager
      * @param ResourceHarmonizerInterface        $resourceHarmonizer
-     * @param ResourceValidatorInterface         $resourceValidator
      * @param DocumentDefinitionManagerInterface $documentDefinitionManager
+     * @param ContextGuardRegistryInterface      $contextGuardRegistry
      */
     public function __construct(
         LoggerInterface $logger,
@@ -79,16 +79,16 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         TransformerManagerInterface $transformerManager,
         IndexManagerInterface $indexManager,
         ResourceHarmonizerInterface $resourceHarmonizer,
-        ResourceValidatorInterface $resourceValidator,
-        DocumentDefinitionManagerInterface $documentDefinitionManager
+        DocumentDefinitionManagerInterface $documentDefinitionManager,
+        ContextGuardRegistryInterface $contextGuardRegistry
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->transformerManager = $transformerManager;
         $this->indexManager = $indexManager;
         $this->resourceHarmonizer = $resourceHarmonizer;
-        $this->resourceValidator = $resourceValidator;
         $this->documentDefinitionManager = $documentDefinitionManager;
+        $this->contextGuardRegistry = $contextGuardRegistry;
     }
 
     /**
@@ -126,14 +126,14 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
                 continue;
             }
 
-            $isValid = $this->resourceValidator->validate($contextData->getname(), $contextData->getContextDispatchType(), $resourceMeta, $resource);
-
-            if ($isValid === false) {
+            $approvedByContextGuard = $this->invokeContextGuard($contextData->getName(), $resourceMeta);
+            if ($approvedByContextGuard === false) {
                 $this->logger->debug(
-                    sprintf('Resource has been dismissed by context guard. Skipping...'),
+                    'Resource has been rejected by context guard. Skipping...',
                     $contextData->getDataProviderName(),
                     $contextData->getName()
                 );
+
                 continue;
             }
 
@@ -171,6 +171,17 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             $this->logger->error(
                 'Unable to generate index document: No document id given. Skipping...',
                 $contextData->getIndexProviderName(),
+                $contextData->getName()
+            );
+
+            return;
+        }
+
+        $approvedByContextGuard = $this->invokeContextGuard($contextData->getName(), $resourceMeta);
+        if ($approvedByContextGuard === false) {
+            $this->logger->debug(
+                'Resource has been rejected by context guard. Skipping...',
+                $contextData->getDataProviderName(),
                 $contextData->getName()
             );
 
@@ -402,5 +413,22 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         } catch (\Throwable $e) {
             throw new RuntimeException(sprintf('Error while executing index modification. Error was: "%s".', $e->getMessage()));
         }
+    }
+
+    /**
+     * @param string                $contextName
+     * @param ResourceMetaInterface $resourceMeta
+     *
+     * @return bool
+     */
+    protected function invokeContextGuard(string $contextName, ResourceMetaInterface $resourceMeta)
+    {
+        foreach ($this->contextGuardRegistry->getAllGuards() as $contextGuard) {
+            if ($contextGuard->verifyResourceMetaForContext($contextName, $resourceMeta) === false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

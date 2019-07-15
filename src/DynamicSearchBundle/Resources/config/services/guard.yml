@@ -5,4 +5,4 @@ services:
         autoconfigure: true
         public: false
 
-    DynamicSearchBundle\Guard\Validator\ResourceValidator: ~
+    DynamicSearchBundle\Validator\ResourceValidator: ~

@@ -22,6 +22,14 @@ interface DataProviderInterface extends ProviderInterface
 
     /**
      * @param ContextDataInterface $contextData
+     * @param mixed                $resource
+     *
+     * @return bool
+     */
+    public function validateUntrustedResource(ContextDataInterface $contextData, $resource);
+
+    /**
+     * @param ContextDataInterface $contextData
      *
      * @throws ProviderException
      * @throws ProcessCancelledException

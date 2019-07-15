@@ -10,24 +10,28 @@ interface QueueManagerInterface
     const QUEUE_IDENTIFIER = 'dynamic_search_index_queue';
 
     /**
-     * @param string $dispatchType
-     * @param mixed  $resource
-     * @param array  $options
-     */
-    public function addToGlobalQueue(string $dispatchType, $resource, array $options);
-
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param mixed  $resource
-     * @param array  $options
-     */
-    public function addToContextQueue(string $contextName, string $dispatchType, $resource, array $options);
-
-    /**
      * @return mixed
      */
     public function clearQueue();
+
+    /**
+     * @return array
+     */
+    public function getQueuedEnvelopes();
+
+    /**
+     * @param Envelope $envelope
+     */
+    public function deleteEnvelope(Envelope $envelope);
+
+    /**
+     * @param string $jobId
+     * @param string $contextName
+     * @param string $dispatchType
+     * @param array  $metaResources
+     * @param array  $options
+     */
+    public function addJobToQueue(string $jobId, string $contextName, string $dispatchType, array $metaResources, array $options);
 
     /**
      * @return bool
@@ -38,14 +42,4 @@ interface QueueManagerInterface
      * @return array|TmpStore[]
      */
     public function getActiveJobs();
-
-    /**
-     * @return array
-     */
-    public function getActiveEnvelopes();
-
-    /**
-     * @param Envelope $envelope
-     */
-    public function deleteJob(Envelope $envelope);
 }
