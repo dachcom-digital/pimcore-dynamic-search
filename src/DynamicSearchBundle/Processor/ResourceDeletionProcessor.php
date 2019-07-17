@@ -2,14 +2,11 @@
 
 namespace DynamicSearchBundle\Processor;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
-use DynamicSearchBundle\Manager\DocumentDefinitionManagerInterface;
-use DynamicSearchBundle\Manager\NormalizerManagerInterface;
 use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
@@ -23,19 +20,9 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     protected $logger;
 
     /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
-
-    /**
      * @var IndexManagerInterface
      */
     protected $indexManager;
-
-    /**
-     * @var NormalizerManagerInterface
-     */
-    protected $normalizerManager;
 
     /**
      * @var ResourceHarmonizerInterface
@@ -43,32 +30,18 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
     protected $resourceHarmonizer;
 
     /**
-     * @var DocumentDefinitionManagerInterface
-     */
-    protected $documentDefinitionManager;
-
-    /**
-     * @param LoggerInterface                    $logger
-     * @param ConfigurationInterface             $configuration
-     * @param IndexManagerInterface              $indexManager
-     * @param NormalizerManagerInterface         $normalizerManager
-     * @param ResourceHarmonizerInterface        $resourceHarmonizer
-     * @param DocumentDefinitionManagerInterface $documentDefinitionManager
+     * @param LoggerInterface             $logger
+     * @param IndexManagerInterface       $indexManager
+     * @param ResourceHarmonizerInterface $resourceHarmonizer
      */
     public function __construct(
         LoggerInterface $logger,
-        ConfigurationInterface $configuration,
         IndexManagerInterface $indexManager,
-        NormalizerManagerInterface $normalizerManager,
-        ResourceHarmonizerInterface $resourceHarmonizer,
-        DocumentDefinitionManagerInterface $documentDefinitionManager
+        ResourceHarmonizerInterface $resourceHarmonizer
     ) {
         $this->logger = $logger;
-        $this->configuration = $configuration;
         $this->indexManager = $indexManager;
-        $this->normalizerManager = $normalizerManager;
         $this->resourceHarmonizer = $resourceHarmonizer;
-        $this->documentDefinitionManager = $documentDefinitionManager;
     }
 
     /**
@@ -88,7 +61,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
             if (!$normalizedResource instanceof NormalizedDataResourceInterface) {
                 $this->logger->error(
                     sprintf('Normalized resource needs to be instance of %s. Skipping...', NormalizedDataResourceInterface::class),
-                    $contextData->getIndexProviderName(),
+                    $contextData->getDataProviderName(),
                     $contextData->getName()
                 );
 
@@ -99,7 +72,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
             if (empty($resourceMeta->getDocumentId())) {
                 $this->logger->error(
                     'Unable to generate index document: No document id given. Skipping...',
-                    $contextData->getIndexProviderName(),
+                    $contextData->getDataProviderName(),
                     $contextData->getName()
                 );
 
@@ -159,14 +132,19 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
                 $indexDocument->getDocumentId(),
                 $contextData->getResourceNormalizerName()
             ),
-            $contextData->getIndexProviderName(),
+            $contextData->getDataProviderName(),
             $contextData->getName()
         );
 
         try {
             $indexProvider->processDocument($contextData, $indexDocument);
         } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Error while executing index modification. Error was: "%s".', $e->getMessage()));
+            throw new RuntimeException(sprintf(
+                    'Error while executing processing index document (%s) via provider. Error was: "%s".',
+                    $contextData->getContextDispatchType(),
+                    $e->getMessage()
+                )
+            );
         }
     }
 }

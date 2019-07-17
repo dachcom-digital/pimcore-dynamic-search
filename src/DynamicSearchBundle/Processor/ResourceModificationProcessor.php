@@ -150,7 +150,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
                 continue;
             }
 
-            $this->sendIndexDocumentToIndexProvider($contextData, $indexProvider, $indexDocument, $resourceContainer->getResourceScaffolderIdentifier());
+            $this->validateAndSubmitIndexDocument($contextData, $indexProvider, $indexDocument, $resourceContainer->getResourceScaffolderIdentifier());
         }
     }
 
@@ -170,7 +170,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (empty($resourceMeta->getDocumentId())) {
             $this->logger->error(
                 'Unable to generate index document: No document id given. Skipping...',
-                $contextData->getIndexProviderName(),
+                $contextData->getDataProviderName(),
                 $contextData->getName()
             );
 
@@ -200,7 +200,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             return;
         }
 
-        $this->sendIndexDocumentToIndexProvider($contextData, $indexProvider, $indexDocument, $resourceContainer->getResourceScaffolderIdentifier());
+        $this->validateAndSubmitIndexDocument($contextData, $indexProvider, $indexDocument, $resourceContainer->getResourceScaffolderIdentifier());
     }
 
     /**
@@ -215,7 +215,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (!$documentDefinition instanceof DocumentDefinitionInterface) {
             $this->logger->error(
                 sprintf('No document definition generated. Probably no applicable document definition builder was found. Skipping...'),
-                $contextData->getIndexProviderName(),
+                $contextData->getDataProviderName(),
                 $contextData->getName()
             );
 
@@ -225,7 +225,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (count($documentDefinition->getDocumentFieldDefinitions()) === 0) {
             $this->logger->error(
                 sprintf('Document Definition does not have any defined field. Skipping...'),
-                $contextData->getIndexProviderName(),
+                $contextData->getDataProviderName(),
                 $contextData->getName()
             );
 
@@ -292,17 +292,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         if (!$indexDocument instanceof IndexDocument) {
             $this->logger->error(
                 sprintf('Index Document needs to be instance of %s. Skipping...', IndexDocument::class),
-                $contextData->getIndexProviderName(),
-                $contextData->getName()
-            );
-
-            return null;
-        }
-
-        if (count($indexDocument->getIndexFields()) === 0) {
-            $this->logger->error(
-                sprintf('Index Document "%s" does not have any index fields. Skip Indexing...', $indexDocument->getDocumentId()),
-                $contextData->getIndexProviderName(),
+                $contextData->getDataProviderName(),
                 $contextData->getName()
             );
 
@@ -330,7 +320,12 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         $transformedData = $fieldTransformer->transformData($dispatchTransformerName, $resourceContainer);
+
         if ($transformedData === null) {
+            return null;
+        }
+
+        if ($transformedData === '') {
             return null;
         }
 
@@ -364,6 +359,88 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
     }
 
     /**
+     * @param ContextDataInterface   $contextData
+     * @param IndexProviderInterface $indexProvider
+     * @param IndexDocument          $indexDocument
+     * @param string                 $resourceScaffolderName
+     */
+    protected function validateAndSubmitIndexDocument(
+        ContextDataInterface $contextData,
+        IndexProviderInterface $indexProvider,
+        IndexDocument $indexDocument,
+        string $resourceScaffolderName
+    ) {
+        $logType = 'debug';
+        $logMessage = null;
+        $contextDispatchType = $contextData->getContextDispatchType();
+
+        if (count($indexDocument->getIndexFields()) === 0) {
+            if ($contextData->getContextDispatchType() === ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
+                $contextDispatchType = ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE;
+                $logMessage = sprintf('Index Document "%s" does not have any index fields. Trying to remove it from index...', $indexDocument->getDocumentId());
+            } else {
+                $logType = 'error';
+                $contextDispatchType = null;
+                $logMessage = sprintf('Index Document "%s" does not have any index fields. Skip Indexing...', $indexDocument->getDocumentId());
+            }
+        } else {
+            $logA = sprintf('Index Document with %d fields successfully generated', count($indexDocument->getIndexFields()));
+            $logB = sprintf('Used "%s" as resource scaffolder', $resourceScaffolderName);
+            $logC = sprintf('Used "%s" as data normalizer', $contextData->getResourceNormalizerName());
+            $logMessage = sprintf('%s. %s. %s.', $logA, $logB, $logC);
+        }
+
+        $this->logger->log($logType, $logMessage, $contextData->getDataProviderName(), $contextData->getName());
+
+        if ($contextDispatchType === null) {
+            return;
+        }
+
+        // switch dispatch type!
+        if ($contextData->getContextDispatchType() !== $contextDispatchType) {
+            $contextData = $this->configuration->getContextDefinition($contextDispatchType, $contextData->getName());
+        }
+
+        $this->sendIndexDocumentToIndexProvider($contextData, $indexProvider, $indexDocument);
+    }
+
+    /**
+     * @param ContextDataInterface   $contextData
+     * @param IndexProviderInterface $indexProvider
+     * @param IndexDocument          $indexDocument
+     */
+    protected function sendIndexDocumentToIndexProvider(ContextDataInterface $contextData, IndexProviderInterface $indexProvider, IndexDocument $indexDocument)
+    {
+        try {
+            $indexProvider->processDocument($contextData, $indexDocument);
+        } catch (\Throwable $e) {
+            throw new RuntimeException(sprintf(
+                    'Error while executing processing index document (%s) via provider. Error was: "%s".',
+                    $contextData->getContextDispatchType(),
+                    $e->getMessage()
+                )
+            );
+        }
+    }
+
+    /**
+     * @param string                $contextName
+     * @param ResourceMetaInterface $resourceMeta
+     *
+     * @return bool
+     */
+    protected function invokeContextGuard(string $contextName, ResourceMetaInterface $resourceMeta)
+    {
+        foreach ($this->contextGuardRegistry->getAllGuards() as $contextGuard) {
+            if ($contextGuard->verifyResourceMetaForContext($contextName, $resourceMeta) === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @param ContextDataInterface $contextData
      *
      * @return IndexProviderInterface
@@ -385,50 +462,4 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         return $indexProvider;
     }
 
-    /**
-     * @param ContextDataInterface   $contextData
-     * @param IndexProviderInterface $indexProvider
-     * @param IndexDocument          $indexDocument
-     * @param string                 $resourceScaffolderName
-     */
-    protected function sendIndexDocumentToIndexProvider(
-        ContextDataInterface $contextData,
-        IndexProviderInterface $indexProvider,
-        IndexDocument $indexDocument,
-        string $resourceScaffolderName
-    ) {
-        $this->logger->debug(
-            sprintf(
-                'Index Document with %d fields successfully generated. Used "%s" as resource scaffolder and "%s" as data normalizer.',
-                count($indexDocument->getIndexFields()),
-                $resourceScaffolderName,
-                $contextData->getResourceNormalizerName()
-            ),
-            $contextData->getIndexProviderName(),
-            $contextData->getName()
-        );
-
-        try {
-            $indexProvider->processDocument($contextData, $indexDocument);
-        } catch (\Throwable $e) {
-            throw new RuntimeException(sprintf('Error while executing index modification. Error was: "%s".', $e->getMessage()));
-        }
-    }
-
-    /**
-     * @param string                $contextName
-     * @param ResourceMetaInterface $resourceMeta
-     *
-     * @return bool
-     */
-    protected function invokeContextGuard(string $contextName, ResourceMetaInterface $resourceMeta)
-    {
-        foreach ($this->contextGuardRegistry->getAllGuards() as $contextGuard) {
-            if ($contextGuard->verifyResourceMetaForContext($contextName, $resourceMeta) === false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
