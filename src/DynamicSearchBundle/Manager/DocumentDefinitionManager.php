@@ -39,7 +39,7 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
     public function generateDocumentDefinition(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta)
     {
         try {
-            $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolve($contextData->getName(), $resourceMeta);
+            $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolve($resourceMeta);
         } catch (DocumentDefinitionNotFoundException $e) {
             return null;
         }
