@@ -3,10 +3,16 @@
 namespace DynamicSearchBundle\Provider\Extension;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 class ProviderConfig
 {
+    /**
+     * @var FileSystem
+     */
+    protected $fileSystem;
+
     /**
      * @var array
      */
@@ -16,6 +22,11 @@ class ProviderConfig
      * @var string
      */
     protected $file;
+
+    public function __construct()
+    {
+        $this->fileSystem = new FileSystem();
+    }
 
     /**
      * @return array
@@ -42,34 +53,16 @@ class ProviderConfig
     {
         $this->config = $config;
 
-        $yml = Yaml::dump($config);
-        file_put_contents($this->locateConfigFile(), $yml);
+        if (!$this->fileSystem->exists($this->locateConfigDir())) {
+            $this->fileSystem->mkdir($this->locateConfigDir(), 0755);
+        }
+
+        $this->fileSystem->dumpFile($this->locateConfigFile(), Yaml::dump($config));
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function locateConfigFile()
-    {
-        if (null === $this->file) {
-            $this->file = ConfigurationInterface::BUNDLE_PATH . '/enabled_providers.yml';
-        }
-
-        return $this->file;
-    }
-
-    /**
-     * @return bool
-     */
-    public function configFileExists()
-    {
-        if (null !== $file = $this->locateConfigFile()) {
-            return file_exists($file);
-        }
-
-        return false;
-    }
-
     protected function loadConfig()
     {
         if (!$this->config) {
@@ -83,5 +76,37 @@ class ProviderConfig
         }
 
         return $this->config;
+    }
+
+    /**
+     * @return bool
+     */
+    public function configFileExists()
+    {
+        if (null !== $file = $this->locateConfigFile()) {
+            return $this->fileSystem->exists($file);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function locateConfigFile()
+    {
+        if ($this->file === null) {
+            $this->file = sprintf('%s/%s', $this->locateConfigDir(), 'enabled_providers.yml');
+        }
+
+        return $this->file;
+    }
+
+    /**
+     * @return string
+     */
+    public function locateConfigDir()
+    {
+        return ConfigurationInterface::BUNDLE_PATH;
     }
 }
