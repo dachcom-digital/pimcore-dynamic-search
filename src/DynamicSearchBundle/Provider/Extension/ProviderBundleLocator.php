@@ -60,6 +60,10 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
      */
     protected function findBundlesInPaths(array $paths)
     {
+        if (empty($paths)) {
+            return [];
+        }
+
         $filteredPaths = [];
         foreach ($paths as $path) {
             if (file_exists($path) && is_dir($path)) {
