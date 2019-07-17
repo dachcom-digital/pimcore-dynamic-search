@@ -39,6 +39,5 @@ class DynamicSearchExtension extends Extension
         }
 
         $container->set(ProviderConfig::class, $providerConfig);
-
     }
 }

@@ -140,11 +140,10 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
             $indexProvider->processDocument($contextData, $indexDocument);
         } catch (\Throwable $e) {
             throw new RuntimeException(sprintf(
-                    'Error while executing processing index document (%s) via provider. Error was: "%s".',
-                    $contextData->getContextDispatchType(),
-                    $e->getMessage()
-                )
-            );
+                'Error while executing processing index document (%s) via provider. Error was: "%s".',
+                $contextData->getContextDispatchType(),
+                $e->getMessage()
+            ));
         }
     }
 }

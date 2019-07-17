@@ -37,7 +37,7 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
 
     /**
      * Finds composer bundles in /vendor
-     * if composer package type is "dynamic-search-provider-bundle"
+     * if composer package type is "dynamic-search-provider-bundle".
      *
      * @return array
      */
@@ -115,5 +115,4 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
 
         $result[$reflector->getName()] = $reflector->getName();
     }
-
 }

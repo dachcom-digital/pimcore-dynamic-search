@@ -3,7 +3,6 @@
 namespace DynamicSearchBundle\EventListener;
 
 use DynamicSearchBundle\Manager\ProviderBundleManagerInterface;
-use DynamicSearchBundle\Provider\Extension\ProviderBundleLocatorInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -11,7 +10,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ProviderAvailabilityListener implements EventSubscriberInterface
 {
     /**
-     * @var ProviderBundleLocatorInterface
+     * @var ProviderBundleManagerInterface
      */
     protected $providerBundleManager;
 
@@ -46,5 +45,4 @@ class ProviderAvailabilityListener implements EventSubscriberInterface
 
         $this->providerBundleManager->checkAvailableProviderBundles();
     }
-
 }

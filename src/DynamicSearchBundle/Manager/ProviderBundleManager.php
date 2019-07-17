@@ -28,7 +28,7 @@ class ProviderBundleManager implements ProviderBundleManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function checkAvailableProviderBundles()
     {
