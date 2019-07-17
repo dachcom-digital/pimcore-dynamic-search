@@ -18,3 +18,5 @@ services:
     DynamicSearchBundle\Manager\NormalizerManager: ~
 
     DynamicSearchBundle\Manager\QueueManager: ~
+
+    DynamicSearchBundle\Manager\ProviderBundleManager: ~

@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Migrations\MigrationException;
 use Doctrine\DBAL\Migrations\Version;
+use DynamicSearchBundle\Manager\ProviderBundleManagerInterface;
 use Pimcore\Model\Property;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Admin;
@@ -15,11 +16,24 @@ use Pimcore\Migrations\Migration\InstallMigration;
 class Install extends MigrationInstaller
 {
     /**
+     * @var ProviderBundleManagerInterface
+     */
+    protected $providerBundleManager;
+
+    /**
      * {@inheritdoc}
      */
     public function getMigrationVersion(): string
     {
         return '00000001';
+    }
+
+    /**
+     * @param ProviderBundleManagerInterface $providerBundleManager
+     */
+    public function setProviderBundleManager(ProviderBundleManagerInterface $providerBundleManager)
+    {
+        $this->providerBundleManager = $providerBundleManager;
     }
 
     /**
@@ -32,6 +46,8 @@ class Install extends MigrationInstaller
         $this->migrationManager->markVersionAsMigrated($migrationConfiguration->getVersion($migrationConfiguration->getLatestVersion()));
 
         $this->initializeFreshSetup();
+
+        $this->providerBundleManager->checkAvailableProviderBundles();
     }
 
     /**

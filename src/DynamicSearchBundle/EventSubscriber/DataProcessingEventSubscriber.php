@@ -64,7 +64,7 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
         } elseif ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH) {
             $this->resourceModificationProcessor->processByResourceMeta($contextDefinition, $event->getResourceMeta(), $event->getData());
         } else {
-            $this->logger->error(sprintf('Invalid provider behaviour "%s". Cannot dispatch resource processor', $event->getProviderBehaviour()), 'web_crawler', $event->getContextName());
+            $this->logger->error(sprintf('Invalid provider behaviour "%s". Cannot dispatch resource processor', $event->getProviderBehaviour()), $contextDefinition->getDataProviderName(), $event->getContextName());
         }
     }
 }

@@ -6,7 +6,7 @@ use DynamicSearchBundle\Context\ContextData;
 
 interface ConfigurationInterface
 {
-    const CRAWLER_LOG_FILE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/DynamicSearchBundle/crawler.log';
+    const BUNDLE_PATH = PIMCORE_PRIVATE_VAR . '/bundles/DynamicSearchBundle';
 
     /**
      * @param string $slot

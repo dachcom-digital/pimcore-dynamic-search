@@ -10,12 +10,15 @@ use DynamicSearchBundle\DependencyInjection\Compiler\IndexProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\OutputChannelPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\ResourceNormalizerPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\ResourceTransformerPass;
+use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use DynamicSearchBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class DynamicSearchBundle extends AbstractPimcoreBundle
+class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBundleInterface
 {
     use PackageVersionTrait;
 
@@ -36,6 +39,19 @@ class DynamicSearchBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new IndexFieldPass());
         $container->addCompilerPass(new OutputChannelPass());
         $container->addCompilerPass(new ContextGuardPass());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $providerConfig = new ProviderConfig();
+        if ($providerConfig->configFileExists()) {
+            foreach ($providerConfig->getAvailableProviderBundles() as $providerBundle) {
+                $collection->addBundle(new $providerBundle());
+            }
+        }
     }
 
     /**
