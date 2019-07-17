@@ -110,8 +110,10 @@ class PimcoreElementListener implements EventSubscriberInterface
         /** @var Concrete $object */
         $object = $event->getObject();
 
-        $dispatchType = $object->isPublished() === false
-            ? ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE
+        $dispatchType = method_exists('isPublished', $object)
+            ? $object->isPublished() === false
+                ? ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE
+                : ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE
             : ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
 
         $this->dataCollector->addToGlobalQueue(
