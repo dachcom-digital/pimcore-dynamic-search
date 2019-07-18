@@ -89,7 +89,7 @@ class Definition implements DocumentDefinitionBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function isApplicable(ResourceMetaInterface $resourceMeta)
+    public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta)
     {
         if ($resourceMeta->getResourceCollectionType() !== 'object') {
             return false;
