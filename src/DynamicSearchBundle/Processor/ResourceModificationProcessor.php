@@ -314,7 +314,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             $preprocessDocumentDefinition = new PreProcessedDocumentDefinition();
 
             // @TODO: check if transformed data is type of array?
-            call_user_func($fieldDefinitionOptions['closure'], $transformedData);
+            call_user_func($fieldDefinitionOptions['closure'], $preprocessDocumentDefinition, $transformedData);
 
             foreach ($preprocessDocumentDefinition->getDocumentFieldDefinitions() as $preProcessedFieldDefinitionOptions) {
 

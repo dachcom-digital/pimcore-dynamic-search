@@ -5,19 +5,24 @@ namespace DynamicSearchBundle\Normalizer\Resource;
 interface ResourceMetaInterface
 {
     /**
-     * @return mixed
+     * @return string|int
      */
     public function getDocumentId();
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getResourceCollectionType();
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getResourceType();
+
+    /**
+     * @return string|null
+     */
+    public function getResourceSubType();
 
     /**
      * @return mixed

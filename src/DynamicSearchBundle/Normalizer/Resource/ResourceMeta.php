@@ -25,6 +25,11 @@ class ResourceMeta implements ResourceMetaInterface
     public $resourceType;
 
     /**
+     * @var mixed
+     */
+    public $resourceSubType;
+
+    /**
      * @var array
      */
     public $resourceOptions;
@@ -35,18 +40,20 @@ class ResourceMeta implements ResourceMetaInterface
     public $normalizerOptions;
 
     /**
-     * @param mixed  $documentId
-     * @param string $resourceCollectionType
-     * @param string $resourceType
-     * @param mixed  $resourceId
-     * @param array  $resourceOptions
-     * @param array  $normalizerOptions
+     * @param mixed       $documentId
+     * @param string      $resourceCollectionType
+     * @param string      $resourceType
+     * @param string|null $resourceSubType
+     * @param mixed       $resourceId
+     * @param array       $resourceOptions
+     * @param array       $normalizerOptions
      */
     public function __construct(
         $documentId,
         $resourceId,
         string $resourceCollectionType,
         string $resourceType,
+        ?string $resourceSubType,
         array $resourceOptions = [],
         array $normalizerOptions = []
     ) {
@@ -54,6 +61,7 @@ class ResourceMeta implements ResourceMetaInterface
         $this->resourceId = $resourceId;
         $this->resourceCollectionType = $resourceCollectionType;
         $this->resourceType = $resourceType;
+        $this->resourceSubType = $resourceSubType;
         $this->resourceOptions = $resourceOptions;
         $this->normalizerOptions = $normalizerOptions;
     }
@@ -80,6 +88,14 @@ class ResourceMeta implements ResourceMetaInterface
     public function getResourceType()
     {
         return $this->resourceType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResourceSubType()
+    {
+        return $this->resourceSubType;
     }
 
     /**
