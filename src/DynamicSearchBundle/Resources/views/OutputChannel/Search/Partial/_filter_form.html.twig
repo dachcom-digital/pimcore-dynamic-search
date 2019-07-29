@@ -1,0 +1,8 @@
+<div class="col-12 col-sm-6">
+    <h4>{{ 'dynamic_search.ui.filter'|trans }}</h4>
+    <hr/>
+    {% for block in filter %}
+        {% include block.template with { label: block.label, values: block.values } only %}
+        <hr/>
+    {% endfor %}
+</div>
