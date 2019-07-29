@@ -7,4 +7,6 @@ services:
 
     DynamicSearchBundle\Resolver\DocumentDefinitionResolver: ~
 
+    DynamicSearchBundle\Resolver\FilterDefinitionResolver: ~
+
     DynamicSearchBundle\Resolver\ResourceScaffolderResolver: ~

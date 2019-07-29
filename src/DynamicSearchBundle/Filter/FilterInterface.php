@@ -1,15 +1,17 @@
 <?php
 
-namespace DynamicSearchBundle\OutputChannel;
+namespace DynamicSearchBundle\Filter;
 
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-interface OutputChannelInterface
+interface FilterInterface
 {
     /**
      * @param OptionsResolver $resolver
+     *
+     * @return mixed
      */
     public function configureOptions(OptionsResolver $resolver);
 
@@ -17,11 +19,6 @@ interface OutputChannelInterface
      * @param array $options
      */
     public function setOptions(array $options);
-
-    /**
-     * @param array $indexProviderOptions
-     */
-    public function setIndexProviderOptions(array $indexProviderOptions);
 
     /**
      * @param OutputChannelModifierEventDispatcher $eventDispatcher
@@ -34,21 +31,28 @@ interface OutputChannelInterface
     public function setRuntimeParameterProvider(RuntimeOptionsProviderInterface $runtimeOptionsProvider);
 
     /**
-     * @return mixed
+     * @param array $indexProviderOptions
      */
-    public function getQuery();
+    public function setIndexProviderOptions(array $indexProviderOptions);
+
+    /**
+     * @return bool
+     */
+    public function supportsFrontendView(): bool;
 
     /**
      * @param mixed $query
      *
-     * @return mixed
+     * @return mixed $query
      */
-    public function getResult($query);
+    public function enrichQuery($query);
 
     /**
+     * @param mixed $query
      * @param mixed $result
      *
-     * @return array
+     * @return mixed|null
      */
-    public function getHits($result);
+    public function buildViewVars($query, $result);
+
 }

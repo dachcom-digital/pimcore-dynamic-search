@@ -36,7 +36,15 @@ interface DocumentDefinitionInterface
      *
      * @return $this
      */
-    public function addDocumentFieldDefinition(array $definition);
+    public function addSimpleDocumentFieldDefinition(array $definition);
+
+    /**
+     * @param array   $preProcessTransformer
+     * @param \Closure $closure
+     *
+     * @return $this
+     */
+    public function addPreProcessFieldDefinition(array $preProcessTransformer, \Closure $closure);
 
     /**
      * @return array

@@ -8,6 +8,10 @@ use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
 use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Exception\OutputChannelException;
 use DynamicSearchBundle\Factory\PaginatorFactoryInterface;
+use DynamicSearchBundle\Filter\Definition\FilterDefinition;
+use DynamicSearchBundle\Filter\Definition\FilterDefinitionInterface;
+use DynamicSearchBundle\Filter\FilterInterface;
+use DynamicSearchBundle\Manager\FilterDefinitionManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Manager\NormalizerManagerInterface;
 use DynamicSearchBundle\Manager\OutputChannelManagerInterface;
@@ -33,6 +37,11 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     protected $outputChannelManager;
 
     /**
+     * @var FilterDefinitionManagerInterface
+     */
+    protected $filterDefinitionManager;
+
+    /**
      * @var IndexManagerInterface
      */
     protected $indexManager;
@@ -48,21 +57,24 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     protected $paginatorFactory;
 
     /**
-     * @param ConfigurationInterface        $configuration
-     * @param OutputChannelManagerInterface $outputChannelManager
-     * @param IndexManagerInterface         $indexManager
-     * @param NormalizerManagerInterface    $normalizerManager
-     * @param PaginatorFactoryInterface     $paginatorFactory
+     * @param ConfigurationInterface           $configuration
+     * @param OutputChannelManagerInterface    $outputChannelManager
+     * @param FilterDefinitionManagerInterface $filterDefinitionManager
+     * @param IndexManagerInterface            $indexManager
+     * @param NormalizerManagerInterface       $normalizerManager
+     * @param PaginatorFactoryInterface        $paginatorFactory
      */
     public function __construct(
         ConfigurationInterface $configuration,
         OutputChannelManagerInterface $outputChannelManager,
+        FilterDefinitionManagerInterface $filterDefinitionManager,
         IndexManagerInterface $indexManager,
         NormalizerManagerInterface $normalizerManager,
         PaginatorFactoryInterface $paginatorFactory
     ) {
         $this->configuration = $configuration;
         $this->outputChannelManager = $outputChannelManager;
+        $this->filterDefinitionManager = $filterDefinitionManager;
         $this->indexManager = $indexManager;
         $this->normalizerManager = $normalizerManager;
         $this->paginatorFactory = $paginatorFactory;
@@ -71,7 +83,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName, $options = []): OutputChannelResultInterface
+    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName): OutputChannelResultInterface
     {
         $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_FETCH, $contextName);
         if (!$contextDefinition instanceof ContextDataInterface) {
@@ -108,8 +120,8 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         }
 
         $outputChannelRuntimeOptionsProviderName = $contextDefinition->getOutputChannelRuntimeOptionsProvider($outputChannelName);
-        $outputChannelRuntimeOptionsProvider = $this->outputChannelManager->getOutputChannelRuntimeOptionsProvider($outputChannelRuntimeOptionsProviderName);
-        if (!$outputChannelRuntimeOptionsProvider instanceof RuntimeOptionsProviderInterface) {
+        $runtimeOptionsProvider = $this->outputChannelManager->getOutputChannelRuntimeOptionsProvider($outputChannelRuntimeOptionsProviderName);
+        if (!$runtimeOptionsProvider instanceof RuntimeOptionsProviderInterface) {
             throw new OutputChannelException($outputChannelName, sprintf('could not load runtime options provider for context "%s"', $contextName));
         }
 
@@ -134,7 +146,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         try {
             $outputChannelOptions = $contextDefinition->getOutputChannelOptions($outputChannelName, $outputChannelService, $eventData->getParameter('optionsResolver'));
-            $outputChannelRuntimeOptionsProvider->setDefaultOptions($outputChannelOptions);
+            $runtimeOptionsProvider->setDefaultOptions($outputChannelOptions);
         } catch (\Throwable $e) {
             throw new OutputChannelException(
                 $outputChannelName,
@@ -155,34 +167,77 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             );
         }
 
+        $outputChannelService->setOptions($outputChannelOptions);
         $outputChannelService->setEventDispatcher($eventDispatcher);
-        $outputChannelService->setRuntimeParameterProvider($outputChannelRuntimeOptionsProvider);
+        $outputChannelService->setRuntimeParameterProvider($runtimeOptionsProvider);
+        $outputChannelService->setIndexProviderOptions($indexProviderOptions);
 
-        $result = $outputChannelService->execute($indexProviderOptions, $outputChannelOptions, $options);
+        $query = $outputChannelService->getQuery();
+
+        $filterServices = [];
+
+        try {
+            $filterDefinition = $this->filterDefinitionManager->generateFilterDefinition($contextDefinition, $outputChannelName);
+        } catch (\Throwable $e) {
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf('Unable to resolve filter definition. Error was: %s', $e->getMessage())
+            );
+        }
+
+        if ($filterDefinition instanceof FilterDefinitionInterface) {
+            $filterServices = $this->getFilterServices(
+                $outputChannelName,
+                $filterDefinition,
+                $contextDefinition,
+                $eventDispatcher,
+                $runtimeOptionsProvider,
+                $indexProviderOptions
+            );
+        }
+
+        foreach ($filterServices as $filterService) {
+            $query = $filterService->enrichQuery($query);
+        }
+
+        $result = $outputChannelService->getResult($query);
+
+        $filterBlocks = [];
+        foreach ($filterServices as $filterService) {
+            if ($filterService->supportsFrontendView() === true) {
+                $viewVars = $filterService->buildViewVars($query, $result);
+                if ($viewVars !== null) {
+                    $filterBlocks[] = $viewVars;
+                }
+            }
+        }
+
+        $hits = $outputChannelService->getHits($result);
 
         if ($outputChannelOptions['paginator']['enabled'] === true) {
             $paginator = $this->paginatorFactory->create(
-                $result,
+                $hits,
                 $outputChannelOptions['paginator']['adapter_class'],
                 $outputChannelName,
                 $contextDefinition,
                 $documentNormalizer
             );
 
-            $paginator->setItemCountPerPage($outputChannelRuntimeOptionsProvider->getMaxPerPage());
-            $paginator->setCurrentPageNumber($outputChannelRuntimeOptionsProvider->getCurrentPage());
+            $paginator->setItemCountPerPage($runtimeOptionsProvider->getMaxPerPage());
+            $paginator->setCurrentPageNumber($runtimeOptionsProvider->getCurrentPage());
 
             return new OutputChannelPaginatorResult(
                 $contextName,
                 $outputChannelName,
-                $outputChannelRuntimeOptionsProvider,
+                $filterBlocks,
+                $runtimeOptionsProvider,
                 $paginator
             );
         }
 
         if ($documentNormalizer instanceof DocumentNormalizerInterface) {
             try {
-                $result = $documentNormalizer->normalize($contextDefinition, $outputChannelName, $result);
+                $hits = $documentNormalizer->normalize($contextDefinition, $outputChannelName, $hits);
             } catch (\Exception $e) {
                 throw new OutputChannelException($outputChannelName, $e->getMessage(), $e);
             }
@@ -191,8 +246,61 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         return new OutputChannelArrayResult(
             $contextName,
             $outputChannelName,
-            $outputChannelRuntimeOptionsProvider,
-            $result
+            $filterBlocks,
+            $runtimeOptionsProvider,
+            $hits
         );
+    }
+
+    /**
+     * @param string                               $outputChannelName
+     * @param FilterDefinition                     $filterDefinition
+     * @param ContextDataInterface                 $contextData
+     * @param OutputChannelModifierEventDispatcher $eventDispatcher
+     * @param RuntimeOptionsProviderInterface      $runtimeOptionsProvider
+     * @param array                                $indexProviderOptions
+     *
+     * @return array|FilterInterface[]
+     *
+     * @throws OutputChannelException
+     */
+    protected function getFilterServices(
+        string $outputChannelName,
+        FilterDefinition $filterDefinition,
+        ContextDataInterface $contextData,
+        OutputChannelModifierEventDispatcher $eventDispatcher,
+        RuntimeOptionsProviderInterface $runtimeOptionsProvider,
+        array $indexProviderOptions
+    ) {
+        $filterServices = [];
+        foreach ($filterDefinition->getFilterDefinitions() as $filterDefinition) {
+
+            $filterTypeName = $filterDefinition['type'];
+            $filterTypeConfiguration = $filterDefinition['configuration'];
+
+            try {
+                $filter = clone $this->indexManager->getFilter($contextData, $filterTypeName, $filterTypeConfiguration);
+            } catch (\Throwable $e) {
+                throw new OutputChannelException(
+                    $outputChannelName,
+                    sprintf(
+                        'Unable to fetch filter "%s". Error was: %s',
+                        $filterTypeName, $e->getMessage()
+                    )
+                );
+            }
+
+            if (!$filter instanceof FilterInterface) {
+                continue;
+            }
+
+            $filter->setEventDispatcher($eventDispatcher);
+            $filter->setRuntimeParameterProvider($runtimeOptionsProvider);
+            $filter->setIndexProviderOptions($indexProviderOptions);
+
+            $filterServices[] = $filter;
+        }
+
+        return $filterServices;
     }
 }

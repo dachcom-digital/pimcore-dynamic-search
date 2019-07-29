@@ -11,11 +11,11 @@ services:
 
     DynamicSearchBundle\Registry\TransformerRegistry: ~
 
-    DynamicSearchBundle\Registry\IndexFieldRegistry: ~
+    DynamicSearchBundle\Registry\IndexRegistry: ~
 
     DynamicSearchBundle\Registry\OutputChannelRegistry: ~
 
-    DynamicSearchBundle\Registry\DocumentDefinitionBuilderRegistry: ~
+    DynamicSearchBundle\Registry\DefinitionBuilderRegistry: ~
 
     DynamicSearchBundle\Registry\ResourceNormalizerRegistry: ~
 

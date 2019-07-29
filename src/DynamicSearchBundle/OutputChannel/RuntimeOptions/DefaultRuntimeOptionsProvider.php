@@ -24,9 +24,20 @@ class DefaultRuntimeOptionsProvider implements RuntimeOptionsProviderInterface
         $this->requestStack = $requestStack;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(array $options = [])
     {
         $this->defaultOptions = $options;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequestQueryAsArray()
+    {
+        return $this->requestStack->getCurrentRequest()->query->all();
     }
 
     /**

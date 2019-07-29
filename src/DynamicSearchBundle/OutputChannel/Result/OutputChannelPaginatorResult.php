@@ -7,28 +7,48 @@ use DynamicSearchBundle\Paginator\PaginatorInterface;
 
 class OutputChannelPaginatorResult implements OutputChannelPaginatorResultInterface
 {
+    /**
+     * @var string
+     */
     protected $contextName;
 
+    /**
+     * @var string
+     */
     protected $outputChannelName;
 
+    /**
+     * @var array
+     */
+    protected $filter;
+
+    /**
+     * @var RuntimeOptionsProviderInterface
+     */
     protected $runtimeOptionsProvider;
 
+    /**
+     * @var PaginatorInterface
+     */
     protected $paginator;
 
     /**
      * @param string                          $contextName
      * @param string                          $outputChannelName
+     * @param array                           $filter
      * @param RuntimeOptionsProviderInterface $runtimeOptionsProvider
      * @param PaginatorInterface              $paginator
      */
     public function __construct(
         string $contextName,
         string $outputChannelName,
+        array $filter,
         RuntimeOptionsProviderInterface $runtimeOptionsProvider,
         PaginatorInterface $paginator
     ) {
         $this->contextName = $contextName;
         $this->outputChannelName = $outputChannelName;
+        $this->filter = $filter;
         $this->runtimeOptionsProvider = $runtimeOptionsProvider;
         $this->paginator = $paginator;
     }
@@ -47,6 +67,14 @@ class OutputChannelPaginatorResult implements OutputChannelPaginatorResultInterf
     public function getOutputChannelName()
     {
         return $this->outputChannelName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilter()
+    {
+        return $this->filter;
     }
 
     /**

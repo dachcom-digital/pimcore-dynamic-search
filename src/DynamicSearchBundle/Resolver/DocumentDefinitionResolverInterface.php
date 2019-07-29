@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Resolver;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
-use DynamicSearchBundle\Exception\Resolver\DocumentDefinitionNotFoundException;
+use DynamicSearchBundle\Exception\Resolver\DefinitionNotFoundException;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 interface DocumentDefinitionResolverInterface
@@ -14,7 +14,7 @@ interface DocumentDefinitionResolverInterface
      *
      * @return DocumentDefinitionBuilderInterface[]
      *
-     * @throws DocumentDefinitionNotFoundException
+     * @throws DefinitionNotFoundException
      */
     public function resolve(string $contextName, ResourceMetaInterface $resourceMeta);
 }

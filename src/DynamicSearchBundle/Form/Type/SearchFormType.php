@@ -33,8 +33,9 @@ final class SearchFormType extends AbstractType
         $builder->add('q', SearchType::class, [
             'label' => false,
             'attr'  => [
-                'class'       => 'form-control form-control-lg',
-                'placeholder' => 'dynamic_search.form.placeholder'
+                'class'        => 'form-control form-control-lg',
+                'placeholder'  => 'dynamic_search.form.placeholder',
+                'autocomplete' => 'off'
             ]
         ]);
 

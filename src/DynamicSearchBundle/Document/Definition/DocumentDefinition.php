@@ -95,7 +95,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
     /**
      * {@inheritdoc}
      */
-    public function addDocumentFieldDefinition(array $definition)
+    public function addSimpleDocumentFieldDefinition(array $definition)
     {
         $resolver = new OptionsResolver();
 
@@ -105,6 +105,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
         $resolver->setAllowedTypes('data_transformer', ['array']);
 
         $options = $resolver->resolve($definition);
+        $options['_field_type'] = 'simple_definition';
 
         if (!isset($options['index_transformer']['type'])) {
             $options['index_transformer']['type'] = null;
@@ -121,6 +122,27 @@ class DocumentDefinition implements DocumentDefinitionInterface
         if (!isset($options['data_transformer']['configuration'])) {
             $options['data_transformer']['configuration'] = [];
         }
+
+        $this->indexFieldDefinitions[] = $options;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addPreProcessFieldDefinition(array $definition, \Closure $closure)
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setRequired(['type', 'configuration']);
+        $resolver->setAllowedTypes('type', ['string']);
+        $resolver->setAllowedTypes('configuration', ['array']);
+        $resolver->setDefault('configuration', []);
+
+        $options = [];
+        $options['_field_type'] = 'pre_process_definition';
+        $options['data_transformer'] = $resolver->resolve($definition);
+        $options['closure'] = $closure;
 
         $this->indexFieldDefinitions[] = $options;
 

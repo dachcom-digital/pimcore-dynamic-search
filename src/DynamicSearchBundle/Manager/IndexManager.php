@@ -6,8 +6,9 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Exception\ProviderException;
-use DynamicSearchBundle\Registry\IndexFieldRegistryInterface;
+use DynamicSearchBundle\Registry\IndexRegistryInterface;
 use DynamicSearchBundle\Registry\IndexProviderRegistryInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IndexManager implements IndexManagerInterface
 {
@@ -22,9 +23,9 @@ class IndexManager implements IndexManagerInterface
     protected $indexProviderRegistry;
 
     /**
-     * @var IndexFieldRegistryInterface
+     * @var IndexRegistryInterface
      */
-    protected $indexFieldRegistry;
+    protected $indexRegistry;
 
     /**
      * @var array
@@ -34,16 +35,16 @@ class IndexManager implements IndexManagerInterface
     /**
      * @param ConfigurationInterface         $configuration
      * @param IndexProviderRegistryInterface $indexProviderRegistry
-     * @param IndexFieldRegistryInterface    $indexFieldRegistry
+     * @param IndexRegistryInterface         $indexRegistry
      */
     public function __construct(
         ConfigurationInterface $configuration,
         IndexProviderRegistryInterface $indexProviderRegistry,
-        IndexFieldRegistryInterface $indexFieldRegistry
+        IndexRegistryInterface $indexRegistry
     ) {
         $this->configuration = $configuration;
         $this->indexProviderRegistry = $indexProviderRegistry;
-        $this->indexFieldRegistry = $indexFieldRegistry;
+        $this->indexRegistry = $indexRegistry;
     }
 
     /**
@@ -83,20 +84,30 @@ class IndexManager implements IndexManagerInterface
     public function getIndexField(ContextDataInterface $contextData, string $identifier)
     {
         $indexProviderName = $contextData->getIndexProviderName();
-        if (!$this->indexFieldRegistry->hasForIndexProvider($indexProviderName, $identifier)) {
+        if (!$this->indexRegistry->hasFieldForIndexProvider($indexProviderName, $identifier)) {
             return null;
         }
 
-        return $this->indexFieldRegistry->getForIndexProvider($indexProviderName, $identifier);
+        return $this->indexRegistry->getFieldForIndexProvider($indexProviderName, $identifier);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getIndexFieldsOfIndexProvider(ContextDataInterface $contextData)
+    public function getFilter(ContextDataInterface $contextData, string $identifier, array $configuration)
     {
         $indexProviderName = $contextData->getIndexProviderName();
+        if (!$this->indexRegistry->hasFilterForIndexProvider($indexProviderName, $identifier)) {
+            return null;
+        }
 
-        return $this->indexFieldRegistry->getIndexFieldsOfIndexProvider($indexProviderName);
+        $filter = $this->indexRegistry->getFilterForIndexProvider($indexProviderName, $identifier);
+
+        $options = new OptionsResolver();
+        $filter->configureOptions($options);
+        $filter->setOptions($options->resolve($configuration));
+
+        return $filter;
     }
+
 }

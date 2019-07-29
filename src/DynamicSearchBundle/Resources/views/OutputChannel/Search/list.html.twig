@@ -1,48 +1,73 @@
 {% extends '@DynamicSearch/layout.html.twig' %}
 
+{% set search_column_width = 12 %}
+
 {% block dynamic_search_output_channel_search_list_content %}
 
     {{ parent() }}
 
     {% if has_error == false %}
 
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
         {% include '@DynamicSearch/OutputChannel/Search/Partial/_search_form.html.twig' %}
 
         {% if search_active == true %}
 
-            <div class="list-group mb-4">
-                {% if paginator.count() == 0 %}
-                    <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>
-                {% else %}
-                    {% for document in paginator %}
-                        {% include '@DynamicSearch/OutputChannel/Search/Partial/_item.html.twig' with { document: document } only %}
-                    {% endfor %}
+            <div class="row">
+
+                {% if filter is iterable and filter|length > 0 %}
+                    {% set search_column_width = 9 %}
+                    <div class="col-12 col-sm-3">
+                        <h4>{{ 'dynamic_search.ui.filter'|trans }}</h4>
+                        <hr />
+                        {% for block in filter %}
+                            {% include block.template with { label: block.label, values: block.values } only %}
+                            <hr />
+                        {% endfor %}
+                    </div>
                 {% endif %}
+
+                <div class="col-12 col-sm-{{ search_column_width }}">
+
+                    <div class="list-group mb-4">
+                        {% if paginator.count() == 0 %}
+                            <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>
+                        {% else %}
+                            {% for document in paginator %}
+                                {% include '@DynamicSearch/OutputChannel/Search/Partial/_item.html.twig' with { document: document } only %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    {% include '@DynamicSearch/OutputChannel/Search/Partial/Pagination/_default.html.twig' with {
+                        current_filters: { contextName: 'default', (query_identifier): user_query },
+                        current_page: current_page,
+                        pagination_path: 'dynamic_search_frontend_search_list',
+                        last_page: paginator.count(),
+                        show_always_first_and_last: true,
+                        extreme_pages_limit: 5,
+                        nearby_pages_limit: 2
+                    } only %}
+
+                    {# use this paginator for simple ajax loader ("more...")
+
+                        {% include '@DynamicSearch/OutputChannel/Search/Partial/Pagination/_single.html.twig' with {
+                            current_filters: {  contextName: 'default', q: user_query },
+                            current_page: current_page,
+                            pagination_path: 'dynamic_search_frontend_search_list',
+                            last_page: paginator.count(),
+                            show_always_first_and_last: true,
+                        } only %}
+
+                    #}
+                </div>
+
             </div>
 
-            {% include '@DynamicSearch/OutputChannel/Search/Partial/Pagination/_default.html.twig' with {
-                current_filters: { contextName: 'default', (query_identifier): user_query },
-                current_page: current_page,
-                pagination_path: 'dynamic_search_frontend_search_list',
-                last_page: paginator.count(),
-                show_always_first_and_last: true,
-                extreme_pages_limit: 5,
-                nearby_pages_limit: 2
-            } only %}
-
-            {# use this paginator for simple ajax loader ("more...")
-
-                {% include '@DynamicSearch/OutputChannel/Search/Partial/Pagination/_single.html.twig' with {
-                    current_filters: {  contextName: 'default', q: user_query },
-                    current_page: current_page,
-                    pagination_path: 'dynamic_search_frontend_search_list',
-                    last_page: paginator.count(),
-                    show_always_first_and_last: true,
-                } only %}
-
-            #}
-
         {% endif %}
+
+        {{ form_end(form) }}
 
     {% endif %}
 

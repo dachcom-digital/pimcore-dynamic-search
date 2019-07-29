@@ -4,7 +4,15 @@ namespace DynamicSearchBundle\OutputChannel\RuntimeOptions;
 
 interface RuntimeOptionsProviderInterface
 {
+    /**
+     * @param array $options
+     */
     public function setDefaultOptions(array $options = []);
+
+    /**
+     * @return array
+     */
+    public function getRequestQueryAsArray();
 
     /**
      * @return int

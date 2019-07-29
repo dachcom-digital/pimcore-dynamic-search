@@ -18,6 +18,11 @@ interface OutputChannelResultInterface
     public function getOutputChannelName();
 
     /**
+     * @return array
+     */
+    public function getFilter();
+
+    /**
      * @return array|DocumentInterface[]
      */
     public function getResult();

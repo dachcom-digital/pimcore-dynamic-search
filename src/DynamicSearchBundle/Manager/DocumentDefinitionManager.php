@@ -5,7 +5,7 @@ namespace DynamicSearchBundle\Manager;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinition;
-use DynamicSearchBundle\Exception\Resolver\DocumentDefinitionNotFoundException;
+use DynamicSearchBundle\Exception\Resolver\DefinitionNotFoundException;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Resolver\DocumentDefinitionResolverInterface;
 
@@ -40,7 +40,7 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
     {
         try {
             $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolve($contextData->getName(), $resourceMeta);
-        } catch (DocumentDefinitionNotFoundException $e) {
+        } catch (DefinitionNotFoundException $e) {
             return null;
         }
 

@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Processor;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Document\Definition\PreProcessedDocumentDefinition;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
@@ -268,25 +269,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         foreach ($documentDefinition->getDocumentFieldDefinitions() as $fieldDefinitionOptions) {
-            $fieldName = $fieldDefinitionOptions['name'];
-            $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
-            $indexTransformerOptions = $fieldDefinitionOptions['index_transformer'];
-
-            $transformedData = $this->dispatchResourceFieldTransformer($dataTransformerOptions, $resourceScaffolderName, $resourceContainer);
-
-            if ($transformedData === null) {
-                // no error: transformer is allowed to refuse data
-                continue;
-            }
-
-            $transformedIndexData = $this->dispatchIndexTransformer($contextData, $fieldName, $indexTransformerOptions, $transformedData);
-            if ($transformedIndexData === null) {
-                // no error?
-                continue;
-            }
-
-            $indexFieldContainer = new IndexFieldContainer($fieldName, $indexTransformerOptions['type'], $transformedIndexData);
-            $indexDocument->addIndexField($indexFieldContainer);
+            $this->processDocumentDataTransformerField($contextData, $indexDocument, $resourceContainer, $fieldDefinitionOptions, $resourceScaffolderName);
         }
 
         if (!$indexDocument instanceof IndexDocument) {
@@ -300,6 +283,83 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         return $indexDocument;
+    }
+
+    /**
+     * @param ContextDataInterface       $contextData
+     * @param IndexDocument              $indexDocument
+     * @param ResourceContainerInterface $resourceContainer
+     * @param array                      $fieldDefinitionOptions
+     * @param string                     $resourceScaffolderName
+     */
+    protected function processDocumentDataTransformerField(
+        ContextDataInterface $contextData,
+        IndexDocument $indexDocument,
+        ResourceContainerInterface $resourceContainer,
+        array $fieldDefinitionOptions,
+        string $resourceScaffolderName
+    ) {
+
+        $fieldType = $fieldDefinitionOptions['_field_type'];
+        $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
+
+        $transformedData = $this->dispatchResourceFieldTransformer($dataTransformerOptions, $resourceScaffolderName, $resourceContainer);
+        if ($transformedData === null) {
+            // no error: transformer is allowed to refuse data
+            return;
+        }
+
+        if ($fieldType === 'pre_process_definition') {
+
+            $preprocessDocumentDefinition = new PreProcessedDocumentDefinition();
+
+            // @TODO: check if transformed data is type of array?
+            call_user_func($fieldDefinitionOptions['closure'], $transformedData);
+
+            foreach ($preprocessDocumentDefinition->getDocumentFieldDefinitions() as $preProcessedFieldDefinitionOptions) {
+
+                $transformedData = $preProcessedFieldDefinitionOptions['value'];
+                unset($preProcessedFieldDefinitionOptions['value']);
+
+                if ($transformedData === null) {
+                    // no error: transformer is allowed to refuse data
+                    continue;
+                }
+
+                $this->processDocumentIndexTransformerField($contextData, $indexDocument, $preProcessedFieldDefinitionOptions, $transformedData);
+            }
+
+        } elseif ($fieldType === 'simple_definition') {
+            $this->processDocumentIndexTransformerField($contextData, $indexDocument, $fieldDefinitionOptions, $transformedData);
+        } else {
+            // throw error?
+        }
+    }
+
+    /**
+     * @param ContextDataInterface $contextData
+     * @param IndexDocument        $indexDocument
+     * @param array                $fieldDefinitionOptions
+     * @param mixed                $transformedData
+     */
+    protected function processDocumentIndexTransformerField(
+        ContextDataInterface $contextData,
+        IndexDocument $indexDocument,
+        array $fieldDefinitionOptions,
+        $transformedData
+    ) {
+
+        $fieldName = $fieldDefinitionOptions['name'];
+        $indexTransformerOptions = $fieldDefinitionOptions['index_transformer'];
+
+        $transformedIndexData = $this->dispatchIndexTransformer($contextData, $fieldName, $indexTransformerOptions, $transformedData);
+        if ($transformedIndexData === null) {
+            // no error?
+            return;
+        }
+
+        $indexFieldContainer = new IndexFieldContainer($fieldName, $indexTransformerOptions['type'], $transformedIndexData);
+        $indexDocument->addIndexField($indexFieldContainer);
     }
 
     /**

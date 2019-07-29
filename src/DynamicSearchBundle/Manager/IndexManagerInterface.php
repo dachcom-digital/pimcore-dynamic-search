@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ProviderException;
+use DynamicSearchBundle\Filter\FilterInterface;
 use DynamicSearchBundle\Index\IndexFieldInterface;
 use DynamicSearchBundle\Provider\IndexProviderInterface;
 
@@ -28,8 +29,10 @@ interface IndexManagerInterface
 
     /**
      * @param ContextDataInterface $contextData
+     * @param string               $identifier
+     * @param array                $configuration
      *
-     * @return IndexFieldInterface[]
+     * @return FilterInterface|null
      */
-    public function getIndexFieldsOfIndexProvider(ContextDataInterface $contextData);
+    public function getFilter(ContextDataInterface $contextData, string $identifier, array $configuration);
 }

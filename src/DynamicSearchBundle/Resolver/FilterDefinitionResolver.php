@@ -3,10 +3,9 @@
 namespace DynamicSearchBundle\Resolver;
 
 use DynamicSearchBundle\Exception\Resolver\DefinitionNotFoundException;
-use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Registry\DefinitionBuilderRegistryInterface;
 
-class DocumentDefinitionResolver implements DocumentDefinitionResolverInterface
+class FilterDefinitionResolver implements FilterDefinitionResolverInterface
 {
     /**
      * @var DefinitionBuilderRegistryInterface
@@ -24,17 +23,17 @@ class DocumentDefinitionResolver implements DocumentDefinitionResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(string $contextName, ResourceMetaInterface $resourceMeta)
+    public function resolve(string $contextName, string $outputChannelName)
     {
         $builder = [];
-        foreach ($this->definitionBuilderRegistry->getAllDocumentDefinitionBuilder() as $documentDefinitionBuilder) {
-            if ($documentDefinitionBuilder->isApplicable($contextName, $resourceMeta) === true) {
-                $builder[] = $documentDefinitionBuilder;
+        foreach ($this->definitionBuilderRegistry->getAllFilterDefinitionBuilder() as $filterDefinitionBuilder) {
+            if ($filterDefinitionBuilder->isApplicable($contextName, $outputChannelName) === true) {
+                $builder[] = $filterDefinitionBuilder;
             }
         }
 
         if (count($builder) === 0) {
-            throw new DefinitionNotFoundException('document');
+            throw new DefinitionNotFoundException('filter');
         }
 
         return $builder;

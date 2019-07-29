@@ -20,7 +20,7 @@ interface ResourceContainerInterface
     public function getResource();
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getResourceScaffolderIdentifier();
 

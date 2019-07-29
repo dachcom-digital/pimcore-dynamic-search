@@ -53,7 +53,10 @@ class SearchController extends Controller
             );
         }
 
-        return $this->json($data->getResult());
+        return $this->json([
+            'result' => $data->getResult(),
+            'filter' => $data->getFilter()
+        ]);
     }
 
     /**
@@ -77,6 +80,9 @@ class SearchController extends Controller
             );
         }
 
-        return $this->json($data->getResult());
+        return $this->json([
+            'result' => $data->getResult(),
+            'filter' => $data->getFilter()
+        ]);
     }
 }
