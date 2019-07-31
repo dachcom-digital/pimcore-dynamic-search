@@ -15,5 +15,5 @@ interface OutputChannelProcessorInterface
      *
      * @throws OutputChannelException
      */
-    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName): OutputChannelResultInterface;
+    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName);
 }

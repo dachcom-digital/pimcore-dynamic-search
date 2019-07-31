@@ -10,8 +10,9 @@ interface FilterDefinitionManagerInterface
     /**
      * @param ContextDataInterface $contextData
      * @param string               $outputChannelName
+     * @param string|null          $subOutputChannelName
      *
      * @return FilterDefinition|null
      */
-    public function generateFilterDefinition(ContextDataInterface $contextData, string $outputChannelName);
+    public function generateFilterDefinition(ContextDataInterface $contextData, string $outputChannelName, ?string $subOutputChannelName);
 }

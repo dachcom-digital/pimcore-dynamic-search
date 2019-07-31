@@ -1,14 +1,10 @@
 dynamic_search.controller.admin.get_state:
     path: /admin/dynamic-search/settings/state
-    defaults: { _controller: DynamicSearchBundle:Admin\Settings:state }
+    defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::stateAction }
 dynamic_search.controller.admin.get_logs:
     path: /admin/dynamic-search/settings/logs
-    defaults: { _controller: DynamicSearchBundle:Admin\Settings:log }
+    defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::logAction }
 
-dynamic_search.controller.auto_complete:
-    path: /dynamic-search/{contextName}/auto-complete
-    defaults: { _controller: DynamicSearchBundle\Controller\SearchController:autoCompleteAction }
-
-dynamic_search.controller.suggestions:
-    path: /dynamic-search/{contextName}/suggestions
-    defaults: { _controller: DynamicSearchBundle\Controller\SearchController:suggestionsAction }
+dynamic_search.controller.json_search:
+    path: /dynamic-search/{contextName}/j-{outputChannelName}
+    defaults: { _controller: DynamicSearchBundle\Controller\SearchController::jsonSearchAction }

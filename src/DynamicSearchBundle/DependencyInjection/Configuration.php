@@ -2,7 +2,6 @@
 
 namespace DynamicSearchBundle\DependencyInjection;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Paginator\Adapter\DynamicSearchAdapter;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -11,8 +10,6 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $validOutputChannels = ContextDataInterface::AVAILABLE_OUTPUT_CHANNEL_TYPES;
-
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('dynamic_search');
 
@@ -71,25 +68,53 @@ class Configuration implements ConfigurationInterface
                             ->end()
 
                             ->arrayNode('output_channels')
+
                                 ->useAttributeAsKey('name')
-                                ->validate()
-                                    ->ifTrue(function ($values) use ($validOutputChannels) {
-                                        return $this->checkValidOutputChannel($values, $validOutputChannels);
-                                    })
-                                    ->thenInvalid(sprintf('Invalid output channel. use one of %s', join(', ', $validOutputChannels)))
-                                ->end()
                                 ->arrayPrototype()
+                                    ->validate()
+                                        ->ifTrue(function ($values) {
+                                            return $values['multiple'] === true && (!is_array($values['blocks']) || count($values['blocks']) === 0);
+                                        })
+                                        ->thenInvalid('"blocks" missing')
+                                    ->end()
+                                    ->validate()
+                                        ->ifTrue(function ($values) {
+                                            return $values['multiple'] === false && !empty($values['blocks']);
+                                        })
+                                        ->thenInvalid('Unrecognized option "blocks"')
+                                    ->end()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($values) {
+                                            return $values['multiple'] === true && isset($values['paginator']) && $values['paginator']['enabled'] === true;
+                                        })
+                                        ->thenInvalid('Unrecognized option "paginator"')
+                                    ->end()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($values) {
+                                            return $values['multiple'] === true && isset($values['normalizer']) && $values['normalizer']['service'] !== null;
+                                        })
+                                        ->thenInvalid('Unrecognized option "normalizer"')
+                                    ->end()
                                     ->children()
-                                        ->scalarNode('service')
-                                            ->defaultNull()
-                                        ->end()
-                                        ->scalarNode('runtime_options_provider')
-                                            ->defaultValue('default')
-                                        ->end()
+                                        ->scalarNode('service')->defaultNull()->end()
+                                        ->booleanNode('multiple')->defaultFalse()->end()
+                                        ->booleanNode('internal')->defaultFalse()->end()
+                                        ->booleanNode('use_frontend_controller')->defaultFalse()->end()
+                                        ->scalarNode('runtime_options_provider')->defaultValue('default')->end()
                                         ->arrayNode('options')
                                             ->variablePrototype()->defaultValue([])->end()
                                         ->end()
+                                        ->arrayNode('blocks')
+                                            ->useAttributeAsKey('name')
+                                            ->arrayPrototype()
+                                                ->children()
+                                                    ->scalarNode('identifier')->end()
+                                                    ->scalarNode('reference')->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
                                         ->arrayNode('paginator')
+                                            ->addDefaultsIfNotSet()
                                             ->children()
                                                 ->booleanNode('enabled')
                                                     ->defaultFalse()
@@ -121,16 +146,5 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $treeBuilder;
-    }
-
-    protected function checkValidOutputChannel($givenValues, $validOutputChannels)
-    {
-        foreach (array_keys($givenValues) as $channel) {
-            if (!in_array($channel, $validOutputChannels)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

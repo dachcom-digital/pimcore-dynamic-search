@@ -15,14 +15,14 @@
     <div class="row">
         <div class="col-12">
 
-            {% block dynamic_search_output_channel_search_list_error %}
+            {% block dynamic_search_error %}
                 {% if error_message is defined and error_message is not null %}
                     <div class="dynamic-search output-channel-search error alert alert-danger">{{ error_message }}</div>
                 {% endif %}
             {% endblock %}
 
             <div class="dynamic-search output-channel-search list">
-                {% block dynamic_search_output_channel_search_list_content %}
+                {% block dynamic_search_list_content %}
                     {# render content #}
                 {% endblock %}
             </div>

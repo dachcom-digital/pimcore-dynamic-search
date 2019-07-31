@@ -56,11 +56,11 @@ class OutputChannelManager implements OutputChannelManagerInterface
             throw new ProviderException(sprintf('Invalid requested index output channel service "%s"', $outputChannel));
         }
 
-        if (!$this->outputChannelRegistry->hasOutputChannel($outputChannel, $outputChannelServiceName)) {
+        if (!$this->outputChannelRegistry->hasOutputChannelService($outputChannelServiceName)) {
             return null;
         }
 
-        $outputChannel = $this->outputChannelRegistry->getOutputChannel($outputChannel, $outputChannelServiceName);
+        $outputChannel = $this->outputChannelRegistry->getOutputChannelService($outputChannelServiceName);
 
         return $outputChannel;
     }
@@ -80,24 +80,24 @@ class OutputChannelManager implements OutputChannelManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action)
+    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action)
     {
-        if (!$this->outputChannelRegistry->hasOutputChannelModifierAction($outputProvider, $outputChannel, $action)) {
+        if (!$this->outputChannelRegistry->hasOutputChannelModifierAction($outputChannelServiceName, $action)) {
             return [];
         }
 
-        return $this->outputChannelRegistry->getOutputChannelModifierAction($outputProvider, $outputChannel, $action);
+        return $this->outputChannelRegistry->getOutputChannelModifierAction($outputChannelServiceName, $action);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter)
+    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter)
     {
-        if (!$this->outputChannelRegistry->hasOutputChannelModifierFilter($outputProvider, $outputChannel, $filter)) {
+        if (!$this->outputChannelRegistry->hasOutputChannelModifierFilter($outputChannelServiceName, $filter)) {
             return null;
         }
 
-        return $this->outputChannelRegistry->getOutputChannelModifierFilter($outputProvider, $outputChannel, $filter);
+        return $this->outputChannelRegistry->getOutputChannelModifierFilter($outputChannelServiceName, $filter);
     }
 }

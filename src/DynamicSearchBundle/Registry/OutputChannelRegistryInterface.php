@@ -2,28 +2,26 @@
 
 namespace DynamicSearchBundle\Registry;
 
+use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierActionInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierFilterInterface;
-use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
 
 interface OutputChannelRegistryInterface
 {
     /**
-     * @param string $type
      * @param string $identifier
      *
      * @return bool
      */
-    public function hasOutputChannel(string $type, string $identifier);
+    public function hasOutputChannelService(string $identifier);
 
     /**
-     * @param string $type
      * @param string $identifier
      *
      * @return OutputChannelInterface
      */
-    public function getOutputChannel(string $type, string $identifier);
+    public function getOutputChannelService(string $identifier);
 
     /**
      * @param string $identifier
@@ -40,38 +38,34 @@ interface OutputChannelRegistryInterface
     public function getOutputChannelRuntimeOptionsProvider(string $identifier);
 
     /**
-     * @param string $outputProvider
-     * @param string $outputChannel
+     * @param string $outputChannelServiceName
      * @param string $action
      *
      * @return bool
      */
-    public function hasOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action);
+    public function hasOutputChannelModifierAction(string $outputChannelServiceName, string $action);
 
     /**
-     * @param string $outputProvider
-     * @param string $outputChannel
+     * @param string $outputChannelServiceName
      * @param string $action
      *
      * @return array|OutputChannelModifierActionInterface[]
      */
-    public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action);
+    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action);
 
     /**
-     * @param string $outputProvider
-     * @param string $outputChannel
+     * @param string $outputChannelServiceName
      * @param string $filter
      *
      * @return bool
      */
-    public function hasOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter);
+    public function hasOutputChannelModifierFilter(string $outputChannelServiceName, string $filter);
 
     /**
-     * @param string $outputProvider
-     * @param string $outputChannel
+     * @param string $outputChannelServiceName
      * @param string $filter
      *
      * @return OutputChannelModifierFilterInterface
      */
-    public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter);
+    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter);
 }

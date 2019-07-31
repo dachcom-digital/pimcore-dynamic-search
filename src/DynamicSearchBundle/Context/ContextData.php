@@ -236,6 +236,25 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritdoc}
      */
+    public function getOutputChannelEnvironment(string $outputChannelName)
+    {
+        if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
+            return [];
+        }
+
+        $config = $this->rawContextOptions['output_channels'][$outputChannelName];
+
+        return [
+            'internal'                => $config['internal'],
+            'multiple'                => $config['multiple'],
+            'use_frontend_controller' => $config['use_frontend_controller'],
+            'blocks'                  => isset($config['blocks']) ? $config['blocks'] : [],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getOutputChannelRuntimeOptionsProvider(string $outputChannelName)
     {
         if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
@@ -268,8 +287,11 @@ class ContextData implements ContextDataInterface
 
         try {
             $options = $optionsResolver->resolve($rawOptions);
+
             // append paginator options
-            $options['paginator'] = $this->rawContextOptions['output_channels'][$outputChannelName]['paginator'];
+            if ($this->rawContextOptions['output_channels'][$outputChannelName]['multiple'] === false) {
+                $options['paginator'] = $this->rawContextOptions['output_channels'][$outputChannelName]['paginator'];
+            }
 
             $this->parsedContextOptions[$outputChannelName] = $options;
         } catch (\Throwable $e) {

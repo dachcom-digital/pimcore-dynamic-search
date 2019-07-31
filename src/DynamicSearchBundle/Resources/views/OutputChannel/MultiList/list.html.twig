@@ -1,0 +1,30 @@
+{% extends '@DynamicSearch/layout.html.twig' %}
+
+{% block dynamic_search_list_content %}
+
+    {{ parent() }}
+
+    {% if has_error == false %}
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        {% include '@DynamicSearch/Common/_search_form.html.twig' %}
+
+        {% if search_active == true %}
+
+            {% if blocks is iterable and blocks|length > 0 %}
+                {% for identifer, block in blocks %}
+                    <h4>{{ identifer }}</h4>
+                    {% include '@DynamicSearch/Common/List/_wrapper.html.twig' with {filter: block.filter, paginator: block.paginator, data: block.data} %}
+                {% endfor %}
+            {% else %}
+                <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>
+            {% endif %}
+
+        {% endif %}
+
+        {{ form_end(form) }}
+
+    {% endif %}
+
+{% endblock %}

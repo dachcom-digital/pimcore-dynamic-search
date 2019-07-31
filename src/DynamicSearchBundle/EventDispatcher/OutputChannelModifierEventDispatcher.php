@@ -2,26 +2,17 @@
 
 namespace DynamicSearchBundle\EventDispatcher;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Event\OutputModifierEvent;
 use DynamicSearchBundle\Manager\OutputChannelManagerInterface;
+use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
+use DynamicSearchBundle\OutputChannel\Context\SubOutputChannelContextInterface;
 
 class OutputChannelModifierEventDispatcher
 {
     /**
-     * @var string
+     * @var OutputChannelContextInterface
      */
-    protected $outputProvider;
-
-    /**
-     * @var string
-     */
-    protected $outputChannelName;
-
-    /**
-     * @var ContextDataInterface
-     */
-    protected $contextData;
+    protected $outputChannelContext;
 
     /**
      * @var OutputChannelManagerInterface
@@ -29,17 +20,19 @@ class OutputChannelModifierEventDispatcher
     protected $outputChannelManager;
 
     /**
-     * @param string                        $outputProvider
-     * @param string                        $outputChannelName
-     * @param ContextDataInterface          $contextData
      * @param OutputChannelManagerInterface $outputChannelManager
      */
-    public function __construct(string $outputProvider, string $outputChannelName, $contextData, OutputChannelManagerInterface $outputChannelManager)
+    public function __construct(OutputChannelManagerInterface $outputChannelManager)
     {
-        $this->outputProvider = $outputProvider;
-        $this->outputChannelName = $outputChannelName;
-        $this->contextData = $contextData;
         $this->outputChannelManager = $outputChannelManager;
+    }
+
+    /**
+     * @param OutputChannelContextInterface $outputChannelContext
+     */
+    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext)
+    {
+        $this->outputChannelContext = $outputChannelContext;
     }
 
     /**
@@ -52,11 +45,19 @@ class OutputChannelModifierEventDispatcher
      */
     public function dispatchAction(string $action, array $options)
     {
+        $outputChannelServiceName = $this->outputChannelContext->getOutputChannelServiceName();
+        $outputChannelName = $this->outputChannelContext->getOutputChannelName();
+        $parentOutputChannelName = null;
+
+        if ($this->outputChannelContext instanceof SubOutputChannelContextInterface) {
+            $parentOutputChannelName = $this->outputChannelContext->getParentOutputChannelName();
+        }
+
         $event = new OutputModifierEvent($options);
-        $channelModifierAction = $this->outputChannelManager->getOutputChannelModifierAction($this->outputProvider, $this->outputChannelName, $action);
+        $channelModifierAction = $this->outputChannelManager->getOutputChannelModifierAction($outputChannelServiceName, $action);
 
         foreach ($channelModifierAction as $modifierAction) {
-            $event = $modifierAction->dispatchAction($action, $this->outputChannelName, $event);
+            $event = $modifierAction->dispatchAction($action, $outputChannelServiceName, $outputChannelName, $parentOutputChannelName, $event);
         }
 
         return $event;
@@ -74,12 +75,20 @@ class OutputChannelModifierEventDispatcher
      */
     public function dispatchFilter(string $filterService, array $options = [])
     {
-        $channelModifierFilter = $this->outputChannelManager->getOutputChannelModifierFilter($this->outputProvider, $this->outputChannelName, $filterService);
+        $outputChannelServiceName = $this->outputChannelContext->getOutputChannelServiceName();
+        $outputChannelName = $this->outputChannelContext->getOutputChannelName();
+        $parentOutputChannelName = null;
+
+        if ($this->outputChannelContext instanceof SubOutputChannelContextInterface) {
+            $parentOutputChannelName = $this->outputChannelContext->getParentOutputChannelName();
+        }
+
+        $channelModifierFilter = $this->outputChannelManager->getOutputChannelModifierFilter($outputChannelServiceName, $filterService);
 
         if ($channelModifierFilter === null) {
             throw new \Exception(sprintf('output channel filter "%s" not found', $filterService));
         }
 
-        return $channelModifierFilter->dispatchFilter($this->outputChannelName, $options);
+        return $channelModifierFilter->dispatchFilter($outputChannelServiceName, $outputChannelName, $parentOutputChannelName, $options);
     }
 }

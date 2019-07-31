@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\OutputChannel;
 
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface OutputChannelInterface
@@ -19,19 +19,19 @@ interface OutputChannelInterface
     public function setOptions(array $options);
 
     /**
-     * @param array $indexProviderOptions
+     * @return array
      */
-    public function setIndexProviderOptions(array $indexProviderOptions);
+    public function getOptions();
+
+    /**
+     * @param OutputChannelContextInterface $outputChannelContext
+     */
+    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext);
 
     /**
      * @param OutputChannelModifierEventDispatcher $eventDispatcher
      */
     public function setEventDispatcher(OutputChannelModifierEventDispatcher $eventDispatcher);
-
-    /**
-     * @param RuntimeOptionsProviderInterface $runtimeOptionsProvider
-     */
-    public function setRuntimeParameterProvider(RuntimeOptionsProviderInterface $runtimeOptionsProvider);
 
     /**
      * @return mixed
@@ -44,11 +44,4 @@ interface OutputChannelInterface
      * @return mixed
      */
     public function getResult($query);
-
-    /**
-     * @param mixed $result
-     *
-     * @return array
-     */
-    public function getHits($result);
 }

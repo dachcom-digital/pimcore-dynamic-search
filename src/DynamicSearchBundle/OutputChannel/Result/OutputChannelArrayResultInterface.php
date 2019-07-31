@@ -2,6 +2,10 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
-interface OutputChannelArrayResultInterface extends OutputChannelResultInterface
+interface OutputChannelArrayResultInterface
 {
+    /**
+     * @return array
+     */
+    public function getResult();
 }

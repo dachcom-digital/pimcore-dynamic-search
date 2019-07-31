@@ -4,9 +4,9 @@ namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ProviderException;
+use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierActionInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierFilterInterface;
-use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
 
 interface OutputChannelManagerInterface
@@ -29,20 +29,18 @@ interface OutputChannelManagerInterface
     public function getOutputChannelRuntimeOptionsProvider(string $provider);
 
     /**
-     * @param string $outputProvider
-     * @param string $outputChannel
+     * @param string $outputChannelServiceName
      * @param string $action
      *
      * @return array|OutputChannelModifierActionInterface[]
      */
-    public function getOutputChannelModifierAction(string $outputProvider, string $outputChannel, string $action);
+    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action);
 
     /**
-     * @param string $outputProvider
-     * @param string $outputChannel
+     * @param string $outputChannelServiceName
      * @param string $filter
      *
      * @return null|OutputChannelModifierFilterInterface
      */
-    public function getOutputChannelModifierFilter(string $outputProvider, string $outputChannel, string $filter);
+    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter);
 }

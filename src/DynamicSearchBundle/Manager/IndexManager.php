@@ -8,7 +8,6 @@ use DynamicSearchBundle\Exception\ContextConfigurationException;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Registry\IndexRegistryInterface;
 use DynamicSearchBundle\Registry\IndexProviderRegistryInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IndexManager implements IndexManagerInterface
 {
@@ -94,20 +93,14 @@ class IndexManager implements IndexManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilter(ContextDataInterface $contextData, string $identifier, array $configuration)
+    public function getFilter(ContextDataInterface $contextData, string $identifier)
     {
         $indexProviderName = $contextData->getIndexProviderName();
         if (!$this->indexRegistry->hasFilterForIndexProvider($indexProviderName, $identifier)) {
             return null;
         }
 
-        $filter = $this->indexRegistry->getFilterForIndexProvider($indexProviderName, $identifier);
-
-        $options = new OptionsResolver();
-        $filter->configureOptions($options);
-        $filter->setOptions($options->resolve($configuration));
-
-        return $filter;
+        return $this->indexRegistry->getFilterForIndexProvider($indexProviderName, $identifier);
     }
 
 }

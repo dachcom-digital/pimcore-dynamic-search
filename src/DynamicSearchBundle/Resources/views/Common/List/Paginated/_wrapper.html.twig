@@ -1,0 +1,31 @@
+<div class="list-group mb-4">
+    {% if paginator.count() == 0 %}
+        <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>
+    {% else %}
+        {% for document in paginator %}
+            {% include '@DynamicSearch/Common/List/Item/_wrapper.html.twig' with { document: document } only %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+{% include '@DynamicSearch/Common/Pagination/_default.html.twig' with {
+    current_filters: { contextName: 'default', (query_identifier): user_query },
+    current_page: current_page,
+    pagination_path: 'dynamic_search_frontend_search_list',
+    last_page: paginator.count(),
+    show_always_first_and_last: true,
+    extreme_pages_limit: 5,
+    nearby_pages_limit: 2
+} only %}
+
+{# use this paginator for simple ajax loader ("more...")
+
+    {% include '@DynamicSearch/OutputChannel/Common/Pagination/_single.html.twig' with {
+        current_filters: {  contextName: 'default', q: user_query },
+        current_page: current_page,
+        pagination_path: 'dynamic_search_frontend_search_list',
+        last_page: paginator.count(),
+        show_always_first_and_last: true,
+    } only %}
+
+#}

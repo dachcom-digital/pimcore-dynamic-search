@@ -19,8 +19,9 @@ class FilterDefinition implements FilterDefinitionInterface
     {
         $resolver = new OptionsResolver();
 
-        $resolver->setRequired(['type', 'label', 'configuration']);
+        $resolver->setRequired(['type', 'name', 'label', 'configuration']);
         $resolver->setAllowedTypes('type', ['string']);
+        $resolver->setAllowedTypes('name', ['string']);
         $resolver->setAllowedTypes('label', ['string', 'null']);
         $resolver->setAllowedTypes('configuration', ['array']);
 

@@ -44,16 +44,6 @@ interface ContextDataInterface
      */
     const ALLOWED_QUEUE_DISPATCH_TYPES = ['insert', 'update', 'delete'];
 
-    /*
-     * Available Output Channels
-     * to fetch query data from index
-     */
-    const AVAILABLE_OUTPUT_CHANNEL_TYPES = [
-        'autocomplete',
-        'suggestions',
-        'search'
-    ];
-
     /**
      * @return string
      */
@@ -143,6 +133,13 @@ interface ContextDataInterface
      * @return string|null
      */
     public function getOutputChannelServiceName(string $outputChannelName);
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return array
+     */
+    public function getOutputChannelEnvironment(string $outputChannelName);
 
     /**
      * @param string $outputChannelName

@@ -30,9 +30,8 @@ interface IndexManagerInterface
     /**
      * @param ContextDataInterface $contextData
      * @param string               $identifier
-     * @param array                $configuration
      *
      * @return FilterInterface|null
      */
-    public function getFilter(ContextDataInterface $contextData, string $identifier, array $configuration);
+    public function getFilter(ContextDataInterface $contextData, string $identifier);
 }

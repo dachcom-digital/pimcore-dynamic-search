@@ -23,11 +23,11 @@ class FilterDefinitionResolver implements FilterDefinitionResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(string $contextName, string $outputChannelName)
+    public function resolve(string $contextName, string $outputChannelName, ?string $parentOutputChannelName)
     {
         $builder = [];
         foreach ($this->definitionBuilderRegistry->getAllFilterDefinitionBuilder() as $filterDefinitionBuilder) {
-            if ($filterDefinitionBuilder->isApplicable($contextName, $outputChannelName) === true) {
+            if ($filterDefinitionBuilder->isApplicable($contextName, $outputChannelName, $parentOutputChannelName) === true) {
                 $builder[] = $filterDefinitionBuilder;
             }
         }

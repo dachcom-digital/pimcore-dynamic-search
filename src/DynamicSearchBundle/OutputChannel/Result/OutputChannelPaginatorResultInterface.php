@@ -4,7 +4,7 @@ namespace DynamicSearchBundle\OutputChannel\Result;
 
 use DynamicSearchBundle\Paginator\PaginatorInterface;
 
-interface OutputChannelPaginatorResultInterface extends OutputChannelResultInterface
+interface OutputChannelPaginatorResultInterface
 {
     /**
      * @return PaginatorInterface

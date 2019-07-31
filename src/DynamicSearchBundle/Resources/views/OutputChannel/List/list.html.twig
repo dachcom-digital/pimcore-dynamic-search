@@ -1,0 +1,21 @@
+{% extends '@DynamicSearch/layout.html.twig' %}
+
+{% block dynamic_search_list_content %}
+
+    {{ parent() }}
+
+    {% if has_error == false %}
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        {% include '@DynamicSearch/Common/_search_form.html.twig' %}
+
+        {% if search_active == true %}
+            {% include '@DynamicSearch/Common/List/_wrapper.html.twig' %}
+        {% endif %}
+
+        {{ form_end(form) }}
+
+    {% endif %}
+
+{% endblock %}

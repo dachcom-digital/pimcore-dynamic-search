@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Filter;
 
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface FilterInterface
@@ -21,19 +21,19 @@ interface FilterInterface
     public function setOptions(array $options);
 
     /**
+     * @param string $name
+     */
+    public function setName(string $name);
+
+    /**
      * @param OutputChannelModifierEventDispatcher $eventDispatcher
      */
     public function setEventDispatcher(OutputChannelModifierEventDispatcher $eventDispatcher);
 
     /**
-     * @param RuntimeOptionsProviderInterface $runtimeOptionsProvider
+     * @param OutputChannelContextInterface $outputChannelContext
      */
-    public function setRuntimeParameterProvider(RuntimeOptionsProviderInterface $runtimeOptionsProvider);
-
-    /**
-     * @param array $indexProviderOptions
-     */
-    public function setIndexProviderOptions(array $indexProviderOptions);
+    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext);
 
     /**
      * @return bool
@@ -48,11 +48,19 @@ interface FilterInterface
     public function enrichQuery($query);
 
     /**
-     * @param mixed $query
      * @param mixed $result
      *
-     * @return mixed|null
+     * @return mixed
      */
-    public function buildViewVars($query, $result);
+    public function findFilterValueInResult($result);
+
+    /**
+     * @param mixed $filterValues
+     * @param mixed $result
+     * @param mixed $query
+     *
+     * @return mixed
+     */
+    public function buildViewVars($filterValues, $result, $query);
 
 }

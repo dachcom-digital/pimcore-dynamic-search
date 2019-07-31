@@ -21,7 +21,7 @@ class FilterDefinitionManager implements FilterDefinitionManagerInterface
     protected $filterDefinitionResolver;
 
     /**
-     * @param ConfigurationInterface           $configuration
+     * @param ConfigurationInterface            $configuration
      * @param FilterDefinitionResolverInterface $filterDefinitionResolver
      */
     public function __construct(
@@ -35,10 +35,10 @@ class FilterDefinitionManager implements FilterDefinitionManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function generateFilterDefinition(ContextDataInterface $contextData, string $outputChannelName)
+    public function generateFilterDefinition(ContextDataInterface $contextData, string $outputChannelName, ?string $parentOutputChannelName)
     {
         try {
-            $filterDefinitionBuilderStack = $this->filterDefinitionResolver->resolve($contextData->getName(), $outputChannelName);
+            $filterDefinitionBuilderStack = $this->filterDefinitionResolver->resolve($contextData->getName(), $outputChannelName, $parentOutputChannelName);
         } catch (DefinitionNotFoundException $e) {
             return null;
         }

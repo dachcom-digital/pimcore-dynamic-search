@@ -4,22 +4,12 @@ namespace DynamicSearchBundle\OutputChannel\Result;
 
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
 
-interface OutputChannelResultInterface
+interface MultiOutputChannelResultInterface
 {
     /**
-     * @return string
+     * @return array|OutputChannelResultInterface[]
      */
-    public function getContextName();
-
-    /**
-     * @return string
-     */
-    public function getOutputChannelName();
-
-    /**
-     * @return array
-     */
-    public function getFilter();
+    public function getResults();
 
     /**
      * @return RuntimeOptionsProviderInterface
