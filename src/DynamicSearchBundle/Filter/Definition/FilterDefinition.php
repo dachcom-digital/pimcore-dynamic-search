@@ -6,7 +6,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterDefinition implements FilterDefinitionInterface
 {
-
     /**
      * @var array
      */

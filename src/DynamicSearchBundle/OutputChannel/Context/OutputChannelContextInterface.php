@@ -37,5 +37,4 @@ interface OutputChannelContextInterface
      * @return string
      */
     public function getOutputChannelServiceName();
-
 }

@@ -62,5 +62,4 @@ interface FilterInterface
      * @return mixed
      */
     public function buildViewVars($filterValues, $result, $query);
-
 }

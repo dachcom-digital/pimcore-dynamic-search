@@ -299,7 +299,6 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         array $fieldDefinitionOptions,
         string $resourceScaffolderName
     ) {
-
         $fieldType = $fieldDefinitionOptions['_field_type'];
         $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
 
@@ -310,14 +309,12 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         if ($fieldType === 'pre_process_definition') {
-
             $preprocessDocumentDefinition = new PreProcessedDocumentDefinition();
 
             // @TODO: check if transformed data is type of array?
             call_user_func($fieldDefinitionOptions['closure'], $preprocessDocumentDefinition, $transformedData);
 
             foreach ($preprocessDocumentDefinition->getDocumentFieldDefinitions() as $preProcessedFieldDefinitionOptions) {
-
                 $transformedData = $preProcessedFieldDefinitionOptions['value'];
                 unset($preProcessedFieldDefinitionOptions['value']);
 
@@ -328,7 +325,6 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
 
                 $this->processDocumentIndexTransformerField($contextData, $indexDocument, $preProcessedFieldDefinitionOptions, $transformedData);
             }
-
         } elseif ($fieldType === 'simple_definition') {
             $this->processDocumentIndexTransformerField($contextData, $indexDocument, $fieldDefinitionOptions, $transformedData);
         } else {
@@ -348,7 +344,6 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         array $fieldDefinitionOptions,
         $transformedData
     ) {
-
         $fieldName = $fieldDefinitionOptions['name'];
         $indexTransformerOptions = $fieldDefinitionOptions['index_transformer'];
 

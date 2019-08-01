@@ -77,7 +77,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
 
     /**
      * @param RuntimeOptionsBuilderInterface $service
-     * @param string                          $identifier
+     * @param string                         $identifier
      */
     public function registerOutputChannelRuntimeOptionsBuilder($service, string $identifier)
     {

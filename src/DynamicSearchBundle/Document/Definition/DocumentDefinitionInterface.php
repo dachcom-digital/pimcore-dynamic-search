@@ -39,7 +39,7 @@ interface DocumentDefinitionInterface
     public function addSimpleDocumentFieldDefinition(array $definition);
 
     /**
-     * @param array   $preProcessTransformer
+     * @param array    $preProcessTransformer
      * @param \Closure $closure
      *
      * @return $this

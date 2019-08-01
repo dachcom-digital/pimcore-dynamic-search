@@ -180,7 +180,6 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $subContexts = [];
 
         foreach ($outputChannelBlocks as $subOutputChannelIdentifier => $block) {
-
             $subOutputChannelName = $block['reference'];
 
             $parentOutputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
@@ -210,7 +209,6 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         $results = [];
         foreach ($multiOutputChannelService->getMultiSearchResult() as $subOutputChannelIdentifier => $result) {
-
             $filter = $filters[$subOutputChannelIdentifier];
             $query = $queries[$subOutputChannelIdentifier];
             /** @var SubOutputChannelContextInterface $subOutputChannelContext */
@@ -231,7 +229,6 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
 
             $results[$subOutputChannelIdentifier] = $this->buildResult($contextDefinition, $subOutputChannelContext, $filterBlocks, $result);
-
         }
 
         return new MultiOutputChannelResult($results, $outputChannelContext->getRuntimeQueryProvider());
@@ -318,15 +315,22 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         try {
             $outputChannelService = $this->outputChannelManager->getOutputChannel($contextDefinition, $outputChannelName);
         } catch (\Throwable $e) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('could not load output channel "%s" for context "%s". Error was: %s', $outputChannelName,
-                    $contextDefinition->getName(), $e->getMessage())
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf(
+                    'could not load output channel "%s" for context "%s". Error was: %s',
+                    $outputChannelName,
+                    $contextDefinition->getName(),
+                    $e->getMessage()
+                )
             );
         }
 
         if (!$outputChannelService instanceof OutputChannelInterface) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('could not load output channel "%s" for context "%s"', $outputChannelName, $contextDefinition->getName()));
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf('could not load output channel "%s" for context "%s"', $outputChannelName, $contextDefinition->getName())
+            );
         }
 
         $eventData = $eventDispatcher->dispatchAction('resolve_options', ['optionsResolver' => new OptionsResolver()]);
@@ -335,8 +339,10 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         try {
             $outputChannelOptions = $contextDefinition->getOutputChannelOptions($outputChannelName, $outputChannelService, $optionsResolver);
         } catch (\Throwable $e) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('could not determinate output channel options for "%s" for context "%s". Error was: %s',
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf(
+                    'could not determinate output channel options for "%s" for context "%s". Error was: %s',
                     $outputChannelName,
                     $contextDefinition->getName(),
                     $e->getMessage()
@@ -390,8 +396,10 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $outputChannelRuntimeQueryProviderName = $contextDefinition->getOutputChannelRuntimeQueryProvider($outputChannelName);
         $runtimeQueryProvider = $this->outputChannelManager->getOutputChannelRuntimeQueryProvider($outputChannelRuntimeQueryProviderName);
         if (!$runtimeQueryProvider instanceof RuntimeQueryProviderInterface) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('could not load runtime query provider "%s" for context "%s"', $outputChannelRuntimeQueryProviderName, $contextDefinition->getName()));
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf('could not load runtime query provider "%s" for context "%s"', $outputChannelRuntimeQueryProviderName, $contextDefinition->getName())
+            );
         }
 
         return $runtimeQueryProvider;
@@ -410,8 +418,10 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $outputChannelRuntimeOptionsBuilderName = $contextDefinition->getOutputChannelRuntimeOptionsBuilder($outputChannelName);
         $runtimeOptionsBuilder = $this->outputChannelManager->getOutputChannelRuntimeOptionsBuilder($outputChannelRuntimeOptionsBuilderName);
         if (!$runtimeOptionsBuilder instanceof RuntimeOptionsBuilderInterface) {
-            throw new OutputChannelException($outputChannelName,
-                sprintf('could not load runtime options builder "%s" for context "%s"', $outputChannelRuntimeOptionsBuilderName, $contextDefinition->getName()));
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf('could not load runtime options builder "%s" for context "%s"', $outputChannelRuntimeOptionsBuilderName, $contextDefinition->getName())
+            );
         }
 
         return $runtimeOptionsBuilder;
@@ -460,8 +470,12 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         } catch (\Throwable $e) {
             throw new OutputChannelException(
                 $outputChannelName,
-                sprintf('could not load index manager "%s" for context "%s". Error was: %s', $contextDefinition->getIndexProviderName(), $contextDefinition->getName(),
-                    $e->getMessage())
+                sprintf(
+                    'could not load index manager "%s" for context "%s". Error was: %s',
+                    $contextDefinition->getIndexProviderName(),
+                    $contextDefinition->getName(),
+                    $e->getMessage()
+                )
             );
         }
 

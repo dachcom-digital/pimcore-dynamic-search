@@ -134,7 +134,8 @@ class SearchFrontendController extends FrontendController
         if ($runtimeQueryProvider === null) {
             return $this->renderTemplate($viewName, [
                 'has_error'     => true,
-                'error_message' => sprintf('output channel result "%s" needs to be instance of "%s" or "%s".',
+                'error_message' => sprintf(
+                    'output channel result "%s" needs to be instance of "%s" or "%s".',
                     $outputChannelName,
                     MultiOutputChannelResultInterface::class,
                     OutputChannelResultInterface::class
@@ -158,21 +159,20 @@ class SearchFrontendController extends FrontendController
         }
 
         $blocks = [];
-        foreach ($outputChannelResult->getResults() as $resultBlockIdentifier => $resultBlock) {
+        if ($outputChannelResult instanceof MultiOutputChannelResultInterface) {
+            foreach ($outputChannelResult->getResults() as $resultBlockIdentifier => $resultBlock) {
+                if (!$resultBlock instanceof OutputChannelResultInterface) {
+                    return $this->renderTemplate($viewName, [
+                        'has_error'     => true,
+                        'error_message' => sprintf('output channel "%s" for context "%s" should return OutputChannelResultInterface.', $outputChannelName, $contextName)
+                    ]);
+                }
 
-            if (!$resultBlock instanceof OutputChannelResultInterface) {
-                return $this->renderTemplate($viewName, [
-                    'has_error'     => true,
-                    'error_message' => sprintf('output channel "%s" for context "%s" should return OutputChannelResultInterface.', $outputChannelName, $contextName)
-                ]);
+                $blocks[$resultBlockIdentifier] = $this->prepareQueryVars($resultBlock);
             }
-
-            $blocks[$resultBlockIdentifier] = $this->prepareQueryVars($resultBlock);
-
         }
 
         return $this->renderTemplate($viewName, array_merge($params, ['blocks' => $blocks]));
-
     }
 
     /**

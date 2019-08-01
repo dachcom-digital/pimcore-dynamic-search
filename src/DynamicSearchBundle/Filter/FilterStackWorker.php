@@ -8,7 +8,6 @@ use DynamicSearchBundle\Filter\Definition\FilterDefinitionInterface;
 use DynamicSearchBundle\Manager\FilterDefinitionManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
-use DynamicSearchBundle\OutputChannel\Context\SubOutputChannelContextInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterStackWorker
@@ -45,7 +44,7 @@ class FilterStackWorker
 
     /**
      * @param array $filterStack
-     * @param       $query
+     * @param mixed $query
      *
      * @return mixed
      */
@@ -60,8 +59,8 @@ class FilterStackWorker
 
     /**
      * @param array $filterStack
-     * @param       $result
-     * @param       $query
+     * @param mixed $result
+     * @param mixed $query
      *
      * @return array
      */
@@ -108,6 +107,7 @@ class FilterStackWorker
      * @param OutputChannelModifierEventDispatcher $eventDispatcher
      *
      * @return array
+     *
      * @throws OutputChannelException
      */
     public function generateFilterServiceStack(OutputChannelContextInterface $outputChannelContext, OutputChannelModifierEventDispatcher $eventDispatcher)
@@ -130,7 +130,6 @@ class FilterStackWorker
         $filterStack = [];
 
         foreach ($filterDefinition->getFilterDefinitions() as $filterDefinition) {
-
             $filterType = $filterDefinition['type'];
             $filterName = $filterDefinition['name'];
             $filterTypeConfiguration = $filterDefinition['configuration'];
@@ -142,7 +141,8 @@ class FilterStackWorker
                     $outputChannelAllocator->getOutputChannelName(),
                     sprintf(
                         'Unable to fetch filter "%s". Error was: %s',
-                        $filterType, $e->getMessage()
+                        $filterType,
+                        $e->getMessage()
                     )
                 );
             }
@@ -157,7 +157,6 @@ class FilterStackWorker
             $filter->setEventDispatcher($eventDispatcher);
 
             $filterStack[] = ['filter' => $filter, 'name' => $filterName, 'config' => $filterTypeConfiguration];
-
         }
 
         return $filterStack;

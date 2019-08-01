@@ -9,7 +9,6 @@ interface OutputChannelModifierFilterInterface
     /**
      * @param OutputChannelAllocatorInterface $outputChannelAllocator
      * @param array                           $options
-     *
      */
     public function dispatchFilter(OutputChannelAllocatorInterface $outputChannelAllocator, array $options);
 }

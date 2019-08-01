@@ -35,7 +35,7 @@ class OutputChannelAllocator implements OutputChannelAllocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelName()
     {
@@ -43,7 +43,7 @@ class OutputChannelAllocator implements OutputChannelAllocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getParentOutputChannelName()
     {
@@ -51,12 +51,10 @@ class OutputChannelAllocator implements OutputChannelAllocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSubOutputChannelIdentifier()
     {
         return $this->subOutputChannelIdentifier;
     }
 }
-
-

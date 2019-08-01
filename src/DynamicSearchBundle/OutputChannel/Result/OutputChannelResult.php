@@ -23,7 +23,7 @@ class OutputChannelResult implements OutputChannelResultInterface
     protected $filter;
 
     /**
-     * @var  \ArrayObject
+     * @var \ArrayObject
      */
     protected $runtimeOptions;
 

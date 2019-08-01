@@ -102,5 +102,4 @@ class IndexManager implements IndexManagerInterface
 
         return $this->indexRegistry->getFilterForIndexProvider($indexProviderName, $identifier);
     }
-
 }

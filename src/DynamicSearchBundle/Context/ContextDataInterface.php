@@ -147,7 +147,7 @@ interface ContextDataInterface
      * @return string|null
      */
     public function getOutputChannelRuntimeQueryProvider(string $outputChannelName);
-    
+
     /**
      * @param string $outputChannelName
      *

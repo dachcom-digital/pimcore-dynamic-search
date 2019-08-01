@@ -47,7 +47,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getContextDefinition()
     {
@@ -63,7 +63,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRuntimeQueryProvider()
     {
@@ -79,7 +79,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRuntimeOptions()
     {
@@ -95,7 +95,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIndexProviderOptions()
     {
@@ -111,7 +111,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelAllocator()
     {
@@ -127,12 +127,10 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getOutputChannelServiceName()
     {
         return $this->outputChannelServiceName;
     }
 }
-
-

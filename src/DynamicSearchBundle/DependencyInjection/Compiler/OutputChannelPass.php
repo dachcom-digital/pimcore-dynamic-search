@@ -61,8 +61,11 @@ final class OutputChannelPass implements CompilerPassInterface
                 $outputChannelService = isset($attributes['output_channel_service_identifier']) ? $attributes['output_channel_service_identifier'] : 'all';
                 if (!in_array($outputChannelService, $validModifierChannelServices)) {
                     throw new \InvalidArgumentException(
-                        sprintf('"%s" is an invalid output channel type for filter. Channel needs to be one of %s', $outputChannelService,
-                            implode(', ', $validModifierChannelServices))
+                        sprintf(
+                            '"%s" is an invalid output channel type for filter. Channel needs to be one of %s',
+                            $outputChannelService,
+                            implode(', ', $validModifierChannelServices)
+                        )
                     );
                 }
 
@@ -103,8 +106,11 @@ final class OutputChannelPass implements CompilerPassInterface
                 $outputChannelService = isset($attributes['output_channel_service_identifier']) ? $attributes['output_channel_service_identifier'] : 'all';
                 if (!in_array($outputChannelService, $outputChannelServices)) {
                     throw new \InvalidArgumentException(
-                        sprintf('"%s" is an invalid output channel type for filter. Channel needs to be one of %s', $outputChannelService,
-                            implode(', ', $outputChannelServices))
+                        sprintf(
+                            '"%s" is an invalid output channel type for filter. Channel needs to be one of %s',
+                            $outputChannelService,
+                            implode(', ', $outputChannelServices)
+                        )
                     );
                 }
 

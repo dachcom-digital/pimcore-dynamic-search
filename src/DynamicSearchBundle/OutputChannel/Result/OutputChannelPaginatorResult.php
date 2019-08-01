@@ -26,5 +26,4 @@ class OutputChannelPaginatorResult extends OutputChannelResult implements Output
     {
         return $this->paginator;
     }
-
 }

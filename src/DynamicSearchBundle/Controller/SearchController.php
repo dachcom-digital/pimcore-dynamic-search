@@ -75,7 +75,6 @@ class SearchController extends Controller
             }
 
             return $this->json($params);
-
         }
 
         return $this->json(['result' => []]);
