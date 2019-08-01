@@ -3,9 +3,9 @@
 ### composer.json
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search": "~0.3.0",
-    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.3.0",
-    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.3.0",
+    "dachcom-digital/dynamic-search": "~0.4.0",
+    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.4.0",
+    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.4.0",
 }
 ```
 
@@ -53,9 +53,9 @@ dynamic_search:
 
             output_channels:
                 autocomplete:
-                    service: 'lucene'
+                    service: 'lucene_autocomplete'
                 suggestions:
-                    service: 'lucene'
+                    service: 'lucene_suggestions'
                     #options:
                     #    restrict_search_fields:
                     #        - 'sku'
@@ -64,13 +64,26 @@ dynamic_search:
                         #options:
                         #    skip_fields: ['title']
                 search:
-                    service: 'lucene'
-                    options:
-                        max_per_page: 4
+                    service: 'lucene_search'
+                    internal: false
+                    use_frontend_controller: true
+                    paginator:
+                        enabled: true
+                        # adapter_class: ''
+                        max_per_page: 1
                     normalizer:
                         service: 'lucene_document_key_value_normalizer'
                         #options:
                         #    skip_fields: ['title']
+                multi_search:
+                    multiple: true
+                    service: 'lucene_multi_search'
+                    use_frontend_controller: true
+                    blocks:
+                        type1:
+                            reference: search
+                        type2:
+                            reference: search
 
 ```
 
@@ -83,6 +96,7 @@ namespace AppBundle\Ds\IndexDefinition\Trinity;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
+use DynamicSearchBundle\Document\Definition\PreProcessedDocumentDefinitionInterface;
 
 class Definition implements DocumentDefinitionBuilderInterface
 {
@@ -104,26 +118,43 @@ class Definition implements DocumentDefinitionBuilderInterface
     public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions)
     {
         $definition
-            ->addDocumentFieldDefinition([
+            ->addSimpleDocumentFieldDefinition([
                 'name'              => 'sku',
                 'index_transformer' => [
-                    'type' => 'keyword',
+                    'type' => 'text',
                 ],
                 'data_transformer'  => [
                     'type'          => 'object_getter_extractor',
                     'configuration' => ['method' => 'getSku']
                 ]
             ])
-            ->addDocumentFieldDefinition([
+            ->addSimpleDocumentFieldDefinition([
                 'name'              => 'title',
                 'index_transformer' => [
-                    'type' => 'keyword',
+                    'type' => 'text',
                 ],
                 'data_transformer'  => [
                     'type'          => 'object_getter_extractor',
                     'configuration' => ['method' => 'getTitle']
                 ]
-            ]);
+            ])
+            ->addPreProcessFieldDefinition([
+                'type'          => 'object_relations_getter_extractor',
+                'configuration' => [
+                    'relations' => 'categories',
+                    'method'    => 'getId',
+                ]
+            ], function (PreProcessedDocumentDefinitionInterface $definition, array $preProcessedTransformedData) {
+                foreach ($preProcessedTransformedData as $categoryId) {
+                    $definition->addSimpleDocumentFieldDefinition([
+                        'name'              => sprintf('category_%d', $categoryId),
+                        'index_transformer' => [
+                            'type' => 'keyword',
+                        ],
+                        'value'             => '1'
+                    ]);
+                }
+            });
     }
 }
 ```

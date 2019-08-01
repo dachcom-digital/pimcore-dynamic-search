@@ -32,7 +32,20 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ## Further Information
 - [Example Setup](docs/0_ExampleSetup.md)
-- [Context Guard](#)
+- [Configuration](#)
+    - [Context Guard](#)
+    - [Document Definition](#)
+    - [Logging](#)
+- [Data Creation](#)
+    - [Enable automatic Update / Insert / Delete Service](#)
+- [Data Fetching](#)
+    - [Output Channels](#)
+        - [Create Output Channel](#)
+        - [Multi Search Channels](#)
+        - [Channel Filter / Actions](#)
+    - [Filter (Faceted Search / Aggregation)](#)
+        - [Create Filter Definition](#)
+- [API](#)
 
 ### Installation via Extension Manager
 After you have installed the Dynamic Search Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
