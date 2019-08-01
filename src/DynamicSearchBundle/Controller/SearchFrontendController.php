@@ -143,15 +143,14 @@ class SearchFrontendController extends FrontendController
         }
 
         $params = [
-            'has_error'           => false,
-            'error_message'       => null,
-            'search_active'       => $searchActive,
-            'form'                => $form->createView(),
-            'user_query'          => $runtimeQueryProvider->getUserQuery(),
-            'query_identifier'    => $runtimeQueryProvider->getQueryIdentifier(),
-            'search_route_name'   => $routeName,
-            'context_name'        => $contextName,
-            'output_channel_name' => $outputChannelName,
+            'has_error'         => false,
+            'error_message'     => null,
+            'search_active'     => $searchActive,
+            'form'              => $form->createView(),
+            'user_query'        => $runtimeQueryProvider->getUserQuery(),
+            'query_identifier'  => $runtimeQueryProvider->getQueryIdentifier(),
+            'search_route_name' => $routeName,
+            'context_name'      => $contextName
         ];
 
         if ($outputChannelResult instanceof OutputChannelResultInterface) {
@@ -199,7 +198,8 @@ class SearchFrontendController extends FrontendController
             'paginator'       => $paginator,
             'current_page'    => $runtimeOptions['current_page'],
             'page_identifier' => $runtimeOptions['page_identifier'],
-            'filter'          => $outputChannelResult->getFilter()
+            'filter'          => $outputChannelResult->getFilter(),
+            'oc_allocator'    => $outputChannelResult->getOutputChannelAllocator(),
         ];
     }
 

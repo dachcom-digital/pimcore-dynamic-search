@@ -90,12 +90,15 @@ class FilterStackWorker
      */
     protected function prepareFilter(array $filterData)
     {
+        $options = new OptionsResolver();
+
         /** @var FilterInterface $filter */
         $filter = $filterData['filter'];
-        $options = new OptionsResolver();
+
         $filter->configureOptions($options);
         $filter->setName($filterData['name']);
         $filter->setOptions($options->resolve($filterData['config']));
+        $filter->setOutputChannelContext($this->context);
 
         return $filter;
     }
@@ -152,7 +155,6 @@ class FilterStackWorker
             // add config and name in each usage
 
             $filter->setEventDispatcher($eventDispatcher);
-            $filter->setOutputChannelContext($outputChannelContext);
 
             $filterStack[] = ['filter' => $filter, 'name' => $filterName, 'config' => $filterTypeConfiguration];
 

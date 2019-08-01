@@ -195,7 +195,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             $eventDispatcher->setOutputChannelContext($subOutputChannelContext);
 
             $filterStackWorker = new FilterStackWorker($subOutputChannelContext, $this->filterDefinitionManager, $this->indexManager);
-            $filterServiceStack = $filterStackWorker->generateFilterServiceStack($outputChannelContext, $eventDispatcher);
+            $filterServiceStack = $filterStackWorker->generateFilterServiceStack($subOutputChannelContext, $eventDispatcher);
 
             $outputChannelService = $this->prepareOutputChannelService($eventDispatcher, $subOutputChannelContext);
 
@@ -270,7 +270,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $paginatorOutputResult = new OutputChannelPaginatorResult(
                 $contextData->getName(),
-                $outputChannelName,
+                $outputChannelContext->getOutputChannelAllocator(),
                 $filterBlocks,
                 $runtimeOptions,
                 $runtimeQueryProvider
@@ -291,7 +291,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         $arrayOutputResult = new OutputChannelArrayResult(
             $contextData->getName(),
-            $outputChannelName,
+            $outputChannelContext->getOutputChannelAllocator(),
             $filterBlocks,
             $runtimeOptions,
             $runtimeQueryProvider

@@ -97,8 +97,9 @@ class SearchController extends Controller
         }
 
         return [
-            'result' => $data,
-            'filter' => $outputChannelResult->getFilter()
+            'result'       => $data,
+            'filter'       => $outputChannelResult->getFilter(),
+            'oc_allocator' => $outputChannelResult->getOutputChannelAllocator()
         ];
     }
 

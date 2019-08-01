@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 class OutputChannelResult implements OutputChannelResultInterface
@@ -12,14 +13,14 @@ class OutputChannelResult implements OutputChannelResultInterface
     protected $contextName;
 
     /**
+     * @var OutputChannelAllocatorInterface
+     */
+    protected $outputChannelAllocator;
+
+    /**
      * @var array
      */
     protected $filter;
-
-    /**
-     * @var string
-     */
-    protected $outputChannelName;
 
     /**
      * @var  \ArrayObject
@@ -32,21 +33,21 @@ class OutputChannelResult implements OutputChannelResultInterface
     protected $runtimeQueryProvider;
 
     /**
-     * @param string                        $contextName
-     * @param string                        $outputChannelName
-     * @param array                         $filter
-     * @param \ArrayObject                  $runtimeOptions
-     * @param RuntimeQueryProviderInterface $runtimeQueryProvider
+     * @param string                          $contextName
+     * @param OutputChannelAllocatorInterface $outputChannelAllocator
+     * @param array                           $filter
+     * @param \ArrayObject                    $runtimeOptions
+     * @param RuntimeQueryProviderInterface   $runtimeQueryProvider
      */
     public function __construct(
         string $contextName,
-        string $outputChannelName,
+        OutputChannelAllocatorInterface $outputChannelAllocator,
         array $filter,
         \ArrayObject $runtimeOptions,
         RuntimeQueryProviderInterface $runtimeQueryProvider
     ) {
         $this->contextName = $contextName;
-        $this->outputChannelName = $outputChannelName;
+        $this->outputChannelAllocator = $outputChannelAllocator;
         $this->filter = $filter;
         $this->runtimeOptions = $runtimeOptions;
         $this->runtimeQueryProvider = $runtimeQueryProvider;
@@ -63,9 +64,9 @@ class OutputChannelResult implements OutputChannelResultInterface
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelName()
+    public function getOutputChannelAllocator()
     {
-        return $this->outputChannelName;
+        return $this->outputChannelAllocator;
     }
 
     /**

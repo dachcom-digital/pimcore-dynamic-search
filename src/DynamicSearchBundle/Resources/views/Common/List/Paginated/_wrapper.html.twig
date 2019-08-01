@@ -3,17 +3,23 @@
         <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>
     {% else %}
         {% for document in paginator %}
-            {% include '@DynamicSearch/Common/List/Item/_wrapper.html.twig' with { document: document } only %}
+            {% include '@DynamicSearch/Common/List/Item/_wrapper.html.twig' with { document: document, oc_allocator: oc_allocator } only %}
         {% endfor %}
     {% endif %}
 </div>
 
+{% set paginator_filter =  {
+    contextName: context_name,
+    outputChannelName: oc_allocator.parentOutputChannelName is not null ? oc_allocator.parentOutputChannelName : oc_allocator.outputChannelName,
+    (query_identifier): user_query
+} %}
+
+{% if active_tab is defined and active_tab is not null %}
+    {% set paginator_filter = paginator_filter|merge({'ds-selected-tab': active_tab}) %}
+{% endif %}
+
 {% include '@DynamicSearch/Common/Pagination/_default.html.twig' with {
-    current_filters: {
-        contextName: context_name,
-        outputChannelName: output_channel_name,
-        (query_identifier): user_query
-    },
+    current_filters: paginator_filter,
     page_identifier: page_identifier,
     current_page: current_page,
     pagination_path: search_route_name,
@@ -26,11 +32,7 @@
 {# use this paginator for simple ajax loader ("more...")
 
     {% include '@DynamicSearch/OutputChannel/Common/Pagination/_single.html.twig' with {
-        current_filters: {
-            contextName: context_name,
-            outputChannelName: output_channel_name,
-            (query_identifier): user_query
-        },
+        current_filters: paginator_filter,
         page_identifier: page_identifier,
         current_page: current_page,
         pagination_path: 'dynamic_search_frontend_search_list',

@@ -2,6 +2,7 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 interface OutputChannelResultInterface
@@ -12,9 +13,9 @@ interface OutputChannelResultInterface
     public function getContextName();
 
     /**
-     * @return string
+     * @return OutputChannelAllocatorInterface
      */
-    public function getOutputChannelName();
+    public function getOutputChannelAllocator();
 
     /**
      * @return array

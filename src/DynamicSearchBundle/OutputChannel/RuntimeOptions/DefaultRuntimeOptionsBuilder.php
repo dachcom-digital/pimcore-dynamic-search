@@ -26,6 +26,7 @@ class DefaultRuntimeOptionsBuilder implements RuntimeOptionsBuilderInterface
     {
         $obj = new \ArrayObject();
 
+        $obj['prefix'] = $prefix;
         $obj['current_page'] = $this->getCurrentPage($prefix);
         $obj['page_identifier'] = $this->getPageIdentifier($prefix);
         $obj['request_query_vars'] = $this->getRequestQueryVars($prefix);
@@ -40,7 +41,13 @@ class DefaultRuntimeOptionsBuilder implements RuntimeOptionsBuilderInterface
      */
     protected function getRequestQueryVars(?string $prefix)
     {
-        return $this->requestStack->getCurrentRequest()->query->all();
+        $queryData = $this->requestStack->getCurrentRequest()->query->all();
+
+        if ($prefix !== null && isset($queryData[$prefix])) {
+            return $queryData[$prefix];
+        }
+
+        return $queryData;
     }
 
     /**
