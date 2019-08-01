@@ -109,20 +109,13 @@ class FilterStackWorker
      */
     public function generateFilterServiceStack(OutputChannelContextInterface $outputChannelContext, OutputChannelModifierEventDispatcher $eventDispatcher)
     {
-        $parentOutputChannelName = null;
-        if ($this->context instanceof SubOutputChannelContextInterface) {
-            $parentOutputChannelName = $this->context->getParentOutputChannelName();
-        }
+        $outputChannelAllocator = $this->context->getOutputChannelAllocator();
 
         try {
-            $filterDefinition = $this->filterDefinitionManager->generateFilterDefinition(
-                $this->context->getContextDefinition(),
-                $this->context->getOutputChannelName(),
-                $parentOutputChannelName
-            );
+            $filterDefinition = $this->filterDefinitionManager->generateFilterDefinition($this->context->getContextDefinition(), $outputChannelAllocator);
         } catch (\Throwable $e) {
             throw new OutputChannelException(
-                $this->context->getOutputChannelName(),
+                $outputChannelAllocator->getOutputChannelName(),
                 sprintf('Unable to resolve filter definition. Error was: %s', $e->getMessage())
             );
         }
@@ -143,7 +136,7 @@ class FilterStackWorker
                 $filter = $this->indexManager->getFilter($this->context->getContextDefinition(), $filterType);
             } catch (\Throwable $e) {
                 throw new OutputChannelException(
-                    $this->context->getOutputChannelName(),
+                    $outputChannelAllocator->getOutputChannelName(),
                     sprintf(
                         'Unable to fetch filter "%s". Error was: %s',
                         $filterType, $e->getMessage()

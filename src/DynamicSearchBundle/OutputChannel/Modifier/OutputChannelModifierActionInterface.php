@@ -3,23 +3,16 @@
 namespace DynamicSearchBundle\OutputChannel\Modifier;
 
 use DynamicSearchBundle\Event\OutputModifierEvent;
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 
 interface OutputChannelModifierActionInterface
 {
     /**
-     * @param string              $action
-     * @param string              $outputChannelServiceName
-     * @param string              $outputChannelName
-     * @param string|null         $parentOutputChannelName
-     * @param OutputModifierEvent $event
+     * @param string                          $action
+     * @param OutputChannelAllocatorInterface $outputChannelAllocator
+     * @param OutputModifierEvent             $event
      *
      * @return OutputModifierEvent
      */
-    public function dispatchAction(
-        string $action,
-        string $outputChannelServiceName,
-        string $outputChannelName,
-        ?string $parentOutputChannelName,
-        OutputModifierEvent $event
-    ): OutputModifierEvent;
+    public function dispatchAction(string $action, OutputChannelAllocatorInterface $outputChannelAllocator, OutputModifierEvent $event): OutputModifierEvent;
 }

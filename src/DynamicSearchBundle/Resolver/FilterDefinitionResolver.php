@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\Resolver;
 
 use DynamicSearchBundle\Exception\Resolver\DefinitionNotFoundException;
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 use DynamicSearchBundle\Registry\DefinitionBuilderRegistryInterface;
 
 class FilterDefinitionResolver implements FilterDefinitionResolverInterface
@@ -23,11 +24,11 @@ class FilterDefinitionResolver implements FilterDefinitionResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(string $contextName, string $outputChannelName, ?string $parentOutputChannelName)
+    public function resolve(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator)
     {
         $builder = [];
         foreach ($this->definitionBuilderRegistry->getAllFilterDefinitionBuilder() as $filterDefinitionBuilder) {
-            if ($filterDefinitionBuilder->isApplicable($contextName, $outputChannelName, $parentOutputChannelName) === true) {
+            if ($filterDefinitionBuilder->isApplicable($contextName, $outputChannelAllocator) === true) {
                 $builder[] = $filterDefinitionBuilder;
             }
         }

@@ -2,16 +2,17 @@
 
 namespace DynamicSearchBundle\Filter\Definition;
 
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
+
 interface FilterDefinitionBuilderInterface
 {
     /**
-     * @param string      $contextName
-     * @param string      $outputChannelName
-     * @param string|null $parentOutputChannelName
+     * @param string                          $contextName
+     * @param OutputChannelAllocatorInterface $outputChannelAllocator
      *
      * @return bool
      */
-    public function isApplicable(string $contextName, string $outputChannelName, string $parentOutputChannelName = null);
+    public function isApplicable(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator);
 
     /**
      * @param FilterDefinitionInterface $definition

@@ -14,6 +14,7 @@ use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\Manager\NormalizerManagerInterface;
 use DynamicSearchBundle\Manager\OutputChannelManagerInterface;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocator;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
 use DynamicSearchBundle\OutputChannel\Context\SubOutputChannelContextInterface;
 use DynamicSearchBundle\OutputChannel\MultiOutputChannelInterface;
@@ -100,12 +101,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $outputChannelServiceName = $contextDefinition->getOutputChannelServiceName($outputChannelName);
         $outputChannelEnvironment = $contextDefinition->getOutputChannelEnvironment($outputChannelName);
 
+        $outputChannelAllocator = new OutputChannelAllocator($outputChannelName, null, null);
+
         $context = new OutputChannelContext();
         $context->setContextDefinition($contextDefinition);
         $context->setRuntimeQueryProvider($runtimeQueryProvider);
         $context->setRuntimeOptions($runtimeOptions);
         $context->setIndexProviderOptions($indexProviderOptions);
-        $context->setOutputChannelName($outputChannelName);
+        $context->setOutputChannelAllocator($outputChannelAllocator);
         $context->setOutputChannelServiceName($outputChannelServiceName);
 
         $eventDispatcher = new OutputChannelModifierEventDispatcher($this->outputChannelManager);
@@ -167,7 +170,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $multiOutputChannelService = $this->prepareOutputChannelService($eventDispatcher, $outputChannelContext);
         if (!$multiOutputChannelService instanceof MultiOutputChannelInterface) {
             throw new OutputChannelException(
-                $outputChannelContext->getOutputChannelName(),
+                $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName(),
                 sprintf('Multi output channel needs to be interface of "%s"', MultiOutputChannelInterface::class)
             );
         }
@@ -179,11 +182,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         foreach ($outputChannelBlocks as $subOutputChannelIdentifier => $block) {
 
             $subOutputChannelName = $block['reference'];
+
+            $parentOutputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
+            $subOutputChannelAllocator = new OutputChannelAllocator($subOutputChannelName, $parentOutputChannelName, $subOutputChannelIdentifier);
+
             $runtimeOptions = $runtimeOptionsBuilder->buildOptions($subOutputChannelIdentifier);
 
             $subOutputChannelContext = new SubOutputChannelContext($outputChannelContext);
-            $subOutputChannelContext->setParentOutputChannelName($outputChannelContext->getOutputChannelName());
-            $subOutputChannelContext->setOutputChannelName($subOutputChannelName);
+            $subOutputChannelContext->setOutputChannelAllocator($subOutputChannelAllocator);
             $subOutputChannelContext->setRuntimeOptions($runtimeOptions);
 
             $eventDispatcher->setOutputChannelContext($subOutputChannelContext);
@@ -212,7 +218,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             if (!array_key_exists($subOutputChannelIdentifier, $outputChannelBlocks)) {
                 throw new OutputChannelException(
-                    $subOutputChannelContext->getOutputChannelName(),
+                    $subOutputChannelContext->getOutputChannelAllocator()->getOutputChannelName(),
                     sprintf('Sub output channel with identifier "%s" not found after calling getMultiSearchResult.', $subOutputChannelIdentifier)
                 );
             }
@@ -243,7 +249,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
      */
     protected function buildResult(ContextDataInterface $contextData, OutputChannelContextInterface $outputChannelContext, array $filterBlocks, $result)
     {
-        $outputChannelName = $outputChannelContext->getOutputChannelName();
+        $outputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
         $runtimeOptions = $outputChannelContext->getRuntimeOptions();
         $runtimeQueryProvider = $outputChannelContext->getRuntimeQueryProvider();
 
@@ -306,7 +312,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
      */
     protected function prepareOutputChannelService(OutputChannelModifierEventDispatcher $eventDispatcher, OutputChannelContextInterface $outputChannelContext)
     {
-        $outputChannelName = $outputChannelContext->getOutputChannelName();
+        $outputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
         $contextDefinition = $outputChannelContext->getContextDefinition();
 
         try {

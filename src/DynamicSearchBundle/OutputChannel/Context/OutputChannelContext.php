@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\OutputChannel\Context;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 class OutputChannelContext implements OutputChannelContextInterface
@@ -28,9 +29,9 @@ class OutputChannelContext implements OutputChannelContextInterface
     protected $indexProviderOptions;
 
     /**
-     * @var string
+     * @var OutputChannelAllocatorInterface
      */
-    protected $outputChannelName;
+    protected $outputChannelAllocator;
 
     /**
      * @var string
@@ -46,7 +47,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * @return ContextDataInterface
+     * {@inheritDoc}
      */
     public function getContextDefinition()
     {
@@ -62,7 +63,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * @return RuntimeQueryProviderInterface
+     * {@inheritDoc}
      */
     public function getRuntimeQueryProvider()
     {
@@ -78,7 +79,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * @return \ArrayObject
+     * {@inheritDoc}
      */
     public function getRuntimeOptions()
     {
@@ -94,7 +95,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     public function getIndexProviderOptions()
     {
@@ -102,19 +103,19 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * @param string $outputChannelName
+     * @param OutputChannelAllocatorInterface $outputChannelAllocator
      */
-    public function setOutputChannelName(string $outputChannelName)
+    public function setOutputChannelAllocator(OutputChannelAllocatorInterface $outputChannelAllocator)
     {
-        $this->outputChannelName = $outputChannelName;
+        $this->outputChannelAllocator = $outputChannelAllocator;
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    public function getOutputChannelName()
+    public function getOutputChannelAllocator()
     {
-        return $this->outputChannelName;
+        return $this->outputChannelAllocator;
     }
 
     /**
@@ -126,7 +127,7 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getOutputChannelServiceName()
     {

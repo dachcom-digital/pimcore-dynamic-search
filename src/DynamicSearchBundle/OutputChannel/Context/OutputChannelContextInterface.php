@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\OutputChannel\Context;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 interface OutputChannelContextInterface
@@ -28,12 +29,13 @@ interface OutputChannelContextInterface
     public function getIndexProviderOptions();
 
     /**
-     * @return string
+     * @return OutputChannelAllocatorInterface
      */
-    public function getOutputChannelName();
+    public function getOutputChannelAllocator();
 
     /**
      * @return string
      */
     public function getOutputChannelServiceName();
+
 }

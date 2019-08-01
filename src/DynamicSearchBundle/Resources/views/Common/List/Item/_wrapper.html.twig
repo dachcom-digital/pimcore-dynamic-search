@@ -10,7 +10,7 @@
     </div>
 
     {% if document.content is defined %}
-        <p class="mb-1">{{ document.content }}</p>
+        <p class="mb-1">{{ document.content|raw }}</p>
     {% endif %}
 
     {% if document.uri is defined %}

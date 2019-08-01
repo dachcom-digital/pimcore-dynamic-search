@@ -5,7 +5,6 @@ namespace DynamicSearchBundle\EventDispatcher;
 use DynamicSearchBundle\Event\OutputModifierEvent;
 use DynamicSearchBundle\Manager\OutputChannelManagerInterface;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
-use DynamicSearchBundle\OutputChannel\Context\SubOutputChannelContextInterface;
 
 class OutputChannelModifierEventDispatcher
 {
@@ -46,18 +45,12 @@ class OutputChannelModifierEventDispatcher
     public function dispatchAction(string $action, array $options)
     {
         $outputChannelServiceName = $this->outputChannelContext->getOutputChannelServiceName();
-        $outputChannelName = $this->outputChannelContext->getOutputChannelName();
-        $parentOutputChannelName = null;
-
-        if ($this->outputChannelContext instanceof SubOutputChannelContextInterface) {
-            $parentOutputChannelName = $this->outputChannelContext->getParentOutputChannelName();
-        }
 
         $event = new OutputModifierEvent($options);
-        $channelModifierAction = $this->outputChannelManager->getOutputChannelModifierAction($outputChannelServiceName, $action);
+        $channelModifierActions = $this->outputChannelManager->getOutputChannelModifierAction($outputChannelServiceName, $action);
 
-        foreach ($channelModifierAction as $modifierAction) {
-            $event = $modifierAction->dispatchAction($action, $outputChannelServiceName, $outputChannelName, $parentOutputChannelName, $event);
+        foreach ($channelModifierActions as $modifierAction) {
+            $event = $modifierAction->dispatchAction($action, $this->outputChannelContext->getOutputChannelAllocator(), $event);
         }
 
         return $event;
@@ -76,12 +69,6 @@ class OutputChannelModifierEventDispatcher
     public function dispatchFilter(string $filterService, array $options = [])
     {
         $outputChannelServiceName = $this->outputChannelContext->getOutputChannelServiceName();
-        $outputChannelName = $this->outputChannelContext->getOutputChannelName();
-        $parentOutputChannelName = null;
-
-        if ($this->outputChannelContext instanceof SubOutputChannelContextInterface) {
-            $parentOutputChannelName = $this->outputChannelContext->getParentOutputChannelName();
-        }
 
         $channelModifierFilter = $this->outputChannelManager->getOutputChannelModifierFilter($outputChannelServiceName, $filterService);
 
@@ -89,6 +76,6 @@ class OutputChannelModifierEventDispatcher
             throw new \Exception(sprintf('output channel filter "%s" not found', $filterService));
         }
 
-        return $channelModifierFilter->dispatchFilter($outputChannelServiceName, $outputChannelName, $parentOutputChannelName, $options);
+        return $channelModifierFilter->dispatchFilter($this->outputChannelContext->getOutputChannelAllocator(), $options);
     }
 }

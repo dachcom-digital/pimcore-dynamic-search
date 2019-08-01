@@ -2,15 +2,14 @@
 
 namespace DynamicSearchBundle\OutputChannel\Modifier;
 
+use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
+
 interface OutputChannelModifierFilterInterface
 {
     /**
-     * @param string      $outputChannelServiceName
-     * @param string      $outputChannelName
-     * @param string|null $parentOutputChannelName
-     * @param array       $options
+     * @param OutputChannelAllocatorInterface $outputChannelAllocator
+     * @param array                           $options
      *
-     * @return mixed
      */
-    public function dispatchFilter(string $outputChannelServiceName, string $outputChannelName, ?string $parentOutputChannelName, array $options);
+    public function dispatchFilter(OutputChannelAllocatorInterface $outputChannelAllocator, array $options);
 }

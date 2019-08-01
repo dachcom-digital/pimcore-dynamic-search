@@ -50,7 +50,7 @@ class SearchFrontendController extends FrontendController
         $outputChannelName = str_replace('-', '_', $outputChannelName);
 
         if (!$this->outputChannelExists($contextName, $outputChannelName)) {
-            throw $this->createNotFoundException(sprintf('invalid or internal output channel "%s".', $outputChannelName));
+            throw $this->createNotFoundException(sprintf('invalid, internal or no frontend output channel "%s".', $outputChannelName));
         }
 
         return $this->renderFrontendSearch($request, $outputChannelName, $contextName, 'List');
@@ -68,7 +68,7 @@ class SearchFrontendController extends FrontendController
         $outputChannelName = str_replace('-', '_', $outputChannelName);
 
         if (!$this->outputChannelExists($contextName, $outputChannelName, true)) {
-            throw $this->createNotFoundException(sprintf('invalid or internal output channel "%s".', $outputChannelName));
+            throw $this->createNotFoundException(sprintf('invalid, internal or no frontend output channel "%s".', $outputChannelName));
         }
 
         return $this->renderFrontendSearch($request, $outputChannelName, $contextName, 'MultiList');
