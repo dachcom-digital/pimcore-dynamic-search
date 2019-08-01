@@ -10,12 +10,12 @@ class SubOutputChannelContext extends OutputChannelContext implements SubOutputC
     protected $parentOutputChannelName;
 
     /**
-     * @param OutputChannelContext $parent
+     * @param OutputChannelContextInterface $parent
      */
-    public function __construct(OutputChannelContext $parent)
+    public function __construct(OutputChannelContextInterface $parent)
     {
+        $this->setRuntimeQueryProvider($parent->getRuntimeQueryProvider());
         $this->setContextDefinition($parent->getContextDefinition());
-        $this->setRuntimeOptionsProvider($parent->getRuntimeOptionsProvider());
         $this->setIndexProviderOptions($parent->getIndexProviderOptions());
         $this->setOutputChannelServiceName($parent->getOutputChannelServiceName());
     }

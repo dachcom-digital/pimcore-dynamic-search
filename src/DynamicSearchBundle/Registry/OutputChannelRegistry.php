@@ -5,7 +5,8 @@ namespace DynamicSearchBundle\Registry;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierActionInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierFilterInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsBuilderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 class OutputChannelRegistry implements OutputChannelRegistryInterface
 {
@@ -17,7 +18,12 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     /**
      * @var array
      */
-    protected $runtimeOptionsProvider;
+    protected $runtimeOptionsBuilder;
+
+    /**
+     * @var array
+     */
+    protected $runtimeQueryProvider;
 
     /**
      * @var array
@@ -50,23 +56,43 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     }
 
     /**
-     * @param RuntimeOptionsProviderInterface $service
-     * @param string                          $identifier
+     * @param RuntimeQueryProviderInterface $service
+     * @param string                        $identifier
      */
-    public function registerOutputChannelRuntimeOptionsProvider($service, string $identifier)
+    public function registerOutputChannelRuntimeQueryProvider($service, string $identifier)
     {
-        if (!in_array(RuntimeOptionsProviderInterface::class, class_implements($service), true)) {
+        if (!in_array(RuntimeQueryProviderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     '%s needs to implement "%s", "%s" given.',
                     get_class($service),
-                    RuntimeOptionsProviderInterface::class,
+                    RuntimeQueryProviderInterface::class,
                     implode(', ', class_implements($service))
                 )
             );
         }
 
-        $this->runtimeOptionsProvider[$identifier] = $service;
+        $this->runtimeQueryProvider[$identifier] = $service;
+    }
+
+    /**
+     * @param RuntimeOptionsBuilderInterface $service
+     * @param string                          $identifier
+     */
+    public function registerOutputChannelRuntimeOptionsBuilder($service, string $identifier)
+    {
+        if (!in_array(RuntimeOptionsBuilderInterface::class, class_implements($service), true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    RuntimeOptionsBuilderInterface::class,
+                    implode(', ', class_implements($service))
+                )
+            );
+        }
+
+        $this->runtimeOptionsBuilder[$identifier] = $service;
     }
 
     /**
@@ -142,17 +168,33 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function hasOutputChannelRuntimeOptionsProvider(string $identifier)
+    public function hasOutputChannelRuntimeQueryProvider(string $identifier)
     {
-        return isset($this->runtimeOptionsProvider[$identifier]);
+        return isset($this->runtimeQueryProvider[$identifier]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelRuntimeOptionsProvider(string $identifier)
+    public function getOutputChannelRuntimeQueryProvider(string $identifier)
     {
-        return $this->runtimeOptionsProvider[$identifier];
+        return $this->runtimeQueryProvider[$identifier];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOutputChannelRuntimeOptionsBuilder(string $identifier)
+    {
+        return isset($this->runtimeOptionsBuilder[$identifier]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOutputChannelRuntimeOptionsBuilder(string $identifier)
+    {
+        return $this->runtimeOptionsBuilder[$identifier];
     }
 
     /**

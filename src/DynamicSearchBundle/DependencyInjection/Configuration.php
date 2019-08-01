@@ -87,20 +87,27 @@ class Configuration implements ConfigurationInterface
                                         ->ifTrue(function ($values) {
                                             return $values['multiple'] === true && isset($values['paginator']) && $values['paginator']['enabled'] === true;
                                         })
-                                        ->thenInvalid('Unrecognized option "paginator"')
+                                        ->thenInvalid('Unrecognized multi search  option "paginator"')
                                     ->end()
                                     ->beforeNormalization()
                                         ->ifTrue(function ($values) {
                                             return $values['multiple'] === true && isset($values['normalizer']) && $values['normalizer']['service'] !== null;
                                         })
-                                        ->thenInvalid('Unrecognized option "normalizer"')
+                                        ->thenInvalid('Unrecognized multi search option "normalizer"')
+                                    ->end()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($values) {
+                                            return $values['multiple'] === true && isset($values['runtime_options_builder']) && $values['runtime_options_builder'] !== null;
+                                        })
+                                        ->thenInvalid('Unrecognized multi search option "runtime_options_builder"')
                                     ->end()
                                     ->children()
                                         ->scalarNode('service')->defaultNull()->end()
                                         ->booleanNode('multiple')->defaultFalse()->end()
                                         ->booleanNode('internal')->defaultFalse()->end()
                                         ->booleanNode('use_frontend_controller')->defaultFalse()->end()
-                                        ->scalarNode('runtime_options_provider')->defaultValue('default')->end()
+                                        ->scalarNode('runtime_query_provider')->defaultValue('default')->end()
+                                        ->scalarNode('runtime_options_builder')->defaultValue('default')->end()
                                         ->arrayNode('options')
                                             ->variablePrototype()->defaultValue([])->end()
                                         ->end()
@@ -121,6 +128,9 @@ class Configuration implements ConfigurationInterface
                                                 ->end()
                                                 ->scalarNode('adapter_class')
                                                     ->defaultValue(DynamicSearchAdapter::class)
+                                                ->end()
+                                                ->integerNode('max_per_page')
+                                                    ->defaultValue(10)
                                                 ->end()
                                             ->end()
                                         ->end()

@@ -146,7 +146,14 @@ interface ContextDataInterface
      *
      * @return string|null
      */
-    public function getOutputChannelRuntimeOptionsProvider(string $outputChannelName);
+    public function getOutputChannelRuntimeQueryProvider(string $outputChannelName);
+    
+    /**
+     * @param string $outputChannelName
+     *
+     * @return string|null
+     */
+    public function getOutputChannelRuntimeOptionsBuilder(string $outputChannelName);
 
     /**
      * @param string                 $outputChannelName
@@ -158,4 +165,11 @@ interface ContextDataInterface
      * @throws ContextConfigurationException
      */
     public function getOutputChannelOptions(string $outputChannelName, OutputChannelInterface $outputChannel, ?OptionsResolver $optionsResolver = null);
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return array
+     */
+    public function getOutputChannelPaginatorOptions(string $outputChannelName);
 }

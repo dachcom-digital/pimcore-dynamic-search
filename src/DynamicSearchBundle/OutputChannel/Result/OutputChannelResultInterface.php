@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 interface OutputChannelResultInterface
 {
@@ -22,7 +22,12 @@ interface OutputChannelResultInterface
     public function getFilter();
 
     /**
-     * @return RuntimeOptionsProviderInterface
+     * @return RuntimeQueryProviderInterface
      */
-    public function getRuntimeOptionsProvider();
+    public function getRuntimeQueryProvider();
+
+    /**
+     * @return \ArrayObject
+     */
+    public function getRuntimeOptions();
 }

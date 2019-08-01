@@ -9,9 +9,14 @@
 </div>
 
 {% include '@DynamicSearch/Common/Pagination/_default.html.twig' with {
-    current_filters: { contextName: 'default', (query_identifier): user_query },
+    current_filters: {
+        contextName: context_name,
+        outputChannelName: output_channel_name,
+        (query_identifier): user_query
+    },
+    page_identifier: page_identifier,
     current_page: current_page,
-    pagination_path: 'dynamic_search_frontend_search_list',
+    pagination_path: search_route_name,
     last_page: paginator.count(),
     show_always_first_and_last: true,
     extreme_pages_limit: 5,
@@ -21,7 +26,12 @@
 {# use this paginator for simple ajax loader ("more...")
 
     {% include '@DynamicSearch/OutputChannel/Common/Pagination/_single.html.twig' with {
-        current_filters: {  contextName: 'default', q: user_query },
+        current_filters: {
+            contextName: context_name,
+            outputChannelName: output_channel_name,
+            (query_identifier): user_query
+        },
+        page_identifier: page_identifier,
         current_page: current_page,
         pagination_path: 'dynamic_search_frontend_search_list',
         last_page: paginator.count(),

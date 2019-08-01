@@ -7,7 +7,8 @@ use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierActionInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierFilterInterface;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsBuilderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 interface OutputChannelManagerInterface
 {
@@ -24,9 +25,16 @@ interface OutputChannelManagerInterface
     /**
      * @param string $provider
      *
-     * @return RuntimeOptionsProviderInterface
+     * @return RuntimeQueryProviderInterface
      */
-    public function getOutputChannelRuntimeOptionsProvider(string $provider);
+    public function getOutputChannelRuntimeQueryProvider(string $provider);
+
+    /**
+     * @param string $provider
+     *
+     * @return RuntimeOptionsBuilderInterface
+     */
+    public function getOutputChannelRuntimeOptionsBuilder(string $provider);
 
     /**
      * @param string $outputChannelServiceName

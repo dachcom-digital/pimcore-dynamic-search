@@ -5,7 +5,8 @@ namespace DynamicSearchBundle\Registry;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierActionInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierFilterInterface;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsBuilderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 interface OutputChannelRegistryInterface
 {
@@ -28,14 +29,28 @@ interface OutputChannelRegistryInterface
      *
      * @return bool
      */
-    public function hasOutputChannelRuntimeOptionsProvider(string $identifier);
+    public function hasOutputChannelRuntimeQueryProvider(string $identifier);
 
     /**
      * @param string $identifier
      *
-     * @return RuntimeOptionsProviderInterface
+     * @return RuntimeQueryProviderInterface
      */
-    public function getOutputChannelRuntimeOptionsProvider(string $identifier);
+    public function getOutputChannelRuntimeQueryProvider(string $identifier);
+
+    /**
+     * @param string $identifier
+     *
+     * @return bool
+     */
+    public function hasOutputChannelRuntimeOptionsBuilder(string $identifier);
+
+    /**
+     * @param string $identifier
+     *
+     * @return RuntimeOptionsBuilderInterface
+     */
+    public function getOutputChannelRuntimeOptionsBuilder(string $identifier);
 
     /**
      * @param string $outputChannelServiceName

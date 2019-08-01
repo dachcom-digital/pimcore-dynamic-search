@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 interface MultiOutputChannelResultInterface
 {
@@ -12,7 +12,7 @@ interface MultiOutputChannelResultInterface
     public function getResults();
 
     /**
-     * @return RuntimeOptionsProviderInterface
+     * @return RuntimeQueryProviderInterface
      */
-    public function getRuntimeOptionsProvider();
+    public function getRuntimeQueryProvider();
 }

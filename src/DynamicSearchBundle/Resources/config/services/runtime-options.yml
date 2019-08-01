@@ -1,0 +1,14 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\OutputChannel\RuntimeOptions\DefaultRuntimeQueryProvider:
+        tags:
+            - { name: dynamic_search.output_channel.runtime_query_provider, identifier: default }
+
+    DynamicSearchBundle\OutputChannel\RuntimeOptions\DefaultRuntimeOptionsBuilder:
+        tags:
+            - { name: dynamic_search.output_channel.runtime_options_builder, identifier: default }

@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\OutputChannel\Context;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 class OutputChannelContext implements OutputChannelContextInterface
 {
@@ -13,9 +13,14 @@ class OutputChannelContext implements OutputChannelContextInterface
     protected $contextDefinition;
 
     /**
-     * @var RuntimeOptionsProviderInterface
+     * @var RuntimeQueryProviderInterface
      */
-    protected $runtimeOptionsProvider;
+    protected $runtimeQueryProvider;
+
+    /**
+     * @var \ArrayObject
+     */
+    protected $runtimeOptions;
 
     /**
      * @var array
@@ -49,19 +54,35 @@ class OutputChannelContext implements OutputChannelContextInterface
     }
 
     /**
-     * @param RuntimeOptionsProviderInterface $runtimeOptionsProvider
+     * @param RuntimeQueryProviderInterface $runtimeQueryProvider
      */
-    public function setRuntimeOptionsProvider(RuntimeOptionsProviderInterface $runtimeOptionsProvider)
+    public function setRuntimeQueryProvider(RuntimeQueryProviderInterface $runtimeQueryProvider)
     {
-        $this->runtimeOptionsProvider = $runtimeOptionsProvider;
+        $this->runtimeQueryProvider = $runtimeQueryProvider;
     }
 
     /**
-     * @return RuntimeOptionsProviderInterface
+     * @return RuntimeQueryProviderInterface
      */
-    public function getRuntimeOptionsProvider()
+    public function getRuntimeQueryProvider()
     {
-        return $this->runtimeOptionsProvider;
+        return $this->runtimeQueryProvider;
+    }
+
+    /**
+     * @param \ArrayObject $runtimeOptions
+     */
+    public function setRuntimeOptions(\ArrayObject $runtimeOptions)
+    {
+        $this->runtimeOptions = $runtimeOptions;
+    }
+
+    /**
+     * @return \ArrayObject
+     */
+    public function getRuntimeOptions()
+    {
+        return $this->runtimeOptions;
     }
 
     /**

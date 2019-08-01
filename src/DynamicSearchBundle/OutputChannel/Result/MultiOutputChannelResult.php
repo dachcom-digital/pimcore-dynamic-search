@@ -2,14 +2,14 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 class MultiOutputChannelResult implements MultiOutputChannelResultInterface
 {
     /**
-     * @var RuntimeOptionsProviderInterface
+     * @var RuntimeQueryProviderInterface
      */
-    protected $runtimeOptionsProvider;
+    protected $runtimeQueryProvider;
 
     /**
      * @var array
@@ -18,12 +18,12 @@ class MultiOutputChannelResult implements MultiOutputChannelResultInterface
 
     /**
      * @param array|OutputChannelResultInterface[] $results
-     * @param RuntimeOptionsProviderInterface      $runtimeOptionsProvider
+     * @param RuntimeQueryProviderInterface        $runtimeQueryProvider
      */
-    public function __construct(array $results, RuntimeOptionsProviderInterface $runtimeOptionsProvider)
+    public function __construct(array $results, RuntimeQueryProviderInterface $runtimeQueryProvider)
     {
         $this->results = $results;
-        $this->runtimeOptionsProvider = $runtimeOptionsProvider;
+        $this->runtimeQueryProvider = $runtimeQueryProvider;
     }
 
     /**
@@ -37,8 +37,8 @@ class MultiOutputChannelResult implements MultiOutputChannelResultInterface
     /**
      * {@inheritdoc}
      */
-    public function getRuntimeOptionsProvider()
+    public function getRuntimeQueryProvider()
     {
-        return $this->runtimeOptionsProvider;
+        return $this->runtimeQueryProvider;
     }
 }

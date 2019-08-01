@@ -29,12 +29,22 @@ final class OutputChannelPass implements CompilerPassInterface
         }
 
         //#
-        //# dynamic_search.output_channel.runtime_options_provider
+        //# dynamic_search.output_channel.runtime_query_provider
         //#
 
-        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.runtime_options_provider', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.runtime_query_provider', true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('registerOutputChannelRuntimeOptionsProvider', [new Reference($id), $attributes['identifier']]);
+                $definition->addMethodCall('registerOutputChannelRuntimeQueryProvider', [new Reference($id), $attributes['identifier']]);
+            }
+        }
+
+        //#
+        //# dynamic_search.output_channel.runtime_options_builder
+        //#
+
+        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.runtime_options_builder', true) as $id => $tags) {
+            foreach ($tags as $attributes) {
+                $definition->addMethodCall('registerOutputChannelRuntimeOptionsBuilder', [new Reference($id), $attributes['identifier']]);
             }
         }
 

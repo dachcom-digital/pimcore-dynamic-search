@@ -15,7 +15,13 @@
             {% if blocks is iterable and blocks|length > 0 %}
                 {% for identifer, block in blocks %}
                     <h4>{{ identifer }}</h4>
-                    {% include '@DynamicSearch/Common/List/_wrapper.html.twig' with {filter: block.filter, paginator: block.paginator, data: block.data} %}
+                    {% include '@DynamicSearch/Common/List/_wrapper.html.twig' with {
+                        filter: block.filter,
+                        paginator: block.paginator,
+                        current_page: block.current_page,
+                        page_identifier: block.page_identifier,
+                        data: block.data,
+                    } %}
                 {% endfor %}
             {% else %}
                 <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>

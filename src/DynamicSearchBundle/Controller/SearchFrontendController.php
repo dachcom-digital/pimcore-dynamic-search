@@ -116,20 +116,22 @@ class SearchFrontendController extends FrontendController
             return $this->renderTemplate($viewName, [
                 'has_error'     => $hasError,
                 'error_message' => $errorMessage,
-                'paginator'     => null,
                 'search_active' => $searchActive,
                 'form'          => $form->createView(),
             ]);
         }
 
-        $runtimeOptionsProvider = null;
+        $runtimeQueryProvider = null;
+        $routeName = null;
         if ($outputChannelResult instanceof MultiOutputChannelResultInterface) {
-            $runtimeOptionsProvider = $outputChannelResult->getRuntimeOptionsProvider();
+            $routeName = 'dynamic_search_frontend_multi_search_list';
+            $runtimeQueryProvider = $outputChannelResult->getRuntimeQueryProvider();
         } elseif ($outputChannelResult instanceof OutputChannelResultInterface) {
-            $runtimeOptionsProvider = $outputChannelResult->getRuntimeOptionsProvider();
+            $routeName = 'dynamic_search_frontend_search_list';
+            $runtimeQueryProvider = $outputChannelResult->getRuntimeQueryProvider();
         }
 
-        if ($runtimeOptionsProvider === null) {
+        if ($runtimeQueryProvider === null) {
             return $this->renderTemplate($viewName, [
                 'has_error'     => true,
                 'error_message' => sprintf('output channel result "%s" needs to be instance of "%s" or "%s".',
@@ -139,14 +141,17 @@ class SearchFrontendController extends FrontendController
                 )
             ]);
         }
+
         $params = [
-            'has_error'        => false,
-            'error_message'    => null,
-            'search_active'    => $searchActive,
-            'current_page'     => $runtimeOptionsProvider->getCurrentPage(),
-            'user_query'       => $runtimeOptionsProvider->getUserQuery(),
-            'query_identifier' => $runtimeOptionsProvider->getQueryIdentifier(),
-            'form'             => $form->createView(),
+            'has_error'           => false,
+            'error_message'       => null,
+            'search_active'       => $searchActive,
+            'form'                => $form->createView(),
+            'user_query'          => $runtimeQueryProvider->getUserQuery(),
+            'query_identifier'    => $runtimeQueryProvider->getQueryIdentifier(),
+            'search_route_name'   => $routeName,
+            'context_name'        => $contextName,
+            'output_channel_name' => $outputChannelName,
         ];
 
         if ($outputChannelResult instanceof OutputChannelResultInterface) {
@@ -154,7 +159,6 @@ class SearchFrontendController extends FrontendController
         }
 
         $blocks = [];
-
         foreach ($outputChannelResult->getResults() as $resultBlockIdentifier => $resultBlock) {
 
             if (!$resultBlock instanceof OutputChannelResultInterface) {
@@ -188,10 +192,14 @@ class SearchFrontendController extends FrontendController
             $data = $outputChannelResult->getResult();
         }
 
+        $runtimeOptions = $outputChannelResult->getRuntimeOptions();
+
         return [
-            'paginator' => $paginator,
-            'data'      => $data,
-            'filter'    => $outputChannelResult->getFilter()
+            'data'            => $data,
+            'paginator'       => $paginator,
+            'current_page'    => $runtimeOptions['current_page'],
+            'page_identifier' => $runtimeOptions['page_identifier'],
+            'filter'          => $outputChannelResult->getFilter()
         ];
     }
 

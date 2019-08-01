@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 class OutputChannelResult implements OutputChannelResultInterface
 {
@@ -12,36 +12,44 @@ class OutputChannelResult implements OutputChannelResultInterface
     protected $contextName;
 
     /**
-     * @var string
-     */
-    protected $outputChannelName;
-
-    /**
      * @var array
      */
     protected $filter;
 
     /**
-     * @var RuntimeOptionsProviderInterface
+     * @var string
      */
-    protected $runtimeOptionsProvider;
+    protected $outputChannelName;
 
     /**
-     * @param string                          $contextName
-     * @param string                          $outputChannelName
-     * @param array                           $filter
-     * @param RuntimeOptionsProviderInterface $runtimeOptionsProvider
+     * @var  \ArrayObject
+     */
+    protected $runtimeOptions;
+
+    /**
+     * @var RuntimeQueryProviderInterface
+     */
+    protected $runtimeQueryProvider;
+
+    /**
+     * @param string                        $contextName
+     * @param string                        $outputChannelName
+     * @param array                         $filter
+     * @param \ArrayObject                  $runtimeOptions
+     * @param RuntimeQueryProviderInterface $runtimeQueryProvider
      */
     public function __construct(
         string $contextName,
         string $outputChannelName,
         array $filter,
-        RuntimeOptionsProviderInterface $runtimeOptionsProvider
+        \ArrayObject $runtimeOptions,
+        RuntimeQueryProviderInterface $runtimeQueryProvider
     ) {
         $this->contextName = $contextName;
         $this->outputChannelName = $outputChannelName;
         $this->filter = $filter;
-        $this->runtimeOptionsProvider = $runtimeOptionsProvider;
+        $this->runtimeOptions = $runtimeOptions;
+        $this->runtimeQueryProvider = $runtimeQueryProvider;
     }
 
     /**
@@ -71,8 +79,16 @@ class OutputChannelResult implements OutputChannelResultInterface
     /**
      * {@inheritdoc}
      */
-    public function getRuntimeOptionsProvider()
+    public function getRuntimeQueryProvider()
     {
-        return $this->runtimeOptionsProvider;
+        return $this->runtimeQueryProvider;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRuntimeOptions()
+    {
+        return $this->runtimeOptions;
     }
 }

@@ -68,13 +68,25 @@ class OutputChannelManager implements OutputChannelManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelRuntimeOptionsProvider(string $provider)
+    public function getOutputChannelRuntimeQueryProvider(string $provider)
     {
-        if (!$this->outputChannelRegistry->hasOutputChannelRuntimeOptionsProvider($provider)) {
+        if (!$this->outputChannelRegistry->hasOutputChannelRuntimeQueryProvider($provider)) {
             return [];
         }
 
-        return $this->outputChannelRegistry->getOutputChannelRuntimeOptionsProvider($provider);
+        return $this->outputChannelRegistry->getOutputChannelRuntimeQueryProvider($provider);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOutputChannelRuntimeOptionsBuilder(string $provider)
+    {
+        if (!$this->outputChannelRegistry->hasOutputChannelRuntimeOptionsBuilder($provider)) {
+            return [];
+        }
+
+        return $this->outputChannelRegistry->getOutputChannelRuntimeOptionsBuilder($provider);
     }
 
     /**

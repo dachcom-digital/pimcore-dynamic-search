@@ -23,7 +23,8 @@ use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Result\MultiOutputChannelResult;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelArrayResult;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResult;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsBuilderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 use DynamicSearchBundle\Provider\IndexProviderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -92,14 +93,17 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $indexProvider = $this->getIndexProvider($contextDefinition, $outputChannelName);
         $indexProviderOptions = $this->getIndexProviderOptions($contextDefinition, $outputChannelName, $indexProvider);
 
-        $runtimeOptionsProvider = $this->getOCRuntimeOptionsProvider($contextDefinition, $outputChannelName);
+        $runtimeQueryProvider = $this->getOCRuntimeQueryProvider($contextDefinition, $outputChannelName);
+        $runtimeOptionsBuilder = $this->getOCRuntimeOptionsBuilder($contextDefinition, $outputChannelName);
+        $runtimeOptions = $runtimeOptionsBuilder->buildOptions(null);
 
         $outputChannelServiceName = $contextDefinition->getOutputChannelServiceName($outputChannelName);
         $outputChannelEnvironment = $contextDefinition->getOutputChannelEnvironment($outputChannelName);
 
         $context = new OutputChannelContext();
         $context->setContextDefinition($contextDefinition);
-        $context->setRuntimeOptionsProvider($runtimeOptionsProvider);
+        $context->setRuntimeQueryProvider($runtimeQueryProvider);
+        $context->setRuntimeOptions($runtimeOptions);
         $context->setIndexProviderOptions($indexProviderOptions);
         $context->setOutputChannelName($outputChannelName);
         $context->setOutputChannelServiceName($outputChannelServiceName);
@@ -108,83 +112,110 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $eventDispatcher->setOutputChannelContext($context);
 
         if ($outputChannelEnvironment['multiple'] === false) {
-
-            $filterStackWorker = new FilterStackWorker($context, $this->filterDefinitionManager, $this->indexManager);
-            $filterServiceStack = $filterStackWorker->generateFilterServiceStack($context, $eventDispatcher);
-
-            $outputChannelService = $this->prepareOutputChannelService($eventDispatcher, $context);
-
-            $query = $outputChannelService->getQuery();
-            $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $query);
-
-            $result = $outputChannelService->getResult($query);
-
-            $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
-
-            return $this->parseResult(
-                $contextDefinition,
-                $runtimeOptionsProvider,
-                $outputChannelName,
-                $outputChannelService->getOptions(),
-                $filterBlocks,
-                $result
-            );
-
+            return $this->buildSingle($contextDefinition, $context, $eventDispatcher);
         }
 
-        $multiOutputChannelService = $this->prepareOutputChannelService($eventDispatcher, $context);
+        return $this->buildMulti($contextDefinition, $context, $runtimeOptionsBuilder, $eventDispatcher, $outputChannelEnvironment['blocks']);
+    }
+
+    /**
+     * @param ContextDataInterface                 $contextDefinition
+     * @param OutputChannelContextInterface        $outputChannelContext
+     * @param OutputChannelModifierEventDispatcher $eventDispatcher
+     *
+     * @return OutputChannelArrayResult|OutputChannelPaginatorResult
+     *
+     * @throws OutputChannelException
+     */
+    protected function buildSingle(
+        ContextDataInterface $contextDefinition,
+        OutputChannelContextInterface $outputChannelContext,
+        OutputChannelModifierEventDispatcher $eventDispatcher
+    ) {
+        $filterStackWorker = new FilterStackWorker($outputChannelContext, $this->filterDefinitionManager, $this->indexManager);
+        $filterServiceStack = $filterStackWorker->generateFilterServiceStack($outputChannelContext, $eventDispatcher);
+
+        $outputChannelService = $this->prepareOutputChannelService($eventDispatcher, $outputChannelContext);
+
+        $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $outputChannelService->getQuery());
+
+        $result = $outputChannelService->getResult($query);
+
+        $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
+
+        return $this->buildResult($contextDefinition, $outputChannelContext, $filterBlocks, $result);
+    }
+
+    /**
+     * @param ContextDataInterface                 $contextDefinition
+     * @param OutputChannelContextInterface        $outputChannelContext
+     * @param RuntimeOptionsBuilderInterface       $runtimeOptionsBuilder
+     * @param OutputChannelModifierEventDispatcher $eventDispatcher
+     * @param array                                $outputChannelBlocks
+     *
+     * @return MultiOutputChannelResult
+     *
+     * @throws OutputChannelException
+     */
+    protected function buildMulti(
+        ContextDataInterface $contextDefinition,
+        OutputChannelContextInterface $outputChannelContext,
+        RuntimeOptionsBuilderInterface $runtimeOptionsBuilder,
+        OutputChannelModifierEventDispatcher $eventDispatcher,
+        array $outputChannelBlocks
+    ) {
+        $multiOutputChannelService = $this->prepareOutputChannelService($eventDispatcher, $outputChannelContext);
         if (!$multiOutputChannelService instanceof MultiOutputChannelInterface) {
             throw new OutputChannelException(
-                $outputChannelName,
+                $outputChannelContext->getOutputChannelName(),
                 sprintf('Multi output channel needs to be interface of "%s"', MultiOutputChannelInterface::class)
             );
         }
 
         $filters = [];
         $queries = [];
-        $outputChannelOptions = [];
-        $subOutputChanelNames = [];
+        $subContexts = [];
 
-        foreach ($outputChannelEnvironment['blocks'] as $subOutputChannelIdentifier => $block) {
+        foreach ($outputChannelBlocks as $subOutputChannelIdentifier => $block) {
 
-            $outputChannelName = $block['reference'];
+            $subOutputChannelName = $block['reference'];
+            $runtimeOptions = $runtimeOptionsBuilder->buildOptions($subOutputChannelIdentifier);
 
-            $subContext = new SubOutputChannelContext($context);
-            $subContext->setParentOutputChannelName($context->getOutputChannelName());
-            $subContext->setOutputChannelName($outputChannelName);
+            $subOutputChannelContext = new SubOutputChannelContext($outputChannelContext);
+            $subOutputChannelContext->setParentOutputChannelName($outputChannelContext->getOutputChannelName());
+            $subOutputChannelContext->setOutputChannelName($subOutputChannelName);
+            $subOutputChannelContext->setRuntimeOptions($runtimeOptions);
 
-            $eventDispatcher->setOutputChannelContext($subContext);
+            $eventDispatcher->setOutputChannelContext($subOutputChannelContext);
 
-            $filterStackWorker = new FilterStackWorker($subContext, $this->filterDefinitionManager, $this->indexManager);
-            $filterServiceStack = $filterStackWorker->generateFilterServiceStack($context, $eventDispatcher);
+            $filterStackWorker = new FilterStackWorker($subOutputChannelContext, $this->filterDefinitionManager, $this->indexManager);
+            $filterServiceStack = $filterStackWorker->generateFilterServiceStack($outputChannelContext, $eventDispatcher);
 
-            $outputChannelService = $this->prepareOutputChannelService($eventDispatcher, $subContext);
+            $outputChannelService = $this->prepareOutputChannelService($eventDispatcher, $subOutputChannelContext);
 
-            $query = $outputChannelService->getQuery();
-            $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $query);
+            $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $outputChannelService->getQuery());
 
             $multiOutputChannelService->addSubQuery($subOutputChannelIdentifier, $query);
 
             $filters[$subOutputChannelIdentifier] = [$filterStackWorker, $filterServiceStack];
             $queries[$subOutputChannelIdentifier] = $query;
-            $outputChannelOptions[$subOutputChannelIdentifier] = $outputChannelService->getOptions();
-            $subOutputChanelNames[$subOutputChannelIdentifier] = $outputChannelName;
+            $subContexts[$subOutputChannelIdentifier] = $subOutputChannelContext;
         }
 
         $results = [];
         foreach ($multiOutputChannelService->getMultiSearchResult() as $subOutputChannelIdentifier => $result) {
 
-            if (!array_key_exists($subOutputChannelIdentifier, $outputChannelEnvironment['blocks'])) {
+            $filter = $filters[$subOutputChannelIdentifier];
+            $query = $queries[$subOutputChannelIdentifier];
+            /** @var SubOutputChannelContextInterface $subOutputChannelContext */
+            $subOutputChannelContext = $subContexts[$subOutputChannelIdentifier];
+
+            if (!array_key_exists($subOutputChannelIdentifier, $outputChannelBlocks)) {
                 throw new OutputChannelException(
-                    $outputChannelName,
+                    $subOutputChannelContext->getOutputChannelName(),
                     sprintf('Sub output channel with identifier "%s" not found after calling getMultiSearchResult.', $subOutputChannelIdentifier)
                 );
             }
-
-            $filter = $filters[$subOutputChannelIdentifier];
-            $query = $queries[$subOutputChannelIdentifier];
-            $ocOptions = $outputChannelOptions[$subOutputChannelIdentifier];
-            $outputChannelName = $subOutputChanelNames[$subOutputChannelIdentifier];
 
             /** @var FilterStackWorker $filterStackWorker */
             $filterStackWorker = $filter[0];
@@ -193,60 +224,50 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
 
-            $results[$subOutputChannelIdentifier] = $this->parseResult(
-                $contextDefinition,
-                $runtimeOptionsProvider,
-                $outputChannelName,
-                $ocOptions,
-                $filterBlocks,
-                $result
-            );
+            $results[$subOutputChannelIdentifier] = $this->buildResult($contextDefinition, $subOutputChannelContext, $filterBlocks, $result);
 
         }
 
-        return new MultiOutputChannelResult($results, $runtimeOptionsProvider);
+        return new MultiOutputChannelResult($results, $outputChannelContext->getRuntimeQueryProvider());
     }
 
     /**
-     * @param ContextDataInterface            $contextData
-     * @param RuntimeOptionsProviderInterface $runtimeOptionsProvider
-     * @param string                          $outputChannelName
-     * @param array                           $outputChannelOptions
-     * @param array                           $filterBlocks
-     * @param mixed                           $result
+     * @param ContextDataInterface          $contextData
+     * @param OutputChannelContextInterface $outputChannelContext
+     * @param array                         $filterBlocks
+     * @param mixed                         $result
      *
      * @return OutputChannelArrayResult|OutputChannelPaginatorResult
      *
      * @throws OutputChannelException
      */
-    protected function parseResult(
-        ContextDataInterface $contextData,
-        RuntimeOptionsProviderInterface $runtimeOptionsProvider,
-        string $outputChannelName,
-        array $outputChannelOptions,
-        array $filterBlocks,
-        $result
-    ) {
+    protected function buildResult(ContextDataInterface $contextData, OutputChannelContextInterface $outputChannelContext, array $filterBlocks, $result)
+    {
+        $outputChannelName = $outputChannelContext->getOutputChannelName();
+        $runtimeOptions = $outputChannelContext->getRuntimeOptions();
+        $runtimeQueryProvider = $outputChannelContext->getRuntimeQueryProvider();
 
         $documentNormalizer = $this->getDocumentNormalizer($contextData, $outputChannelName);
+        $paginatorOptions = $contextData->getOutputChannelPaginatorOptions($outputChannelName);
 
-        if ($outputChannelOptions['paginator']['enabled'] === true) {
+        if ($paginatorOptions['enabled'] === true) {
             $paginator = $this->paginatorFactory->create(
                 $result,
-                $outputChannelOptions['paginator']['adapter_class'],
+                $paginatorOptions['adapter_class'],
                 $outputChannelName,
                 $contextData,
                 $documentNormalizer
             );
 
-            $paginator->setItemCountPerPage($runtimeOptionsProvider->getMaxPerPage());
-            $paginator->setCurrentPageNumber($runtimeOptionsProvider->getCurrentPage());
+            $paginator->setItemCountPerPage($paginatorOptions['max_per_page']);
+            $paginator->setCurrentPageNumber($runtimeOptions['current_page']);
 
             $paginatorOutputResult = new OutputChannelPaginatorResult(
                 $contextData->getName(),
                 $outputChannelName,
                 $filterBlocks,
-                $runtimeOptionsProvider
+                $runtimeOptions,
+                $runtimeQueryProvider
             );
 
             $paginatorOutputResult->setPaginator($paginator);
@@ -266,7 +287,8 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             $contextData->getName(),
             $outputChannelName,
             $filterBlocks,
-            $runtimeOptionsProvider
+            $runtimeOptions,
+            $runtimeQueryProvider
         );
 
         $arrayOutputResult->setResult($result);
@@ -316,8 +338,6 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             );
         }
 
-        $outputChannelContext->getRuntimeOptionsProvider()->setDefaultOptions($outputChannelOptions);
-
         $outputChannelService->setOptions($outputChannelOptions);
         $outputChannelService->setEventDispatcher($eventDispatcher);
         $outputChannelService->setOutputChannelContext($outputChannelContext);
@@ -355,20 +375,40 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
      * @param ContextDataInterface $contextDefinition
      * @param string               $outputChannelName
      *
-     * @return RuntimeOptionsProviderInterface
+     * @return RuntimeQueryProviderInterface
      *
      * @throws OutputChannelException
      */
-    protected function getOCRuntimeOptionsProvider(ContextDataInterface $contextDefinition, string $outputChannelName)
+    protected function getOCRuntimeQueryProvider(ContextDataInterface $contextDefinition, string $outputChannelName)
     {
-        $outputChannelRuntimeOptionsProviderName = $contextDefinition->getOutputChannelRuntimeOptionsProvider($outputChannelName);
-        $runtimeOptionsProvider = $this->outputChannelManager->getOutputChannelRuntimeOptionsProvider($outputChannelRuntimeOptionsProviderName);
-        if (!$runtimeOptionsProvider instanceof RuntimeOptionsProviderInterface) {
+        $outputChannelRuntimeQueryProviderName = $contextDefinition->getOutputChannelRuntimeQueryProvider($outputChannelName);
+        $runtimeQueryProvider = $this->outputChannelManager->getOutputChannelRuntimeQueryProvider($outputChannelRuntimeQueryProviderName);
+        if (!$runtimeQueryProvider instanceof RuntimeQueryProviderInterface) {
             throw new OutputChannelException($outputChannelName,
-                sprintf('could not load runtime options provider "%s" for context "%s"', $outputChannelRuntimeOptionsProviderName, $contextDefinition->getName()));
+                sprintf('could not load runtime query provider "%s" for context "%s"', $outputChannelRuntimeQueryProviderName, $contextDefinition->getName()));
         }
 
-        return $runtimeOptionsProvider;
+        return $runtimeQueryProvider;
+    }
+
+    /**
+     * @param ContextDataInterface $contextDefinition
+     * @param string               $outputChannelName
+     *
+     * @return RuntimeOptionsBuilderInterface
+     *
+     * @throws OutputChannelException
+     */
+    protected function getOCRuntimeOptionsBuilder(ContextDataInterface $contextDefinition, string $outputChannelName)
+    {
+        $outputChannelRuntimeOptionsBuilderName = $contextDefinition->getOutputChannelRuntimeOptionsBuilder($outputChannelName);
+        $runtimeOptionsBuilder = $this->outputChannelManager->getOutputChannelRuntimeOptionsBuilder($outputChannelRuntimeOptionsBuilderName);
+        if (!$runtimeOptionsBuilder instanceof RuntimeOptionsBuilderInterface) {
+            throw new OutputChannelException($outputChannelName,
+                sprintf('could not load runtime options builder "%s" for context "%s"', $outputChannelRuntimeOptionsBuilderName, $contextDefinition->getName()));
+        }
+
+        return $runtimeOptionsBuilder;
     }
 
     /**

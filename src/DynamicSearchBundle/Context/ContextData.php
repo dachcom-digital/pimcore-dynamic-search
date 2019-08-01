@@ -255,13 +255,25 @@ class ContextData implements ContextDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannelRuntimeOptionsProvider(string $outputChannelName)
+    public function getOutputChannelRuntimeQueryProvider(string $outputChannelName)
     {
         if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
             return null;
         }
 
-        return $this->rawContextOptions['output_channels'][$outputChannelName]['runtime_options_provider'];
+        return $this->rawContextOptions['output_channels'][$outputChannelName]['runtime_query_provider'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOutputChannelRuntimeOptionsBuilder(string $outputChannelName)
+    {
+        if (!isset($this->rawContextOptions['output_channels'][$outputChannelName])) {
+            return null;
+        }
+
+        return $this->rawContextOptions['output_channels'][$outputChannelName]['runtime_options_builder'];
     }
 
     /**
@@ -287,17 +299,19 @@ class ContextData implements ContextDataInterface
 
         try {
             $options = $optionsResolver->resolve($rawOptions);
-
-            // append paginator options
-            if ($this->rawContextOptions['output_channels'][$outputChannelName]['multiple'] === false) {
-                $options['paginator'] = $this->rawContextOptions['output_channels'][$outputChannelName]['paginator'];
-            }
-
             $this->parsedContextOptions[$outputChannelName] = $options;
         } catch (\Throwable $e) {
             throw new ContextConfigurationException($outputChannelName, $e->getMessage());
         }
 
         return $this->parsedContextOptions[$outputChannelName];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOutputChannelPaginatorOptions(string $outputChannelName)
+    {
+        return $this->rawContextOptions['output_channels'][$outputChannelName]['paginator'];
     }
 }

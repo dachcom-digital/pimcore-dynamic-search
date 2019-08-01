@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\OutputChannel\Context;
 
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsProviderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 interface OutputChannelContextInterface
 {
@@ -13,9 +13,14 @@ interface OutputChannelContextInterface
     public function getContextDefinition();
 
     /**
-     * @return RuntimeOptionsProviderInterface
+     * @return RuntimeQueryProviderInterface
      */
-    public function getRuntimeOptionsProvider();
+    public function getRuntimeQueryProvider();
+
+    /**
+     * @return \ArrayObject
+     */
+    public function getRuntimeOptions();
 
     /**
      * @return array
