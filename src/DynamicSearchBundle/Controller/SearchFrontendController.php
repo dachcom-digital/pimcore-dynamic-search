@@ -198,6 +198,7 @@ class SearchFrontendController extends FrontendController
             'paginator'       => $paginator,
             'current_page'    => $runtimeOptions['current_page'],
             'page_identifier' => $runtimeOptions['page_identifier'],
+            'total_count'     => $outputChannelResult->getHitCount(),
             'filter'          => $outputChannelResult->getFilter(),
             'oc_allocator'    => $outputChannelResult->getOutputChannelAllocator(),
         ];

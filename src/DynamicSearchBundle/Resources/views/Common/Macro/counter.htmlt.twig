@@ -1,10 +1,7 @@
 {% macro count(block) %}
     {% set counter = 0 %}
-    {% if block.paginator is not null %}
-        {% set counter = block.paginator.count %}
-    {% elseif block.data is not null %}
-        {% set counter = block.data|length %}
+    {% if block.total_count is not null %}
+        {% set counter = block.total_count %}
     {% endif %}
-
     <span class="badge badge-dark">{{ counter }}</span>
 {% endmacro %}

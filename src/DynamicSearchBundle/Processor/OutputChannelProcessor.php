@@ -143,10 +143,11 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $outputChannelService->getQuery());
 
         $result = $outputChannelService->getResult($query);
+        $hitCount = $outputChannelService->getHitCount($result);
 
         $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
 
-        return $this->buildResult($contextDefinition, $outputChannelContext, $filterBlocks, $result);
+        return $this->buildResult($contextDefinition, $outputChannelContext, $filterBlocks, $hitCount, $result);
     }
 
     /**
@@ -221,6 +222,8 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
                 );
             }
 
+            $hitCount = $multiOutputChannelService->getHitCount($result);
+
             /** @var FilterStackWorker $filterStackWorker */
             $filterStackWorker = $filter[0];
             /** @var array $filterStackWorker */
@@ -228,7 +231,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
 
-            $results[$subOutputChannelIdentifier] = $this->buildResult($contextDefinition, $subOutputChannelContext, $filterBlocks, $result);
+            $results[$subOutputChannelIdentifier] = $this->buildResult($contextDefinition, $subOutputChannelContext, $filterBlocks, $hitCount, $result);
         }
 
         return new MultiOutputChannelResult($results, $outputChannelContext->getRuntimeQueryProvider());
@@ -238,13 +241,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
      * @param ContextDataInterface          $contextData
      * @param OutputChannelContextInterface $outputChannelContext
      * @param array                         $filterBlocks
+     * @param int                           $hitCount
      * @param mixed                         $result
      *
      * @return OutputChannelArrayResult|OutputChannelPaginatorResult
      *
      * @throws OutputChannelException
      */
-    protected function buildResult(ContextDataInterface $contextData, OutputChannelContextInterface $outputChannelContext, array $filterBlocks, $result)
+    protected function buildResult(ContextDataInterface $contextData, OutputChannelContextInterface $outputChannelContext, array $filterBlocks, int $hitCount, $result)
     {
         $outputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
         $runtimeOptions = $outputChannelContext->getRuntimeOptions();
@@ -267,6 +271,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $paginatorOutputResult = new OutputChannelPaginatorResult(
                 $contextData->getName(),
+                $hitCount,
                 $outputChannelContext->getOutputChannelAllocator(),
                 $filterBlocks,
                 $runtimeOptions,
@@ -288,6 +293,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         $arrayOutputResult = new OutputChannelArrayResult(
             $contextData->getName(),
+            $hitCount,
             $outputChannelContext->getOutputChannelAllocator(),
             $filterBlocks,
             $runtimeOptions,

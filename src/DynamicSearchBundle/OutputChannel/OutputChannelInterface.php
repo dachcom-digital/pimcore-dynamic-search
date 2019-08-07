@@ -44,4 +44,11 @@ interface OutputChannelInterface
      * @return mixed
      */
     public function getResult($query);
+
+    /**
+     * @param mixed $result
+     *
+     * @return int
+     */
+    public function getHitCount($result);
 }

@@ -11,6 +11,9 @@
         {% include '@DynamicSearch/Common/_search_form.html.twig' %}
 
         {% if search_active == true %}
+            {% if total_count > 0 %}
+                <small class="mb-4 d-block">we found <span class="badge badge-dark">{{ total_count }}</span> items for "<em>{{ user_query }}"</em></small>
+            {% endif %}
             {% include '@DynamicSearch/Common/List/_wrapper.html.twig' %}
         {% endif %}
 

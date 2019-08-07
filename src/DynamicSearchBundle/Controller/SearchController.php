@@ -97,6 +97,7 @@ class SearchController extends Controller
 
         return [
             'result'       => $data,
+            'total_count'  => $outputChannelResult->getHitCount(),
             'filter'       => $outputChannelResult->getFilter(),
             'oc_allocator' => $outputChannelResult->getOutputChannelAllocator()
         ];

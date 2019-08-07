@@ -13,6 +13,11 @@ class OutputChannelResult implements OutputChannelResultInterface
     protected $contextName;
 
     /**
+     * @var int
+     */
+    protected $hitCount;
+
+    /**
      * @var OutputChannelAllocatorInterface
      */
     protected $outputChannelAllocator;
@@ -34,6 +39,7 @@ class OutputChannelResult implements OutputChannelResultInterface
 
     /**
      * @param string                          $contextName
+     * @param int                             $hitCount
      * @param OutputChannelAllocatorInterface $outputChannelAllocator
      * @param array                           $filter
      * @param \ArrayObject                    $runtimeOptions
@@ -41,12 +47,14 @@ class OutputChannelResult implements OutputChannelResultInterface
      */
     public function __construct(
         string $contextName,
+        int $hitCount,
         OutputChannelAllocatorInterface $outputChannelAllocator,
         array $filter,
         \ArrayObject $runtimeOptions,
         RuntimeQueryProviderInterface $runtimeQueryProvider
     ) {
         $this->contextName = $contextName;
+        $this->hitCount = $hitCount;
         $this->outputChannelAllocator = $outputChannelAllocator;
         $this->filter = $filter;
         $this->runtimeOptions = $runtimeOptions;
@@ -59,6 +67,14 @@ class OutputChannelResult implements OutputChannelResultInterface
     public function getContextName()
     {
         return $this->contextName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHitCount()
+    {
+        return $this->hitCount;
     }
 
     /**

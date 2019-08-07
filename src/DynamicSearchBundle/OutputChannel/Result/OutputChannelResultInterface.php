@@ -13,6 +13,11 @@ interface OutputChannelResultInterface
     public function getContextName();
 
     /**
+     * @return int
+     */
+    public function getHitCount();
+
+    /**
      * @return OutputChannelAllocatorInterface
      */
     public function getOutputChannelAllocator();
