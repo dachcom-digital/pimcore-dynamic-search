@@ -4,7 +4,6 @@ namespace DynamicSearchBundle\Processor;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Document\Definition\PreProcessedDocumentDefinition;
 use DynamicSearchBundle\Document\IndexDocument;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;

@@ -96,7 +96,6 @@ namespace AppBundle\Ds\IndexDefinition\Trinity;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
-use DynamicSearchBundle\Document\Definition\PreProcessedDocumentDefinitionInterface;
 
 class Definition implements DocumentDefinitionBuilderInterface
 {
@@ -144,7 +143,7 @@ class Definition implements DocumentDefinitionBuilderInterface
                     'relations' => 'categories',
                     'method'    => 'getId',
                 ]
-            ], function (PreProcessedDocumentDefinitionInterface $definition, array $preProcessedTransformedData) {
+            ], function (DocumentDefinitionInterface $definition, array $preProcessedTransformedData) {
                 foreach ($preProcessedTransformedData as $categoryId) {
                     $definition->addSimpleDocumentFieldDefinition([
                         'name'              => sprintf('category_%d', $categoryId),
