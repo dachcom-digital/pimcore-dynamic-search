@@ -272,5 +272,4 @@ class SearchFrontendController extends FrontendController
 
         return $contextConfig[$contextName]['output_channels'][$outputChannelName];
     }
-
 }

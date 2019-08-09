@@ -334,7 +334,6 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         if ($fieldType === 'pre_process_definition') {
-
             $documentDefinition->setCurrentLevel($fieldDefinitionOptions['level']);
 
             call_user_func($fieldDefinitionOptions['closure'], $documentDefinition, $transformedData);

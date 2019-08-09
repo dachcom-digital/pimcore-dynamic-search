@@ -130,7 +130,6 @@ class Configuration implements ConfigurationInterface
                                     ->beforeNormalization()
                                         ->always()
                                         ->then(function ($values) {
-
                                             if ($values['use_frontend_controller'] !== true) {
                                                 return $values;
                                             }
