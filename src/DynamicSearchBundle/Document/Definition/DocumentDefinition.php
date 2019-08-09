@@ -7,6 +7,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class DocumentDefinition implements DocumentDefinitionInterface
 {
     /**
+     * @var string|int
+     */
+    protected $currentLevel;
+
+    /**
+     * @var int
+     */
+    protected $levelCount = 0;
+
+    /**
      * @var string
      */
     protected $dataNormalizerIdentifier;
@@ -31,6 +41,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
      */
     public function __construct(string $dataNormalizerIdentifier)
     {
+        $this->currentLevel = 'root';
         $this->dataNormalizerIdentifier = $dataNormalizerIdentifier;
     }
 
@@ -40,6 +51,14 @@ class DocumentDefinition implements DocumentDefinitionInterface
     public function getDataNormalizerIdentifier()
     {
         return $this->dataNormalizerIdentifier;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCurrentLevel($currentLevel)
+    {
+        $this->currentLevel = $currentLevel;
     }
 
     /**
@@ -105,6 +124,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
         $resolver->setAllowedTypes('data_transformer', ['array']);
 
         $options = $resolver->resolve($definition);
+        $options['level'] = 'root';
         $options['_field_type'] = 'simple_definition';
 
         if (!isset($options['index_transformer']['type'])) {
@@ -123,7 +143,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
             $options['data_transformer']['configuration'] = [];
         }
 
-        $this->indexFieldDefinitions[] = $options;
+        $this->indexFieldDefinitions[$this->currentLevel][] = $options;
 
         return $this;
     }
@@ -139,12 +159,16 @@ class DocumentDefinition implements DocumentDefinitionInterface
         $resolver->setAllowedTypes('configuration', ['array']);
         $resolver->setDefault('configuration', []);
 
+        $level = $this->levelCount + 1;
+        $this->levelCount = $level;
+
         $options = [];
         $options['_field_type'] = 'pre_process_definition';
         $options['data_transformer'] = $resolver->resolve($definition);
         $options['closure'] = $closure;
+        $options['level'] = $level;
 
-        $this->indexFieldDefinitions[] = $options;
+        $this->indexFieldDefinitions[$this->currentLevel][] = $options;
 
         return $this;
     }
@@ -154,6 +178,8 @@ class DocumentDefinition implements DocumentDefinitionInterface
      */
     public function getDocumentFieldDefinitions(): array
     {
-        return !is_array($this->indexFieldDefinitions) ? [] : $this->indexFieldDefinitions;
+        return !isset($this->indexFieldDefinitions[$this->currentLevel]) || !is_array($this->indexFieldDefinitions[$this->currentLevel])
+            ? []
+            : $this->indexFieldDefinitions[$this->currentLevel];
     }
 }

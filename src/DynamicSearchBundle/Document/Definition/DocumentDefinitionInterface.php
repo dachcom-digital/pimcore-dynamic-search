@@ -10,6 +10,11 @@ interface DocumentDefinitionInterface
     public function getDataNormalizerIdentifier();
 
     /**
+     * @param string|int $currentLevel
+     */
+    public function setCurrentLevel($currentLevel);
+
+    /**
      * @param array $documentConfiguration
      */
     public function setDocumentConfiguration(array $documentConfiguration);

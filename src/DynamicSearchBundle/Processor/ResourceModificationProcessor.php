@@ -145,11 +145,13 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             }
 
             $resourceContainer = $normalizedResource->getResourceContainer();
-            $indexDocument = $this->generateIndexDocument($contextData, $resourceContainer, $resourceMeta, $documentDefinition);
+            $indexDocument = $this->generateIndexDocument($contextData, $resourceMeta, $documentDefinition);
             if (!$indexDocument instanceof IndexDocument) {
                 // nothing to log: done by generateIndexDocument() method.
                 continue;
             }
+
+            $indexDocument = $this->populateIndexDocument($contextData, $indexDocument, $resourceContainer, $documentDefinition);
 
             $this->validateAndSubmitIndexDocument($contextData, $indexProvider, $indexDocument, $resourceContainer->getResourceScaffolderIdentifier());
         }
@@ -195,11 +197,13 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
             return;
         }
 
-        $indexDocument = $this->generateIndexDocument($contextData, $resourceContainer, $resourceMeta, $documentDefinition);
+        $indexDocument = $this->generateIndexDocument($contextData, $resourceMeta, $documentDefinition);
         if (!$indexDocument instanceof IndexDocument) {
             // nothing to log: done by generateIndexDocument() method.
             return;
         }
+
+        $indexDocument = $this->populateIndexDocument($contextData, $indexDocument, $resourceContainer, $documentDefinition);
 
         $this->validateAndSubmitIndexDocument($contextData, $indexProvider, $indexDocument, $resourceContainer->getResourceScaffolderIdentifier());
     }
@@ -224,7 +228,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         if (count($documentDefinition->getDocumentFieldDefinitions()) === 0) {
-            $this->logger->error(
+            $this->logger->debug(
                 sprintf('Document Definition does not have any defined field. Skipping...'),
                 $contextData->getDataProviderName(),
                 $contextData->getName()
@@ -238,21 +242,43 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
 
     /**
      * @param ContextDataInterface        $contextData
-     * @param ResourceContainerInterface  $resourceContainer
      * @param ResourceMetaInterface       $resourceMeta
      * @param DocumentDefinitionInterface $documentDefinition
      *
      * @return IndexDocument|null
      */
-    protected function generateIndexDocument(
+    protected function generateIndexDocument(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta, DocumentDefinitionInterface $documentDefinition)
+    {
+        $indexDocument = new IndexDocument($resourceMeta, $documentDefinition->getDocumentConfiguration());
+
+        if (!$indexDocument instanceof IndexDocument) {
+            $this->logger->error(
+                sprintf('Index Document needs to be instance of %s. Skipping...', IndexDocument::class),
+                $contextData->getDataProviderName(),
+                $contextData->getName()
+            );
+
+            return null;
+        }
+
+        return $indexDocument;
+    }
+
+    /**
+     * @param ContextDataInterface        $contextData
+     * @param IndexDocument               $indexDocument
+     * @param ResourceContainerInterface  $resourceContainer
+     * @param DocumentDefinitionInterface $documentDefinition
+     *
+     * @return IndexDocument
+     */
+    public function populateIndexDocument(
         ContextDataInterface $contextData,
+        IndexDocument $indexDocument,
         ResourceContainerInterface $resourceContainer,
-        ResourceMetaInterface $resourceMeta,
         DocumentDefinitionInterface $documentDefinition
     ) {
         $resourceScaffolderName = $resourceContainer->getResourceScaffolderIdentifier();
-
-        $indexDocument = new IndexDocument($resourceMeta, $documentDefinition->getDocumentConfiguration());
 
         foreach ($documentDefinition->getOptionFieldDefinitions() as $documentDefinitionOptions) {
             $fieldName = $documentDefinitionOptions['name'];
@@ -269,33 +295,32 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         foreach ($documentDefinition->getDocumentFieldDefinitions() as $fieldDefinitionOptions) {
-            $this->processDocumentDataTransformerField($contextData, $indexDocument, $resourceContainer, $fieldDefinitionOptions, $resourceScaffolderName);
-        }
-
-        if (!$indexDocument instanceof IndexDocument) {
-            $this->logger->error(
-                sprintf('Index Document needs to be instance of %s. Skipping...', IndexDocument::class),
-                $contextData->getDataProviderName(),
-                $contextData->getName()
+            $this->processDocumentDataTransformerField(
+                $contextData,
+                $indexDocument,
+                $resourceContainer,
+                $documentDefinition,
+                $fieldDefinitionOptions,
+                $resourceScaffolderName
             );
-
-            return null;
         }
 
         return $indexDocument;
     }
 
     /**
-     * @param ContextDataInterface       $contextData
-     * @param IndexDocument              $indexDocument
-     * @param ResourceContainerInterface $resourceContainer
-     * @param array                      $fieldDefinitionOptions
-     * @param string                     $resourceScaffolderName
+     * @param ContextDataInterface        $contextData
+     * @param IndexDocument               $indexDocument
+     * @param ResourceContainerInterface  $resourceContainer
+     * @param DocumentDefinitionInterface $documentDefinition
+     * @param array                       $fieldDefinitionOptions
+     * @param string                      $resourceScaffolderName
      */
     protected function processDocumentDataTransformerField(
         ContextDataInterface $contextData,
         IndexDocument $indexDocument,
         ResourceContainerInterface $resourceContainer,
+        DocumentDefinitionInterface $documentDefinition,
         array $fieldDefinitionOptions,
         string $resourceScaffolderName
     ) {
@@ -303,27 +328,27 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
 
         $transformedData = $this->dispatchResourceFieldTransformer($dataTransformerOptions, $resourceScaffolderName, $resourceContainer);
+
         if ($transformedData === null) {
             // no error: transformer is allowed to refuse data
             return;
         }
 
         if ($fieldType === 'pre_process_definition') {
-            $preprocessDocumentDefinition = new PreProcessedDocumentDefinition();
 
-            // @TODO: check if transformed data is type of array?
-            call_user_func($fieldDefinitionOptions['closure'], $preprocessDocumentDefinition, $transformedData);
+            $documentDefinition->setCurrentLevel($fieldDefinitionOptions['level']);
 
-            foreach ($preprocessDocumentDefinition->getDocumentFieldDefinitions() as $preProcessedFieldDefinitionOptions) {
-                $transformedData = $preProcessedFieldDefinitionOptions['value'];
-                unset($preProcessedFieldDefinitionOptions['value']);
+            call_user_func($fieldDefinitionOptions['closure'], $documentDefinition, $transformedData);
 
-                if ($transformedData === null) {
-                    // no error: transformer is allowed to refuse data
-                    continue;
-                }
-
-                $this->processDocumentIndexTransformerField($contextData, $indexDocument, $preProcessedFieldDefinitionOptions, $transformedData);
+            foreach ($documentDefinition->getDocumentFieldDefinitions() as $fieldDefinitionOptions) {
+                $this->processDocumentDataTransformerField(
+                    $contextData,
+                    $indexDocument,
+                    $resourceContainer,
+                    $documentDefinition,
+                    $fieldDefinitionOptions,
+                    $resourceScaffolderName
+                );
             }
         } elseif ($fieldType === 'simple_definition') {
             $this->processDocumentIndexTransformerField($contextData, $indexDocument, $fieldDefinitionOptions, $transformedData);
