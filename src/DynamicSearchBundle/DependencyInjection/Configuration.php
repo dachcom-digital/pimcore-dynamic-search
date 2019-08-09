@@ -121,10 +121,34 @@ class Configuration implements ConfigurationInterface
                                         })
                                         ->thenInvalid('Unrecognized multi search option "runtime_options_builder"')
                                     ->end()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($values) {
+                                            return $values['use_frontend_controller'] !== true && isset($values['view_name']) && $values['view_name'] !== null;
+                                        })
+                                        ->thenInvalid('Unrecognized option "view_name" in a non frontend controller based output channel')
+                                    ->end()
+                                    ->beforeNormalization()
+                                        ->always()
+                                        ->then(function ($values) {
+
+                                            if ($values['use_frontend_controller'] !== true) {
+                                                return $values;
+                                            }
+
+                                            if ($values['view_name'] !== null) {
+                                                return $values;
+                                            }
+
+                                            $values['view_name'] = $values['multiple'] === true ? 'MultiList' : 'List';
+
+                                            return $values;
+                                        })
+                                    ->end()
                                     ->children()
                                         ->scalarNode('service')->defaultNull()->end()
                                         ->booleanNode('multiple')->defaultFalse()->end()
                                         ->booleanNode('internal')->defaultFalse()->end()
+                                        ->scalarNode('view_name')->defaultNull()->end()
                                         ->booleanNode('use_frontend_controller')->defaultFalse()->end()
                                         ->scalarNode('runtime_query_provider')->defaultValue('default')->end()
                                         ->scalarNode('runtime_options_builder')->defaultValue('default')->end()

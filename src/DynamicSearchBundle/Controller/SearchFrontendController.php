@@ -53,7 +53,7 @@ class SearchFrontendController extends FrontendController
             throw $this->createNotFoundException(sprintf('invalid, internal or no frontend output channel "%s".', $outputChannelName));
         }
 
-        return $this->renderFrontendSearch($request, $outputChannelName, $contextName, 'List');
+        return $this->renderFrontendSearch($request, $outputChannelName, $contextName, $this->getOutputChannelView($contextName, $outputChannelName, 'List'));
     }
 
     /**
@@ -71,7 +71,7 @@ class SearchFrontendController extends FrontendController
             throw $this->createNotFoundException(sprintf('invalid, internal or no frontend output channel "%s".', $outputChannelName));
         }
 
-        return $this->renderFrontendSearch($request, $outputChannelName, $contextName, 'MultiList');
+        return $this->renderFrontendSearch($request, $outputChannelName, $contextName, $this->getOutputChannelView($contextName, $outputChannelName, 'MultiList'));
     }
 
     /**
@@ -213,17 +213,11 @@ class SearchFrontendController extends FrontendController
      */
     protected function outputChannelExists(string $contextName, string $outputChannelName, $multiSearchOnly = false)
     {
-        $contextConfig = $this->configuration->get('context');
+        $channelConfig = $this->getOutputChannelConfig($contextName, $outputChannelName);
 
-        if (!isset($contextConfig[$contextName])) {
+        if (!is_array($channelConfig)) {
             return false;
         }
-
-        if (!array_key_exists($outputChannelName, $contextConfig[$contextName]['output_channels'])) {
-            return false;
-        }
-
-        $channelConfig = $contextConfig[$contextName]['output_channels'][$outputChannelName];
 
         if ($channelConfig['internal'] === true) {
             return false;
@@ -239,4 +233,44 @@ class SearchFrontendController extends FrontendController
 
         return $channelConfig['use_frontend_controller'] === true;
     }
+
+    /**
+     * @param string $contextName
+     * @param string $outputChannelName
+     * @param string $default
+     *
+     * @return string
+     */
+    protected function getOutputChannelView(string $contextName, string $outputChannelName, string $default)
+    {
+        $channelConfig = $this->getOutputChannelConfig($contextName, $outputChannelName);
+
+        if (!is_array($channelConfig)) {
+            return $default;
+        }
+
+        return isset($channelConfig['view_name']) && is_string($channelConfig['view_name']) ? $channelConfig['view_name'] : $default;
+    }
+
+    /**
+     * @param string $contextName
+     * @param string $outputChannelName
+     *
+     * @return array|null
+     */
+    protected function getOutputChannelConfig(string $contextName, string $outputChannelName)
+    {
+        $contextConfig = $this->configuration->get('context');
+
+        if (!isset($contextConfig[$contextName])) {
+            return null;
+        }
+
+        if (!array_key_exists($outputChannelName, $contextConfig[$contextName]['output_channels'])) {
+            return null;
+        }
+
+        return $contextConfig[$contextName]['output_channels'][$outputChannelName];
+    }
+
 }
