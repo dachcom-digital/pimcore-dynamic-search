@@ -24,7 +24,7 @@ class DefaultRuntimeQueryProvider implements RuntimeQueryProviderInterface
      */
     public function getUserQuery()
     {
-        return $this->requestStack->getCurrentRequest()->query->get($this->getQueryIdentifier(), null);
+        return $this->requestStack->getMasterRequest()->query->get($this->getQueryIdentifier(), null);
     }
 
     /**
