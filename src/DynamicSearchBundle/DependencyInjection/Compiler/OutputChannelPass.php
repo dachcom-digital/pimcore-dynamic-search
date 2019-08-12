@@ -56,6 +56,11 @@ final class OutputChannelPass implements CompilerPassInterface
 
         $outputChannelModifierActionServices = [];
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.modifier.action', true) as $id => $tags) {
+
+            if (count($outputChannelServices) === 0) {
+                continue;
+            }
+
             foreach ($tags as $attributes) {
                 $priority = isset($attributes['priority']) ? $attributes['priority'] : 0;
                 $outputChannelService = isset($attributes['output_channel_service_identifier']) ? $attributes['output_channel_service_identifier'] : 'all';
@@ -101,6 +106,11 @@ final class OutputChannelPass implements CompilerPassInterface
 
         $outputChannelModifierFilterServices = [];
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.modifier.filter', true) as $id => $tags) {
+
+            if (count($outputChannelServices) === 0) {
+                continue;
+            }
+
             foreach ($tags as $attributes) {
                 $priority = isset($attributes['priority']) ? $attributes['priority'] : 0;
                 $outputChannelService = isset($attributes['output_channel_service_identifier']) ? $attributes['output_channel_service_identifier'] : 'all';
