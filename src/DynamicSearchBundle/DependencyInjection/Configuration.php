@@ -154,7 +154,7 @@ class Configuration implements ConfigurationInterface
                                         ->arrayNode('options')
                                             ->useAttributeAsKey('name')
                                             ->variablePrototype()
-                                                ->beforeNormalization()->ifEmpty()->thenUnset()->end()
+                                                ->beforeNormalization()->ifNull()->thenUnset()->end()
                                                 ->defaultValue([])
                                             ->end()
                                         ->end()
