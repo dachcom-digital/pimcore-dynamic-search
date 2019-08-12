@@ -10,6 +10,11 @@ interface RuntimeQueryProviderInterface
     public function getUserQuery();
 
     /**
+     * @return string|null
+     */
+    public function getUserLocale();
+
+    /**
      * @return string
      */
     public function getQueryIdentifier();

@@ -30,6 +30,20 @@ class DefaultRuntimeQueryProvider implements RuntimeQueryProviderInterface
     /**
      * {@inheritdoc}
      */
+    public function getUserLocale()
+    {
+        $locale = $this->requestStack->getMasterRequest()->query->get('locale', null);
+
+        if ($locale === null) {
+            $locale = $this->requestStack->getMasterRequest()->getLocale();
+        }
+
+        return $locale;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getQueryIdentifier()
     {
         return 'q';
