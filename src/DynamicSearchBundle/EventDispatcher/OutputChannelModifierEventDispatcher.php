@@ -69,7 +69,6 @@ class OutputChannelModifierEventDispatcher
     public function dispatchFilter(string $filterService, array $options = [])
     {
         $outputChannelServiceName = $this->outputChannelContext->getOutputChannelServiceName();
-
         $channelModifierFilter = $this->outputChannelManager->getOutputChannelModifierFilter($outputChannelServiceName, $filterService);
 
         if ($channelModifierFilter === null) {

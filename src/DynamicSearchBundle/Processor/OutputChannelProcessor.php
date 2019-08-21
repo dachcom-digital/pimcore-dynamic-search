@@ -180,9 +180,11 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $queries = [];
         $subContexts = [];
 
+        // execute all sub output channels
         foreach ($outputChannelBlocks as $subOutputChannelIdentifier => $block) {
             $subOutputChannelName = $block['reference'];
 
+            $subOutputChannelServiceName = $contextDefinition->getOutputChannelServiceName($subOutputChannelName);
             $parentOutputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
             $subOutputChannelAllocator = new OutputChannelAllocator($subOutputChannelName, $parentOutputChannelName, $subOutputChannelIdentifier);
 
@@ -190,6 +192,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $subOutputChannelContext = new SubOutputChannelContext($outputChannelContext);
             $subOutputChannelContext->setOutputChannelAllocator($subOutputChannelAllocator);
+            $subOutputChannelContext->setOutputChannelServiceName($subOutputChannelServiceName);
             $subOutputChannelContext->setRuntimeOptions($runtimeOptions);
 
             $eventDispatcher->setOutputChannelContext($subOutputChannelContext);
@@ -201,13 +204,21 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $outputChannelService->getQuery());
 
-            $multiOutputChannelService->addSubQuery($subOutputChannelIdentifier, $query);
-
             $filters[$subOutputChannelIdentifier] = [$filterStackWorker, $filterServiceStack];
             $queries[$subOutputChannelIdentifier] = $query;
             $subContexts[$subOutputChannelIdentifier] = $subOutputChannelContext;
         }
 
+        // reset multichannel context
+        $eventDispatcher->setOutputChannelContext($outputChannelContext);
+
+        // execute all sub query
+        foreach ($outputChannelBlocks as $subOutputChannelIdentifier => $block) {
+            $query = $queries[$subOutputChannelIdentifier];
+            $multiOutputChannelService->addSubQuery($subOutputChannelIdentifier, $query);
+        }
+
+        // fetch result of each sub query
         $results = [];
         foreach ($multiOutputChannelService->getMultiSearchResult() as $subOutputChannelIdentifier => $result) {
             $filter = $filters[$subOutputChannelIdentifier];
