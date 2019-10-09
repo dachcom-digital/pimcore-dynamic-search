@@ -9,6 +9,7 @@ services:
 
     DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber: ~
 
+    DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcherInterface: '@DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher'
     DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher: ~
 
     DynamicSearchBundle\EventListener\PimcoreElementListener:

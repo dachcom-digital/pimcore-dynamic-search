@@ -6,6 +6,7 @@ services:
         public: false
 
     # configuration
+    DynamicSearchBundle\Configuration\ConfigurationInterface: '@DynamicSearchBundle\Configuration\Configuration'
     DynamicSearchBundle\Configuration\Configuration: ~
 
     DynamicSearchBundle\Tool\Install:

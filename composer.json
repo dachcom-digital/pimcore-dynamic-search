@@ -25,10 +25,13 @@
             "bundles": [
                 "DynamicSearchBundle\\DynamicSearchBundle"
             ]
+        },
+        "branch-alias": {
+            "dev-master": "0.6-dev"
         }
     },
     "require": {
-        "pimcore/pimcore": "^5.8.0"
+        "pimcore/pimcore": "^5.8.0 | ^6.0"
     },
     "require-dev": {
         "codeception/codeception": "~2.3.0",

@@ -1,3 +1,7 @@
+parameters:
+    dynamic_search.console.logger.options:
+        format: "[%%datetime%%] %%level_name%%: %%start_tag%%%%message%%%%end_tag%% %%extra%%\n"
+
 services:
 
     _defaults:
@@ -13,6 +17,7 @@ services:
         tags:
             - { name: monolog.processor, handler: dynamic_search_console_logging }
 
+    DynamicSearchBundle\Logger\LoggerInterface: '@DynamicSearchBundle\Logger\Logger'
     DynamicSearchBundle\Logger\Logger:
         tags:
             - { name: monolog.logger, channel: dynamic_search }
@@ -25,4 +30,4 @@ services:
     dynamic_search.log.formatter.console.provider:
         class: Symfony\Bridge\Monolog\Formatter\ConsoleFormatter
         arguments:
-            - "[%%datetime%%] %%level_name%%: %%start_tag%%%%message%%%%end_tag%% %%extra%%\n"
+            - '%dynamic_search.console.logger.options%'
