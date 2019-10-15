@@ -2,9 +2,11 @@
 
 namespace DynamicSearchBundle\DependencyInjection;
 
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Paginator\Paginator;
 use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -38,6 +40,13 @@ class DynamicSearchExtension extends Extension
             $container->addResource(new FileResource($providerConfig->locateConfigFile()));
         }
 
-        $container->set(ProviderConfig::class, $providerConfig);
+        $providerConfigDefinition = new Definition();
+        $providerConfigDefinition->setClass(ProviderConfig::class);
+
+        $container->setDefinition(ProviderConfig::class, $providerConfigDefinition);
+
+        $container
+            ->registerForAutoconfiguration(DocumentDefinitionBuilderInterface::class)
+            ->addTag('dynamic_search.document_definition_builder');
     }
 }

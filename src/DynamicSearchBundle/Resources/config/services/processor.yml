@@ -5,10 +5,14 @@ services:
         autoconfigure: true
         public: false
 
+    DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface: '@DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizer'
     DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizer: ~
 
+    DynamicSearchBundle\Processor\ResourceModificationProcessorInterface: '@DynamicSearchBundle\Processor\ResourceModificationProcessor'
     DynamicSearchBundle\Processor\ResourceModificationProcessor: ~
 
+    DynamicSearchBundle\Processor\ResourceDeletionProcessorInterface: '@DynamicSearchBundle\Processor\ResourceDeletionProcessor'
     DynamicSearchBundle\Processor\ResourceDeletionProcessor: ~
 
+    DynamicSearchBundle\Processor\OutputChannelProcessorInterface: '@DynamicSearchBundle\Processor\OutputChannelProcessor'
     DynamicSearchBundle\Processor\OutputChannelProcessor: ~

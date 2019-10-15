@@ -5,8 +5,11 @@ services:
         autoconfigure: true
         public: false
 
+    DynamicSearchBundle\Resolver\DocumentDefinitionResolverInterface: '@DynamicSearchBundle\Resolver\DocumentDefinitionResolver'
     DynamicSearchBundle\Resolver\DocumentDefinitionResolver: ~
 
+    DynamicSearchBundle\Resolver\FilterDefinitionResolverInterface: '@DynamicSearchBundle\Resolver\FilterDefinitionResolver'
     DynamicSearchBundle\Resolver\FilterDefinitionResolver: ~
 
+    DynamicSearchBundle\Resolver\ResourceScaffolderResolverInterface: '@DynamicSearchBundle\Resolver\ResourceScaffolderResolver'
     DynamicSearchBundle\Resolver\ResourceScaffolderResolver: ~

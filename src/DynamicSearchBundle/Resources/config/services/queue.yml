@@ -5,6 +5,8 @@ services:
         autoconfigure: true
         public: false
 
+    DynamicSearchBundle\Queue\DataCollectorInterface: '@DynamicSearchBundle\Queue\DataCollector'
     DynamicSearchBundle\Queue\DataCollector: ~
 
+    DynamicSearchBundle\Queue\DataProcessorInterface: '@DynamicSearchBundle\Queue\DataProcessor'
     DynamicSearchBundle\Queue\DataProcessor: ~

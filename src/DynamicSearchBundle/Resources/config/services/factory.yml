@@ -5,6 +5,7 @@ services:
         autoconfigure: true
         public: true
 
+    DynamicSearchBundle\Factory\PaginatorFactoryInterface: '@DynamicSearchBundle\Factory\PaginatorFactory'
     DynamicSearchBundle\Factory\PaginatorFactory:
         arguments:
             $paginatorClass: '%dynamic_search_default_paginator_class%'

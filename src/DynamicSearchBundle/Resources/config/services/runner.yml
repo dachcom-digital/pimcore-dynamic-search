@@ -9,18 +9,21 @@ services:
             - [setDataManager, ['@DynamicSearchBundle\Manager\DataManager']]
             - [setIndexManager, ['@DynamicSearchBundle\Manager\IndexManager']]
 
+    DynamicSearchBundle\Runner\ContextRunnerInterface: '@DynamicSearchBundle\Runner\ContextRunner'
     DynamicSearchBundle\Runner\ContextRunner:
         parent: DynamicSearchBundle\Runner\AbstractRunner
         autowire: true
         autoconfigure: false
         public: false
 
+    DynamicSearchBundle\Runner\ResourceRunnerInterface: '@DynamicSearchBundle\Runner\ResourceRunner'
     DynamicSearchBundle\Runner\ResourceRunner:
         parent: DynamicSearchBundle\Runner\AbstractRunner
         autowire: true
         autoconfigure: false
         public: false
 
+    DynamicSearchBundle\Runner\SimpleRunnerInterface: '@DynamicSearchBundle\Runner\SimpleRunner'
     DynamicSearchBundle\Runner\SimpleRunner:
         parent: DynamicSearchBundle\Runner\AbstractRunner
         autowire: true

@@ -5,4 +5,5 @@ services:
         autoconfigure: true
         public: false
 
+    DynamicSearchBundle\Provider\Extension\ProviderBundleLocatorInterface: '@DynamicSearchBundle\Provider\Extension\ProviderBundleLocator'
     DynamicSearchBundle\Provider\Extension\ProviderBundleLocator: ~

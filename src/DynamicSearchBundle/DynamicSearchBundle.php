@@ -68,7 +68,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
     public function getJsPaths()
     {
         return [
-            '/bundles/dynamicsearch/js/plugin.js',
+
         ];
     }
 

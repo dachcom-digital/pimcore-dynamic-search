@@ -5,20 +5,29 @@ services:
         autoconfigure: true
         public: false
 
+    DynamicSearchBundle\Manager\DataManagerInterface: '@DynamicSearchBundle\Manager\DataManager'
     DynamicSearchBundle\Manager\DataManager: ~
 
+    DynamicSearchBundle\Manager\TransformerManagerInterface: '@DynamicSearchBundle\Manager\TransformerManager'
     DynamicSearchBundle\Manager\TransformerManager: ~
 
+    DynamicSearchBundle\Manager\IndexManagerInterface: '@DynamicSearchBundle\Manager\IndexManager'
     DynamicSearchBundle\Manager\IndexManager: ~
 
+    DynamicSearchBundle\Manager\OutputChannelManagerInterface: '@DynamicSearchBundle\Manager\OutputChannelManager'
     DynamicSearchBundle\Manager\OutputChannelManager: ~
 
+    DynamicSearchBundle\Manager\DocumentDefinitionManagerInterface: '@DynamicSearchBundle\Manager\DocumentDefinitionManager'
     DynamicSearchBundle\Manager\DocumentDefinitionManager: ~
 
+    DynamicSearchBundle\Manager\FilterDefinitionManagerInterface: '@DynamicSearchBundle\Manager\FilterDefinitionManager'
     DynamicSearchBundle\Manager\FilterDefinitionManager: ~
 
+    DynamicSearchBundle\Manager\NormalizerManagerInterface: '@DynamicSearchBundle\Manager\NormalizerManager'
     DynamicSearchBundle\Manager\NormalizerManager: ~
 
+    DynamicSearchBundle\Manager\QueueManagerInterface: '@DynamicSearchBundle\Manager\QueueManager'
     DynamicSearchBundle\Manager\QueueManager: ~
 
+    DynamicSearchBundle\Manager\ProviderBundleManagerInterface: '@DynamicSearchBundle\Manager\ProviderBundleManager'
     DynamicSearchBundle\Manager\ProviderBundleManager: ~

@@ -5,18 +5,26 @@ services:
         autoconfigure: true
         public: false
 
+    DynamicSearchBundle\Registry\DataProviderRegistryInterface: '@DynamicSearchBundle\Registry\DataProviderRegistry'
     DynamicSearchBundle\Registry\DataProviderRegistry: ~
 
+    DynamicSearchBundle\Registry\IndexProviderRegistryInterface: '@DynamicSearchBundle\Registry\IndexProviderRegistry'
     DynamicSearchBundle\Registry\IndexProviderRegistry: ~
 
+    DynamicSearchBundle\Registry\TransformerRegistryInterface: '@DynamicSearchBundle\Registry\TransformerRegistry'
     DynamicSearchBundle\Registry\TransformerRegistry: ~
 
+    DynamicSearchBundle\Registry\IndexRegistryInterface: '@DynamicSearchBundle\Registry\IndexRegistry'
     DynamicSearchBundle\Registry\IndexRegistry: ~
 
+    DynamicSearchBundle\Registry\OutputChannelRegistryInterface: '@DynamicSearchBundle\Registry\OutputChannelRegistry'
     DynamicSearchBundle\Registry\OutputChannelRegistry: ~
 
+    DynamicSearchBundle\Registry\DefinitionBuilderRegistryInterface: '@DynamicSearchBundle\Registry\DefinitionBuilderRegistry'
     DynamicSearchBundle\Registry\DefinitionBuilderRegistry: ~
 
+    DynamicSearchBundle\Registry\ResourceNormalizerRegistryInterface: '@DynamicSearchBundle\Registry\ResourceNormalizerRegistry'
     DynamicSearchBundle\Registry\ResourceNormalizerRegistry: ~
 
+    DynamicSearchBundle\Registry\ContextGuardRegistryInterface: '@DynamicSearchBundle\Registry\ContextGuardRegistry'
     DynamicSearchBundle\Registry\ContextGuardRegistry: ~
