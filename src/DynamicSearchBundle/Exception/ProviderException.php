@@ -13,6 +13,6 @@ final class ProviderException extends \Exception
     {
         $providerName = is_null($providerName) ? '' : sprintf(' (%s)', $providerName);
 
-        parent::__construct(sprintf('Provider Error%s: %s', $providerName, $message), 0, $previousException);
+        parent::__construct(sprintf('Provider Error %s: %s', $providerName, $message), 0, $previousException);
     }
 }
