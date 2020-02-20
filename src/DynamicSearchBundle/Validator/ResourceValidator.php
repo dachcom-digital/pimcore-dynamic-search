@@ -34,7 +34,40 @@ class ResourceValidator implements ResourceValidatorInterface
     /**
      * {@inheritdoc}
      */
+    public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource)
+    {
+        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+        $dataProvider = $this->getDataProvider($contextName, $dispatchType);
+
+        if (!$dataProvider instanceof DataProviderInterface) {
+            return $resource;
+        }
+
+        return $dataProvider->checkUntrustedResourceProxy($contextDefinition, $resource);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function validateUntrustedResource(string $contextName, string $dispatchType, $resource)
+    {
+        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+        $dataProvider = $this->getDataProvider($contextName, $dispatchType);
+
+        if (!$dataProvider instanceof DataProviderInterface) {
+            return false;
+        }
+
+        return $dataProvider->validateUntrustedResource($contextDefinition, $resource);
+    }
+
+    /**
+     * @param string $contextName
+     * @param string $dispatchType
+     *
+     * @return bool|DataProviderInterface
+     */
+    protected function getDataProvider(string $contextName, string $dispatchType)
     {
         $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
 
@@ -44,6 +77,6 @@ class ResourceValidator implements ResourceValidatorInterface
             return false;
         }
 
-        return $dataProvider->validateUntrustedResource($contextDefinition, $resource);
+        return $dataProvider;
     }
 }

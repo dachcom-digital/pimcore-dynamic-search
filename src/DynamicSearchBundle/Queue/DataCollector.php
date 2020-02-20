@@ -137,6 +137,9 @@ class DataCollector implements DataCollectorInterface
             $resourceType = gettype($resource);
         }
 
+        // check for proxy resource
+        $resource = $this->resourceValidator->checkUntrustedResourceProxy($contextName, $dispatchType, $resource);
+
         $resourcedIsValid = $this->resourceValidator->validateUntrustedResource($contextName, $dispatchType, $resource);
 
         if ($resourcedIsValid === false) {

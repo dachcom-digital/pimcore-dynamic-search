@@ -24,6 +24,14 @@ interface DataProviderInterface extends ProviderInterface
      * @param ContextDataInterface $contextData
      * @param mixed                $resource
      *
+     * @return mixed resource
+     */
+    public function checkUntrustedResourceProxy(ContextDataInterface $contextData, $resource);
+
+    /**
+     * @param ContextDataInterface $contextData
+     * @param mixed                $resource
+     *
      * @return bool
      */
     public function validateUntrustedResource(ContextDataInterface $contextData, $resource);
