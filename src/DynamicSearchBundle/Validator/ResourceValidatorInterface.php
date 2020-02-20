@@ -7,11 +7,12 @@ interface ResourceValidatorInterface
     /**
      * @param string $contextName
      * @param string $dispatchType
-     * @param        $resource
+     * @param mixed  $resource
      *
      * @return mixed resource
      */
     public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource);
+
     /**
      * @param string $contextName
      * @param string $dispatchType
