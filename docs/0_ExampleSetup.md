@@ -3,9 +3,9 @@
 ### composer.json
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search": "~0.4.0",
-    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.4.0",
-    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.4.0",
+    "dachcom-digital/dynamic-search": "~0.7.0",
+    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.7.0",
+    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.7.0",
 }
 ```
 
@@ -91,7 +91,7 @@ dynamic_search:
 ```php
 <?php
 
-namespace AppBundle\Ds\IndexDefinition\Trinity;
+namespace AppBundle\DynamicSearch\IndexDefinition\Trinity;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
