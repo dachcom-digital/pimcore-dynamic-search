@@ -110,7 +110,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         /** @var Concrete $object */
         $object = $event->getObject();
 
-        $dispatchType = method_exists('isPublished', $object)
+        $dispatchType = method_exists($object, 'isPublished')
             ? $object->isPublished() === false
                 ? ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE
                 : ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE
