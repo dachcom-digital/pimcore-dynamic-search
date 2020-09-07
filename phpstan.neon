@@ -5,7 +5,7 @@ parameters:
     autoload_files:
         - %currentWorkingDirectory%/vendor/pimcore/pimcore/stubs/compatibility-v4.php
     symfony:
-        container_xml_path: %rootDir%/../../../var/cache/test/appAppKernelTestDebugContainer.xml
+        container_xml_path: %rootDir%/../../../var/cache/test/appDevDebugProjectContainer.xml
     ignoreErrors:
         # There is no global constants definition file we could include, ignore it:
         - '#Constant PIMCORE_[A-Z\\_]+ not found\.#'
