@@ -2,6 +2,8 @@
 
 namespace DynamicSearchBundle\Validator;
 
+use DynamicSearchBundle\Resource\Proxy\ProxyResourceInterface;
+
 interface ResourceValidatorInterface
 {
     /**
@@ -9,7 +11,7 @@ interface ResourceValidatorInterface
      * @param string $dispatchType
      * @param mixed  $resource
      *
-     * @return mixed resource
+     * @return ProxyResourceInterface|null
      */
     public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource);
 

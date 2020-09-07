@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Queue;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Resource\Proxy\ProxyResourceInterface;
 use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
@@ -138,7 +139,12 @@ class DataCollector implements DataCollectorInterface
         }
 
         // check for proxy resource
-        $resource = $this->resourceValidator->checkUntrustedResourceProxy($contextName, $dispatchType, $resource);
+        $proxyResource = $this->resourceValidator->checkUntrustedResourceProxy($contextName, $dispatchType, $resource);
+
+        if ($proxyResource instanceof ProxyResourceInterface) {
+            $resource = $proxyResource->hasProxyResource() ? $proxyResource->getProxyResource() : $resource;
+            $dispatchType = $proxyResource->hasProxyContextDispatchType() ? $proxyResource->getProxyContextDispatchType() : $dispatchType;
+        }
 
         $resourcedIsValid = $this->resourceValidator->validateUntrustedResource($contextName, $dispatchType, $resource);
 

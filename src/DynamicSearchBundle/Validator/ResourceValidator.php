@@ -40,7 +40,7 @@ class ResourceValidator implements ResourceValidatorInterface
         $dataProvider = $this->getDataProvider($contextName, $dispatchType);
 
         if (!$dataProvider instanceof DataProviderInterface) {
-            return $resource;
+            return null;
         }
 
         return $dataProvider->checkUntrustedResourceProxy($contextDefinition, $resource);

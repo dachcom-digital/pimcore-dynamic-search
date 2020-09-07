@@ -6,6 +6,7 @@ use DynamicSearchBundle\Context\ContextDataInterface;
 use DynamicSearchBundle\Exception\ProcessCancelledException;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
+use DynamicSearchBundle\Resource\Proxy\ProxyResourceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface DataProviderInterface extends ProviderInterface
@@ -24,7 +25,7 @@ interface DataProviderInterface extends ProviderInterface
      * @param ContextDataInterface $contextData
      * @param mixed                $resource
      *
-     * @return mixed resource
+     * @return ProxyResourceInterface|null
      */
     public function checkUntrustedResourceProxy(ContextDataInterface $contextData, $resource);
 
