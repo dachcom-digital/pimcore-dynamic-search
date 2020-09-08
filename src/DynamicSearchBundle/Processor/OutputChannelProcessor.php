@@ -237,7 +237,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             /** @var FilterStackWorker $filterStackWorker */
             $filterStackWorker = $filter[0];
-            /** @var array $filterStackWorker */
+            /** @var array $filterServiceStack */
             $filterServiceStack = $filter[1];
 
             $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);

@@ -73,7 +73,7 @@ class SearchCommand extends Command
             if ($input->getOption('force') === false) {
                 $output->writeln(sprintf('<error>%s</error>', $this->lockService->getLockMessage(LockServiceInterface::CONTEXT_INDEXING)));
 
-                return;
+                return 0;
             }
 
             $this->lockService->unlock(LockServiceInterface::CONTEXT_INDEXING);
@@ -92,5 +92,7 @@ class SearchCommand extends Command
         }
 
         $this->lockService->unlock(LockServiceInterface::CONTEXT_INDEXING);
+
+        return 0;
     }
 }
