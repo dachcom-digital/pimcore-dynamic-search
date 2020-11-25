@@ -8,7 +8,8 @@
 [![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat-square)](#)
 
 ## Requirements
-* Pimcore >= 5.8.0
+* Pimcore >= 6.3
+* Symfony >= 4.4
 
 ## Introduction
 The Dynamic Search Bundle allows you to redefine your search strategy. It's based on several data- and index providers.
@@ -19,7 +20,7 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ### Index Provider
 - [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene)
-- _Elastic Search (coming soon)_
+- [Elastic Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch)
 - _apisearch.io (coming soon)_
 
 ### Installation  

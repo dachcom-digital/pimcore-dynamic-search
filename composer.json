@@ -31,7 +31,8 @@
         }
     },
     "require": {
-        "pimcore/pimcore": "^5.8.0 | ^6.3"
+        "pimcore/pimcore": "^6.3",
+        "symfony/symfony": "^4.4"
     },
     "require-dev": {
         "codeception/codeception": "~2.4.0",
