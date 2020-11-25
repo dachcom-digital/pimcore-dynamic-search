@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\EventListener;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Queue\DataCollectorInterface;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
@@ -70,8 +70,8 @@ class PimcoreElementListener implements EventSubscriberInterface
         }
 
         $dispatchType = $event->getDocument()->isPublished() === false
-            ? ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE
-            : ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
+            ? ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE
+            : ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
 
         $this->dataCollector->addToGlobalQueue(
             $dispatchType,
@@ -93,7 +93,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         }
 
         $this->dataCollector->addToGlobalQueue(
-            ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE,
+            ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE,
             $event->getDocument()
         );
     }
@@ -112,9 +112,9 @@ class PimcoreElementListener implements EventSubscriberInterface
 
         $dispatchType = method_exists($object, 'isPublished')
             ? $object->isPublished() === false
-                ? ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE
-                : ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE
-            : ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
+                ? ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE
+                : ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE
+            : ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
 
         $this->dataCollector->addToGlobalQueue(
             $dispatchType,
@@ -132,7 +132,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         }
 
         $this->dataCollector->addToGlobalQueue(
-            ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE,
+            ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE,
             $event->getObject()
         );
     }
@@ -147,7 +147,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         }
 
         $this->dataCollector->addToGlobalQueue(
-            ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT,
+            ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT,
             $event->getAsset()
         );
     }
@@ -162,7 +162,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         }
 
         $this->dataCollector->addToGlobalQueue(
-            ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE,
+            ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE,
             $event->getAsset()
         );
     }
@@ -177,7 +177,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         }
 
         $this->dataCollector->addToGlobalQueue(
-            ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE,
+            ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE,
             $event->getAsset()
         );
     }

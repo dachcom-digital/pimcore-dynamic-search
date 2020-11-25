@@ -9,3 +9,6 @@ services:
     DynamicSearchBundle\Factory\PaginatorFactory:
         arguments:
             $paginatorClass: '%dynamic_search_default_paginator_class%'
+
+    DynamicSearchBundle\Factory\ContextDefinitionFactoryInterface: '@DynamicSearchBundle\Factory\ContextDefinitionFactory'
+    DynamicSearchBundle\Factory\ContextDefinitionFactory: ~

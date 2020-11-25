@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Runner;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Processor\ResourceDeletionProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
@@ -28,7 +28,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runInsert(string $contextName, ResourceMetaInterface $resourceMeta)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT);
 
         $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
 
@@ -47,7 +47,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runInsertStack(string $contextName, array $resourceMetaStack)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT);
 
         $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
 
@@ -68,7 +68,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runUpdate(string $contextName, ResourceMetaInterface $resourceMeta)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE);
 
         $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
 
@@ -87,7 +87,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runUpdateStack(string $contextName, array $resourceMetaStack)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE);
 
         $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH);
 
@@ -108,7 +108,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runDelete(string $contextName, ResourceMetaInterface $resourceMeta)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE);
 
         $indexProvider = $this->setupIndexProvider($contextDefinition);
         if (!$indexProvider instanceof IndexProviderInterface) {
@@ -127,7 +127,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
      */
     public function runDeleteStack(string $contextName, array $resourceMetaStack)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE);
 
         $indexProvider = $this->setupIndexProvider($contextDefinition);
 

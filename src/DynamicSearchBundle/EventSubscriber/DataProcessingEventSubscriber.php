@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\EventSubscriber;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
+use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\DynamicSearchEvents;
 use DynamicSearchBundle\Event\NewDataEvent;
 use DynamicSearchBundle\Logger\LoggerInterface;
@@ -18,9 +18,9 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     protected $logger;
 
     /**
-     * @var ConfigurationInterface
+     * @var ContextDefinitionBuilderInterface
      */
-    protected $configuration;
+    protected $contextDefinitionBuilder;
 
     /**
      * @var ResourceModificationProcessorInterface
@@ -29,16 +29,16 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
 
     /**
      * @param LoggerInterface                        $logger
-     * @param ConfigurationInterface                 $configuration
+     * @param ContextDefinitionBuilderInterface      $contextDefinitionBuilder
      * @param ResourceModificationProcessorInterface $resourceModificationProcessor
      */
     public function __construct(
         LoggerInterface $logger,
-        ConfigurationInterface $configuration,
+        ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         ResourceModificationProcessorInterface $resourceModificationProcessor
     ) {
         $this->logger = $logger;
-        $this->configuration = $configuration;
+        $this->contextDefinitionBuilder = $contextDefinitionBuilder;
         $this->resourceModificationProcessor = $resourceModificationProcessor;
     }
 
@@ -57,14 +57,17 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
      */
     public function dispatchResourceModification(NewDataEvent $event)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($event->getContextDispatchType(), $event->getContextName());
+        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($event->getContextName(), $event->getContextDispatchType());
 
         if ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH) {
             $this->resourceModificationProcessor->process($contextDefinition, $event->getData());
         } elseif ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH) {
             $this->resourceModificationProcessor->processByResourceMeta($contextDefinition, $event->getResourceMeta(), $event->getData());
         } else {
-            $this->logger->error(sprintf('Invalid provider behaviour "%s". Cannot dispatch resource processor', $event->getProviderBehaviour()), $contextDefinition->getDataProviderName(), $event->getContextName());
+            $this->logger->error(
+                sprintf('Invalid provider behaviour "%s". Cannot dispatch resource processor', $event->getProviderBehaviour()),
+                $contextDefinition->getDataProviderName(), $event->getContextName()
+            );
         }
     }
 }

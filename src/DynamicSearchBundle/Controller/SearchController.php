@@ -111,7 +111,7 @@ class SearchController extends Controller
      */
     protected function outputChannelExists(string $contextName, string $outputChannelName)
     {
-        $contextConfig = $this->configuration->get('context');
+        $contextConfig = $this->getParameter('dynamic_search.context.full_configuration');
 
         if (!isset($contextConfig[$contextName])) {
             return false;

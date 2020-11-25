@@ -2,8 +2,8 @@
 
 namespace DynamicSearchBundle\Processor;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
 use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Exception\OutputChannelException;
@@ -26,15 +26,13 @@ use DynamicSearchBundle\OutputChannel\Result\OutputChannelArrayResult;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResult;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsBuilderInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
-use DynamicSearchBundle\Provider\IndexProviderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OutputChannelProcessor implements OutputChannelProcessorInterface
 {
     /**
-     * @var ConfigurationInterface
+     * @var ContextDefinitionBuilderInterface
      */
-    protected $configuration;
+    protected $contextDefinitionBuilder;
 
     /**
      * @var OutputChannelManagerInterface
@@ -62,22 +60,22 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     protected $paginatorFactory;
 
     /**
-     * @param ConfigurationInterface           $configuration
-     * @param OutputChannelManagerInterface    $outputChannelManager
-     * @param FilterDefinitionManagerInterface $filterDefinitionManager
-     * @param IndexManagerInterface            $indexManager
-     * @param NormalizerManagerInterface       $normalizerManager
-     * @param PaginatorFactoryInterface        $paginatorFactory
+     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
+     * @param OutputChannelManagerInterface     $outputChannelManager
+     * @param FilterDefinitionManagerInterface  $filterDefinitionManager
+     * @param IndexManagerInterface             $indexManager
+     * @param NormalizerManagerInterface        $normalizerManager
+     * @param PaginatorFactoryInterface         $paginatorFactory
      */
     public function __construct(
-        ConfigurationInterface $configuration,
+        ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         OutputChannelManagerInterface $outputChannelManager,
         FilterDefinitionManagerInterface $filterDefinitionManager,
         IndexManagerInterface $indexManager,
         NormalizerManagerInterface $normalizerManager,
         PaginatorFactoryInterface $paginatorFactory
     ) {
-        $this->configuration = $configuration;
+        $this->contextDefinitionBuilder = $contextDefinitionBuilder;
         $this->outputChannelManager = $outputChannelManager;
         $this->filterDefinitionManager = $filterDefinitionManager;
         $this->indexManager = $indexManager;
@@ -91,8 +89,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName)
     {
         $contextDefinition = $this->getContextDefinition($contextName, $outputChannelName);
-        $indexProvider = $this->getIndexProvider($contextDefinition, $outputChannelName);
-        $indexProviderOptions = $this->getIndexProviderOptions($contextDefinition, $outputChannelName, $indexProvider);
+        $indexProviderOptions = $contextDefinition->getIndexProviderOptions();
 
         $runtimeQueryProvider = $this->getOCRuntimeQueryProvider($contextDefinition, $outputChannelName);
         $runtimeOptionsBuilder = $this->getOCRuntimeOptionsBuilder($contextDefinition, $outputChannelName);
@@ -122,7 +119,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface                 $contextDefinition
+     * @param ContextDefinitionInterface           $contextDefinition
      * @param OutputChannelContextInterface        $outputChannelContext
      * @param OutputChannelModifierEventDispatcher $eventDispatcher
      *
@@ -131,7 +128,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
      * @throws OutputChannelException
      */
     protected function buildSingle(
-        ContextDataInterface $contextDefinition,
+        ContextDefinitionInterface $contextDefinition,
         OutputChannelContextInterface $outputChannelContext,
         OutputChannelModifierEventDispatcher $eventDispatcher
     ) {
@@ -151,7 +148,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface                 $contextDefinition
+     * @param ContextDefinitionInterface           $contextDefinition
      * @param OutputChannelContextInterface        $outputChannelContext
      * @param RuntimeOptionsBuilderInterface       $runtimeOptionsBuilder
      * @param OutputChannelModifierEventDispatcher $eventDispatcher
@@ -162,7 +159,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
      * @throws OutputChannelException
      */
     protected function buildMulti(
-        ContextDataInterface $contextDefinition,
+        ContextDefinitionInterface $contextDefinition,
         OutputChannelContextInterface $outputChannelContext,
         RuntimeOptionsBuilderInterface $runtimeOptionsBuilder,
         OutputChannelModifierEventDispatcher $eventDispatcher,
@@ -249,7 +246,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface          $contextData
+     * @param ContextDefinitionInterface    $contextDefinition
      * @param OutputChannelContextInterface $outputChannelContext
      * @param array                         $filterBlocks
      * @param int                           $hitCount
@@ -259,21 +256,26 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
      *
      * @throws OutputChannelException
      */
-    protected function buildResult(ContextDataInterface $contextData, OutputChannelContextInterface $outputChannelContext, array $filterBlocks, int $hitCount, $result)
-    {
+    protected function buildResult(
+        ContextDefinitionInterface $contextDefinition,
+        OutputChannelContextInterface $outputChannelContext,
+        array $filterBlocks,
+        int $hitCount,
+        $result
+    ) {
         $outputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
         $runtimeOptions = $outputChannelContext->getRuntimeOptions();
         $runtimeQueryProvider = $outputChannelContext->getRuntimeQueryProvider();
 
-        $documentNormalizer = $this->getDocumentNormalizer($contextData, $outputChannelName);
-        $paginatorOptions = $contextData->getOutputChannelPaginatorOptions($outputChannelName);
+        $documentNormalizer = $this->getDocumentNormalizer($contextDefinition, $outputChannelName);
+        $paginatorOptions = $contextDefinition->getOutputChannelPaginatorOptions($outputChannelName);
 
         if ($paginatorOptions['enabled'] === true) {
             $paginator = $this->paginatorFactory->create(
                 $result,
                 $paginatorOptions['adapter_class'],
                 $outputChannelName,
-                $contextData,
+                $contextDefinition,
                 $documentNormalizer
             );
 
@@ -281,7 +283,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             $paginator->setCurrentPageNumber($runtimeOptions['current_page']);
 
             $paginatorOutputResult = new OutputChannelPaginatorResult(
-                $contextData->getName(),
+                $contextDefinition->getName(),
                 $hitCount,
                 $outputChannelContext->getOutputChannelAllocator(),
                 $filterBlocks,
@@ -296,14 +298,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         if ($documentNormalizer instanceof DocumentNormalizerInterface) {
             try {
-                $result = $documentNormalizer->normalize($contextData, $outputChannelName, $result);
+                $result = $documentNormalizer->normalize($contextDefinition, $outputChannelName, $result);
             } catch (\Exception $e) {
                 throw new OutputChannelException($outputChannelName, $e->getMessage(), $e);
             }
         }
 
         $arrayOutputResult = new OutputChannelArrayResult(
-            $contextData->getName(),
+            $contextDefinition->getName(),
             $hitCount,
             $outputChannelContext->getOutputChannelAllocator(),
             $filterBlocks,
@@ -350,11 +352,8 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             );
         }
 
-        $eventData = $eventDispatcher->dispatchAction('resolve_options', ['optionsResolver' => new OptionsResolver()]);
-        $optionsResolver = $eventData->getParameter('optionsResolver');
-
         try {
-            $outputChannelOptions = $contextDefinition->getOutputChannelOptions($outputChannelName, $outputChannelService, $optionsResolver);
+            $outputChannelOptions = $contextDefinition->getOutputChannelOptions($outputChannelName);
         } catch (\Throwable $e) {
             throw new OutputChannelException(
                 $outputChannelName,
@@ -375,14 +374,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface $contextDefinition
-     * @param string               $outputChannelName
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param string                     $outputChannelName
      *
      * @return DocumentNormalizerInterface|null
      *
      * @throws OutputChannelException
      */
-    protected function getDocumentNormalizer(ContextDataInterface $contextDefinition, string $outputChannelName)
+    protected function getDocumentNormalizer(ContextDefinitionInterface $contextDefinition, string $outputChannelName)
     {
         try {
             $documentNormalizer = $this->normalizerManager->getDocumentNormalizerForOutputChannel($contextDefinition, $outputChannelName);
@@ -401,14 +400,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface $contextDefinition
-     * @param string               $outputChannelName
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param string                     $outputChannelName
      *
      * @return RuntimeQueryProviderInterface
      *
      * @throws OutputChannelException
      */
-    protected function getOCRuntimeQueryProvider(ContextDataInterface $contextDefinition, string $outputChannelName)
+    protected function getOCRuntimeQueryProvider(ContextDefinitionInterface $contextDefinition, string $outputChannelName)
     {
         $outputChannelRuntimeQueryProviderName = $contextDefinition->getOutputChannelRuntimeQueryProvider($outputChannelName);
         $runtimeQueryProvider = $this->outputChannelManager->getOutputChannelRuntimeQueryProvider($outputChannelRuntimeQueryProviderName);
@@ -423,14 +422,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface $contextDefinition
-     * @param string               $outputChannelName
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param string                     $outputChannelName
      *
      * @return RuntimeOptionsBuilderInterface
      *
      * @throws OutputChannelException
      */
-    protected function getOCRuntimeOptionsBuilder(ContextDataInterface $contextDefinition, string $outputChannelName)
+    protected function getOCRuntimeOptionsBuilder(ContextDefinitionInterface $contextDefinition, string $outputChannelName)
     {
         $outputChannelRuntimeOptionsBuilderName = $contextDefinition->getOutputChannelRuntimeOptionsBuilder($outputChannelName);
         $runtimeOptionsBuilder = $this->outputChannelManager->getOutputChannelRuntimeOptionsBuilder($outputChannelRuntimeOptionsBuilderName);
@@ -445,79 +444,17 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     }
 
     /**
-     * @param ContextDataInterface   $contextDefinition
-     * @param string                 $outputChannelName
-     * @param IndexProviderInterface $indexProvider
-     *
-     * @return array
-     *
-     * @throws OutputChannelException
-     */
-    protected function getIndexProviderOptions(ContextDataInterface $contextDefinition, string $outputChannelName, IndexProviderInterface $indexProvider)
-    {
-        try {
-            $indexProviderOptions = $contextDefinition->getIndexProviderOptions($indexProvider);
-        } catch (\Throwable $e) {
-            throw new OutputChannelException(
-                $outputChannelName,
-                sprintf(
-                    'could not determinate index provider options for "%s" for context "%s". Error was: %s',
-                    $contextDefinition->getIndexProviderName(),
-                    $contextDefinition->getName(),
-                    $e->getMessage()
-                )
-            );
-        }
-
-        return $indexProviderOptions;
-    }
-
-    /**
-     * @param ContextDataInterface $contextDefinition
-     * @param string               $outputChannelName
-     *
-     * @return IndexProviderInterface
-     *
-     * @throws OutputChannelException
-     */
-    protected function getIndexProvider(ContextDataInterface $contextDefinition, string $outputChannelName)
-    {
-        try {
-            $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
-        } catch (\Throwable $e) {
-            throw new OutputChannelException(
-                $outputChannelName,
-                sprintf(
-                    'could not load index manager "%s" for context "%s". Error was: %s',
-                    $contextDefinition->getIndexProviderName(),
-                    $contextDefinition->getName(),
-                    $e->getMessage()
-                )
-            );
-        }
-
-        if (!$indexProvider instanceof IndexProviderInterface) {
-            throw new OutputChannelException(
-                $outputChannelName,
-                sprintf('could not load index manager "%s" for context "%s"', $contextDefinition->getIndexProviderName(), $contextDefinition->getName())
-            );
-        }
-
-        return $indexProvider;
-    }
-
-    /**
      * @param string $contextName
      * @param string $outputChannelName
      *
-     * @return ContextDataInterface
+     * @return ContextDefinitionInterface
      *
      * @throws OutputChannelException
      */
     protected function getContextDefinition(string $contextName, string $outputChannelName)
     {
-        $contextDefinition = $this->configuration->getContextDefinition(ContextDataInterface::CONTEXT_DISPATCH_TYPE_FETCH, $contextName);
-        if (!$contextDefinition instanceof ContextDataInterface) {
+        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_FETCH);
+        if (!$contextDefinition instanceof ContextDefinitionInterface) {
             throw new OutputChannelException($outputChannelName, sprintf('could not load context data for context "%s"', $contextName));
         }
 

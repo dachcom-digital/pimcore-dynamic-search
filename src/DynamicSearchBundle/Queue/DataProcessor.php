@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Queue;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
@@ -122,17 +122,16 @@ class DataProcessor implements DataProcessorInterface
             $envelope = $envelopeData['envelope'];
             /** @var ResourceMetaInterface $resourceMeta */
             $resourceMeta = $envelopeData['resourceMeta'];
-            /** @var array $envelopeOptions */
             $envelopeOptions = $envelope->getOptions();
 
             $resourceMetaStack[] = $resourceMeta;
         }
 
-        if ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT) {
+        if ($dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT) {
             $this->resourceRunner->runInsertStack($contextName, $resourceMetaStack);
-        } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
+        } elseif ($dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
             $this->resourceRunner->runUpdateStack($contextName, $resourceMetaStack);
-        } elseif ($dispatchType === ContextDataInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
+        } elseif ($dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
             $this->resourceRunner->runDeleteStack($contextName, $resourceMetaStack);
         }
     }

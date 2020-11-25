@@ -2,8 +2,8 @@
 
 namespace DynamicSearchBundle\Queue;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Resource\Proxy\ProxyResourceInterface;
 use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
@@ -21,9 +21,9 @@ class DataCollector implements DataCollectorInterface
     protected $logger;
 
     /**
-     * @var ConfigurationInterface
+     * @var ContextDefinitionBuilderInterface
      */
-    protected $configuration;
+    protected $contextDefinitionBuilder;
 
     /**
      * @var ResourceHarmonizerInterface
@@ -46,23 +46,23 @@ class DataCollector implements DataCollectorInterface
     protected $lockService;
 
     /**
-     * @param LoggerInterface             $logger
-     * @param ConfigurationInterface      $configuration
-     * @param ResourceHarmonizerInterface $resourceHarmonizer
-     * @param ResourceValidatorInterface  $resourceValidator
-     * @param QueueManagerInterface       $queueManager
-     * @param LockServiceInterface        $lockService
+     * @param LoggerInterface                   $logger
+     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
+     * @param ResourceHarmonizerInterface       $resourceHarmonizer
+     * @param ResourceValidatorInterface        $resourceValidator
+     * @param QueueManagerInterface             $queueManager
+     * @param LockServiceInterface              $lockService
      */
     public function __construct(
         LoggerInterface $logger,
-        ConfigurationInterface $configuration,
+        ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         ResourceHarmonizerInterface $resourceHarmonizer,
         ResourceValidatorInterface $resourceValidator,
         QueueManagerInterface $queueManager,
         LockServiceInterface $lockService
     ) {
         $this->logger = $logger;
-        $this->configuration = $configuration;
+        $this->contextDefinitionBuilder = $contextDefinitionBuilder;
         $this->resourceHarmonizer = $resourceHarmonizer;
         $this->resourceValidator = $resourceValidator;
         $this->queueManager = $queueManager;
@@ -74,7 +74,7 @@ class DataCollector implements DataCollectorInterface
      */
     public function addToGlobalQueue(string $dispatchType, $resource, array $options = [])
     {
-        $contextDefinitions = $this->configuration->getContextDefinitions(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX);
+        $contextDefinitions = $this->contextDefinitionBuilder->buildContextDefinitionStack(ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
         if (count($contextDefinitions) === 0) {
             $this->logger->error(
@@ -86,7 +86,6 @@ class DataCollector implements DataCollectorInterface
             return;
         }
 
-        /** @var ContextDataInterface $contextDefinition */
         foreach ($contextDefinitions as $contextDefinition) {
             $this->addToContextQueue($contextDefinition->getName(), $dispatchType, $resource, $options);
         }
@@ -99,9 +98,9 @@ class DataCollector implements DataCollectorInterface
     {
         $envelope = null;
 
-        if (!in_array($dispatchType, ContextDataInterface::ALLOWED_QUEUE_DISPATCH_TYPES)) {
+        if (!in_array($dispatchType, ContextDefinitionInterface::ALLOWED_QUEUE_DISPATCH_TYPES)) {
             $this->logger->error(
-                sprintf('Wrong dispatch type "%s" for queue. Allowed types are: %s', $dispatchType, join(', ', ContextDataInterface::ALLOWED_QUEUE_DISPATCH_TYPES)),
+                sprintf('Wrong dispatch type "%s" for queue. Allowed types are: %s', $dispatchType, join(', ', ContextDefinitionInterface::ALLOWED_QUEUE_DISPATCH_TYPES)),
                 'queue',
                 $contextName
             );
@@ -209,7 +208,7 @@ class DataCollector implements DataCollectorInterface
      */
     protected function generateResourceMeta(string $contextName, string $dispatchType, $resource)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
 
         $normalizedResourceStack = $this->resourceHarmonizer->harmonizeUntilNormalizedResourceStack($contextDefinition, $resource);
 

@@ -6,6 +6,7 @@ services:
         calls:
             - [setLogger, ['@DynamicSearchBundle\Logger\Logger']]
             - [setConfiguration, ['@DynamicSearchBundle\Configuration\Configuration']]
+            - [setContextDefinitionBuilder, ['@DynamicSearchBundle\Builder\ContextDefinitionBuilder']]
             - [setDataManager, ['@DynamicSearchBundle\Manager\DataManager']]
             - [setIndexManager, ['@DynamicSearchBundle\Manager\IndexManager']]
 

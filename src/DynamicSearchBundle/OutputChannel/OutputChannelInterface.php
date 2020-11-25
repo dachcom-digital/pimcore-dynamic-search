@@ -11,17 +11,12 @@ interface OutputChannelInterface
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver);
 
     /**
      * @param array $options
      */
     public function setOptions(array $options);
-
-    /**
-     * @return array
-     */
-    public function getOptions();
 
     /**
      * @param OutputChannelContextInterface $outputChannelContext

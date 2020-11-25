@@ -2,25 +2,25 @@
 
 namespace DynamicSearchBundle\Processor\Harmonizer;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 
 interface ResourceHarmonizerInterface
 {
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $resource
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param mixed                      $resource
      *
      * @return array|NormalizedDataResourceInterface[]|null
      */
-    public function harmonizeUntilNormalizedResourceStack(ContextDataInterface $contextData, $resource);
+    public function harmonizeUntilNormalizedResourceStack(ContextDefinitionInterface $contextDefinition, $resource);
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $resource
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param mixed                      $resource
      *
      * @return null|ResourceContainerInterface
      */
-    public function harmonizeUntilResourceContainer(ContextDataInterface $contextData, $resource);
+    public function harmonizeUntilResourceContainer(ContextDefinitionInterface $contextDefinition, $resource);
 }

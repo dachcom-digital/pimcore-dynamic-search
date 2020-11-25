@@ -2,20 +2,20 @@
 
 namespace DynamicSearchBundle\Processor;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 interface ResourceDeletionProcessorInterface
 {
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      * @param mixed                $resource
      */
-    public function process(ContextDataInterface $contextData, $resource);
+    public function process(ContextDefinitionInterface $contextDefinition, $resource);
 
     /**
-     * @param ContextDataInterface  $contextData
+     * @param ContextDefinitionInterface  $contextDefinition
      * @param ResourceMetaInterface $resourceMeta
      */
-    public function processByResourceMeta(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta);
+    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta);
 }

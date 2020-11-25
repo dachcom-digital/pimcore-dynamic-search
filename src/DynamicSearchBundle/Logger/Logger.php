@@ -20,6 +20,14 @@ class Logger implements LoggerInterface
     /**
      * {@inheritdoc}
      */
+    public function getPsrLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function log($level, $message, string $provider, string $contextName)
     {
         $this->logger->log($level, $message, ['provider' => $provider, 'contextName' => $contextName]);

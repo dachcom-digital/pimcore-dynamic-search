@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Resource;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 
 interface ResourceScaffolderInterface
 {
@@ -21,10 +21,10 @@ interface ResourceScaffolderInterface
     public function isBaseResource($resource);
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $resource
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param mixed                      $resource
      *
      * @return array
      */
-    public function setup(ContextDataInterface $contextData, $resource): array;
+    public function setup(ContextDefinitionInterface $contextDefinition, $resource): array;
 }

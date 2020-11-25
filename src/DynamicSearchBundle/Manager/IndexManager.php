@@ -3,8 +3,7 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\ContextConfigurationException;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Registry\IndexRegistryInterface;
 use DynamicSearchBundle\Registry\IndexProviderRegistryInterface;
@@ -49,10 +48,10 @@ class IndexManager implements IndexManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getIndexProvider(ContextDataInterface $contextData)
+    public function getIndexProvider(ContextDefinitionInterface $contextDefinition)
     {
-        $indexProviderName = $contextData->getIndexProviderName();
-        $cacheKey = sprintf('%s_%s', $contextData->getName(), $indexProviderName);
+        $indexProviderName = $contextDefinition->getIndexProviderName();
+        $cacheKey = sprintf('%s_%s', $contextDefinition->getName(), $indexProviderName);
 
         if (isset($this->validProviders[$cacheKey])) {
             return $this->validProviders[$cacheKey];
@@ -63,14 +62,7 @@ class IndexManager implements IndexManagerInterface
         }
 
         $indexProvider = $this->indexProviderRegistry->get($indexProviderName);
-
-        try {
-            $indexProviderOptions = $contextData->getIndexProviderOptions($indexProvider);
-        } catch (ContextConfigurationException $e) {
-            throw new ProviderException($e->getMessage(), $contextData->getIndexProviderName(), $e);
-        }
-
-        $indexProvider->setOptions($indexProviderOptions);
+        $indexProvider->setOptions($contextDefinition->getIndexProviderOptions());
 
         $this->validProviders[$cacheKey] = $indexProvider;
 
@@ -80,9 +72,9 @@ class IndexManager implements IndexManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getIndexField(ContextDataInterface $contextData, string $identifier)
+    public function getIndexField(ContextDefinitionInterface $contextDefinition, string $identifier)
     {
-        $indexProviderName = $contextData->getIndexProviderName();
+        $indexProviderName = $contextDefinition->getIndexProviderName();
         if (!$this->indexRegistry->hasFieldForIndexProvider($indexProviderName, $identifier)) {
             return null;
         }
@@ -93,9 +85,9 @@ class IndexManager implements IndexManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilter(ContextDataInterface $contextData, string $identifier)
+    public function getFilter(ContextDefinitionInterface $contextDefinition, string $identifier)
     {
-        $indexProviderName = $contextData->getIndexProviderName();
+        $indexProviderName = $contextDefinition->getIndexProviderName();
         if (!$this->indexRegistry->hasFilterForIndexProvider($indexProviderName, $identifier)) {
             return null;
         }

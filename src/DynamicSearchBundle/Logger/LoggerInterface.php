@@ -5,6 +5,11 @@ namespace DynamicSearchBundle\Logger;
 interface LoggerInterface
 {
     /**
+     * @return \Psr\Log\LoggerInterface
+     */
+    public function getPsrLogger();
+
+    /**
      * DEBUG (100)
      * INFO (200)
      * NOTICE (250)

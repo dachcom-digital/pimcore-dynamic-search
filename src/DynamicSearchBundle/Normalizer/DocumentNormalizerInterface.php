@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Normalizer;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface DocumentNormalizerInterface
@@ -10,7 +10,7 @@ interface DocumentNormalizerInterface
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver);
 
     /**
      * @param array $options
@@ -18,7 +18,7 @@ interface DocumentNormalizerInterface
     public function setOptions(array $options);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      * @param string               $outputChannelName
      * @param mixed                $data
      *
@@ -26,5 +26,5 @@ interface DocumentNormalizerInterface
      *
      * @throws \Exception
      */
-    public function normalize(ContextDataInterface $contextData, string $outputChannelName, $data);
+    public function normalize(ContextDefinitionInterface $contextDefinition, string $outputChannelName, $data);
 }

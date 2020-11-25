@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Manager;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
@@ -10,21 +10,21 @@ use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 interface NormalizerManagerInterface
 {
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      *
      * @return ResourceNormalizerInterface|null
      *
      * @throws NormalizerException
      */
-    public function getResourceNormalizer(ContextDataInterface $contextData);
+    public function getResourceNormalizer(ContextDefinitionInterface $contextDefinition);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      * @param string               $outputChannelName
      *
      * @return DocumentNormalizerInterface|null
      *
      * @throws NormalizerException
      */
-    public function getDocumentNormalizerForOutputChannel(ContextDataInterface $contextData, string $outputChannelName);
+    public function getDocumentNormalizerForOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannelName);
 }

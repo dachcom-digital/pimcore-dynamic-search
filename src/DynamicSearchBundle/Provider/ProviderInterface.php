@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Provider;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProcessCancelledException;
 use DynamicSearchBundle\Exception\ProviderException;
 
@@ -14,28 +14,28 @@ interface ProviderInterface
     public function setOptions(array $options);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      *
      * @throws ProviderException
      * @throws ProcessCancelledException
      */
-    public function warmUp(ContextDataInterface $contextData);
+    public function warmUp(ContextDefinitionInterface $contextDefinition);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      *
      * @throws ProviderException
      * @throws ProcessCancelledException
      */
-    public function coolDown(ContextDataInterface $contextData);
+    public function coolDown(ContextDefinitionInterface $contextDefinition);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      */
-    public function cancelledShutdown(ContextDataInterface $contextData);
+    public function cancelledShutdown(ContextDefinitionInterface $contextDefinition);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      */
-    public function emergencyShutdown(ContextDataInterface $contextData);
+    public function emergencyShutdown(ContextDefinitionInterface $contextDefinition);
 }

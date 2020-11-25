@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\Resolver\DefinitionNotFoundException;
 use DynamicSearchBundle\Filter\Definition\FilterDefinition;
 use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
@@ -36,10 +36,10 @@ class FilterDefinitionManager implements FilterDefinitionManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function generateFilterDefinition(ContextDataInterface $contextData, OutputChannelAllocatorInterface $outputChannelAllocator)
+    public function generateFilterDefinition(ContextDefinitionInterface $contextDefinition, OutputChannelAllocatorInterface $outputChannelAllocator)
     {
         try {
-            $filterDefinitionBuilderStack = $this->filterDefinitionResolver->resolve($contextData->getName(), $outputChannelAllocator);
+            $filterDefinitionBuilderStack = $this->filterDefinitionResolver->resolve($contextDefinition->getName(), $outputChannelAllocator);
         } catch (DefinitionNotFoundException $e) {
             return null;
         }

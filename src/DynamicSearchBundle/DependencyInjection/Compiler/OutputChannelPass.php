@@ -2,6 +2,8 @@
 
 namespace DynamicSearchBundle\DependencyInjection\Compiler;
 
+use DynamicSearchBundle\DependencyInjection\Compiler\Helper\OptionsResolverValidator;
+use DynamicSearchBundle\Factory\ContextDefinitionFactory;
 use DynamicSearchBundle\Registry\OutputChannelRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,12 +23,16 @@ final class OutputChannelPass implements CompilerPassInterface
         //# dynamic_search.output_channel
         //#
 
+        $serviceDefinitionStack = [];
         foreach ($container->findTaggedServiceIds('dynamic_search.output_channel', true) as $id => $tags) {
             foreach ($tags as $attributes) {
                 $outputChannelServices[] = $attributes['identifier'];
+                $serviceDefinitionStack[] = ['serviceName' => $attributes['identifier'], 'id' => $id];
                 $definition->addMethodCall('registerOutputChannelService', [new Reference($id), $attributes['identifier']]);
             }
         }
+
+        $this->validateOutputChannelOptions($container, $serviceDefinitionStack);
 
         //#
         //# dynamic_search.output_channel.runtime_query_provider
@@ -156,5 +162,41 @@ final class OutputChannelPass implements CompilerPassInterface
                 $definition->addMethodCall('registerOutputChannelModifierFilter', $serviceData);
             }
         }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param array            $serviceDefinitionStack
+     */
+    protected function validateOutputChannelOptions(ContainerBuilder $container, array $serviceDefinitionStack)
+    {
+        if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
+            return;
+        }
+
+        $validator = new OptionsResolverValidator();
+        $contextDefinitionFactory = $container->getDefinition(ContextDefinitionFactory::class);
+        $contextConfiguration = $container->getParameter('dynamic_search.context.full_configuration');
+
+        foreach ($contextConfiguration as $contextName => &$contextConfig) {
+
+            if (!isset($contextConfig['output_channels']) ||!is_array($contextConfig['output_channels'])) {
+                continue;
+            }
+
+            foreach ($contextConfig['output_channels'] as $outputChannelName => &$outputChannelConfig) {
+
+                $contextService = [
+                    'serviceName' => $outputChannelConfig['service'] ?? null,
+                    'options'     => $outputChannelConfig['options'] ?? null
+                ];
+
+                $outputChannelConfig['options'] = $validator->validate($container, $contextService, $serviceDefinitionStack);
+            }
+
+            $contextDefinitionFactory->addMethodCall('replaceContextConfig', [$contextName, $contextConfig]);
+        }
+
+        $container->setParameter('dynamic_search.context.full_configuration', $contextConfiguration);
     }
 }

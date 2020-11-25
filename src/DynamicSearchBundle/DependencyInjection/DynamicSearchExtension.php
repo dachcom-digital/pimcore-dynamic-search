@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\DependencyInjection;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Factory\ContextDefinitionFactory;
 use DynamicSearchBundle\Paginator\Paginator;
 use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use Symfony\Component\Config\Resource\FileResource;
@@ -23,7 +24,6 @@ class DynamicSearchExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $providerConfig = new ProviderConfig();
         $configuration = new Configuration();
 
         $config = $this->processConfiguration($configuration, $configs);
@@ -31,14 +31,40 @@ class DynamicSearchExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../Resources/config']));
         $loader->load('services.yml');
 
+        $this->setupConfiguration($container, $config);
+        $this->setupProviderBundles($container);
+
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param array            $config
+     */
+    protected function setupConfiguration(ContainerBuilder $container, array $config)
+    {
+        $contextConfig = $config['context'];
+
+        unset($config['context']);
+
         $configManagerDefinition = $container->getDefinition(BundleConfiguration::class);
         $configManagerDefinition->addMethodCall('setConfig', [$config]);
 
+        $container->setParameter('dynamic_search.context.full_configuration', $contextConfig);
         $container->setParameter('dynamic_search_default_paginator_class', Paginator::class);
 
-        if ($providerConfig->configFileExists()) {
-            $container->addResource(new FileResource($providerConfig->locateConfigFile()));
+        $contextDefinitionFactory = $container->getDefinition(ContextDefinitionFactory::class);
+
+        foreach ($contextConfig as $contextName => $config) {
+            $contextDefinitionFactory->addMethodCall('addContextConfig', [$contextName, $config]);
         }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function setupProviderBundles(ContainerBuilder $container)
+    {
+        $providerConfig = new ProviderConfig();
 
         $providerConfigDefinition = new Definition();
         $providerConfigDefinition->setClass(ProviderConfig::class);
@@ -48,5 +74,9 @@ class DynamicSearchExtension extends Extension
         $container
             ->registerForAutoconfiguration(DocumentDefinitionBuilderInterface::class)
             ->addTag('dynamic_search.document_definition_builder');
+
+        if ($providerConfig->configFileExists()) {
+            $container->addResource(new FileResource($providerConfig->locateConfigFile()));
+        }
     }
 }

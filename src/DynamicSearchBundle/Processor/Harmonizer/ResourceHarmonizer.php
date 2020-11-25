@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Processor\Harmonizer;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\NormalizerManagerInterface;
@@ -47,9 +47,9 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
     /**
      * {@inheritdoc}
      */
-    public function harmonizeUntilNormalizedResourceStack(ContextDataInterface $contextData, $resource)
+    public function harmonizeUntilNormalizedResourceStack(ContextDefinitionInterface $contextDefinition, $resource)
     {
-        $resourceContainer = $this->harmonizeUntilResourceContainer($contextData, $resource);
+        $resourceContainer = $this->harmonizeUntilResourceContainer($contextDefinition, $resource);
 
         if (!$resourceContainer instanceof ResourceContainerInterface) {
             // nothing to log: done by harmonizeToResourceContainer() method.
@@ -57,16 +57,16 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
         }
 
         try {
-            $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextData);
+            $resourceNormalizer = $this->normalizerManager->getResourceNormalizer($contextDefinition);
         } catch (NormalizerException $e) {
             $this->logger->error(
                 sprintf(
                     'Unable to load resource normalizer "%s". Error was: %s. Skipping...',
-                    $contextData->getResourceNormalizerName(),
+                    $contextDefinition->getResourceNormalizerName(),
                     $e->getMessage()
                 ),
-                $contextData->getIndexProviderName(),
-                $contextData->getName()
+                $contextDefinition->getIndexProviderName(),
+                $contextDefinition->getName()
             );
 
             return null;
@@ -76,26 +76,26 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
             $this->logger->error(
                 sprintf(
                     'No resource normalizer "%s" found. Skipping...',
-                    $contextData->getResourceNormalizerName()
+                    $contextDefinition->getResourceNormalizerName()
                 ),
-                $contextData->getIndexProviderName(),
-                $contextData->getName()
+                $contextDefinition->getIndexProviderName(),
+                $contextDefinition->getName()
             );
 
             return null;
         }
 
         try {
-            $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextData, $resourceContainer);
+            $normalizedResourceStack = $resourceNormalizer->normalizeToResourceStack($contextDefinition, $resourceContainer);
         } catch (NormalizerException $e) {
             $this->logger->error(
                 sprintf(
                     'Error while generating normalized resource stack with identifier "%s". Error was: %s. Skipping...',
-                    $contextData->getResourceNormalizerName(),
+                    $contextDefinition->getResourceNormalizerName(),
                     $e->getMessage()
                 ),
-                $contextData->getIndexProviderName(),
-                $contextData->getName()
+                $contextDefinition->getIndexProviderName(),
+                $contextDefinition->getName()
             );
 
             return null;
@@ -103,9 +103,9 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
 
         if (count($normalizedResourceStack) === 0) {
             $this->logger->debug(
-                sprintf('No normalized resources generated. Used resource normalizer: %s. Skipping...', $contextData->getResourceNormalizerName()),
-                $contextData->getIndexProviderName(),
-                $contextData->getName()
+                sprintf('No normalized resources generated. Used resource normalizer: %s. Skipping...', $contextDefinition->getResourceNormalizerName()),
+                $contextDefinition->getIndexProviderName(),
+                $contextDefinition->getName()
             );
 
             return null;
@@ -117,20 +117,20 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
     /**
      * {@inheritdoc}
      */
-    public function harmonizeUntilResourceContainer(ContextDataInterface $contextData, $resource)
+    public function harmonizeUntilResourceContainer(ContextDefinitionInterface $contextDefinition, $resource)
     {
-        $resourceScaffolderContainer = $this->transformerManager->getResourceScaffolder($contextData, $resource);
+        $resourceScaffolderContainer = $this->transformerManager->getResourceScaffolder($contextDefinition, $resource);
         if (!$resourceScaffolderContainer instanceof ResourceScaffolderContainerInterface) {
             $this->logger->debug(
                 'No resource scaffolder has been found. Skipping...',
-                $contextData->getIndexProviderName(),
-                $contextData->getName()
+                $contextDefinition->getIndexProviderName(),
+                $contextDefinition->getName()
             );
 
             return null;
         }
 
-        $scaffoldResourceAttributes = $resourceScaffolderContainer->getScaffolder()->setup($contextData, $resource);
+        $scaffoldResourceAttributes = $resourceScaffolderContainer->getScaffolder()->setup($contextDefinition, $resource);
         $isBaseResource = $resourceScaffolderContainer->getScaffolder()->isBaseResource($resource);
         $resourceContainer = new ResourceContainer($resource, $isBaseResource, $resourceScaffolderContainer->getIdentifier(), $scaffoldResourceAttributes);
 

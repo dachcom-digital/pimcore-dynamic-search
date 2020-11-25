@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Validator;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
+use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Manager\DataManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
@@ -10,9 +10,9 @@ use DynamicSearchBundle\Provider\DataProviderInterface;
 class ResourceValidator implements ResourceValidatorInterface
 {
     /**
-     * @var ConfigurationInterface
+     * @var ContextDefinitionBuilderInterface
      */
-    protected $configuration;
+    protected $contextDefinitionBuilder;
 
     /**
      * @var DataManagerInterface
@@ -20,14 +20,14 @@ class ResourceValidator implements ResourceValidatorInterface
     protected $dataManager;
 
     /**
-     * @param ConfigurationInterface $configuration
-     * @param DataManagerInterface   $dataManager
+     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
+     * @param DataManagerInterface              $dataManager
      */
     public function __construct(
-        ConfigurationInterface $configuration,
+        ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         DataManagerInterface $dataManager
     ) {
-        $this->configuration = $configuration;
+        $this->contextDefinitionBuilder = $contextDefinitionBuilder;
         $this->dataManager = $dataManager;
     }
 
@@ -36,7 +36,7 @@ class ResourceValidator implements ResourceValidatorInterface
      */
     public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
         $dataProvider = $this->getDataProvider($contextName, $dispatchType);
 
         if (!$dataProvider instanceof DataProviderInterface) {
@@ -51,7 +51,7 @@ class ResourceValidator implements ResourceValidatorInterface
      */
     public function validateUntrustedResource(string $contextName, string $dispatchType, $resource)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
         $dataProvider = $this->getDataProvider($contextName, $dispatchType);
 
         if (!$dataProvider instanceof DataProviderInterface) {
@@ -69,7 +69,7 @@ class ResourceValidator implements ResourceValidatorInterface
      */
     protected function getDataProvider(string $contextName, string $dispatchType)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
 
         try {
             $dataProvider = $this->dataManager->getDataProvider($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);

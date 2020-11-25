@@ -8,7 +8,7 @@ use DynamicSearchBundle\DependencyInjection\Compiler\DefinitionBuilderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\OutputChannelPass;
-use DynamicSearchBundle\DependencyInjection\Compiler\ResourceNormalizerPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\NormalizerPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\ResourceTransformerPass;
 use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use DynamicSearchBundle\Tool\Install;
@@ -34,7 +34,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
         $container->addCompilerPass(new DataProviderPass());
         $container->addCompilerPass(new IndexProviderPass());
         $container->addCompilerPass(new DefinitionBuilderPass());
-        $container->addCompilerPass(new ResourceNormalizerPass());
+        $container->addCompilerPass(new NormalizerPass());
         $container->addCompilerPass(new ResourceTransformerPass());
         $container->addCompilerPass(new IndexPass());
         $container->addCompilerPass(new OutputChannelPass());

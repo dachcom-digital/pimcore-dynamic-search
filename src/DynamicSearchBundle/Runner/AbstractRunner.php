@@ -2,8 +2,9 @@
 
 namespace DynamicSearchBundle\Runner;
 
+use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProcessCancelledException;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Exception\RuntimeException;
@@ -24,6 +25,11 @@ abstract class AbstractRunner
      * @var ConfigurationInterface
      */
     protected $configuration;
+
+    /**
+     * @var ContextDefinitionBuilderInterface
+     */
+    protected $contextDefinitionBuilder;
 
     /**
      * @var DataManagerInterface
@@ -52,6 +58,14 @@ abstract class AbstractRunner
     }
 
     /**
+     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
+     */
+    public function setContextDefinitionBuilder(ContextDefinitionBuilderInterface $contextDefinitionBuilder)
+    {
+        $this->contextDefinitionBuilder = $contextDefinitionBuilder;
+    }
+
+    /**
      * @param DataManagerInterface $dataManager
      */
     public function setDataManager(DataManagerInterface $dataManager)
@@ -68,14 +82,14 @@ abstract class AbstractRunner
     }
 
     /**
-     * @param ContextDataInterface $contextDefinition
-     * @param string               $dataProviderBehaviour
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param string                     $dataProviderBehaviour
      *
      * @return array
      *
      * @throws RuntimeException
      */
-    protected function setupProviders(ContextDataInterface $contextDefinition, string $dataProviderBehaviour)
+    protected function setupProviders(ContextDefinitionInterface $contextDefinition, string $dataProviderBehaviour)
     {
         return [
             'dataProvider'  => $this->setupDataProvider($contextDefinition, $dataProviderBehaviour),
@@ -84,11 +98,11 @@ abstract class AbstractRunner
     }
 
     /**
-     * @param ContextDataInterface $contextDefinition
+     * @param ContextDefinitionInterface $contextDefinition
      *
      * @return IndexProviderInterface
      */
-    protected function setupIndexProvider(ContextDataInterface $contextDefinition)
+    protected function setupIndexProvider(ContextDefinitionInterface $contextDefinition)
     {
         try {
             $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
@@ -100,13 +114,15 @@ abstract class AbstractRunner
     }
 
     /**
-     * @param ContextDataInterface $contextDefinition
-     * @param string               $providerBehaviour
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param string                     $providerBehaviour
      *
      * @return DataProviderInterface
      */
-    protected function setupDataProvider(ContextDataInterface $contextDefinition, string $providerBehaviour = DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH)
-    {
+    protected function setupDataProvider(
+        ContextDefinitionInterface $contextDefinition,
+        string $providerBehaviour = DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH
+    ) {
         try {
             $dataProvider = $this->dataManager->getDataProvider($contextDefinition, $providerBehaviour);
         } catch (ProviderException $e) {
@@ -120,127 +136,127 @@ abstract class AbstractRunner
      * @param string $contextName
      * @param string $dispatchType
      *
-     * @return ContextDataInterface
+     * @return ContextDefinitionInterface
      *
      * @throws RuntimeException
      */
     protected function setupContextDefinition(string $contextName, string $dispatchType)
     {
-        $contextDefinition = $this->configuration->getContextDefinition($dispatchType, $contextName);
+        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
 
-        if (!$contextDefinition instanceof ContextDataInterface) {
-            throw new RuntimeException(sprintf('Context configuration "%s" does not exist', $contextName));
+        if (!$contextDefinition instanceof ContextDefinitionInterface) {
+            throw new RuntimeException(sprintf('Context definition "%s" does not exist', $contextName));
         }
 
         return $contextDefinition;
     }
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param array                $providers
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param array                      $providers
      */
-    protected function warmUpProvider(ContextDataInterface $contextData, array $providers)
+    protected function warmUpProvider(ContextDefinitionInterface $contextDefinition, array $providers)
     {
         foreach ($providers as $provider) {
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
-            $this->logger->log('DEBUG', sprintf('warm up provider'), $providerName, $contextData->getName());
+            $providerName = $provider instanceof DataProviderInterface ? $contextDefinition->getDataProviderName() : $contextDefinition->getIndexProviderName();
+            $this->logger->log('DEBUG', sprintf('warm up provider'), $providerName, $contextDefinition->getName());
 
             try {
-                $provider->warmUp($contextData);
+                $provider->warmUp($contextDefinition);
             } catch (ProcessCancelledException $e) {
                 $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated', $e->getMessage());
-                $this->dispatchCancelledProcessToProviders($errorMessage, $contextData, $providers);
+                $this->dispatchCancelledProcessToProviders($errorMessage, $contextDefinition, $providers);
             } catch (\Throwable $e) {
                 $errorMessage = sprintf('Error while warming up provider. Error was: %s. FailOver has been initiated', $e->getMessage());
-                $this->dispatchFailOverToProviders($errorMessage, $contextData, $providers);
+                $this->dispatchFailOverToProviders($errorMessage, $contextDefinition, $providers);
             }
         }
     }
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param array                $providers
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param array                      $providers
      */
-    protected function coolDownProvider(ContextDataInterface $contextData, array $providers)
+    protected function coolDownProvider(ContextDefinitionInterface $contextDefinition, array $providers)
     {
         foreach ($providers as $provider) {
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
-            $this->logger->log('DEBUG', sprintf('cooling down provider'), $providerName, $contextData->getName());
+            $providerName = $provider instanceof DataProviderInterface ? $contextDefinition->getDataProviderName() : $contextDefinition->getIndexProviderName();
+            $this->logger->log('DEBUG', sprintf('cooling down provider'), $providerName, $contextDefinition->getName());
 
             try {
-                $provider->coolDown($contextData);
+                $provider->coolDown($contextDefinition);
             } catch (ProcessCancelledException $e) {
                 $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated', $e->getMessage());
-                $this->dispatchCancelledProcessToProviders($errorMessage, $contextData, $providers);
+                $this->dispatchCancelledProcessToProviders($errorMessage, $contextDefinition, $providers);
             } catch (\Throwable $e) {
                 $errorMessage = sprintf('Error while cooling down provider. Error was: %s. FailOver has been initiated', $e->getMessage());
-                $this->dispatchFailOverToProviders($errorMessage, $contextData, $providers);
+                $this->dispatchFailOverToProviders($errorMessage, $contextDefinition, $providers);
             }
         }
     }
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $class
-     * @param string               $method
-     * @param array                $arguments
-     * @param array                $involvedProviders
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param mixed                      $class
+     * @param string                     $method
+     * @param array                      $arguments
+     * @param array                      $involvedProviders
      */
-    protected function callSaveMethod(ContextDataInterface $contextData, $class, string $method, array $arguments, array $involvedProviders)
+    protected function callSaveMethod(ContextDefinitionInterface $contextDefinition, $class, string $method, array $arguments, array $involvedProviders)
     {
         try {
             call_user_func_array([$class, $method], $arguments);
         } catch (ProcessCancelledException $e) {
             $errorMessage = sprintf('Process has been cancelled. Message was: %s. Process canceling has been initiated', $e->getMessage());
-            $this->dispatchCancelledProcessToProviders($errorMessage, $contextData, $involvedProviders);
+            $this->dispatchCancelledProcessToProviders($errorMessage, $contextDefinition, $involvedProviders);
         } catch (\Throwable $e) {
             $errorMessage = sprintf('Error while executing data provider. Error was: %s. FailOver has been initiated', $e->getMessage());
-            $this->dispatchFailOverToProviders($errorMessage, $contextData, $involvedProviders);
+            $this->dispatchFailOverToProviders($errorMessage, $contextDefinition, $involvedProviders);
         }
     }
 
     /**
-     * @param string               $errorMessage
-     * @param ContextDataInterface $contextData
-     * @param array                $providers
+     * @param string                     $errorMessage
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param array                      $providers
      */
-    protected function dispatchCancelledProcessToProviders(string $errorMessage, ContextDataInterface $contextData, array $providers)
+    protected function dispatchCancelledProcessToProviders(string $errorMessage, ContextDefinitionInterface $contextDefinition, array $providers)
     {
-        $this->logger->error($errorMessage, 'workflow', $contextData->getName());
+        $this->logger->error($errorMessage, 'workflow', $contextDefinition->getName());
 
         foreach ($providers as $provider) {
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
-            $this->logger->log('DEBUG', sprintf('executing provider cancelled shutdown'), $providerName, $contextData->getName());
+            $providerName = $provider instanceof DataProviderInterface ? $contextDefinition->getDataProviderName() : $contextDefinition->getIndexProviderName();
+            $this->logger->log('DEBUG', sprintf('executing provider cancelled shutdown'), $providerName, $contextDefinition->getName());
 
             try {
-                $provider->cancelledShutdown($contextData);
+                $provider->cancelledShutdown($contextDefinition);
             } catch (\Throwable $e) {
                 $this->logger->error(
                     sprintf('Error while dispatching cancelled process. Error was: %s.', $e->getMessage()),
                     get_class($provider),
-                    $contextData->getName()
+                    $contextDefinition->getName()
                 );
             }
         }
     }
 
     /**
-     * @param string               $errorMessage
-     * @param ContextDataInterface $contextData
-     * @param array                $providers
+     * @param string                     $errorMessage
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param array                      $providers
      */
-    protected function dispatchFailOverToProviders(string $errorMessage, ContextDataInterface $contextData, array $providers)
+    protected function dispatchFailOverToProviders(string $errorMessage, ContextDefinitionInterface $contextDefinition, array $providers)
     {
-        $this->logger->error($errorMessage, 'workflow', $contextData->getName());
+        $this->logger->error($errorMessage, 'workflow', $contextDefinition->getName());
 
         foreach ($providers as $provider) {
-            $providerName = $provider instanceof DataProviderInterface ? $contextData->getDataProviderName() : $contextData->getIndexProviderName();
-            $this->logger->log('DEBUG', sprintf('executing provider emergency shutdown'), $providerName, $contextData->getName());
+            $providerName = $provider instanceof DataProviderInterface ? $contextDefinition->getDataProviderName() : $contextDefinition->getIndexProviderName();
+            $this->logger->log('DEBUG', sprintf('executing provider emergency shutdown'), $providerName, $contextDefinition->getName());
 
             try {
-                $provider->emergencyShutdown($contextData);
+                $provider->emergencyShutdown($contextDefinition);
             } catch (\Throwable $e) {
-                $this->logger->error(sprintf('Error while dispatching fail over. Error was: %s.', $e->getMessage()), 'workflow', $contextData->getName());
+                $this->logger->error(sprintf('Error while dispatching fail over. Error was: %s.', $e->getMessage()), 'workflow', $contextDefinition->getName());
             }
         }
     }

@@ -2,8 +2,6 @@
 
 namespace DynamicSearchBundle\Configuration;
 
-use DynamicSearchBundle\Context\ContextData;
-
 class Configuration implements ConfigurationInterface
 {
     /**
@@ -27,30 +25,5 @@ class Configuration implements ConfigurationInterface
     public function get($slot)
     {
         return $this->config[$slot];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContextDefinitions(string $dispatchType, array $runtimeValues = [])
-    {
-        $contextDefinitions = [];
-        foreach ($this->config['context'] as $contextName => $context) {
-            $contextDefinitions[] = $this->getContextDefinition($dispatchType, $contextName, $runtimeValues);
-        }
-
-        return $contextDefinitions;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContextDefinition(string $dispatchType, string $contextName, array $runtimeValues = [])
-    {
-        if (!isset($this->config['context'][$contextName]) || !is_array($this->config['context'][$contextName])) {
-            return null;
-        }
-
-        return new ContextData($dispatchType, $contextName, $this->config['context'][$contextName], $runtimeValues);
     }
 }

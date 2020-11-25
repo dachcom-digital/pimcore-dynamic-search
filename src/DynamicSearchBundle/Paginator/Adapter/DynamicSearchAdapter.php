@@ -2,16 +2,16 @@
 
 namespace DynamicSearchBundle\Paginator\Adapter;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Paginator\AdapterInterface;
 
 class DynamicSearchAdapter implements AdapterInterface
 {
     /**
-     * @var ContextDataInterface
+     * @var ContextDefinitionInterface
      */
-    protected $contextData;
+    protected $contextDefinition;
 
     /**
      * @var string
@@ -24,15 +24,11 @@ class DynamicSearchAdapter implements AdapterInterface
     protected $documentNormalizer;
 
     /**
-     * array.
-     *
      * @var array
      */
     protected $array = null;
 
     /**
-     * Item count.
-     *
      * @var int
      */
     protected $count = null;
@@ -49,9 +45,9 @@ class DynamicSearchAdapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function setContext(ContextDataInterface $contextData)
+    public function setContextDefinition(ContextDefinitionInterface $contextDefinition)
     {
-        $this->contextData = $contextData;
+        $this->contextDefinition = $contextDefinition;
     }
 
     /**
@@ -83,7 +79,7 @@ class DynamicSearchAdapter implements AdapterInterface
         $data = array_slice($this->array, $offset, $itemCountPerPage);
 
         if ($this->documentNormalizer instanceof DocumentNormalizerInterface) {
-            $data = $this->documentNormalizer->normalize($this->contextData, $this->outputChannelName, $data);
+            $data = $this->documentNormalizer->normalize($this->contextDefinition, $this->outputChannelName, $data);
         }
 
         return $data;

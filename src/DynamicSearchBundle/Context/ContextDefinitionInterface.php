@@ -3,14 +3,8 @@
 namespace DynamicSearchBundle\Context;
 
 use DynamicSearchBundle\Exception\ContextConfigurationException;
-use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
-use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
-use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
-use DynamicSearchBundle\Provider\DataProviderInterface;
-use DynamicSearchBundle\Provider\IndexProviderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-interface ContextDataInterface
+interface ContextDefinitionInterface
 {
     /*
      * Index: Complete data indexing
@@ -68,6 +62,46 @@ interface ContextDataInterface
     public function getRuntimeValues();
 
     /**
+     * @param string $providerBehaviour
+     *
+     * @return array
+     */
+    public function getDataProviderOptions(string $providerBehaviour);
+
+    /**
+     * @return array
+     */
+    public function getIndexProviderOptions();
+
+    /**
+     * @return array
+     */
+    public function getResourceNormalizerOptions();
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return array
+     */
+    public function getOutputChannelDocumentNormalizerOptions(string $outputChannelName);
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return array
+     *
+     * @throws ContextConfigurationException
+     */
+    public function getOutputChannelOptions(string $outputChannelName);
+
+    /**
+     * @param string $outputChannelName
+     *
+     * @return array
+     */
+    public function getOutputChannelPaginatorOptions(string $outputChannelName);
+
+    /**
      * @return string
      */
     public function getDataProviderName();
@@ -81,44 +115,6 @@ interface ContextDataInterface
      * @return string
      */
     public function getResourceNormalizerName();
-
-    /**
-     * @param DataProviderInterface $dataProvider
-     * @param string                $providerBehaviour
-     *
-     * @return array
-     *
-     * @throws ContextConfigurationException
-     */
-    public function getDataProviderOptions(DataProviderInterface $dataProvider, string $providerBehaviour);
-
-    /**
-     * @param IndexProviderInterface $indexProvider
-     *
-     * @return array
-     *
-     * @throws ContextConfigurationException
-     */
-    public function getIndexProviderOptions(IndexProviderInterface $indexProvider);
-
-    /**
-     * @param ResourceNormalizerInterface $resourceNormalizer
-     *
-     * @return array
-     *
-     * @throws ContextConfigurationException
-     */
-    public function getResourceNormalizerOptions(ResourceNormalizerInterface $resourceNormalizer);
-
-    /**
-     * @param DocumentNormalizerInterface $documentNormalizer
-     * @param string                      $outputChannelName
-     *
-     * @return array
-     *
-     * @throws ContextConfigurationException
-     */
-    public function getOutputChannelDocumentNormalizerOptions(DocumentNormalizerInterface $documentNormalizer, string $outputChannelName);
 
     /**
      * @param string $outputChannelName
@@ -154,22 +150,4 @@ interface ContextDataInterface
      * @return string|null
      */
     public function getOutputChannelRuntimeOptionsBuilder(string $outputChannelName);
-
-    /**
-     * @param string                 $outputChannelName
-     * @param OutputChannelInterface $outputChannel
-     * @param OptionsResolver|null   $optionsResolver
-     *
-     * @return mixed
-     *
-     * @throws ContextConfigurationException
-     */
-    public function getOutputChannelOptions(string $outputChannelName, OutputChannelInterface $outputChannel, ?OptionsResolver $optionsResolver = null);
-
-    /**
-     * @param string $outputChannelName
-     *
-     * @return array
-     */
-    public function getOutputChannelPaginatorOptions(string $outputChannelName);
 }

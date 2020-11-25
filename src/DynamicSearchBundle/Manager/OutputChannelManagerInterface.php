@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Manager;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierActionInterface;
@@ -13,14 +13,14 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterfa
 interface OutputChannelManagerInterface
 {
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      * @param string               $type
      *
      * @return OutputChannelInterface|null
      *
      * @throws ProviderException
      */
-    public function getOutputChannel(ContextDataInterface $contextData, string $type);
+    public function getOutputChannel(ContextDefinitionInterface $contextDefinition, string $type);
 
     /**
      * @param string $provider

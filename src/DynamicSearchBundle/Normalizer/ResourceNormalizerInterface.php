@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Normalizer;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\NormalizerException;
 use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
@@ -13,7 +13,7 @@ interface ResourceNormalizerInterface
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver);
 
     /**
      * @param array $options
@@ -21,11 +21,11 @@ interface ResourceNormalizerInterface
     public function setOptions(array $options);
 
     /***
-     * @param ContextDataInterface       $contextData
+     * @param ContextDefinitionInterface       $contextDefinition
      * @param ResourceContainerInterface $resourceContainer
      *
      * @return array|NormalizedDataResourceInterface[]
      * @throws NormalizerException
      */
-    public function normalizeToResourceStack(ContextDataInterface $contextData, ResourceContainerInterface $resourceContainer): array;
+    public function normalizeToResourceStack(ContextDefinitionInterface $contextDefinition, ResourceContainerInterface $resourceContainer): array;
 }

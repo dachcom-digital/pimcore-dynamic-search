@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\OutputChannelRegistryInterface;
@@ -43,9 +43,9 @@ class OutputChannelManager implements OutputChannelManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getOutputChannel(ContextDataInterface $contextData, string $outputChannel)
+    public function getOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannel)
     {
-        $outputChannelServiceName = $contextData->getOutputChannelServiceName($outputChannel);
+        $outputChannelServiceName = $contextDefinition->getOutputChannelServiceName($outputChannel);
 
         // output channel is disabled by default.
         if ($outputChannelServiceName === null) {

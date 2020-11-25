@@ -2,14 +2,14 @@
 
 namespace DynamicSearchBundle\OutputChannel\Context;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 
 class OutputChannelContext implements OutputChannelContextInterface
 {
     /**
-     * @var ContextDataInterface
+     * @var ContextDefinitionInterface
      */
     protected $contextDefinition;
 
@@ -39,9 +39,9 @@ class OutputChannelContext implements OutputChannelContextInterface
     protected $outputChannelServiceName;
 
     /**
-     * @param ContextDataInterface $contextDefinition
+     * @param ContextDefinitionInterface $contextDefinition
      */
-    public function setContextDefinition(ContextDataInterface $contextDefinition)
+    public function setContextDefinition(ContextDefinitionInterface $contextDefinition)
     {
         $this->contextDefinition = $contextDefinition;
     }

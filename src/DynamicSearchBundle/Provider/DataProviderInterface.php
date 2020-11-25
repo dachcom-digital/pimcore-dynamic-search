@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Provider;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProcessCancelledException;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
@@ -17,40 +17,39 @@ interface DataProviderInterface extends ProviderInterface
 
     /**
      * @param OptionsResolver $resolver
-     * @param string          $providerBehaviour
      */
-    public function configureOptions(OptionsResolver $resolver, string $providerBehaviour);
+    public static function configureOptions(OptionsResolver $resolver);
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $resource
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param mixed                      $resource
      *
      * @return ProxyResourceInterface|null
      */
-    public function checkUntrustedResourceProxy(ContextDataInterface $contextData, $resource);
+    public function checkUntrustedResourceProxy(ContextDefinitionInterface $contextDefinition, $resource);
 
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $resource
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param mixed                      $resource
      *
      * @return bool
      */
-    public function validateUntrustedResource(ContextDataInterface $contextData, $resource);
+    public function validateUntrustedResource(ContextDefinitionInterface $contextDefinition, $resource);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      *
      * @throws ProviderException
      * @throws ProcessCancelledException
      */
-    public function provideAll(ContextDataInterface $contextData);
+    public function provideAll(ContextDefinitionInterface $contextDefinition);
 
     /**
-     * @param ContextDataInterface  $contextData
-     * @param ResourceMetaInterface $resourceMeta
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param ResourceMetaInterface      $resourceMeta
      *
      * @throws ProviderException
      * @throws ProcessCancelledException
      */
-    public function provideSingle(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta);
+    public function provideSingle(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta);
 }

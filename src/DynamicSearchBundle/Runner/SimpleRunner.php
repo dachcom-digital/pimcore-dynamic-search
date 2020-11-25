@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Runner;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Processor\ResourceDeletionProcessorInterface;
@@ -46,7 +46,7 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
      */
     public function runInsert(string $contextName, $resource)
     {
-        $this->runModification($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT, $resource);
+        $this->runModification($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT, $resource);
     }
 
     /**
@@ -54,7 +54,7 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
      */
     public function runUpdate(string $contextName, $resource)
     {
-        $this->runModification($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_UPDATE, $resource);
+        $this->runModification($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE, $resource);
     }
 
     /**
@@ -62,7 +62,7 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
      */
     public function runDelete(string $contextName, $resource)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INSERT);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT);
 
         $this->resourceDeletionProcessor->process($contextDefinition, $resource);
     }

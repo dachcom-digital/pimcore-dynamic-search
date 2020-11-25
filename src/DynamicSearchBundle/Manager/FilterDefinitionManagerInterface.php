@@ -2,17 +2,17 @@
 
 namespace DynamicSearchBundle\Manager;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Filter\Definition\FilterDefinition;
 use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 
 interface FilterDefinitionManagerInterface
 {
     /**
-     * @param ContextDataInterface            $contextData
+     * @param ContextDefinitionInterface      $contextDefinition
      * @param OutputChannelAllocatorInterface $outputChannelAllocator
      *
      * @return FilterDefinition|null
      */
-    public function generateFilterDefinition(ContextDataInterface $contextData, OutputChannelAllocatorInterface $outputChannelAllocator);
+    public function generateFilterDefinition(ContextDefinitionInterface $contextDefinition, OutputChannelAllocatorInterface $outputChannelAllocator);
 }

@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Runner;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
@@ -42,7 +42,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
      */
     public function runFullContextCreation()
     {
-        $contextDefinitions = $this->configuration->getContextDefinitions(ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX);
+        $contextDefinitions = $this->contextDefinitionBuilder->buildContextDefinitionStack(ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
         if (count($contextDefinitions) === 0) {
             throw new RuntimeException('No context configuration found. Please add them to the "dynamic_search.context" configuration node');
@@ -64,7 +64,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
      */
     public function runSingleContextCreation(string $contextName)
     {
-        $contextDefinition = $this->setupContextDefinition($contextName, ContextDataInterface::CONTEXT_DISPATCH_TYPE_INDEX);
+        $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
         $this->queueManager->clearQueue();
 
@@ -76,9 +76,9 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     }
 
     /**
-     * @param ContextDataInterface $contextDefinition
+     * @param ContextDefinitionInterface $contextDefinition
      */
-    protected function dispatchContext(ContextDataInterface $contextDefinition)
+    protected function dispatchContext(ContextDefinitionInterface $contextDefinition)
     {
         $this->validProcessRunning = true;
 

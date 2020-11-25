@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Factory;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Paginator\Paginator;
 
@@ -12,7 +12,7 @@ interface PaginatorFactoryInterface
      * @param mixed                            $adapterData
      * @param string                           $adapterClass
      * @param string                           $outputChannelName
-     * @param ContextDataInterface             $contextData
+     * @param ContextDefinitionInterface             $contextDefinition
      * @param DocumentNormalizerInterface|null $documentNormalizer
      *
      * @return Paginator
@@ -21,7 +21,7 @@ interface PaginatorFactoryInterface
         $adapterData,
         string $adapterClass,
         string $outputChannelName,
-        ContextDataInterface $contextData,
+        ContextDefinitionInterface $contextDefinition,
         ?DocumentNormalizerInterface $documentNormalizer
     );
 }

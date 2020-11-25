@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Manager;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Filter\FilterInterface;
 use DynamicSearchBundle\Index\IndexFieldInterface;
@@ -11,27 +11,27 @@ use DynamicSearchBundle\Provider\IndexProviderInterface;
 interface IndexManagerInterface
 {
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      *
      * @return IndexProviderInterface
      *
      * @throws ProviderException
      */
-    public function getIndexProvider(ContextDataInterface $contextData);
+    public function getIndexProvider(ContextDefinitionInterface $contextDefinition);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      * @param string               $identifier
      *
      * @return IndexFieldInterface|null
      */
-    public function getIndexField(ContextDataInterface $contextData, string $identifier);
+    public function getIndexField(ContextDefinitionInterface $contextDefinition, string $identifier);
 
     /**
-     * @param ContextDataInterface $contextData
+     * @param ContextDefinitionInterface $contextDefinition
      * @param string               $identifier
      *
      * @return FilterInterface|null
      */
-    public function getFilter(ContextDataInterface $contextData, string $identifier);
+    public function getFilter(ContextDefinitionInterface $contextDefinition, string $identifier);
 }

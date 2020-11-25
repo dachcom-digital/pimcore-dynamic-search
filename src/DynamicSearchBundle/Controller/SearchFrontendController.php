@@ -260,7 +260,7 @@ class SearchFrontendController extends FrontendController
      */
     protected function getOutputChannelConfig(string $contextName, string $outputChannelName)
     {
-        $contextConfig = $this->configuration->get('context');
+        $contextConfig = $this->getParameter('dynamic_search.context.full_configuration');
 
         if (!isset($contextConfig[$contextName])) {
             return null;

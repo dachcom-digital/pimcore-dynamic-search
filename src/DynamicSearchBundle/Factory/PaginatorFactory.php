@@ -2,7 +2,7 @@
 
 namespace DynamicSearchBundle\Factory;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Paginator\AdapterInterface;
 use DynamicSearchBundle\Paginator\PaginatorInterface;
@@ -29,14 +29,14 @@ class PaginatorFactory implements PaginatorFactoryInterface
         $adapterData,
         string $adapterClass,
         string $outputChannelName,
-        ContextDataInterface $contextData,
+        ContextDefinitionInterface $contextDefinition,
         ?DocumentNormalizerInterface $documentNormalizer
     ) {
         $paginatorClassName = $this->paginatorClass;
 
         /** @var AdapterInterface $adapter */
         $adapter = new $adapterClass($adapterData);
-        $adapter->setContext($contextData);
+        $adapter->setContext($contextDefinition);
         $adapter->setOutputChannelName($outputChannelName);
         $adapter->setDocumentNormalizer($documentNormalizer);
 

@@ -2,26 +2,26 @@
 
 namespace DynamicSearchBundle\Processor;
 
-use DynamicSearchBundle\Context\ContextDataInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 interface ResourceModificationProcessorInterface
 {
     /**
-     * @param ContextDataInterface $contextData
-     * @param mixed                $resource
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param mixed                      $resource
      *
      * @throws RuntimeException
      */
-    public function process(ContextDataInterface $contextData, $resource);
+    public function process(ContextDefinitionInterface $contextDefinition, $resource);
 
     /**
-     * @param ContextDataInterface  $contextData
-     * @param ResourceMetaInterface $resourceMeta
-     * @param mixed                 $resource
+     * @param ContextDefinitionInterface $contextDefinition
+     * @param ResourceMetaInterface      $resourceMeta
+     * @param mixed                      $resource
      *
      * @throws RuntimeException
      */
-    public function processByResourceMeta(ContextDataInterface $contextData, ResourceMetaInterface $resourceMeta, $resource);
+    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta, $resource);
 }

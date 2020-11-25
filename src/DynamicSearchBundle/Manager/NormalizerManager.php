@@ -2,43 +2,31 @@
 
 namespace DynamicSearchBundle\Manager;
 
-use DynamicSearchBundle\Configuration\ConfigurationInterface;
-use DynamicSearchBundle\Context\ContextDataInterface;
-use DynamicSearchBundle\Exception\ContextConfigurationException;
-use DynamicSearchBundle\Exception\NormalizerException;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Registry\ResourceNormalizerRegistryInterface;
 
 class NormalizerManager implements NormalizerManagerInterface
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
-
     /**
      * @var ResourceNormalizerRegistryInterface
      */
     protected $resourceNormalizerRegistry;
 
     /**
-     * @param ConfigurationInterface              $configuration
      * @param ResourceNormalizerRegistryInterface $resourceNormalizerRegistry
      */
-    public function __construct(
-        ConfigurationInterface $configuration,
-        ResourceNormalizerRegistryInterface $resourceNormalizerRegistry
-    ) {
-        $this->configuration = $configuration;
+    public function __construct(ResourceNormalizerRegistryInterface $resourceNormalizerRegistry)
+    {
         $this->resourceNormalizerRegistry = $resourceNormalizerRegistry;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getResourceNormalizer(ContextDataInterface $contextData)
+    public function getResourceNormalizer(ContextDefinitionInterface $contextDefinition)
     {
-        $normalizerName = $contextData->getResourceNormalizerName();
-        $dataProviderName = $contextData->getDataProviderName();
+        $normalizerName = $contextDefinition->getResourceNormalizerName();
+        $dataProviderName = $contextDefinition->getDataProviderName();
 
         if (is_null($normalizerName)) {
             return null;
@@ -53,14 +41,7 @@ class NormalizerManager implements NormalizerManagerInterface
         }
 
         $normalizer = $this->resourceNormalizerRegistry->getResourceNormalizerForDataProvider($dataProviderName, $normalizerName);
-
-        try {
-            $resourceOptions = $contextData->getResourceNormalizerOptions($normalizer);
-        } catch (ContextConfigurationException $e) {
-            throw new NormalizerException($normalizerName, $e->getMessage(), $e);
-        }
-
-        $normalizer->setOptions($resourceOptions);
+        $normalizer->setOptions($contextDefinition->getResourceNormalizerOptions());
 
         return $normalizer;
     }
@@ -68,10 +49,10 @@ class NormalizerManager implements NormalizerManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getDocumentNormalizerForOutputChannel(ContextDataInterface $contextData, string $outputChannelName)
+    public function getDocumentNormalizerForOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannelName)
     {
-        $normalizerName = $contextData->getOutputChannelNormalizerName($outputChannelName);
-        $indexProviderName = $contextData->getIndexProviderName();
+        $normalizerName = $contextDefinition->getOutputChannelNormalizerName($outputChannelName);
+        $indexProviderName = $contextDefinition->getIndexProviderName();
 
         if (is_null($normalizerName)) {
             return null;
@@ -86,14 +67,7 @@ class NormalizerManager implements NormalizerManagerInterface
         }
 
         $normalizer = $this->resourceNormalizerRegistry->getDocumentNormalizerForIndexProvider($indexProviderName, $normalizerName);
-
-        try {
-            $resourceOptions = $contextData->getOutputChannelDocumentNormalizerOptions($normalizer, $outputChannelName);
-        } catch (ContextConfigurationException $e) {
-            throw new NormalizerException($normalizerName, $e->getMessage(), $e);
-        }
-
-        $normalizer->setOptions($resourceOptions);
+        $normalizer->setOptions($contextDefinition->getOutputChannelDocumentNormalizerOptions($outputChannelName));
 
         return $normalizer;
     }
