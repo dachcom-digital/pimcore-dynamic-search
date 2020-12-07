@@ -111,12 +111,5 @@ jobs:
 
             -   name: Tests
                 run: |
-                    echo "127.0.0.1 test-domain1.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain2.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain3.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain4.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain5.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain6.test" | sudo tee -a /etc/hosts
-                    echo "127.0.0.1 test-domain7.test" | sudo tee -a /etc/hosts
                     bin/console cache:warmup --env=test
                     vendor/bin/codecept run --env github -c ${{ env.GITHUB_WORKSPACE }}
