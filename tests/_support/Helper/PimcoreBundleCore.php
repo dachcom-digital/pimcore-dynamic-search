@@ -4,7 +4,6 @@ namespace DachcomBundle\Test\Helper;
 
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
-use Pimcore\Tool\Console;
 
 class PimcoreBundleCore extends Module
 {

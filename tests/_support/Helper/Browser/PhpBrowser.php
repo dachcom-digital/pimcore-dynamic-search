@@ -4,7 +4,6 @@ namespace DachcomBundle\Test\Helper\Browser;
 
 use Codeception\Module;
 use Codeception\Lib;
-use Codeception\Util\Uri;
 use Codeception\Exception\ModuleException;
 use DachcomBundle\Test\Helper\PimcoreCore;
 use DachcomBundle\Test\Helper\PimcoreUser;

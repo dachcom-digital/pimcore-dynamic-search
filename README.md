@@ -8,7 +8,7 @@
 [![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat-square)](#)
 
 ## Requirements
-* Pimcore >= 6.3
+* Pimcore >= 6.6
 * Symfony >= 4.4
 
 ## Introduction
@@ -27,7 +27,7 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search" : "~0.5.0"
+    "dachcom-digital/dynamic-search" : "~0.7.0"
 }
 ```
 
