@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Runner;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\RuntimeException;
+use DynamicSearchBundle\Exception\SilentException;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Service\LongProcessServiceInterface;
@@ -19,11 +20,6 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
      * @var LongProcessServiceInterface
      */
     protected $longProcessService;
-
-    /**
-     * @var bool
-     */
-    protected $validProcessRunning;
 
     /**
      * @param QueueManagerInterface       $queueManager
@@ -49,7 +45,6 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         }
 
         $this->queueManager->clearQueue();
-
         $this->longProcessService->boot();
 
         foreach ($contextDefinitions as $contextDefinition) {
@@ -67,7 +62,6 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
         $this->queueManager->clearQueue();
-
         $this->longProcessService->boot();
 
         $this->dispatchContext($contextDefinition);
@@ -77,11 +71,10 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
 
     /**
      * @param ContextDefinitionInterface $contextDefinition
+     * @throws SilentException
      */
     protected function dispatchContext(ContextDefinitionInterface $contextDefinition)
     {
-        $this->validProcessRunning = true;
-
         $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);
 
         if ($providers === null) {
@@ -101,7 +94,6 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         $dataProvider = $providers['dataProvider'];
 
         $this->callSaveMethod($contextDefinition, $dataProvider, 'provideAll', [$contextDefinition], $providers);
-
         $this->coolDownProvider($contextDefinition, $providers);
     }
 }

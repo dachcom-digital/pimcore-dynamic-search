@@ -3,10 +3,10 @@
 namespace DynamicSearchBundle\Queue;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
+use DynamicSearchBundle\Exception\SilentException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
-use DynamicSearchBundle\Queue\Data\Envelope;
 use DynamicSearchBundle\Runner\ResourceRunnerInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
 
@@ -98,6 +98,8 @@ class DataProcessor implements DataProcessorInterface
 
                 try {
                     $this->dispatchResourceRunner($contextName, $dispatchType, $dispatchEnvelopes);
+                } catch (SilentException $e) {
+                    // do not raise errors in silent exception. this error has been logged already in the right channel.
                 } catch (\Throwable $e) {
                     $this->logger->error(
                         sprintf('Error dispatch resource runner (%s). Message was: %s', $dispatchType, $e->getMessage()),
@@ -113,17 +115,15 @@ class DataProcessor implements DataProcessorInterface
      * @param string $contextName
      * @param string $dispatchType
      * @param array  $dispatchEnvelopes
+     *
+     * @throws SilentException
      */
     protected function dispatchResourceRunner(string $contextName, string $dispatchType, array $dispatchEnvelopes)
     {
         $resourceMetaStack = [];
         foreach ($dispatchEnvelopes as $envelopeData) {
-            /** @var Envelope $envelope */
-            $envelope = $envelopeData['envelope'];
             /** @var ResourceMetaInterface $resourceMeta */
             $resourceMeta = $envelopeData['resourceMeta'];
-            $envelopeOptions = $envelope->getOptions();
-
             $resourceMetaStack[] = $resourceMeta;
         }
 

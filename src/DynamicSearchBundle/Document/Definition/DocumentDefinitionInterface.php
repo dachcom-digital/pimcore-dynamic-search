@@ -28,6 +28,7 @@ interface DocumentDefinitionInterface
      * @param array $definition
      *
      * @return $this
+     * @throws \Exception
      */
     public function addOptionFieldDefinition(array $definition);
 
@@ -40,6 +41,7 @@ interface DocumentDefinitionInterface
      * @param array $definition
      *
      * @return $this
+     * @throws \Exception
      */
     public function addSimpleDocumentFieldDefinition(array $definition);
 
@@ -48,6 +50,8 @@ interface DocumentDefinitionInterface
      * @param \Closure $closure
      *
      * @return $this
+     * @throws \Exception
+     *
      */
     public function addPreProcessFieldDefinition(array $preProcessTransformer, \Closure $closure);
 

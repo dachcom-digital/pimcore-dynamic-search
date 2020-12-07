@@ -9,6 +9,7 @@ services:
             - [setContextDefinitionBuilder, ['@DynamicSearchBundle\Builder\ContextDefinitionBuilder']]
             - [setDataManager, ['@DynamicSearchBundle\Manager\DataManager']]
             - [setIndexManager, ['@DynamicSearchBundle\Manager\IndexManager']]
+            - [setIndexDocumentGenerator, ['@DynamicSearchBundle\Generator\IndexDocumentGenerator']]
 
     DynamicSearchBundle\Runner\ContextRunnerInterface: '@DynamicSearchBundle\Runner\ContextRunner'
     DynamicSearchBundle\Runner\ContextRunner:

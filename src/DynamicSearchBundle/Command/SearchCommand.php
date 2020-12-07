@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\Command;
 
 use DynamicSearchBundle\Command\Traits\SignalWatchTrait;
+use DynamicSearchBundle\Exception\SilentException;
 use DynamicSearchBundle\Runner\ContextRunnerInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
 use Symfony\Component\Console\Command\Command;
@@ -87,6 +88,8 @@ class SearchCommand extends Command
             } else {
                 $this->contextRunner->runSingleContextCreation($input->getOption('context'));
             }
+        } catch (SilentException $e) {
+            // do not raise errors in silent exception. this error has been logged already in the right channel.
         } catch (\Throwable $e) {
             $output->writeln(sprintf('<error>%s. (File: %s, Line: %s)</error>', $e->getMessage(), $e->getFile(), $e->getLine()));
         }

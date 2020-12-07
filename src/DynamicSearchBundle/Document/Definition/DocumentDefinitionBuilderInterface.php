@@ -19,6 +19,7 @@ interface DocumentDefinitionBuilderInterface
      * @param array                       $normalizerOptions
      *
      * @return DocumentDefinitionInterface
+     * @throws \Exception
      */
     public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions);
 }

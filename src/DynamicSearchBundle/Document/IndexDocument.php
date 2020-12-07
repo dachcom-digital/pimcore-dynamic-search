@@ -9,7 +9,7 @@ use DynamicSearchBundle\Resource\Container\OptionFieldContainerInterface;
 class IndexDocument
 {
     /**
-     * @var ResourceMetaInterface
+     * @var ResourceMetaInterface|null
      */
     protected $resourceMeta;
 
@@ -29,10 +29,10 @@ class IndexDocument
     protected $indexFields;
 
     /**
-     * @param ResourceMetaInterface $resourceMeta
-     * @param array                 $documentConfiguration
+     * @param ResourceMetaInterface|null $resourceMeta
+     * @param array                      $documentConfiguration
      */
-    public function __construct(ResourceMetaInterface $resourceMeta, array $documentConfiguration = [])
+    public function __construct(?ResourceMetaInterface $resourceMeta, array $documentConfiguration = [])
     {
         $this->resourceMeta = $resourceMeta;
         $this->documentConfiguration = $documentConfiguration;
@@ -43,7 +43,7 @@ class IndexDocument
      */
     public function getDocumentId()
     {
-        return $this->resourceMeta->getDocumentId();
+        return $this->resourceMeta instanceof ResourceMetaInterface ? $this->resourceMeta->getDocumentId() : null;
     }
 
     /**

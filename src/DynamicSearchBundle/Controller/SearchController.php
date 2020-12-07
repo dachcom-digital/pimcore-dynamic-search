@@ -55,7 +55,7 @@ class SearchController extends Controller
             $outputChannelResult = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, $outputChannelName);
         } catch (\Throwable $e) {
             return $this->json(
-                ['error' => sprintf('Error while loading auto complete output channel for "%s" context. Error was: %s', $contextName, $e->getMessage())],
+                ['error' => sprintf('Error while loading json based output channel for "%s" context. Error was: %s', $contextName, $e->getMessage())],
                 500,
                 [
                     'file' => $e->getFile(),

@@ -36,7 +36,27 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function generateDocumentDefinition(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta)
+    public function generateDocumentDefinitionForContext(ContextDefinitionInterface $contextDefinition, array $definitionOptions = [])
+    {
+        try {
+            $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolveForContext($contextDefinition->getName());
+        } catch (DefinitionNotFoundException $e) {
+            return null;
+        }
+
+        $documentDefinition = new DocumentDefinition($contextDefinition->getResourceNormalizerName(), $definitionOptions);
+
+        foreach ($documentDefinitionBuilderStack as $documentDefinitionBuilder) {
+            $documentDefinitionBuilder->buildDefinition($documentDefinition, []);
+        }
+
+        return $documentDefinition;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateDocumentDefinition(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta, array $definitionOptions = [])
     {
         try {
             $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolve($contextDefinition->getName(), $resourceMeta);
@@ -44,7 +64,7 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
             return null;
         }
 
-        $documentDefinition = new DocumentDefinition($contextDefinition->getResourceNormalizerName());
+        $documentDefinition = new DocumentDefinition($contextDefinition->getResourceNormalizerName(), $definitionOptions);
 
         foreach ($documentDefinitionBuilderStack as $documentDefinitionBuilder) {
             $documentDefinitionBuilder->buildDefinition($documentDefinition, $resourceMeta->getNormalizerOptions());

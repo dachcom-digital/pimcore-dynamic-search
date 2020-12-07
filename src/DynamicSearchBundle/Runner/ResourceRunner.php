@@ -38,7 +38,6 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
         $dataProvider = $providers['dataProvider'];
 
         $this->callSaveMethod($contextDefinition, $dataProvider, 'provideSingle', [$contextDefinition, $resourceMeta], $providers);
-
         $this->coolDownProvider($contextDefinition, $providers);
     }
 
@@ -78,7 +77,6 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
         $dataProvider = $providers['dataProvider'];
 
         $this->callSaveMethod($contextDefinition, $dataProvider, 'provideSingle', [$contextDefinition, $resourceMeta], $providers);
-
         $this->coolDownProvider($contextDefinition, $providers);
     }
 
@@ -116,9 +114,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
         }
 
         $this->warmUpProvider($contextDefinition, [$indexProvider]);
-
         $this->callSaveMethod($contextDefinition, $this->resourceDeletionProcessor, 'processByResourceMeta', [$contextDefinition, $resourceMeta], [$indexProvider]);
-
         $this->coolDownProvider($contextDefinition, [$indexProvider]);
     }
 

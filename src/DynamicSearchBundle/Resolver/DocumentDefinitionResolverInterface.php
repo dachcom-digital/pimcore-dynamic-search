@@ -10,6 +10,15 @@ interface DocumentDefinitionResolverInterface
 {
     /**
      * @param string                $contextName
+     *
+     * @return DocumentDefinitionBuilderInterface[]
+     *
+     * @throws DefinitionNotFoundException
+     */
+    public function resolveForContext(string $contextName);
+
+    /**
+     * @param string                $contextName
      * @param ResourceMetaInterface $resourceMeta
      *
      * @return DocumentDefinitionBuilderInterface[]

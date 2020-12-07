@@ -35,7 +35,7 @@ class OutputChannelModifierEventDispatcher
     }
 
     /**
-     * Action can be dispatched several times and are optional.
+     * Action can be dispatched several times and are optional
      *
      * @param string $action
      * @param array  $options
@@ -57,7 +57,7 @@ class OutputChannelModifierEventDispatcher
     }
 
     /**
-     * Filters can be dispatched only once an at least one filter and is required.
+     * Filters can be dispatched only once and at least one filter is required
      *
      * @param string $filterService
      * @param array  $options

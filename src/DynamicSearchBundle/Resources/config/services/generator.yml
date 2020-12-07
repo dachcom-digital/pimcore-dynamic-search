@@ -1,0 +1,9 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Generator\IndexDocumentGeneratorInterface: '@DynamicSearchBundle\Generator\IndexDocumentGenerator'
+    DynamicSearchBundle\Generator\IndexDocumentGenerator: ~

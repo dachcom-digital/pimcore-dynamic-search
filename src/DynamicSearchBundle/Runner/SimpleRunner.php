@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\Runner;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
+use DynamicSearchBundle\Exception\SilentException;
 use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Processor\ResourceDeletionProcessorInterface;
@@ -71,6 +72,8 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
      * @param string $contextName
      * @param string $contextDispatchType
      * @param mixed  $resource
+     *
+     * @throws SilentException
      */
     protected function runModification(string $contextName, string $contextDispatchType, $resource)
     {
