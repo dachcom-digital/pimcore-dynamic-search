@@ -63,6 +63,7 @@ jobs:
                 run: |
                     chmod +x tests/_etc/scripts/install
                     ./tests/_etc/scripts/install
+                    sed -i 's,\("dachcom-digital\/dynamic-search"\): "\(.*\)",\1: "dev-master",g' composer.json
 
             -   name: Install PHP
                 uses: shivammathur/setup-php@v2
