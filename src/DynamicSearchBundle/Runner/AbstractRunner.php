@@ -5,7 +5,6 @@ namespace DynamicSearchBundle\Runner;
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
-use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Exception\ProcessCancelledException;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Exception\RuntimeException;
