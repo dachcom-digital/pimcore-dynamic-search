@@ -9,3 +9,5 @@ Just click the "update" button or execute the migration command to finish the bu
 #### Update from Version 0.x to Version 1.0.0
 - **[IMPROVEMENT|BC BREAK]**: Move all Configuration to Compiler [#18](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/18)
 - **[IMPROVEMENT|BC BREAK]**: Implement Output Workflow Condition [#19](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/19)
+- **[BC BREAK]**: translation `dynamic_search.ui.we-found` and `dynamic_search.ui.items-for` has been removed
+- **[BC BREAK]**: new translation keys added: `dynamic_search.ui.result_subline` (args: `%badge%` and `%query%`), `dynamic_search.ui.no_items` (args: `%count%`), `dynamic_search.ui.items` (args: `%count%`), `dynamic_search.ui.no_item` (args: `%count%`)

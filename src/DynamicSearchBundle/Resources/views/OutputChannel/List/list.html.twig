@@ -12,11 +12,12 @@
 
         {% if search_active == true %}
             {% if total_count > 0 %}
-                <small class="mb-4 d-block">{{ 'dynamic_search.ui.we-found'|trans }}
-                    <span class="badge badge-dark">
-                                {% transchoice total_count with {'%count%': total_count} %}dynamic_search.ui.items-for{% endtranschoice %}
-                                </span>
-                    <em>"{{ user_query }}"</em></small>
+                {% set badge_label = '{0} dynamic_search.ui.no_items|{1} dynamic_search.ui.item|]1,Inf[ dynamic_search.ui.items'|trans({'%count%': total_count}) %}
+                {% set badge_markup = '<span class="badge badge-dark">%s</span>'|format(badge_label) %}
+                {% set query_markup = '<em>%s</em>'|format(user_query) %}
+                <small class="mb-4 d-block">
+                    {{ 'dynamic_search.ui.result_subline'|trans({'%badge%' : badge_markup, '%query%' : query_markup})|raw }}
+                </small>
             {% endif %}
             {% include '@DynamicSearch/Common/List/_wrapper.html.twig' %}
         {% endif %}
