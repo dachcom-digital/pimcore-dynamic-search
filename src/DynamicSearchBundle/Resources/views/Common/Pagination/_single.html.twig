@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless %}
     {% if last_page > 1 and current_page < last_page %}
         <nav>
             <ul class="pagination dynamic-search-pagination-simple">
@@ -8,4 +8,4 @@
             </ul>
         </nav>
     {% endif %}
-{% endspaceless %}
+{% endapply %}

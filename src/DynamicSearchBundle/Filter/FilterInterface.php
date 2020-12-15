@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Filter;
 
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
+use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface FilterInterface
@@ -48,18 +49,18 @@ interface FilterInterface
     public function enrichQuery($query);
 
     /**
-     * @param mixed $result
+     * @param RawResultInterface $rawResult
      *
      * @return mixed
      */
-    public function findFilterValueInResult($result);
+    public function findFilterValueInResult(RawResultInterface $rawResult);
 
     /**
-     * @param mixed $filterValues
-     * @param mixed $result
-     * @param mixed $query
+     * @param RawResultInterface $rawResult
+     * @param mixed              $filterValues
+     * @param mixed              $query
      *
      * @return mixed
      */
-    public function buildViewVars($filterValues, $result, $query);
+    public function buildViewVars(RawResultInterface $rawResult, $filterValues, $query);
 }

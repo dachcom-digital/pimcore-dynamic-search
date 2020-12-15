@@ -21,6 +21,9 @@ use DynamicSearchBundle\OutputChannel\MultiOutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContext;
 use DynamicSearchBundle\OutputChannel\Context\SubOutputChannelContext;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
+use DynamicSearchBundle\OutputChannel\Query\MultiSearchContainer;
+use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
+use DynamicSearchBundle\OutputChannel\Query\SearchContainer;
 use DynamicSearchBundle\OutputChannel\Result\MultiOutputChannelResult;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelArrayResult;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResult;
@@ -135,16 +138,32 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $filterStackWorker = new FilterStackWorker($outputChannelContext, $this->filterDefinitionManager, $this->indexManager);
         $filterServiceStack = $filterStackWorker->generateFilterServiceStack($outputChannelContext, $eventDispatcher);
 
+        $outputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
         $outputChannelService = $this->prepareOutputChannelService($eventDispatcher, $outputChannelContext);
 
-        $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $outputChannelService->getQuery());
+        try {
+            $rawQuery = $outputChannelService->getQuery();
+        } catch (\Throwable $e) {
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf('Error while calling query() on output channel: %s', $e->getMessage())
+            );
+        }
 
-        $result = $outputChannelService->getResult($query);
-        $hitCount = $outputChannelService->getHitCount($result);
+        $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $rawQuery);
 
-        $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
+        try {
+            $searchContainer = $outputChannelService->getResult(new SearchContainer($outputChannelName, $query));
+        } catch (\Throwable $e) {
+            throw new OutputChannelException(
+                $outputChannelName,
+                sprintf('Error while calling getResult() on output channel: %s', $e->getMessage())
+            );
+        }
 
-        return $this->buildResult($contextDefinition, $outputChannelContext, $filterBlocks, $hitCount, $result);
+        $filterBlocks = $filterStackWorker->buildStackViewVars($searchContainer, $filterServiceStack);
+
+        return $this->buildResult($contextDefinition, $outputChannelContext, $searchContainer->getRawResult(), $filterBlocks);
     }
 
     /**
@@ -199,7 +218,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $outputChannelService = $this->prepareOutputChannelService($eventDispatcher, $subOutputChannelContext);
 
-            $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $outputChannelService->getQuery());
+            try {
+                $query = $filterStackWorker->enrichStackQuery($filterServiceStack, $outputChannelService->getQuery());
+            } catch (\Throwable $e) {
+                throw new OutputChannelException(
+                    $parentOutputChannelName,
+                    sprintf('Error while calling query() on sub output channel "%s": %s', $subOutputChannelIdentifier, $e->getMessage())
+                );
+            }
 
             $filters[$subOutputChannelIdentifier] = [$filterStackWorker, $filterServiceStack];
             $queries[$subOutputChannelIdentifier] = $query;
@@ -210,16 +236,18 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $eventDispatcher->setOutputChannelContext($outputChannelContext);
 
         // execute all sub query
+        $multiSearchContainer = [];
         foreach ($outputChannelBlocks as $subOutputChannelIdentifier => $block) {
-            $query = $queries[$subOutputChannelIdentifier];
-            $multiOutputChannelService->addSubQuery($subOutputChannelIdentifier, $query);
+            $multiSearchContainer[] = new SearchContainer($subOutputChannelIdentifier, $queries[$subOutputChannelIdentifier]);
         }
 
         // fetch result of each sub query
         $results = [];
-        foreach ($multiOutputChannelService->getMultiSearchResult() as $subOutputChannelIdentifier => $result) {
+        foreach ($multiOutputChannelService->getMultiSearchResult(new MultiSearchContainer($multiSearchContainer)) as $searchContainer) {
+
+            $subOutputChannelIdentifier = $searchContainer->getIdentifier();
+
             $filter = $filters[$subOutputChannelIdentifier];
-            $query = $queries[$subOutputChannelIdentifier];
             /** @var SubOutputChannelContextInterface $subOutputChannelContext */
             $subOutputChannelContext = $subContexts[$subOutputChannelIdentifier];
 
@@ -230,16 +258,14 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
                 );
             }
 
-            $hitCount = $multiOutputChannelService->getHitCount($result);
-
             /** @var FilterStackWorker $filterStackWorker */
             $filterStackWorker = $filter[0];
             /** @var array $filterServiceStack */
             $filterServiceStack = $filter[1];
 
-            $filterBlocks = $filterStackWorker->buildStackViewVars($filterServiceStack, $result, $query);
+            $filterBlocks = $filterStackWorker->buildStackViewVars($searchContainer, $filterServiceStack);
 
-            $results[$subOutputChannelIdentifier] = $this->buildResult($contextDefinition, $subOutputChannelContext, $filterBlocks, $hitCount, $result);
+            $results[$subOutputChannelIdentifier] = $this->buildResult($contextDefinition, $subOutputChannelContext, $searchContainer->getRawResult(), $filterBlocks);
         }
 
         return new MultiOutputChannelResult($results, $outputChannelContext->getRuntimeQueryProvider());
@@ -248,9 +274,8 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     /**
      * @param ContextDefinitionInterface    $contextDefinition
      * @param OutputChannelContextInterface $outputChannelContext
+     * @param RawResultInterface            $rawResult
      * @param array                         $filterBlocks
-     * @param int                           $hitCount
-     * @param mixed                         $result
      *
      * @return OutputChannelArrayResult|OutputChannelPaginatorResult
      *
@@ -259,9 +284,8 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
     protected function buildResult(
         ContextDefinitionInterface $contextDefinition,
         OutputChannelContextInterface $outputChannelContext,
-        array $filterBlocks,
-        int $hitCount,
-        $result
+        RawResultInterface $rawResult,
+        array $filterBlocks
     ) {
         $outputChannelName = $outputChannelContext->getOutputChannelAllocator()->getOutputChannelName();
         $runtimeOptions = $outputChannelContext->getRuntimeOptions();
@@ -272,9 +296,9 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         if ($paginatorOptions['enabled'] === true) {
             $paginator = $this->paginatorFactory->create(
-                $result,
                 $paginatorOptions['adapter_class'],
                 $outputChannelName,
+                $rawResult,
                 $contextDefinition,
                 $documentNormalizer
             );
@@ -284,7 +308,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
             $paginatorOutputResult = new OutputChannelPaginatorResult(
                 $contextDefinition->getName(),
-                $hitCount,
+                $rawResult->getHitCount(),
                 $outputChannelContext->getOutputChannelAllocator(),
                 $filterBlocks,
                 $runtimeOptions,
@@ -296,9 +320,10 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             return $paginatorOutputResult;
         }
 
+        $result = [];
         if ($documentNormalizer instanceof DocumentNormalizerInterface) {
             try {
-                $result = $documentNormalizer->normalize($contextDefinition, $outputChannelName, $result);
+                $result = $documentNormalizer->normalize($contextDefinition, $outputChannelName, $rawResult->getData());
             } catch (\Exception $e) {
                 throw new OutputChannelException($outputChannelName, $e->getMessage(), $e);
             }
@@ -306,7 +331,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         $arrayOutputResult = new OutputChannelArrayResult(
             $contextDefinition->getName(),
-            $hitCount,
+            $rawResult->getHitCount(),
             $outputChannelContext->getOutputChannelAllocator(),
             $filterBlocks,
             $runtimeOptions,

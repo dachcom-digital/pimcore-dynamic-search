@@ -2,16 +2,14 @@
 
 namespace DynamicSearchBundle\OutputChannel;
 
+use DynamicSearchBundle\OutputChannel\Query\MultiSearchContainerInterface;
+
 interface MultiOutputChannelInterface
 {
     /**
-     * @param string $subOutputChannelIdentifier
-     * @param mixed  $subQuery
+     * @param MultiSearchContainerInterface $multiSearchContainer
+     *
+     * @return MultiSearchContainerInterface
      */
-    public function addSubQuery(string $subOutputChannelIdentifier, $subQuery);
-
-    /**
-     * @return array
-     */
-    public function getMultiSearchResult(): array;
+    public function getMultiSearchResult(MultiSearchContainerInterface $multiSearchContainer): MultiSearchContainerInterface;
 }

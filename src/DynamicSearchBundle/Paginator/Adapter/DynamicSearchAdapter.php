@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Paginator\Adapter;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
+use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
 use DynamicSearchBundle\Paginator\AdapterInterface;
 
 class DynamicSearchAdapter implements AdapterInterface
@@ -24,22 +25,16 @@ class DynamicSearchAdapter implements AdapterInterface
     protected $documentNormalizer;
 
     /**
-     * @var array
+     * @var RawResultInterface
      */
-    protected $array = null;
+    protected $rawResult;
 
     /**
-     * @var int
+     * @param RawResultInterface $rawResult
      */
-    protected $count = null;
-
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(RawResultInterface $rawResult)
     {
-        $this->array = $data;
-        $this->count = count($this->array);
+        $this->rawResult = $rawResult;
     }
 
     /**
@@ -76,7 +71,13 @@ class DynamicSearchAdapter implements AdapterInterface
      */
     public function getItems($offset, $itemCountPerPage)
     {
-        $data = array_slice($this->array, $offset, $itemCountPerPage);
+        $data = $this->rawResult->getData();
+
+        if (!is_array($data)) {
+            return [];
+        }
+
+        $data = count($data) > $offset ? array_slice($data, $offset, $itemCountPerPage) : $data;
 
         if ($this->documentNormalizer instanceof DocumentNormalizerInterface) {
             $data = $this->documentNormalizer->normalize($this->contextDefinition, $this->outputChannelName, $data);
@@ -92,6 +93,6 @@ class DynamicSearchAdapter implements AdapterInterface
      */
     public function count()
     {
-        return $this->count;
+        return $this->rawResult->getHitCount();
     }
 }

@@ -3,6 +3,7 @@
 namespace DynamicSearchBundle\Normalizer;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
+use DynamicSearchBundle\Exception\NormalizerException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface DocumentNormalizerInterface
@@ -19,12 +20,12 @@ interface DocumentNormalizerInterface
 
     /**
      * @param ContextDefinitionInterface $contextDefinition
-     * @param string               $outputChannelName
-     * @param mixed                $data
+     * @param string                     $outputChannelName
+     * @param mixed                      $data
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws NormalizerException
      */
     public function normalize(ContextDefinitionInterface $contextDefinition, string $outputChannelName, $data);
 }

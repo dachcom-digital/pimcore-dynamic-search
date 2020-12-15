@@ -8,6 +8,7 @@ use DynamicSearchBundle\Filter\Definition\FilterDefinitionInterface;
 use DynamicSearchBundle\Manager\FilterDefinitionManagerInterface;
 use DynamicSearchBundle\Manager\IndexManagerInterface;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
+use DynamicSearchBundle\OutputChannel\Query\SearchContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterStackWorker
@@ -58,21 +59,19 @@ class FilterStackWorker
     }
 
     /**
-     * @param array $filterStack
-     * @param mixed $result
-     * @param mixed $query
+     * @param SearchContainerInterface $searchContainer
+     * @param array                    $filterStack
      *
      * @return array
      */
-    public function buildStackViewVars(array $filterStack, $result, $query)
+    public function buildStackViewVars(SearchContainerInterface $searchContainer, array $filterStack)
     {
         $filterBlocks = [];
-
         foreach ($filterStack as $filterService) {
             $preparedFilterService = $this->prepareFilter($filterService);
             if ($preparedFilterService->supportsFrontendView() === true) {
-                $filterValues = $preparedFilterService->findFilterValueInResult($result);
-                $viewVars = $preparedFilterService->buildViewVars($filterValues, $result, $query);
+                $filterValues = $preparedFilterService->findFilterValueInResult($searchContainer->getRawResult());
+                $viewVars = $preparedFilterService->buildViewVars($searchContainer->getRawResult(), $filterValues, $searchContainer->getQuery());
                 if ($viewVars !== null) {
                     $filterBlocks[] = $viewVars;
                 }

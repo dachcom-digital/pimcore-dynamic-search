@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\OutputChannel;
 
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
+use DynamicSearchBundle\OutputChannel\Query\SearchContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface OutputChannelInterface
@@ -30,20 +31,15 @@ interface OutputChannelInterface
 
     /**
      * @return mixed
+     * @throws \Exception
      */
     public function getQuery();
 
     /**
-     * @param mixed $query
+     * @param SearchContainerInterface $searchContainer
      *
-     * @return mixed
+     * @return SearchContainerInterface
+     * @throws \Exception
      */
-    public function getResult($query);
-
-    /**
-     * @param mixed $result
-     *
-     * @return int
-     */
-    public function getHitCount($result);
+    public function getResult(SearchContainerInterface $searchContainer): SearchContainerInterface;
 }
