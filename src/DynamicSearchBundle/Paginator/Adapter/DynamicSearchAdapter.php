@@ -79,8 +79,12 @@ class DynamicSearchAdapter implements AdapterInterface
 
         $data = count($data) > $offset ? array_slice($data, $offset, $itemCountPerPage) : $data;
 
+        // clone raw result and reset data to the requested range of items
+        $rawResult = clone $this->rawResult;
+        $rawResult->setData($data);
+
         if ($this->documentNormalizer instanceof DocumentNormalizerInterface) {
-            $data = $this->documentNormalizer->normalize($this->contextDefinition, $this->outputChannelName, $data);
+            $data = $this->documentNormalizer->normalize($rawResult, $this->contextDefinition, $this->outputChannelName);
         }
 
         return $data;

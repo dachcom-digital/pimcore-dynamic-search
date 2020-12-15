@@ -4,6 +4,7 @@ namespace DynamicSearchBundle\Normalizer;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\NormalizerException;
+use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface DocumentNormalizerInterface
@@ -19,13 +20,13 @@ interface DocumentNormalizerInterface
     public function setOptions(array $options);
 
     /**
+     * @param RawResultInterface         $rawResult
      * @param ContextDefinitionInterface $contextDefinition
      * @param string                     $outputChannelName
-     * @param mixed                      $data
      *
      * @return mixed
      *
      * @throws NormalizerException
      */
-    public function normalize(ContextDefinitionInterface $contextDefinition, string $outputChannelName, $data);
+    public function normalize(RawResultInterface $rawResult, ContextDefinitionInterface $contextDefinition, string $outputChannelName);
 }

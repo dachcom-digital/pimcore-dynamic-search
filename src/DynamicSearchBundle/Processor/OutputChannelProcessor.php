@@ -323,7 +323,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $result = [];
         if ($documentNormalizer instanceof DocumentNormalizerInterface) {
             try {
-                $result = $documentNormalizer->normalize($contextDefinition, $outputChannelName, $rawResult->getData());
+                $result = $documentNormalizer->normalize($rawResult, $contextDefinition, $outputChannelName);
             } catch (\Exception $e) {
                 throw new OutputChannelException($outputChannelName, $e->getMessage(), $e);
             }

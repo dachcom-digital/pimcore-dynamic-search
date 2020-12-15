@@ -12,10 +12,11 @@ Just click the "update" button or execute the migration command to finish the bu
 - **[IMPROVEMENT|BC BREAK]**: Implement Output Workflow Condition [#19](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/19)
 - **[BC BREAK]**: translation `dynamic_search.ui.we-found` and `dynamic_search.ui.items-for` has been removed
 - **[BC BREAK]**: new translation keys added: `dynamic_search.ui.result_subline` (args: `%badge%` and `%query%`), `dynamic_search.ui.no_items` (args: `%count%`), `dynamic_search.ui.items` (args: `%count%`), `dynamic_search.ui.no_item` (args: `%count%`)
-- **[BC BREAK]**: `SearchContainerInterface`, `MultiSearchContainerInterface` and `RawResultInterface` added. If you're using custom output channel filter, adjust these classes accordingly.
+- **[BC BREAK]**: `SearchContainerInterface`, `MultiSearchContainerInterface` and `RawResultInterface` added. If you're using custom output channel filter, adjust these classes accordingly:
   - Method `getHitCount` removed from `OutputChannelInterface`. This needs to be defined in `RawResponse` class (available in `OutputChannelInterface::getResult(SearchContainerInterface $searchContainer)`).
   - Method `addSubQuery` removed from `MultiOutputChannelInterface`. The sub queries will be passed within `MultiOutputChannelInterface::getMultiSearchResult(MultiSearchContainerInterface $multiSearchContainer)`
   - Signature `OutputChannelInterface::getResult()` changed to `OutputChannelInterface::getResult(SearchContainerInterface $searchContainer): SearchContainerInterface`
   - Signature `MultiOutputChannelInterface::getMultiSearchResult()` changed to `MultiOutputChannelInterface::getMultiSearchResult(MultiSearchContainerInterface $multiSearchContainer): MultiSearchContainerInterface`
   - Signature `FilterInterface::findFilterValueInResult()` changed to `FilterInterface::findFilterValueInResult(RawResultInterface $rawResult)`
   - Signature `FilterInterface::buildViewVars()` changed to `FilterInterface::buildViewVars(RawResultInterface $rawResult, $filterValues, $query)`
+  - Signature `DocumentNormalizerInterface::normalize()` changed to `DocumentNormalizerInterface::normalize(RawResultInterface $rawResult, ContextDefinitionInterface $contextDefinition, string $outputChannelName)`
