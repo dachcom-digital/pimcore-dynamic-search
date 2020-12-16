@@ -7,8 +7,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 interface DynamicSearchEventDispatcherInterface
 {
     /**
-     * @param string     $eventName
-     * @param Event|null $event
+     * @param Event  $event
+     * @param string $eventName
      */
-    public function dispatch($eventName, Event $event = null);
+    public function dispatch(Event $event, $eventName);
 }

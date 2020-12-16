@@ -33,7 +33,7 @@ class DynamicSearchEventDispatcher implements DynamicSearchEventDispatcherInterf
     /**
      * {@inheritdoc}
      */
-    public function dispatch($eventName, Event $event = null)
+    public function dispatch(Event $event, $eventName)
     {
         $this->eventDispatcher->dispatch($event, $eventName);
     }
