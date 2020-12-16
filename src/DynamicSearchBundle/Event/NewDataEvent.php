@@ -3,7 +3,7 @@
 namespace DynamicSearchBundle\Event;
 
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class NewDataEvent extends Event
 {

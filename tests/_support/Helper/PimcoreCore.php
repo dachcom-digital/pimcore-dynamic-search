@@ -9,6 +9,7 @@ use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Event\TestEvents;
 use Pimcore\Tests\Helper\Pimcore as PimcoreCoreModule;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 
 class PimcoreCore extends PimcoreCoreModule
@@ -192,7 +193,7 @@ class PimcoreCore extends PimcoreCoreModule
         }
 
         // dispatch kernel booted event - will be used from services which need to reset state between tests
-        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(TestEvents::KERNEL_BOOTED);
+        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), TestEvents::KERNEL_BOOTED);
 
     }
 

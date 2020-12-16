@@ -10,7 +10,7 @@ class MultiSearchContainer implements MultiSearchContainerInterface
     protected $searchContainer;
 
     /**
-     * @param array|SearchContainerInterface[]
+     * @param array|SearchContainerInterface[] $searchContainer
      */
     public function __construct(array $searchContainer)
     {

@@ -10,8 +10,8 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('dynamic_search');
+        $treeBuilder = new TreeBuilder('dynamic_search');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
@@ -83,12 +83,10 @@ class Configuration implements ConfigurationInterface
                                             ->end()
                                         ->end()
                                     ->end()
-
                                 ->end()
                             ->end()
 
                             ->arrayNode('output_channels')
-
                                 ->useAttributeAsKey('name')
                                 ->arrayPrototype()
                                     ->validate()
@@ -199,10 +197,8 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
-
                         ->end()
                     ->end()
-
                 ->end()
             ->end();
 

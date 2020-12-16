@@ -4,9 +4,9 @@ namespace DynamicSearchBundle\EventDispatcher;
 
 use DynamicSearchBundle\EventSubscriber\DataProcessingEventSubscriber;
 use DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class DynamicSearchEventDispatcher implements DynamicSearchEventDispatcherInterface
 {
@@ -35,6 +35,6 @@ class DynamicSearchEventDispatcher implements DynamicSearchEventDispatcherInterf
      */
     public function dispatch($eventName, Event $event = null)
     {
-        $this->eventDispatcher->dispatch($eventName, $event);
+        $this->eventDispatcher->dispatch($event, $eventName);
     }
 }
