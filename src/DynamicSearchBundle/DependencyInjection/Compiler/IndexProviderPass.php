@@ -11,6 +11,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class IndexProviderPass implements CompilerPassInterface
 {
+    public const INDEX_PROVIDER_TAG = 'dynamic_search.index_provider';
+
     /**
      * {@inheritdoc}
      */
@@ -19,10 +21,14 @@ final class IndexProviderPass implements CompilerPassInterface
         $definition = $container->getDefinition(IndexProviderRegistry::class);
 
         $serviceDefinitionStack = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.index_provider', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::INDEX_PROVIDER_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $serviceDefinitionStack[] = ['serviceName' => $attributes['identifier'], 'id' => $id];
-                $definition->addMethodCall('register', [new Reference($id), $attributes['identifier']]);
+
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $serviceName = $alias !== null ? $alias : $id;
+
+                $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
+                $definition->addMethodCall('register', [new Reference($id), $id, $alias]);
             }
         }
 

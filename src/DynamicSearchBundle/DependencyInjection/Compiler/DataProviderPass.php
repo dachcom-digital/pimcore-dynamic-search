@@ -11,17 +11,23 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class DataProviderPass implements CompilerPassInterface
 {
+    public const DATA_PROVIDER_TAG = 'dynamic_search.data_provider';
+
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
         $serviceDefinitionStack = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.data_provider', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::DATA_PROVIDER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(DataProviderRegistry::class);
             foreach ($tags as $attributes) {
-                $serviceDefinitionStack[] = ['serviceName' => $attributes['identifier'], 'id' => $id];
-                $definition->addMethodCall('register', [new Reference($id), $attributes['identifier']]);
+
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $serviceName = $alias !== null ? $alias : $id;
+
+                $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
+                $definition->addMethodCall('register', [new Reference($id), $id, $alias]);
             }
         }
 

@@ -11,28 +11,39 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class NormalizerPass implements CompilerPassInterface
 {
+    public const RESOURCE_NORMALIZER_TAG = 'dynamic_search.resource_normalizer';
+    public const DOCUMENT_NORMALIZER_TAG = 'dynamic_search.document_normalizer';
+
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
         $serviceDefinitionStack = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.resource_normalizer', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::RESOURCE_NORMALIZER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
-                $serviceDefinitionStack[] = ['serviceName' => $attributes['identifier'], 'id' => $id];
-                $definition->addMethodCall('registerResourceNormalizer', [new Reference($id), $attributes['identifier'], $attributes['data_provider']]);
+
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $serviceName = $alias !== null ? $alias : $id;
+
+                $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
+                $definition->addMethodCall('registerResourceNormalizer', [new Reference($id), $id, $alias, $attributes['data_provider']]);
             }
         }
 
         $this->validateResourceNormalizerOptions($container, $serviceDefinitionStack);
 
         $serviceDefinitionStack = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.document_normalizer', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::DOCUMENT_NORMALIZER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
-                $serviceDefinitionStack[] = ['serviceName' => $attributes['identifier'], 'id' => $id];
-                $definition->addMethodCall('registerDocumentNormalizer', [new Reference($id), $attributes['identifier'], $attributes['index_provider']]);
+
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $serviceName = $alias !== null ? $alias : $id;
+
+                $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
+                $definition->addMethodCall('registerDocumentNormalizer', [new Reference($id), $id, $alias, $attributes['index_provider']]);
             }
         }
 

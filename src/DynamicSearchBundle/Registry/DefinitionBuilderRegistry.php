@@ -4,36 +4,26 @@ namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Filter\Definition\FilterDefinitionBuilderInterface;
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $documentDefinitionBuilder;
+    protected $registryStorage;
 
-    /**
-     * @var array
-     */
-    protected $filterDefinitionBuilder;
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param DocumentDefinitionBuilderInterface $service
      */
     public function registerDocumentDefinition($service)
     {
-        if (!in_array(DocumentDefinitionBuilderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    DocumentDefinitionBuilderInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->documentDefinitionBuilder[] = $service;
+        $this->registryStorage->store($service, DocumentDefinitionBuilderInterface::class, 'documentDefinitionBuilder', get_class($service));
     }
 
     /**
@@ -41,18 +31,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
      */
     public function registerFilterDefinition($service)
     {
-        if (!in_array(FilterDefinitionBuilderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    FilterDefinitionBuilderInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->filterDefinitionBuilder[] = $service;
+        $this->registryStorage->store($service, FilterDefinitionBuilderInterface::class, 'filterDefinitionBuilder', get_class($service));
     }
 
     /**
@@ -60,7 +39,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
      */
     public function getAllDocumentDefinitionBuilder()
     {
-        return !is_array($this->documentDefinitionBuilder) ? [] : $this->documentDefinitionBuilder;
+        return $this->registryStorage->getByNamespace('documentDefinitionBuilder');
     }
 
     /**
@@ -68,6 +47,6 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
      */
     public function getAllFilterDefinitionBuilder()
     {
-        return !is_array($this->filterDefinitionBuilder) ? [] : $this->filterDefinitionBuilder;
+        return $this->registryStorage->getByNamespace('filterDefinitionBuilder');
     }
 }

@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class ContextGuardPass implements CompilerPassInterface
 {
+    public const CONTEXT_GUARD_TAG = 'dynamic_search.context_guard';
+
     use PriorityTaggedServiceTrait;
 
     /**
@@ -17,7 +19,7 @@ final class ContextGuardPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $definition = $container->getDefinition(ContextGuardRegistry::class);
-        foreach ($this->findAndSortTaggedServices('dynamic_search.context_guard', $container) as $reference) {
+        foreach ($this->findAndSortTaggedServices(self::CONTEXT_GUARD_TAG, $container) as $reference) {
             $definition->addMethodCall('register', [$reference]);
         }
     }

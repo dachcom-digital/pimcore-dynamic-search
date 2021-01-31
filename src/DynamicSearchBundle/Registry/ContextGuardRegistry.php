@@ -3,31 +3,26 @@
 namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Guard\ContextGuardInterface;
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class ContextGuardRegistry implements ContextGuardRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $guards;
+    protected $registryStorage;
+
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param ContextGuardInterface $service
      */
     public function register($service)
     {
-        if (!in_array(ContextGuardInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    ContextGuardInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->guards[] = $service;
+        $this->registryStorage->store($service, ContextGuardInterface::class,'contextGuard', get_class($service));
     }
 
     /**
@@ -35,6 +30,6 @@ class ContextGuardRegistry implements ContextGuardRegistryInterface
      */
     public function getAllGuards()
     {
-        return !is_array($this->guards) ? [] : $this->guards;
+        return $this->registryStorage->getByNamespace('contextGuard');
     }
 }

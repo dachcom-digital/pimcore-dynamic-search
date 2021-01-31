@@ -9,22 +9,27 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class IndexPass implements CompilerPassInterface
 {
+    public const INDEX_FIELD_TAG = 'dynamic_search.index.field';
+    public const INDEX_FILTER_TAG = 'dynamic_search.index.filter';
+
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        foreach ($container->findTaggedServiceIds('dynamic_search.index.field', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::INDEX_FIELD_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(IndexRegistry::class);
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('registerField', [new Reference($id), $attributes['identifier'], $attributes['index_provider']]);
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $definition->addMethodCall('registerField', [new Reference($id), $id, $alias, $attributes['index_provider']]);
             }
         }
 
-        foreach ($container->findTaggedServiceIds('dynamic_search.index.filter', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::INDEX_FILTER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(IndexRegistry::class);
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('registerFilter', [new Reference($id), $attributes['identifier'], $attributes['index_provider']]);
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $definition->addMethodCall('registerFilter', [new Reference($id), $id, $alias, $attributes['index_provider']]);
             }
         }
     }

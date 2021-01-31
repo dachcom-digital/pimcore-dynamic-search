@@ -2,59 +2,42 @@
 
 namespace DynamicSearchBundle\Registry;
 
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 use DynamicSearchBundle\Resource\ResourceScaffolderInterface;
 use DynamicSearchBundle\Resource\FieldTransformerInterface;
 
 class TransformerRegistry implements TransformerRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $resourceScaffolder;
+    protected $registryStorage;
 
-    /**
-     * @var array
-     */
-    protected $resourceFieldTransformer;
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param ResourceScaffolderInterface $service
      * @param string                      $identifier
+     * @param string|null                 $alias
      * @param string                      $dataProvider
      */
-    public function registerResourceScaffolder($service, string $identifier, string $dataProvider)
+    public function registerResourceScaffolder($service, string $identifier, ?string $alias, string $dataProvider)
     {
-        if (!in_array(ResourceScaffolderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ResourceScaffolderInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        if (!isset($this->resourceScaffolder[$dataProvider])) {
-            $this->resourceScaffolder[$dataProvider] = [];
-        }
-
-        $this->resourceScaffolder[$dataProvider][$identifier] = $service;
+        $this->registryStorage->store($service, ResourceScaffolderInterface::class, $dataProvider, $identifier, $alias);
     }
 
     /**
      * @param FieldTransformerInterface $service
      * @param string                    $identifier
+     * @param string|null               $alias
      * @param string                    $resourceScaffolder
      */
-    public function registerResourceFieldTransformer($service, string $identifier, string $resourceScaffolder)
+    public function registerResourceFieldTransformer($service, string $identifier, ?string $alias, string $resourceScaffolder)
     {
-        if (!in_array(FieldTransformerInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), FieldTransformerInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        if (!isset($this->resourceFieldTransformer[$resourceScaffolder])) {
-            $this->resourceFieldTransformer[$resourceScaffolder] = [];
-        }
-
-        $this->resourceFieldTransformer[$resourceScaffolder][$identifier] = $service;
+        $this->registryStorage->store($service, FieldTransformerInterface::class, $resourceScaffolder, $identifier, $alias);
     }
 
     /**
@@ -62,7 +45,7 @@ class TransformerRegistry implements TransformerRegistryInterface
      */
     public function hasResourceFieldTransformer(string $resourceScaffolderName, string $identifier)
     {
-        return isset($this->resourceFieldTransformer[$resourceScaffolderName]) && isset($this->resourceFieldTransformer[$resourceScaffolderName][$identifier]);
+        return $this->registryStorage->has($resourceScaffolderName, $identifier);
     }
 
     /**
@@ -70,7 +53,7 @@ class TransformerRegistry implements TransformerRegistryInterface
      */
     public function getResourceFieldTransformer(string $resourceScaffolderName, string $identifier)
     {
-        return $this->resourceFieldTransformer[$resourceScaffolderName][$identifier];
+        return $this->registryStorage->get($resourceScaffolderName, $identifier);
     }
 
     /**
@@ -78,6 +61,6 @@ class TransformerRegistry implements TransformerRegistryInterface
      */
     public function getAllResourceScaffolderForDataProvider(string $dataProviderName)
     {
-        return isset($this->resourceScaffolder[$dataProviderName]) ? $this->resourceScaffolder[$dataProviderName] : [];
+        return $this->registryStorage->getByNamespace($dataProviderName);
     }
 }

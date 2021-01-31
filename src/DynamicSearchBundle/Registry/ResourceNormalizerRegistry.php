@@ -4,60 +4,42 @@ namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $normalizer;
+    protected $registryStorage;
+
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param ResourceNormalizerInterface $service
      * @param string                      $identifier
+     * @param string|null                 $alias
      * @param string                      $dataProviderName
      */
-    public function registerResourceNormalizer($service, string $identifier, string $dataProviderName)
+    public function registerResourceNormalizer($service, string $identifier, ?string $alias, string $dataProviderName)
     {
-        if (!in_array(ResourceNormalizerInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ResourceNormalizerInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        if (!isset($this->normalizer['resource'])) {
-            $this->normalizer['resource'] = [];
-        }
-
-        if (!isset($this->normalizer['resource'][$dataProviderName])) {
-            $this->normalizer['resource'][$dataProviderName] = [];
-        }
-
-        $this->normalizer['resource'][$dataProviderName][$identifier] = $service;
+        $namespace = sprintf('resourceNormalizer_%s', $dataProviderName);
+        $this->registryStorage->store($service, ResourceNormalizerInterface::class, $namespace, $identifier, $alias);
     }
 
     /**
      * @param DocumentNormalizerInterface $service
      * @param string                      $identifier
+     * @param string|null                 $alias
      * @param string                      $indexProviderName
      */
-    public function registerDocumentNormalizer($service, string $identifier, string $indexProviderName)
+    public function registerDocumentNormalizer($service, string $identifier, ?string $alias, string $indexProviderName)
     {
-        if (!in_array(DocumentNormalizerInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DocumentNormalizerInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        if (!isset($this->normalizer['document'])) {
-            $this->normalizer['document'] = [];
-        }
-
-        if (!isset($this->normalizer['document'][$indexProviderName])) {
-            $this->normalizer['document'][$indexProviderName] = [];
-        }
-
-        $this->normalizer['document'][$indexProviderName][$identifier] = $service;
+        $namespace = sprintf('documentNormalizer_%s', $indexProviderName);
+        $this->registryStorage->store($service, DocumentNormalizerInterface::class, $namespace, $identifier, $alias);
     }
 
     /**
@@ -65,7 +47,9 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
      */
     public function getResourceNormalizerForDataProvider(string $dataProviderName, string $identifier)
     {
-        return $this->normalizer['resource'][$dataProviderName][$identifier];
+        $namespace = sprintf('resourceNormalizer_%s', $dataProviderName);
+
+        return $this->registryStorage->get($namespace, $identifier);
     }
 
     /**
@@ -73,7 +57,9 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
      */
     public function hasResourceNormalizerForDataProvider(string $dataProviderName, string $identifier)
     {
-        return isset($this->normalizer['resource'][$dataProviderName]) && isset($this->normalizer['resource'][$dataProviderName][$identifier]);
+        $namespace = sprintf('resourceNormalizer_%s', $dataProviderName);
+
+        return $this->registryStorage->has($namespace, $identifier);
     }
 
     /**
@@ -81,7 +67,9 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
      */
     public function getDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier)
     {
-        return $this->normalizer['document'][$indexProviderName][$identifier];
+        $namespace = sprintf('documentNormalizer_%s', $indexProviderName);
+
+        return $this->registryStorage->get($namespace, $identifier);
     }
 
     /**
@@ -89,6 +77,8 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
      */
     public function hasDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier)
     {
-        return isset($this->normalizer['document'][$indexProviderName]) && isset($this->normalizer['document'][$indexProviderName][$identifier]);
+        $namespace = sprintf('documentNormalizer_%s', $indexProviderName);
+
+        return $this->registryStorage->has($namespace, $identifier);
     }
 }

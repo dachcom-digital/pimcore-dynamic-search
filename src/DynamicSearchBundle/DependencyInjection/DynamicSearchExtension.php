@@ -2,8 +2,12 @@
 
 namespace DynamicSearchBundle\DependencyInjection;
 
+use DynamicSearchBundle\DependencyInjection\Compiler\ContextGuardPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\DefinitionBuilderPass;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Factory\ContextDefinitionFactory;
+use DynamicSearchBundle\Filter\Definition\FilterDefinitionBuilderInterface;
+use DynamicSearchBundle\Guard\ContextGuardInterface;
 use DynamicSearchBundle\Paginator\Paginator;
 use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use Symfony\Component\Config\Resource\FileResource;
@@ -31,9 +35,19 @@ class DynamicSearchExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../Resources/config']));
         $loader->load('services.yml');
 
+        $this->buildAutoconfiguration($container);
         $this->setupConfiguration($container, $config);
         $this->setupProviderBundles($container);
+    }
 
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function buildAutoconfiguration($container)
+    {
+        $container->registerForAutoconfiguration(DocumentDefinitionBuilderInterface::class)->addTag(DefinitionBuilderPass::DOCUMENT_DEFINITION_BUILDER);
+        $container->registerForAutoconfiguration(FilterDefinitionBuilderInterface::class)->addTag(DefinitionBuilderPass::FILTER_DEFINITION_BUILDER);
+        $container->registerForAutoconfiguration(ContextGuardInterface::class)->addTag(ContextGuardPass::CONTEXT_GUARD_TAG);
     }
 
     /**
@@ -70,10 +84,6 @@ class DynamicSearchExtension extends Extension
         $providerConfigDefinition->setClass(ProviderConfig::class);
 
         $container->setDefinition(ProviderConfig::class, $providerConfigDefinition);
-
-        $container
-            ->registerForAutoconfiguration(DocumentDefinitionBuilderInterface::class)
-            ->addTag('dynamic_search.document_definition_builder');
 
         if ($providerConfig->configFileExists()) {
             $container->addResource(new FileResource($providerConfig->locateConfigFile()));
