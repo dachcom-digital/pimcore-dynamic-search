@@ -103,7 +103,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
         }
 
         $namespace = sprintf('outputChannelModifierAction_%s_%s', $outputChannelService, $action);
-        $this->registryStorage->store($service, $namespace, $action);
+        $this->registryStorage->store($service, $namespace, null, null, true);
     }
 
     /**
@@ -181,7 +181,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function hasOutputChannelModifierAction(string $outputChannelServiceName, string $action)
     {
-        $namespace = sprintf('outputChannelModifierAction_%s_%s', $outputChannelService, $action);
+        $namespace = sprintf('outputChannelModifierAction_%s_%s', $outputChannelServiceName, $action);
 
         return $this->registryStorage->hasOneByNamespace($namespace);
     }
@@ -191,7 +191,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action)
     {
-        $namespace = sprintf('outputChannelModifierAction_%s_%s', $outputChannelService, $action);
+        $namespace = sprintf('outputChannelModifierAction_%s_%s', $outputChannelServiceName, $action);
 
         return $this->registryStorage->getByNamespace($namespace);
     }
@@ -201,7 +201,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function hasOutputChannelModifierFilter(string $outputChannelServiceName, string $filter)
     {
-        $namespace = sprintf('outputChannelModifierFilter_%s', $outputChannelService);
+        $namespace = sprintf('outputChannelModifierFilter_%s', $outputChannelServiceName);
 
         return $this->registryStorage->has($namespace, $filter);
     }
@@ -211,7 +211,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter)
     {
-        $namespace = sprintf('outputChannelModifierFilter_%s', $outputChannelService);
+        $namespace = sprintf('outputChannelModifierFilter_%s', $outputChannelServiceName);
 
         return $this->registryStorage->get($namespace, $filter);
     }

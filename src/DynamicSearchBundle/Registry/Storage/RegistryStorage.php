@@ -21,23 +21,28 @@ class RegistryStorage
      * @param string      $namespace
      * @param string      $identifier
      * @param string|null $alias
+     * @param bool        $allowMultipleAppearance
      *
      * @throws \Exception
      */
-    public function store($service, $namespace, $identifier, $alias = null)
+    public function store($service, $namespace, $identifier, $alias = null, $allowMultipleAppearance = false)
     {
         if (!isset($this->store[$namespace])) {
             $this->store[$namespace] = [];
         }
 
-        if ($identifier === $alias) {
-            throw new \Exception(sprintf('Alias "%s" for Servivce "%s" cannot be identical', $alias, $identifier));
-        }
+        if ($allowMultipleAppearance === false) {
 
-        if ($this->getByIdentifier($namespace, $identifier) !== null) {
-            throw new \Exception(sprintf('Service "%s" for namespace "%s" already has been registered', $identifier, $namespace));
-        } elseif ($this->getByAlias($namespace, $alias) !== null) {
-            throw new \Exception(sprintf('Service "%s" for namespace "%s" with alias "%s" already has been registered', $identifier, $namespace, $alias));
+            if ($identifier === $alias) {
+                throw new \Exception(sprintf('Alias "%s" for Service "%s" cannot be identical', $alias, $identifier));
+            }
+
+            if ($this->getByIdentifier($namespace, $identifier) !== null) {
+                throw new \Exception(sprintf('Service "%s" for namespace "%s" already has been registered', $identifier, $namespace));
+            } elseif ($this->getByAlias($namespace, $alias) !== null) {
+                throw new \Exception(sprintf('Service "%s" for namespace "%s" with alias "%s" already has been registered', $identifier, $namespace, $alias));
+            }
+
         }
 
         $this->store[] = [
@@ -45,13 +50,13 @@ class RegistryStorage
             'namespace'  => $namespace,
             'alias'      => $alias,
             'service'    => $service,
+            'multiple'   => $allowMultipleAppearance
         ];
     }
 
     /**
      * @param string $namespace
      * @param string $identififer
-     * @param string $alias
      *
      * @return bool
      */
@@ -75,7 +80,6 @@ class RegistryStorage
     /**
      * @param string $namespace
      * @param string $identififer
-     * @param string $alias
      *
      * @return mixed|null
      */
@@ -104,7 +108,11 @@ class RegistryStorage
         $items = [];
         foreach ($validRows as $row) {
             $identifier = $row['alias'] !== null ? $row['alias'] : $row['identifier'];
-            $items[$identifier] = $row['service'];
+            if ($identifier === null) {
+                $items[] = $row['service'];
+            } else {
+                $items[$identifier] = $row['service'];
+            }
         }
 
         return $items;
