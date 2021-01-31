@@ -24,13 +24,7 @@ class DataProviderRegistry implements DataProviderRegistryInterface
      */
     public function register($service, string $identifier, ?string $alias)
     {
-        if (!in_array(DataProviderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DataProviderInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        $this->registryStorage->store($service, 'dataProvider', $identifier, $alias);
+        $this->registryStorage->store($service, DataProviderInterface::class, 'dataProvider', $identifier, $alias);
     }
 
     /**

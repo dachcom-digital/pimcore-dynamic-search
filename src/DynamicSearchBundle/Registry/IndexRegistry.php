@@ -26,14 +26,8 @@ class IndexRegistry implements IndexRegistryInterface
      */
     public function registerField($service, string $identifier, ?string $alias, string $indexProviderName)
     {
-        if (!in_array(IndexFieldInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), IndexFieldInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
         $namespace = sprintf('fields_%s', $indexProviderName);
-        $this->registryStorage->store($service, $namespace, $identifier, $alias);
+        $this->registryStorage->store($service, IndexFieldInterface::class, $namespace, $identifier, $alias);
     }
 
     /**
@@ -44,14 +38,8 @@ class IndexRegistry implements IndexRegistryInterface
      */
     public function registerFilter($service, string $identifier, ?string $alias, string $indexProviderName)
     {
-        if (!in_array(FilterInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), FilterInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
         $namespace = sprintf('filter_%s', $indexProviderName);
-        $this->registryStorage->store($service, $namespace, $identifier, $alias);
+        $this->registryStorage->store($service, FilterInterface::class, $namespace, $identifier, $alias);
     }
 
     /**

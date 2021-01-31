@@ -28,18 +28,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function registerOutputChannelService($service, string $identifier, ?string $alias)
     {
-        if (!in_array(OutputChannelInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    OutputChannelInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->registryStorage->store($service, 'outputChannel', $identifier, $alias);
+        $this->registryStorage->store($service, OutputChannelInterface::class, 'outputChannel', $identifier, $alias);
     }
 
     /**
@@ -49,18 +38,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function registerOutputChannelRuntimeQueryProvider($service, string $identifier, ?string $alias)
     {
-        if (!in_array(RuntimeQueryProviderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    RuntimeQueryProviderInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->registryStorage->store($service, 'runtimeQueryProvider', $identifier, $alias);
+        $this->registryStorage->store($service, RuntimeQueryProviderInterface::class, 'runtimeQueryProvider', $identifier, $alias);
     }
 
     /**
@@ -70,18 +48,7 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function registerOutputChannelRuntimeOptionsBuilder($service, string $identifier, ?string $alias)
     {
-        if (!in_array(RuntimeOptionsBuilderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    RuntimeOptionsBuilderInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->registryStorage->store($service, 'runtimeOptionsBuilder', $identifier, $alias);
+        $this->registryStorage->store($service, RuntimeOptionsBuilderInterface::class, 'runtimeOptionsBuilder', $identifier, $alias);
     }
 
     /**
@@ -91,19 +58,8 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function registerOutputChannelModifierAction($service, string $outputChannelService, string $action)
     {
-        if (!in_array(OutputChannelModifierActionInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    OutputChannelModifierActionInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
         $namespace = sprintf('outputChannelModifierAction_%s_%s', $outputChannelService, $action);
-        $this->registryStorage->store($service, $namespace, null, null, true);
+        $this->registryStorage->store($service, OutputChannelModifierActionInterface::class, $namespace, null, null, true);
     }
 
     /**
@@ -113,19 +69,8 @@ class OutputChannelRegistry implements OutputChannelRegistryInterface
      */
     public function registerOutputChannelModifierFilter($service, string $outputChannelService, string $filter)
     {
-        if (!in_array(OutputChannelModifierFilterInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    OutputChannelModifierFilterInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
         $namespace = sprintf('outputChannelModifierFilter_%s', $outputChannelService);
-        $this->registryStorage->store($service, $namespace, $filter);
+        $this->registryStorage->store($service, OutputChannelModifierFilterInterface::class, $namespace, $filter);
     }
 
     /**

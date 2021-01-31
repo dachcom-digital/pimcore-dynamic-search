@@ -26,14 +26,8 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
      */
     public function registerResourceNormalizer($service, string $identifier, ?string $alias, string $dataProviderName)
     {
-        if (!in_array(ResourceNormalizerInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ResourceNormalizerInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
         $namespace = sprintf('resourceNormalizer_%s', $dataProviderName);
-        $this->registryStorage->store($service, $namespace, $identifier, $alias);
+        $this->registryStorage->store($service, ResourceNormalizerInterface::class, $namespace, $identifier, $alias);
     }
 
     /**
@@ -44,14 +38,8 @@ class ResourceNormalizerRegistry implements ResourceNormalizerRegistryInterface
      */
     public function registerDocumentNormalizer($service, string $identifier, ?string $alias, string $indexProviderName)
     {
-        if (!in_array(DocumentNormalizerInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), DocumentNormalizerInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
         $namespace = sprintf('documentNormalizer_%s', $indexProviderName);
-        $this->registryStorage->store($service, $namespace, $identifier, $alias);
+        $this->registryStorage->store($service, DocumentNormalizerInterface::class, $namespace, $identifier, $alias);
     }
 
     /**

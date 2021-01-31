@@ -18,6 +18,7 @@ class RegistryStorage
 
     /**
      * @param Reference   $service
+     * @param string      $requiredInterface
      * @param string      $namespace
      * @param string      $identifier
      * @param string|null $alias
@@ -25,10 +26,21 @@ class RegistryStorage
      *
      * @throws \Exception
      */
-    public function store($service, $namespace, $identifier, $alias = null, $allowMultipleAppearance = false)
+    public function store($service, $requiredInterface, $namespace, $identifier, $alias = null, $allowMultipleAppearance = false)
     {
         if (!isset($this->store[$namespace])) {
             $this->store[$namespace] = [];
+        }
+
+        if (!in_array($requiredInterface, class_implements($service), true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%s needs to implement "%s", "%s" given.',
+                    get_class($service),
+                    $requiredInterface,
+                    implode(', ', class_implements($service))
+                )
+            );
         }
 
         if ($allowMultipleAppearance === false) {

@@ -26,13 +26,7 @@ class TransformerRegistry implements TransformerRegistryInterface
      */
     public function registerResourceScaffolder($service, string $identifier, ?string $alias, string $dataProvider)
     {
-        if (!in_array(ResourceScaffolderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), ResourceScaffolderInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        $this->registryStorage->store($service, $dataProvider, $identifier, $alias);
+        $this->registryStorage->store($service, ResourceScaffolderInterface::class, $dataProvider, $identifier, $alias);
     }
 
     /**
@@ -43,13 +37,7 @@ class TransformerRegistry implements TransformerRegistryInterface
      */
     public function registerResourceFieldTransformer($service, string $identifier, ?string $alias, string $resourceScaffolder)
     {
-        if (!in_array(FieldTransformerInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), FieldTransformerInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        $this->registryStorage->store($service, $resourceScaffolder, $identifier, $alias);
+        $this->registryStorage->store($service, FieldTransformerInterface::class, $resourceScaffolder, $identifier, $alias);
     }
 
     /**

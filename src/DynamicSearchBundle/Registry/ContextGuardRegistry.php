@@ -22,19 +22,7 @@ class ContextGuardRegistry implements ContextGuardRegistryInterface
      */
     public function register($service)
     {
-        if (!in_array(ContextGuardInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    ContextGuardInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->registryStorage->store($service, 'contextGuard', get_class($service));
-
+        $this->registryStorage->store($service, ContextGuardInterface::class,'contextGuard', get_class($service));
     }
 
     /**

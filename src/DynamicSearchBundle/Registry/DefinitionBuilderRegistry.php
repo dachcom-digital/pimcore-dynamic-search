@@ -23,18 +23,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
      */
     public function registerDocumentDefinition($service)
     {
-        if (!in_array(DocumentDefinitionBuilderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    DocumentDefinitionBuilderInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->registryStorage->store($service, 'documentDefinitionBuilder', get_class($service));
+        $this->registryStorage->store($service, DocumentDefinitionBuilderInterface::class, 'documentDefinitionBuilder', get_class($service));
     }
 
     /**
@@ -42,18 +31,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
      */
     public function registerFilterDefinition($service)
     {
-        if (!in_array(FilterDefinitionBuilderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    '%s needs to implement "%s", "%s" given.',
-                    get_class($service),
-                    FilterDefinitionBuilderInterface::class,
-                    implode(', ', class_implements($service))
-                )
-            );
-        }
-
-        $this->registryStorage->store($service, 'filterDefinitionBuilder', get_class($service));
+        $this->registryStorage->store($service, FilterDefinitionBuilderInterface::class, 'filterDefinitionBuilder', get_class($service));
     }
 
     /**

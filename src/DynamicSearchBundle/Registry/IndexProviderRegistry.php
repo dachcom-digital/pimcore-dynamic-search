@@ -24,13 +24,7 @@ class IndexProviderRegistry implements IndexProviderRegistryInterface
      */
     public function register($service, string $identifier, ?string $alias)
     {
-        if (!in_array(IndexProviderInterface::class, class_implements($service), true)) {
-            throw new \InvalidArgumentException(
-                sprintf('%s needs to implement "%s", "%s" given.', get_class($service), IndexProviderInterface::class, implode(', ', class_implements($service)))
-            );
-        }
-
-        $this->registryStorage->store($service, 'indexProvider', $identifier, $alias);
+        $this->registryStorage->store($service, IndexProviderInterface::class, 'indexProvider', $identifier, $alias);
     }
 
     /**
