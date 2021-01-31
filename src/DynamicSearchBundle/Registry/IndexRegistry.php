@@ -4,25 +4,27 @@ namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Filter\FilterInterface;
 use DynamicSearchBundle\Index\IndexFieldInterface;
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class IndexRegistry implements IndexRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $fields;
+    protected $registryStorage;
 
-    /**
-     * @var array
-     */
-    protected $filter;
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param IndexFieldInterface $service
      * @param string              $identifier
+     * @param string|null         $alias
      * @param string              $indexProviderName
      */
-    public function registerField($service, string $identifier, string $indexProviderName)
+    public function registerField($service, string $identifier, ?string $alias, string $indexProviderName)
     {
         if (!in_array(IndexFieldInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -30,19 +32,17 @@ class IndexRegistry implements IndexRegistryInterface
             );
         }
 
-        if (!isset($this->fields[$indexProviderName])) {
-            $this->fields[$indexProviderName] = [];
-        }
-
-        $this->fields[$indexProviderName][$identifier] = $service;
+        $namespace = sprintf('fields_%s', $indexProviderName);
+        $this->registryStorage->store($service, $namespace, $identifier, $alias);
     }
 
     /**
      * @param IndexFieldInterface $service
      * @param string              $identifier
+     * @param string|null         $alias
      * @param string              $indexProviderName
      */
-    public function registerFilter($service, string $identifier, string $indexProviderName)
+    public function registerFilter($service, string $identifier, ?string $alias, string $indexProviderName)
     {
         if (!in_array(FilterInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -50,11 +50,8 @@ class IndexRegistry implements IndexRegistryInterface
             );
         }
 
-        if (!isset($this->filter[$indexProviderName])) {
-            $this->filter[$indexProviderName] = [];
-        }
-
-        $this->filter[$indexProviderName][$identifier] = $service;
+        $namespace = sprintf('filter_%s', $indexProviderName);
+        $this->registryStorage->store($service, $namespace, $identifier, $alias);
     }
 
     /**
@@ -62,7 +59,9 @@ class IndexRegistry implements IndexRegistryInterface
      */
     public function getFieldForIndexProvider(string $indexProviderName, string $identifier)
     {
-        return $this->fields[$indexProviderName][$identifier];
+        $namespace = sprintf('fields_%s', $indexProviderName);
+
+        return $this->registryStorage->get($namespace, $identifier);
     }
 
     /**
@@ -70,7 +69,9 @@ class IndexRegistry implements IndexRegistryInterface
      */
     public function hasFieldForIndexProvider(string $indexProviderName, string $identifier)
     {
-        return isset($this->fields[$indexProviderName]) && isset($this->fields[$indexProviderName][$identifier]);
+        $namespace = sprintf('fields_%s', $indexProviderName);
+
+        return $this->registryStorage->has($namespace, $identifier);
     }
 
     /**
@@ -78,7 +79,9 @@ class IndexRegistry implements IndexRegistryInterface
      */
     public function getFilterForIndexProvider(string $indexProviderName, string $identifier)
     {
-        return $this->filter[$indexProviderName][$identifier];
+        $namespace = sprintf('filter_%s', $indexProviderName);
+
+        return $this->registryStorage->get($namespace, $identifier);
     }
 
     /**
@@ -86,6 +89,8 @@ class IndexRegistry implements IndexRegistryInterface
      */
     public function hasFilterForIndexProvider(string $indexProviderName, string $identifier)
     {
-        return isset($this->filter[$indexProviderName]) && isset($this->filter[$indexProviderName][$identifier]);
+        $namespace = sprintf('filter_%s', $indexProviderName);
+
+        return $this->registryStorage->has($namespace, $identifier);
     }
 }

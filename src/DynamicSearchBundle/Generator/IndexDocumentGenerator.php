@@ -257,6 +257,7 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         $fieldTransformerConfiguration = $options['configuration'];
 
         $fieldTransformer = $this->transformerManager->getResourceFieldTransformer($dispatchTransformerName, $fieldTransformerName, $fieldTransformerConfiguration);
+
         if (!$fieldTransformer instanceof FieldTransformerInterface) {
             return null;
         }

@@ -3,19 +3,26 @@
 namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Provider\IndexProviderInterface;
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class IndexProviderRegistry implements IndexProviderRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $provider;
+    protected $registryStorage;
+
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param IndexProviderInterface $service
      * @param string                 $identifier
+     * @param string|null            $alias
      */
-    public function register($service, string $identifier)
+    public function register($service, string $identifier, ?string $alias)
     {
         if (!in_array(IndexProviderInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -23,7 +30,7 @@ class IndexProviderRegistry implements IndexProviderRegistryInterface
             );
         }
 
-        $this->provider[$identifier] = $service;
+        $this->registryStorage->store($service, 'indexProvider', $identifier, $alias);
     }
 
     /**
@@ -31,7 +38,7 @@ class IndexProviderRegistry implements IndexProviderRegistryInterface
      */
     public function has(string $identifier)
     {
-        return isset($this->provider[$identifier]);
+        return $this->registryStorage->has('indexProvider', $identifier);
     }
 
     /**
@@ -39,10 +46,6 @@ class IndexProviderRegistry implements IndexProviderRegistryInterface
      */
     public function get(string $identifier)
     {
-        if (!$this->has($identifier)) {
-            throw new \Exception('"' . $identifier . '" Index Provider does not exist');
-        }
-
-        return $this->provider[$identifier];
+        return $this->registryStorage->get('indexProvider', $identifier);
     }
 }

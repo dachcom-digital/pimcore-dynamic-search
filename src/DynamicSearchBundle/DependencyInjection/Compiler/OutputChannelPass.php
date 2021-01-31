@@ -11,6 +11,12 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class OutputChannelPass implements CompilerPassInterface
 {
+    public const OUTPUT_CHANNEL_TAG = 'dynamic_search.output_channel';
+    public const OUTPUT_CHANNEL_RUNTIME_QUERY_BUILDER_TAG = 'dynamic_search.output_channel.runtime_query_provider';
+    public const OUTPUT_CHANNEL_RUNTIME_OPTIONS_BUILDER_TAG = 'dynamic_search.output_channel.runtime_options_builder';
+    public const OUTPUT_CHANNEL_MODIFIER_ACTION_TAG = 'dynamic_search.output_channel.modifier.action';
+    public const OUTPUT_CHANNEL_MODIFIER_FILTER_TAG = 'dynamic_search.output_channel.modifier.filter';
+
     /**
      * {@inheritdoc}
      */
@@ -19,49 +25,55 @@ final class OutputChannelPass implements CompilerPassInterface
         $outputChannelServices = [];
         $definition = $container->getDefinition(OutputChannelRegistry::class);
 
-        //#
-        //# dynamic_search.output_channel
-        //#
+        //
+        // dynamic_search.output_channel
+        //
 
         $serviceDefinitionStack = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $outputChannelServices[] = $attributes['identifier'];
-                $serviceDefinitionStack[] = ['serviceName' => $attributes['identifier'], 'id' => $id];
-                $definition->addMethodCall('registerOutputChannelService', [new Reference($id), $attributes['identifier']]);
+
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $serviceName = $alias !== null ? $alias : $id;
+
+                $outputChannelServices[] = $serviceName;
+                $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
+                $definition->addMethodCall('registerOutputChannelService', [new Reference($id), $id, $alias]);
             }
         }
 
         $this->validateOutputChannelOptions($container, $serviceDefinitionStack);
 
-        //#
-        //# dynamic_search.output_channel.runtime_query_provider
-        //#
+        //
+        // dynamic_search.output_channel.runtime_query_provider
+        //
 
-        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.runtime_query_provider', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_RUNTIME_QUERY_BUILDER_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('registerOutputChannelRuntimeQueryProvider', [new Reference($id), $attributes['identifier']]);
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $definition->addMethodCall('registerOutputChannelRuntimeQueryProvider', [new Reference($id), $id, $alias]);
             }
         }
 
-        //#
-        //# dynamic_search.output_channel.runtime_options_builder
-        //#
+        //
+        // dynamic_search.output_channel.runtime_options_builder
+        //
 
-        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.runtime_options_builder', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_RUNTIME_OPTIONS_BUILDER_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $definition->addMethodCall('registerOutputChannelRuntimeOptionsBuilder', [new Reference($id), $attributes['identifier']]);
+                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $definition->addMethodCall('registerOutputChannelRuntimeOptionsBuilder', [new Reference($id), $id, $alias]);
             }
         }
 
-        //#
-        //# dynamic_search.output_channel.modifier.action
-        //#
+        //
+        // dynamic_search.output_channel.modifier.action
+        //
 
         $validModifierChannelServices = array_merge(['all'], $outputChannelServices);
 
         $outputChannelModifierActionServices = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.modifier.action', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_MODIFIER_ACTION_TAG, true) as $id => $tags) {
 
             if (count($outputChannelServices) === 0) {
                 continue;
@@ -106,12 +118,12 @@ final class OutputChannelPass implements CompilerPassInterface
             }
         }
 
-        //#
-        //# dynamic_search.output_channel.modifier.filter
-        //#
+        //
+        // dynamic_search.output_channel.modifier.filter
+        //
 
         $outputChannelModifierFilterServices = [];
-        foreach ($container->findTaggedServiceIds('dynamic_search.output_channel.modifier.filter', true) as $id => $tags) {
+        foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_MODIFIER_FILTER_TAG, true) as $id => $tags) {
 
             if (count($outputChannelServices) === 0) {
                 continue;
@@ -180,7 +192,7 @@ final class OutputChannelPass implements CompilerPassInterface
 
         foreach ($contextConfiguration as $contextName => &$contextConfig) {
 
-            if (!isset($contextConfig['output_channels']) ||!is_array($contextConfig['output_channels'])) {
+            if (!isset($contextConfig['output_channels']) || !is_array($contextConfig['output_channels'])) {
                 continue;
             }
 

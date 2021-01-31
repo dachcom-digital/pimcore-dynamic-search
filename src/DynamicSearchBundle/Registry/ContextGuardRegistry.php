@@ -3,13 +3,19 @@
 namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Guard\ContextGuardInterface;
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class ContextGuardRegistry implements ContextGuardRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $guards;
+    protected $registryStorage;
+
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param ContextGuardInterface $service
@@ -27,7 +33,8 @@ class ContextGuardRegistry implements ContextGuardRegistryInterface
             );
         }
 
-        $this->guards[] = $service;
+        $this->registryStorage->store($service, 'contextGuard', get_class($service));
+
     }
 
     /**
@@ -35,6 +42,6 @@ class ContextGuardRegistry implements ContextGuardRegistryInterface
      */
     public function getAllGuards()
     {
-        return !is_array($this->guards) ? [] : $this->guards;
+        return $this->registryStorage->getByNamespace('contextGuard');
     }
 }

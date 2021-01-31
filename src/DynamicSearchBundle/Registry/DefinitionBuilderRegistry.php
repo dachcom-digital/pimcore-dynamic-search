@@ -4,18 +4,19 @@ namespace DynamicSearchBundle\Registry;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Filter\Definition\FilterDefinitionBuilderInterface;
+use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
 {
     /**
-     * @var array
+     * @var RegistryStorage
      */
-    protected $documentDefinitionBuilder;
+    protected $registryStorage;
 
-    /**
-     * @var array
-     */
-    protected $filterDefinitionBuilder;
+    public function __construct()
+    {
+        $this->registryStorage = new RegistryStorage();
+    }
 
     /**
      * @param DocumentDefinitionBuilderInterface $service
@@ -33,7 +34,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
             );
         }
 
-        $this->documentDefinitionBuilder[] = $service;
+        $this->registryStorage->store($service, 'documentDefinitionBuilder', get_class($service));
     }
 
     /**
@@ -52,7 +53,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
             );
         }
 
-        $this->filterDefinitionBuilder[] = $service;
+        $this->registryStorage->store($service, 'filterDefinitionBuilder', get_class($service));
     }
 
     /**
@@ -60,7 +61,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
      */
     public function getAllDocumentDefinitionBuilder()
     {
-        return !is_array($this->documentDefinitionBuilder) ? [] : $this->documentDefinitionBuilder;
+        return $this->registryStorage->getByNamespace('documentDefinitionBuilder');
     }
 
     /**
@@ -68,6 +69,6 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
      */
     public function getAllFilterDefinitionBuilder()
     {
-        return !is_array($this->filterDefinitionBuilder) ? [] : $this->filterDefinitionBuilder;
+        return $this->registryStorage->getByNamespace('filterDefinitionBuilder');
     }
 }
