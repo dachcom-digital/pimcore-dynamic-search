@@ -12,7 +12,7 @@
 
         {% if search_active == true %}
             {% if total_count > 0 %}
-                {% set badge_label = '{0} dynamic_search.ui.no_items|{1} dynamic_search.ui.item|]1,Inf[ dynamic_search.ui.items'|trans({'%count%': total_count}) %}
+                {% set badge_label = ('{0}%s|{1}%s|]1,Inf[%s'|format('dynamic_search.ui.no_items', 'dynamic_search.ui.item', 'dynamic_search.ui.items'))|trans({'%count%': total_count}) %}
                 {% set badge_markup = '<span class="badge badge-dark">%s</span>'|format(badge_label) %}
                 {% set query_markup = '<em>%s</em>'|format(user_query) %}
                 <small class="mb-4 d-block">
