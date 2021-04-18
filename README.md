@@ -27,7 +27,7 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search" : "~0.7.0"
+    "dachcom-digital/dynamic-search" : "~1.0.0"
 }
 ```
 
