@@ -82,11 +82,11 @@ class ResourceValidator implements ResourceValidatorInterface
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
         $dataProvider = $this->getDataProvider($contextName, $dispatchType);
 
-        if (!$dataProvider instanceof DataProviderValidationAwareInterface) {
-            return null;
-        }
-
         $resourceCandidate = new ResourceCandidate($contextName, $dispatchType, $isUnknownResource === true, $isImmutableResource === false, $resource);
+
+        if (!$dataProvider instanceof DataProviderValidationAwareInterface) {
+            return $resourceCandidate;
+        }
 
         $dataProvider->validateResource($contextDefinition, $resourceCandidate);
 
