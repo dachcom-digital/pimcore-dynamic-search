@@ -2,6 +2,9 @@
 
 namespace DynamicSearchBundle\Resource\Proxy;
 
+/**
+ * @deprecated since 1.0.0 and will be removed in 2.0.0.
+ */
 interface ProxyResourceInterface
 {
     /**
