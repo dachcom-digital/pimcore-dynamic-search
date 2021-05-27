@@ -96,7 +96,27 @@ class DataCollector implements DataCollectorInterface
      */
     public function addToContextQueue(string $contextName, string $dispatchType, $resource, array $options = [])
     {
-        $envelope = null;
+        try {
+            // validate and allow rewriting dispatch type and/or resource
+            $resourceCandidate = $this->resourceValidator->validateResource($contextName, $dispatchType, true, false, $resource);
+        } catch (\Throwable $e) {
+            $this->logger->error(sprintf('Error while validate resource candidate: %s', $e->getMessage()), 'queue', $contextName);
+
+            return;
+        }
+
+        if ($resourceCandidate->getResource() === null) {
+            $this->logger->debug(
+                sprintf('Resource has been removed due to validation. Skipping...'),
+                'queue',
+                $contextName
+            );
+
+            return;
+        }
+
+        $resource = $resourceCandidate->getResource();
+        $dispatchType = $resourceCandidate->getDispatchType();
 
         if (!in_array($dispatchType, ContextDefinitionInterface::ALLOWED_QUEUE_DISPATCH_TYPES)) {
             $this->logger->error(
@@ -137,7 +157,7 @@ class DataCollector implements DataCollectorInterface
             $resourceType = gettype($resource);
         }
 
-        // check for proxy resource
+        // check for proxy resource (deprecated)
         $proxyResource = $this->resourceValidator->checkUntrustedResourceProxy($contextName, $dispatchType, $resource);
 
         if ($proxyResource instanceof ProxyResourceInterface) {
@@ -145,11 +165,12 @@ class DataCollector implements DataCollectorInterface
             $dispatchType = $proxyResource->hasProxyContextDispatchType() ? $proxyResource->getProxyContextDispatchType() : $dispatchType;
         }
 
+        // check for proxy validity (deprecated)
         $resourcedIsValid = $this->resourceValidator->validateUntrustedResource($contextName, $dispatchType, $resource);
 
         if ($resourcedIsValid === false) {
             $this->logger->debug(
-                sprintf('Resource has been marked as untrusted. Skipping...'),
+                sprintf('[DEPRECATED] Resource has been marked as untrusted. Skipping...'),
                 'queue',
                 $contextName
             );

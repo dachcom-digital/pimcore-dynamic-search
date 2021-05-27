@@ -8,6 +8,7 @@ use DynamicSearchBundle\Event\NewDataEvent;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Processor\ResourceModificationProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
+use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DataProcessingEventSubscriber implements EventSubscriberInterface
@@ -28,18 +29,26 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     protected $resourceModificationProcessor;
 
     /**
+     * @var ResourceValidatorInterface
+     */
+    protected $resourceValidator;
+
+    /**
      * @param LoggerInterface                        $logger
      * @param ContextDefinitionBuilderInterface      $contextDefinitionBuilder
      * @param ResourceModificationProcessorInterface $resourceModificationProcessor
+     * @param ResourceValidatorInterface             $resourceValidator
      */
     public function __construct(
         LoggerInterface $logger,
         ContextDefinitionBuilderInterface $contextDefinitionBuilder,
-        ResourceModificationProcessorInterface $resourceModificationProcessor
+        ResourceModificationProcessorInterface $resourceModificationProcessor,
+        ResourceValidatorInterface $resourceValidator
     ) {
         $this->logger = $logger;
         $this->contextDefinitionBuilder = $contextDefinitionBuilder;
         $this->resourceModificationProcessor = $resourceModificationProcessor;
+        $this->resourceValidator = $resourceValidator;
     }
 
     /**
@@ -59,8 +68,32 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     {
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($event->getContextName(), $event->getContextDispatchType());
 
+        try {
+            // validate and allow rewriting resource based on current data behaviour
+            $isImmutableResource = $event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH;
+            $resourceCandidate = $this->resourceValidator->validateResource($event->getContextName(), $event->getContextDispatchType(), false, $isImmutableResource, $event->getData());
+        } catch (\Throwable $e) {
+            $this->logger->error(
+                sprintf(
+                    'Error while validate resource candidate: %s',
+                    $e->getMessage()), $contextDefinition->getDataProviderName(), $event->getContextName()
+            );
+
+            return;
+        }
+
+        if ($resourceCandidate->getResource() === null) {
+            $this->logger->debug(
+                sprintf(
+                    'Resource has been removed due to validation. Skipping...'),
+                $contextDefinition->getDataProviderName(), $contextDefinition->getName()
+            );
+
+            return;
+        }
+
         if ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH) {
-            $this->resourceModificationProcessor->process($contextDefinition, $event->getData());
+            $this->resourceModificationProcessor->process($contextDefinition, $resourceCandidate->getResource());
         } elseif ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH) {
             $this->resourceModificationProcessor->processByResourceMeta($contextDefinition, $event->getResourceMeta(), $event->getData());
         } else {

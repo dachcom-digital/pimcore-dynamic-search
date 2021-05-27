@@ -6,6 +6,9 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### Update from Version 1.0.0 to Version 1.0.1
+- **[IMPROVEMENT]**: Introduce ResourceCandidate [#24](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/24)
+
 #### Update from Version 0.x to Version 1.0.0
 - **[IMPROVEMENT]**: Better exception fetching and messaging
 - **[IMPROVEMENT|BC BREAK]**: Move all Configuration to Compiler [#18](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/18)
