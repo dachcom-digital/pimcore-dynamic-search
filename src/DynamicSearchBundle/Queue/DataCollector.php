@@ -229,9 +229,6 @@ class DataCollector implements DataCollectorInterface
      */
     protected function generateResourceMeta(string $contextName, string $dispatchType, $resource)
     {
-        dump("generateResourceMeta");
-        dump(get_class($resource));
-
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
 
         $normalizedResourceStack = $this->resourceHarmonizer->harmonizeUntilNormalizedResourceStack($contextDefinition, $resource);
