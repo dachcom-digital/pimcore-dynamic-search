@@ -1,9 +1,9 @@
 name: PHP Stan
 on:
     push:
-        branches: [ '1.x' ]
+        branches: [ 'master' ]
     pull_request:
-        branches: [ '1.x' ]
+        branches: [ 'master' ]
 
 jobs:
     stan:
