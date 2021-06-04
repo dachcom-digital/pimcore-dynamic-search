@@ -2,7 +2,7 @@
     "name": "dachcom-digital/dynamic-search",
     "type": "pimcore-bundle",
     "license": "GPL-3.0-or-later",
-    "description": "Pimcore >= 6.6 Dynamic Search Bundle",
+    "description": "Pimcore X Dynamic Search Bundle",
     "keywords": ["pimcore", "search"],
     "homepage": "https://github.com/dachcom-digital/pimcore-dynamic-search",
     "authors": [
@@ -31,11 +31,14 @@
             "bundles": [
                 "DynamicSearchBundle\\DynamicSearchBundle"
             ]
+        },
+        "branch-alias": {
+            "dev-master": "2.0-dev"
         }
     },
     "require": {
-        "symfony/symfony": "^4|^5",
-        "pimcore/pimcore": "^6.6"
+        "pimcore/pimcore": "^10.0",
+        "symfony/symfony": "^5.0"
     },
     "require-dev": {
         "codeception/codeception": "~2.4.0",

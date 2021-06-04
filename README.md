@@ -8,8 +8,19 @@
 [![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-dynamic-search/PHP%20Stan?style=flat-square&logo=github&label=phpstan%20level%202)](https://github.com/dachcom-digital/pimcore-dynamic-search/actions?query=workflow%3A%22PHP%20Stan%22)
 
 ## Requirements
-* Pimcore >= 6.6
-* Symfony >= 4.4
+* Pimcore >= 10.0
+* Symfony >= 5.2
+***
+
+## Pimcore 6
+Fetch the latest [Pimcore 6 Version here](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/1.x).
+
+### Release Plan
+
+| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained                       | Branch     |
+|---------|-----------------------------------|----------------------------|--------------|----------------------------------|------------|
+| **2.x** | `10.0`                            | `^5.2`                     | no release   | Yes (Bugs, Features)             | master     |
+| **1.x** | `6.6` - `6.9`                     | `^4.4`                     | 18.04.2021   | Yes (Bugs, Features if required) | 1.x        |
 
 ## Introduction
 The Dynamic Search Bundle allows you to redefine your search strategy. It's based on several data- and index providers.
@@ -27,7 +38,7 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search" : "~1.0.0"
+    "dachcom-digital/dynamic-search" : "dev-master"
 }
 ```
 
