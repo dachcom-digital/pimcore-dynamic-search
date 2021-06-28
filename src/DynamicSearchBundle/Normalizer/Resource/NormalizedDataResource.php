@@ -6,38 +6,21 @@ use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 
 class NormalizedDataResource implements NormalizedDataResourceInterface
 {
-    /**
-     * @var ResourceContainerInterface
-     */
-    protected $resourceContainer;
+    protected ?ResourceContainerInterface $resourceContainer;
+    protected ResourceMetaInterface $resourceMeta;
 
-    /**
-     * @var ResourceMetaInterface
-     */
-    protected $resourceMeta;
-
-    /**
-     * @param ResourceContainerInterface|null $resourceContainer
-     * @param ResourceMetaInterface           $resourceMeta
-     */
-    public function __construct(?ResourceContainerInterface $resourceContainer, $resourceMeta)
+    public function __construct(?ResourceContainerInterface $resourceContainer, ResourceMetaInterface $resourceMeta)
     {
         $this->resourceContainer = $resourceContainer;
         $this->resourceMeta = $resourceMeta;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceContainer()
+    public function getResourceContainer(): ?ResourceContainerInterface
     {
         return $this->resourceContainer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceMeta()
+    public function getResourceMeta(): ResourceMetaInterface
     {
         return $this->resourceMeta;
     }

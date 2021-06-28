@@ -4,38 +4,12 @@ namespace DynamicSearchBundle\Resource;
 
 class ResourceCandidate implements ResourceCandidateInterface
 {
-    /**
-     * @var string
-     */
-    protected $contextName;
-
-    /**
-     * @var string
-     */
-    protected $dispatchType;
-
-    /**
-     * @var bool
-     */
-    protected $allowDispatchTypeModification;
-
-    /**
-     * @var bool
-     */
-    protected $allowResourceModification;
-
-    /**
-     * @var mixed
-     */
+    protected string $contextName;
+    protected string $dispatchType;
+    protected bool $allowDispatchTypeModification;
+    protected bool $allowResourceModification;
     protected $resource;
 
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param bool   $allowDispatchTypeModification
-     * @param bool   $allowResourceModification
-     * @param mixed  $resource
-     */
     public function __construct(string $contextName, string $dispatchType, bool $allowDispatchTypeModification, bool $allowResourceModification, $resource)
     {
         $this->contextName = $contextName;
@@ -45,26 +19,17 @@ class ResourceCandidate implements ResourceCandidateInterface
         $this->resource = $resource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isAllowedToModifyDispatchType()
+    public function isAllowedToModifyDispatchType(): bool
     {
         return $this->allowDispatchTypeModification === true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isAllowedToModifyResource()
+    public function isAllowedToModifyResource(): bool
     {
         return $this->allowResourceModification === true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setResource($resource)
+    public function setResource($resource): void
     {
         if ($this->allowResourceModification === false && $resource !== null) {
             throw new \Exception(
@@ -78,18 +43,12 @@ class ResourceCandidate implements ResourceCandidateInterface
         $this->resource = $resource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getResource()
     {
         return $this->resource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setDispatchType(string $dispatchType)
+    public function setDispatchType(string $dispatchType): void
     {
         if ($this->allowDispatchTypeModification === false) {
             throw new \Exception(
@@ -103,10 +62,7 @@ class ResourceCandidate implements ResourceCandidateInterface
         $this->dispatchType = $dispatchType;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getDispatchType()
+    public function getDispatchType(): string
     {
         return $this->dispatchType;
     }

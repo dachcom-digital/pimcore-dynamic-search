@@ -2,31 +2,11 @@
 
 namespace DynamicSearchBundle\Registry\Storage;
 
-use Symfony\Component\DependencyInjection\Reference;
-
 class RegistryStorage
 {
-    /**
-     * @var array
-     */
-    protected $store;
+    protected array $store = [];
 
-    public function __construct()
-    {
-        $this->store = [];
-    }
-
-    /**
-     * @param Reference   $service
-     * @param string      $requiredInterface
-     * @param string      $namespace
-     * @param string      $identifier
-     * @param string|null $alias
-     * @param bool        $allowMultipleAppearance
-     *
-     * @throws \Exception
-     */
-    public function store($service, $requiredInterface, $namespace, $identifier, $alias = null, $allowMultipleAppearance = false)
+    public function store($service, string $requiredInterface, string $namespace, string $identifier, ?string $alias = null, bool $allowMultipleAppearance = false)
     {
         if (!isset($this->store[$namespace])) {
             $this->store[$namespace] = [];
@@ -66,52 +46,32 @@ class RegistryStorage
         ];
     }
 
-    /**
-     * @param string $namespace
-     * @param string $identififer
-     *
-     * @return bool
-     */
-    public function has($namespace, $identififer)
+    public function has(string $namespace, string $identififer)
     {
         return $this->get($namespace, $identififer) !== null;
     }
 
-    /**
-     * @param string $namespace
-     *
-     * @return array
-     */
-    public function hasOneByNamespace($namespace)
+    public function hasOneByNamespace(string $namespace)
     {
-        return count(array_filter($this->store, function ($entry) use ($namespace) {
+        return count(array_filter($this->store, static function ($entry) use ($namespace) {
                 return $entry['namespace'] === $namespace;
             })) > 0;
     }
 
-    /**
-     * @param string $namespace
-     * @param string $identififer
-     *
-     * @return mixed|null
-     */
-    public function get($namespace, $identififer)
+    public function get(string $namespace, string $identifier)
     {
-        if (null !== $byIdentifier = $this->getByIdentifier($namespace, $identififer)) {
+        if (null !== $byIdentifier = $this->getByIdentifier($namespace, $identifier)) {
             return $byIdentifier;
-        } elseif (null !== $byAlias = $this->getByAlias($namespace, $identififer)) {
+        }
+
+        if (null !== $byAlias = $this->getByAlias($namespace, $identifier)) {
             return $byAlias;
         }
 
         return null;
     }
 
-    /**
-     * @param string $namespace
-     *
-     * @return array
-     */
-    public function getByNamespace($namespace)
+    public function getByNamespace(string $namespace): array
     {
         $validRows = array_filter($this->store, function ($entry) use ($namespace) {
             return $entry['namespace'] === $namespace;
@@ -130,13 +90,7 @@ class RegistryStorage
         return $items;
     }
 
-    /**
-     * @param string $namespace
-     * @param string $identififer
-     *
-     * @return mixed|null
-     */
-    protected function getByIdentifier($namespace, $identififer)
+    protected function getByIdentifier(string $namespace, string $identififer)
     {
         foreach ($this->store as $entry) {
             if ($entry['namespace'] === $namespace && $entry['identifier'] === $identififer) {
@@ -147,13 +101,7 @@ class RegistryStorage
         return null;
     }
 
-    /**
-     * @param string      $namespace
-     * @param string|null $alias
-     *
-     * @return mixed|null
-     */
-    protected function getByAlias($namespace, $alias)
+    protected function getByAlias(string $namespace, string $alias)
     {
         if ($alias === null) {
             return null;

@@ -5,7 +5,7 @@ namespace DynamicSearchBundle\OutputChannel\Query;
 interface MultiSearchContainerInterface
 {
     /**
-     * @return array|SearchContainerInterface[]
+     * @return SearchContainerInterface[]
      */
-    public function getSearchContainer();
+    public function getSearchContainer(): array;
 }

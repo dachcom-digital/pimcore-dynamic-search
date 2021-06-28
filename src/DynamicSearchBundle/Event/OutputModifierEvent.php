@@ -4,44 +4,24 @@ namespace DynamicSearchBundle\Event;
 
 class OutputModifierEvent
 {
-    /**
-     * @var array
-     */
-    protected $parameter;
+    protected array $parameter;
 
-    /**
-     * @param array $parameter
-     */
     public function __construct(array $parameter)
     {
         $this->parameter = $parameter;
     }
 
-    /**
-     * @param string $key
-     * @param mixed  $value
-     */
-    public function setParameter($key, $value)
+    public function setParameter(string $key, $value): void
     {
         $this->parameter[$key] = $value;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function hasParameter($key)
+    public function hasParameter(string $key): bool
     {
         return isset($this->parameter[$key]);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getParameter($key)
+    public function getParameter(string $key)
     {
         return $this->parameter[$key];
     }

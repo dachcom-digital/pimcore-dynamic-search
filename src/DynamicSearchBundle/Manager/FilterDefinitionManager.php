@@ -6,25 +6,15 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\Resolver\DefinitionNotFoundException;
 use DynamicSearchBundle\Filter\Definition\FilterDefinition;
+use DynamicSearchBundle\Filter\Definition\FilterDefinitionInterface;
 use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 use DynamicSearchBundle\Resolver\FilterDefinitionResolverInterface;
 
 class FilterDefinitionManager implements FilterDefinitionManagerInterface
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected ConfigurationInterface $configuration;
+    protected FilterDefinitionResolverInterface $filterDefinitionResolver;
 
-    /**
-     * @var FilterDefinitionResolverInterface
-     */
-    protected $filterDefinitionResolver;
-
-    /**
-     * @param ConfigurationInterface            $configuration
-     * @param FilterDefinitionResolverInterface $filterDefinitionResolver
-     */
     public function __construct(
         ConfigurationInterface $configuration,
         FilterDefinitionResolverInterface $filterDefinitionResolver
@@ -33,10 +23,10 @@ class FilterDefinitionManager implements FilterDefinitionManagerInterface
         $this->filterDefinitionResolver = $filterDefinitionResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateFilterDefinition(ContextDefinitionInterface $contextDefinition, OutputChannelAllocatorInterface $outputChannelAllocator)
+    public function generateFilterDefinition(
+        ContextDefinitionInterface $contextDefinition,
+        OutputChannelAllocatorInterface $outputChannelAllocator
+    ): ?FilterDefinitionInterface
     {
         try {
             $filterDefinitionBuilderStack = $this->filterDefinitionResolver->resolve($contextDefinition->getName(), $outputChannelAllocator);

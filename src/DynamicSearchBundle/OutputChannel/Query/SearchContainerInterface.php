@@ -14,13 +14,7 @@ interface SearchContainerInterface
      */
     public function getQuery();
 
-    /**
-     * @return string
-     */
-    public function getIdentifier();
+    public function getIdentifier(): string;
 
-    /**
-     * @return RawResultInterface
-     */
-    public function getRawResult();
+    public function getRawResult(): RawResultInterface;
 }

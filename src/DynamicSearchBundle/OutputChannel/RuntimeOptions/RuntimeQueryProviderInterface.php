@@ -4,18 +4,9 @@ namespace DynamicSearchBundle\OutputChannel\RuntimeOptions;
 
 interface RuntimeQueryProviderInterface
 {
-    /**
-     * @return string
-     */
-    public function getUserQuery();
+    public function getUserQuery(): ?string;
 
-    /**
-     * @return string|null
-     */
-    public function getUserLocale();
+    public function getUserLocale(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getQueryIdentifier();
+    public function getQueryIdentifier(): string;
 }

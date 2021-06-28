@@ -13,3 +13,6 @@ services:
 
     DynamicSearchBundle\Service\LongProcessServiceInterface: '@DynamicSearchBundle\Service\LongProcessService'
     DynamicSearchBundle\Service\LongProcessService: ~
+
+    DynamicSearchBundle\Configuration\ConfigurationInterface: '@DynamicSearchBundle\Configuration\Configuration'
+    DynamicSearchBundle\Configuration\Configuration: ~

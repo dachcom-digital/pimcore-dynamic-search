@@ -11,20 +11,9 @@ use DynamicSearchBundle\Service\LongProcessServiceInterface;
 
 class ContextRunner extends AbstractRunner implements ContextRunnerInterface
 {
-    /**
-     * @var QueueManagerInterface
-     */
-    protected $queueManager;
+    protected QueueManagerInterface $queueManager;
+    protected LongProcessServiceInterface $longProcessService;
 
-    /**
-     * @var LongProcessServiceInterface
-     */
-    protected $longProcessService;
-
-    /**
-     * @param QueueManagerInterface       $queueManager
-     * @param LongProcessServiceInterface $longProcessService
-     */
     public function __construct(
         QueueManagerInterface $queueManager,
         LongProcessServiceInterface $longProcessService
@@ -33,10 +22,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         $this->longProcessService = $longProcessService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function runFullContextCreation()
+    public function runFullContextCreation(): void
     {
         $contextDefinitions = $this->contextDefinitionBuilder->buildContextDefinitionStack(ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
@@ -54,10 +40,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         $this->longProcessService->shutdown();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function runSingleContextCreation(string $contextName)
+    public function runSingleContextCreation(string $contextName): void
     {
         $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
@@ -69,11 +52,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
         $this->longProcessService->shutdown();
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @throws SilentException
-     */
-    protected function dispatchContext(ContextDefinitionInterface $contextDefinition)
+    protected function dispatchContext(ContextDefinitionInterface $contextDefinition): void
     {
         $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);
 

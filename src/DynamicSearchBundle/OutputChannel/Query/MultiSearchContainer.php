@@ -5,22 +5,16 @@ namespace DynamicSearchBundle\OutputChannel\Query;
 class MultiSearchContainer implements MultiSearchContainerInterface
 {
     /**
-     * @var array|SearchContainerInterface[]
+     * @var SearchContainerInterface[]
      */
-    protected $searchContainer;
+    protected array $searchContainer;
 
-    /**
-     * @param array|SearchContainerInterface[] $searchContainer
-     */
     public function __construct(array $searchContainer)
     {
         $this->searchContainer = $searchContainer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSearchContainer()
+    public function getSearchContainer(): array
     {
         return $this->searchContainer;
     }

@@ -11,16 +11,9 @@ class ConnectionKeepAlive
     /**
      * @var Connection[]
      */
-    protected $connections;
+    protected array $connections;
+    protected bool $isAttached;
 
-    /**
-     * @var bool
-     */
-    protected $isAttached;
-
-    /**
-     * ConnectionKeepAlive constructor.
-     */
     public function __construct()
     {
         $this->connections = [];
@@ -30,16 +23,13 @@ class ConnectionKeepAlive
     /**
      * Detach Kick Event.
      */
-    public function detach()
+    public function detach(): void
     {
         unregister_tick_function([$this, 'kick']);
         $this->isAttached = false;
     }
 
-    /**
-     * Attach Kick Event.
-     */
-    public function attach()
+    public function attach(): void
     {
         if ($this->isAttached || register_tick_function([$this, 'kick'])) {
             $this->isAttached = true;
@@ -50,18 +40,12 @@ class ConnectionKeepAlive
         throw new \RuntimeException('Unable to attach keep alive to the system');
     }
 
-    /**
-     * @param Connection $logConnection
-     */
-    public function addConnection(Connection $logConnection)
+    public function addConnection(Connection $logConnection): void
     {
         $this->connections[spl_object_hash($logConnection)] = $logConnection;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function kick()
+    public function kick(): void
     {
         foreach ($this->connections as $conn) {
             try {

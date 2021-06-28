@@ -16,20 +16,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SearchFrontendController extends FrontendController
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected ConfigurationInterface $configuration;
+    protected OutputChannelProcessorInterface $outputChannelWorkflowProcessor;
 
-    /**
-     * @var OutputChannelProcessorInterface
-     */
-    protected $outputChannelWorkflowProcessor;
-
-    /**
-     * @param ConfigurationInterface          $configuration
-     * @param OutputChannelProcessorInterface $outputChannelWorkflowProcessor
-     */
     public function __construct(
         ConfigurationInterface $configuration,
         OutputChannelProcessorInterface $outputChannelWorkflowProcessor
@@ -38,14 +27,7 @@ class SearchFrontendController extends FrontendController
         $this->outputChannelWorkflowProcessor = $outputChannelWorkflowProcessor;
     }
 
-    /**
-     * @param Request $request
-     * @param string  $contextName
-     * @param string  $outputChannelName
-     *
-     * @return Response|NotFoundHttpException
-     */
-    public function searchAction(Request $request, string $contextName, string $outputChannelName)
+    public function searchAction(Request $request, string $contextName, string $outputChannelName): Response
     {
         $outputChannelName = str_replace('-', '_', $outputChannelName);
 
@@ -56,14 +38,7 @@ class SearchFrontendController extends FrontendController
         return $this->renderFrontendSearch($request, $outputChannelName, $contextName, $this->getOutputChannelView($contextName, $outputChannelName, 'List'));
     }
 
-    /**
-     * @param Request $request
-     * @param string  $contextName
-     * @param string  $outputChannelName
-     *
-     * @return Response|NotFoundHttpException
-     */
-    public function multiSearchAction(Request $request, string $contextName, string $outputChannelName)
+    public function multiSearchAction(Request $request, string $contextName, string $outputChannelName): Response
     {
         $outputChannelName = str_replace('-', '_', $outputChannelName);
 
@@ -74,15 +49,7 @@ class SearchFrontendController extends FrontendController
         return $this->renderFrontendSearch($request, $outputChannelName, $contextName, $this->getOutputChannelView($contextName, $outputChannelName, 'MultiList'));
     }
 
-    /**
-     * @param Request $request
-     * @param string  $contextName
-     * @param string  $outputChannelName
-     * @param string  $viewName
-     *
-     * @return Response
-     */
-    protected function renderFrontendSearch(Request $request, string $outputChannelName, string $contextName, string $viewName)
+    protected function renderFrontendSearch(Request $request, string $outputChannelName, string $contextName, string $viewName): Response
     {
         $hasError = false;
         $errorMessage = null;
@@ -175,12 +142,7 @@ class SearchFrontendController extends FrontendController
         return $this->renderTemplate($viewName, array_merge($params, ['blocks' => $blocks]));
     }
 
-    /**
-     * @param OutputChannelResultInterface $outputChannelResult
-     *
-     * @return array
-     */
-    protected function prepareQueryVars(OutputChannelResultInterface $outputChannelResult)
+    protected function prepareQueryVars(OutputChannelResultInterface $outputChannelResult): array
     {
         $data = null;
         $paginator = null;
@@ -204,14 +166,7 @@ class SearchFrontendController extends FrontendController
         ];
     }
 
-    /**
-     * @param string $contextName
-     * @param string $outputChannelName
-     * @param bool   $multiSearchOnly
-     *
-     * @return bool
-     */
-    protected function outputChannelExists(string $contextName, string $outputChannelName, $multiSearchOnly = false)
+    protected function outputChannelExists(string $contextName, string $outputChannelName, bool $multiSearchOnly = false): bool
     {
         $channelConfig = $this->getOutputChannelConfig($contextName, $outputChannelName);
 
@@ -234,14 +189,7 @@ class SearchFrontendController extends FrontendController
         return $channelConfig['use_frontend_controller'] === true;
     }
 
-    /**
-     * @param string $contextName
-     * @param string $outputChannelName
-     * @param string $default
-     *
-     * @return string
-     */
-    protected function getOutputChannelView(string $contextName, string $outputChannelName, string $default)
+    protected function getOutputChannelView(string $contextName, string $outputChannelName, string $default): string
     {
         $channelConfig = $this->getOutputChannelConfig($contextName, $outputChannelName);
 
@@ -252,13 +200,7 @@ class SearchFrontendController extends FrontendController
         return isset($channelConfig['view_name']) && is_string($channelConfig['view_name']) ? $channelConfig['view_name'] : $default;
     }
 
-    /**
-     * @param string $contextName
-     * @param string $outputChannelName
-     *
-     * @return array|null
-     */
-    protected function getOutputChannelConfig(string $contextName, string $outputChannelName)
+    protected function getOutputChannelConfig(string $contextName, string $outputChannelName): ?array
     {
         $contextConfig = $this->getParameter('dynamic_search.context.full_configuration');
 
@@ -266,10 +208,6 @@ class SearchFrontendController extends FrontendController
             return null;
         }
 
-        if (!array_key_exists($outputChannelName, $contextConfig[$contextName]['output_channels'])) {
-            return null;
-        }
-
-        return $contextConfig[$contextName]['output_channels'][$outputChannelName];
+        return $contextConfig[$contextName]['output_channels'][$outputChannelName] ?? null;
     }
 }

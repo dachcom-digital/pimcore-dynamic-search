@@ -4,25 +4,14 @@ namespace DynamicSearchBundle\Configuration;
 
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config = [];
 
-    /**
-     * @param array $config
-     */
-    public function setConfig($config = [])
+    public function setConfig(array $config = []): void
     {
         $this->config = $config;
     }
 
-    /**
-     * @param string $slot
-     *
-     * @return mixed
-     */
-    public function get($slot)
+    public function get(string $slot)
     {
         return $this->config[$slot];
     }

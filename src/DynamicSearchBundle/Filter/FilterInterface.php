@@ -10,35 +10,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 interface FilterInterface
 {
     /**
-     * @param OptionsResolver $resolver
-     *
      * @return mixed
      */
     public function configureOptions(OptionsResolver $resolver);
 
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options);
+    public function setOptions(array $options): void;
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name);
+    public function setName(string $name): void;
 
-    /**
-     * @param OutputChannelModifierEventDispatcher $eventDispatcher
-     */
-    public function setEventDispatcher(OutputChannelModifierEventDispatcher $eventDispatcher);
+    public function setEventDispatcher(OutputChannelModifierEventDispatcher $eventDispatcher): void;
 
-    /**
-     * @param OutputChannelContextInterface $outputChannelContext
-     */
-    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext);
+    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext): void;
 
-    /**
-     * @return bool
-     */
     public function supportsFrontendView(): bool;
 
     /**
@@ -49,8 +32,6 @@ interface FilterInterface
     public function enrichQuery($query);
 
     /**
-     * @param RawResultInterface $rawResult
-     *
      * @return mixed
      */
     public function findFilterValueInResult(RawResultInterface $rawResult);

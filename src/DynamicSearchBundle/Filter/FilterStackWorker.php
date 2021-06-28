@@ -13,26 +13,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterStackWorker
 {
-    /**
-     * @var OutputChannelContextInterface
-     */
-    protected $context;
+    protected OutputChannelContextInterface $context;
+    protected FilterDefinitionManagerInterface $filterDefinitionManager;
+    protected IndexManagerInterface $indexManager;
 
-    /**
-     * @var FilterDefinitionManagerInterface
-     */
-    protected $filterDefinitionManager;
-
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
-     * @param OutputChannelContextInterface    $context
-     * @param FilterDefinitionManagerInterface $filterDefinitionManager
-     * @param IndexManagerInterface            $indexManager
-     */
     public function __construct(
         OutputChannelContextInterface $context,
         FilterDefinitionManagerInterface $filterDefinitionManager,
@@ -43,12 +27,6 @@ class FilterStackWorker
         $this->indexManager = $indexManager;
     }
 
-    /**
-     * @param array $filterStack
-     * @param mixed $query
-     *
-     * @return mixed
-     */
     public function enrichStackQuery(array $filterStack, $query)
     {
         foreach ($filterStack as $filterService) {
@@ -58,13 +36,7 @@ class FilterStackWorker
         return $query;
     }
 
-    /**
-     * @param SearchContainerInterface $searchContainer
-     * @param array                    $filterStack
-     *
-     * @return array
-     */
-    public function buildStackViewVars(SearchContainerInterface $searchContainer, array $filterStack)
+    public function buildStackViewVars(SearchContainerInterface $searchContainer, array $filterStack): array
     {
         $filterBlocks = [];
         foreach ($filterStack as $filterService) {
@@ -81,12 +53,7 @@ class FilterStackWorker
         return $filterBlocks;
     }
 
-    /**
-     * @param array $filterData
-     *
-     * @return FilterInterface
-     */
-    protected function prepareFilter(array $filterData)
+    protected function prepareFilter(array $filterData): FilterInterface
     {
         $options = new OptionsResolver();
 
@@ -101,15 +68,10 @@ class FilterStackWorker
         return $filter;
     }
 
-    /**
-     * @param OutputChannelContextInterface        $outputChannelContext
-     * @param OutputChannelModifierEventDispatcher $eventDispatcher
-     *
-     * @return array
-     *
-     * @throws OutputChannelException
-     */
-    public function generateFilterServiceStack(OutputChannelContextInterface $outputChannelContext, OutputChannelModifierEventDispatcher $eventDispatcher)
+    public function generateFilterServiceStack(
+        OutputChannelContextInterface $outputChannelContext,
+        OutputChannelModifierEventDispatcher $eventDispatcher
+    ): array
     {
         $outputChannelAllocator = $this->context->getOutputChannelAllocator();
 

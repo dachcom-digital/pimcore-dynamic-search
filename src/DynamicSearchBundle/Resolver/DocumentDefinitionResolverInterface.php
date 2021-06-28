@@ -9,21 +9,12 @@ use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 interface DocumentDefinitionResolverInterface
 {
     /**
-     * @param string                $contextName
-     *
      * @return DocumentDefinitionBuilderInterface[]
-     *
-     * @throws DefinitionNotFoundException
      */
-    public function resolveForContext(string $contextName);
+    public function resolveForContext(string $contextName): array;
 
     /**
-     * @param string                $contextName
-     * @param ResourceMetaInterface $resourceMeta
-     *
      * @return DocumentDefinitionBuilderInterface[]
-     *
-     * @throws DefinitionNotFoundException
      */
-    public function resolve(string $contextName, ResourceMetaInterface $resourceMeta);
+    public function resolve(string $contextName, ResourceMetaInterface $resourceMeta): array;
 }

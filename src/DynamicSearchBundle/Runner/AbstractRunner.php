@@ -19,93 +19,44 @@ use DynamicSearchBundle\Provider\PreConfiguredIndexProviderInterface;
 
 abstract class AbstractRunner
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected ?LoggerInterface $logger = null;
+    protected ?ConfigurationInterface $configuration = null;
+    protected ?ContextDefinitionBuilderInterface $contextDefinitionBuilder = null;
+    protected ?DataManagerInterface $dataManager = null;
+    protected ?IndexManagerInterface $indexManager = null;
+    protected ?IndexDocumentGeneratorInterface $indexDocumentGenerator = null;
 
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
-
-    /**
-     * @var ContextDefinitionBuilderInterface
-     */
-    protected $contextDefinitionBuilder;
-
-    /**
-     * @var DataManagerInterface
-     */
-    protected $dataManager;
-
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
-     * @var IndexDocumentGeneratorInterface
-     */
-    protected $indexDocumentGenerator;
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
-    /**
-     * @param ConfigurationInterface $configuration
-     */
-    public function setConfiguration(ConfigurationInterface $configuration)
+    public function setConfiguration(ConfigurationInterface $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
-     */
-    public function setContextDefinitionBuilder(ContextDefinitionBuilderInterface $contextDefinitionBuilder)
+    public function setContextDefinitionBuilder(ContextDefinitionBuilderInterface $contextDefinitionBuilder): void
     {
         $this->contextDefinitionBuilder = $contextDefinitionBuilder;
     }
 
-    /**
-     * @param DataManagerInterface $dataManager
-     */
-    public function setDataManager(DataManagerInterface $dataManager)
+    public function setDataManager(DataManagerInterface $dataManager): void
     {
         $this->dataManager = $dataManager;
     }
 
-    /**
-     * @param IndexManagerInterface $indexManager
-     */
-    public function setIndexManager(IndexManagerInterface $indexManager)
+    public function setIndexManager(IndexManagerInterface $indexManager): void
     {
         $this->indexManager = $indexManager;
     }
 
-    /**
-     * @param IndexDocumentGeneratorInterface $indexDocumentGenerator
-     */
-    public function setIndexDocumentGenerator(IndexDocumentGeneratorInterface $indexDocumentGenerator)
+    public function setIndexDocumentGenerator(IndexDocumentGeneratorInterface $indexDocumentGenerator): void
     {
         $this->indexDocumentGenerator = $indexDocumentGenerator;
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string                     $dataProviderBehaviour
-     *
-     * @return array
-     *
-     * @throws RuntimeException
-     */
-    protected function setupProviders(ContextDefinitionInterface $contextDefinition, string $dataProviderBehaviour)
+    protected function setupProviders(ContextDefinitionInterface $contextDefinition, string $dataProviderBehaviour): array
     {
         return [
             'dataProvider'  => $this->setupDataProvider($contextDefinition, $dataProviderBehaviour),
@@ -113,13 +64,7 @@ abstract class AbstractRunner
         ];
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     *
-     * @return IndexProviderInterface
-     * @throws RuntimeException
-     */
-    protected function setupIndexProvider(ContextDefinitionInterface $contextDefinition)
+    protected function setupIndexProvider(ContextDefinitionInterface $contextDefinition): IndexProviderInterface
     {
         try {
             $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
@@ -140,16 +85,10 @@ abstract class AbstractRunner
         return $indexProvider;
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string                     $providerBehaviour
-     *
-     * @return DataProviderInterface
-     */
     protected function setupDataProvider(
         ContextDefinitionInterface $contextDefinition,
         string $providerBehaviour = DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH
-    ) {
+    ): DataProviderInterface {
         try {
             $dataProvider = $this->dataManager->getDataProvider($contextDefinition, $providerBehaviour);
         } catch (ProviderException $e) {
@@ -159,15 +98,7 @@ abstract class AbstractRunner
         return $dataProvider;
     }
 
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     *
-     * @return ContextDefinitionInterface
-     *
-     * @throws RuntimeException
-     */
-    protected function setupContextDefinition(string $contextName, string $dispatchType)
+    protected function setupContextDefinition(string $contextName, string $dispatchType): ContextDefinitionInterface
     {
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
 
@@ -178,13 +109,7 @@ abstract class AbstractRunner
         return $contextDefinition;
     }
 
-    /**
-     * @param ContextDefinitionInterface          $contextDefinition
-     * @param PreConfiguredIndexProviderInterface $indexProvider
-     *
-     * @throws \Exception
-     */
-    private function setupPreConfiguredIndexProvider(ContextDefinitionInterface $contextDefinition, PreConfiguredIndexProviderInterface $indexProvider)
+    private function setupPreConfiguredIndexProvider(ContextDefinitionInterface $contextDefinition, PreConfiguredIndexProviderInterface $indexProvider): void
     {
         try {
             $indexDocument = $this->indexDocumentGenerator->generateWithoutData($contextDefinition, ['preConfiguredIndexProvider' => true]);
@@ -207,13 +132,7 @@ abstract class AbstractRunner
         $indexProvider->preConfigureIndex($indexDocument);
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param array                      $providers
-     *
-     * @throws SilentException
-     */
-    protected function warmUpProvider(ContextDefinitionInterface $contextDefinition, array $providers)
+    protected function warmUpProvider(ContextDefinitionInterface $contextDefinition, array $providers): void
     {
         foreach ($providers as $provider) {
 
@@ -243,13 +162,7 @@ abstract class AbstractRunner
         }
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param array                      $providers
-     *
-     * @throws SilentException
-     */
-    protected function coolDownProvider(ContextDefinitionInterface $contextDefinition, array $providers)
+    protected function coolDownProvider(ContextDefinitionInterface $contextDefinition, array $providers): void
     {
         foreach ($providers as $provider) {
             $providerName = $provider instanceof DataProviderInterface ? $contextDefinition->getDataProviderName() : $contextDefinition->getIndexProviderName();
@@ -275,16 +188,7 @@ abstract class AbstractRunner
         }
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param mixed                      $class
-     * @param string                     $method
-     * @param array                      $arguments
-     * @param array                      $involvedProviders
-     *
-     * @throws SilentException
-     */
-    protected function callSaveMethod(ContextDefinitionInterface $contextDefinition, $class, string $method, array $arguments, array $involvedProviders)
+    protected function callSaveMethod(ContextDefinitionInterface $contextDefinition, $class, string $method, array $arguments, array $involvedProviders): void
     {
         try {
             call_user_func_array([$class, $method], $arguments);
@@ -305,12 +209,7 @@ abstract class AbstractRunner
         }
     }
 
-    /**
-     * @param string                     $errorMessage
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param array                      $providers
-     */
-    protected function dispatchCancelledProcessToProviders(string $errorMessage, ContextDefinitionInterface $contextDefinition, array $providers)
+    protected function dispatchCancelledProcessToProviders(string $errorMessage, ContextDefinitionInterface $contextDefinition, array $providers): void
     {
         $this->logger->error($errorMessage, 'workflow', $contextDefinition->getName());
 
@@ -329,12 +228,7 @@ abstract class AbstractRunner
         }
     }
 
-    /**
-     * @param string                     $errorMessage
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param array                      $providers
-     */
-    protected function dispatchFailOverToProviders(string $errorMessage, ContextDefinitionInterface $contextDefinition, array $providers)
+    protected function dispatchFailOverToProviders(string $errorMessage, ContextDefinitionInterface $contextDefinition, array $providers): void
     {
         $this->logger->error($errorMessage, 'workflow', $contextDefinition->getName());
 

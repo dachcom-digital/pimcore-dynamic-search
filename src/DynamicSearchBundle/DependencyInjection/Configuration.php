@@ -91,44 +91,52 @@ class Configuration implements ConfigurationInterface
                                 ->arrayPrototype()
                                     ->validate()
                                         ->ifTrue(function ($values) {
-                                            return $values['multiple'] === true && (!is_array($values['blocks']) || count($values['blocks']) === 0);
+                                            return isset($values['multiple']) && $values['multiple'] === true && (!is_array($values['blocks']) || count($values['blocks']) === 0);
                                         })
                                         ->thenInvalid('"blocks" missing')
                                     ->end()
                                     ->validate()
                                         ->ifTrue(function ($values) {
-                                            return $values['multiple'] === false && !empty($values['blocks']);
+                                            return isset($values['multiple']) && $values['multiple'] === false && !empty($values['blocks']);
                                         })
                                         ->thenInvalid('Unrecognized option "blocks"')
                                     ->end()
                                     ->beforeNormalization()
                                         ->ifTrue(function ($values) {
-                                            return $values['multiple'] === true && isset($values['paginator']) && $values['paginator']['enabled'] === true;
+                                            return isset($values['multiple']) && $values['multiple'] === true && isset($values['paginator']) && $values['paginator']['enabled'] === true;
                                         })
                                         ->thenInvalid('Unrecognized multi search  option "paginator"')
                                     ->end()
                                     ->beforeNormalization()
                                         ->ifTrue(function ($values) {
-                                            return $values['multiple'] === true && isset($values['normalizer']) && $values['normalizer']['service'] !== null;
+                                            return isset($values['multiple']) && $values['multiple'] === true && isset($values['normalizer']) && $values['normalizer']['service'] !== null;
                                         })
                                         ->thenInvalid('Unrecognized multi search option "normalizer"')
                                     ->end()
                                     ->beforeNormalization()
                                         ->ifTrue(function ($values) {
-                                            return $values['multiple'] === true && isset($values['runtime_options_builder']) && $values['runtime_options_builder'] !== null;
+                                            return isset($values['multiple']) && $values['multiple'] === true && isset($values['runtime_options_builder']) && $values['runtime_options_builder'] !== null;
                                         })
                                         ->thenInvalid('Unrecognized multi search option "runtime_options_builder"')
                                     ->end()
                                     ->beforeNormalization()
                                         ->ifTrue(function ($values) {
-                                            return $values['use_frontend_controller'] !== true && isset($values['view_name']) && $values['view_name'] !== null;
+                                            return isset($values['use_frontend_controller']) && $values['use_frontend_controller'] !== true && isset($values['view_name']) && $values['view_name'] !== null;
                                         })
                                         ->thenInvalid('Unrecognized option "view_name" in a non frontend controller based output channel')
                                     ->end()
                                     ->beforeNormalization()
                                         ->always()
                                         ->then(function ($values) {
+                                            if (!isset($values['use_frontend_controller'])) {
+                                                return $values;
+                                            }
+
                                             if ($values['use_frontend_controller'] !== true) {
+                                                return $values;
+                                            }
+
+                                            if (!isset($values['view_name'])) {
                                                 return $values;
                                             }
 
@@ -136,7 +144,7 @@ class Configuration implements ConfigurationInterface
                                                 return $values;
                                             }
 
-                                            $values['view_name'] = $values['multiple'] === true ? 'MultiList' : 'List';
+                                            $values['view_name'] = isset($values['multiple']) && $values['multiple'] === true ? 'MultiList' : 'List';
 
                                             return $values;
                                         })

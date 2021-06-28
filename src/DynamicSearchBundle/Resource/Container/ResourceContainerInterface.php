@@ -4,42 +4,17 @@ namespace DynamicSearchBundle\Resource\Container;
 
 interface ResourceContainerInterface
 {
-    /**
-     * @return bool
-     */
-    public function hasResource();
+    public function hasResource(): bool;
 
-    /**
-     * @return bool
-     */
-    public function isBaseResource();
+    public function isBaseResource(): bool;
 
-    /**
-     * @return mixed
-     */
     public function getResource();
 
-    /**
-     * @return string
-     */
-    public function getResourceScaffolderIdentifier();
+    public function getResourceScaffolderIdentifier(): string;
 
-    /**
-     * @param string $attribute
-     *
-     * @return bool
-     */
-    public function hasAttribute($attribute);
+    public function hasAttribute(string $attribute): bool;
 
-    /**
-     * @param string $attribute
-     *
-     * @return mixed
-     */
-    public function getAttribute($attribute);
+    public function getAttribute(string $attribute);
 
-    /**
-     * @return array
-     */
-    public function getAttributes();
+    public function getAttributes(): array;
 }

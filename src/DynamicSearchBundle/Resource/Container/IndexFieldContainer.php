@@ -11,23 +11,14 @@ class IndexFieldContainer implements IndexFieldContainerInterface
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $indexType;
+    protected string $indexType;
 
-    /**
-     * @param string $name
-     * @param string $indexType
-     * @param mixed  $data
-     */
     public function __construct(string $name, string $indexType, $data)
     {
         $this->name = $name;
@@ -35,26 +26,17 @@ class IndexFieldContainer implements IndexFieldContainerInterface
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData()
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIndexType()
+    public function getIndexType(): string
     {
         return $this->indexType;
     }

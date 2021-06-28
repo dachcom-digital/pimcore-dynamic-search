@@ -6,8 +6,5 @@ use DynamicSearchBundle\Paginator\PaginatorInterface;
 
 interface OutputChannelPaginatorResultInterface
 {
-    /**
-     * @return PaginatorInterface
-     */
-    public function getPaginator();
+    public function getPaginator(): ?PaginatorInterface;
 }

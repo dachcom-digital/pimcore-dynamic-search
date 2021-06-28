@@ -9,15 +9,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface DocumentNormalizerInterface
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public static function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver): void;
 
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options);
+    public function setOptions(array $options): void;
 
     /**
      * @param RawResultInterface         $rawResult

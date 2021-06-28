@@ -6,30 +6,18 @@ use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProviderException;
 use DynamicSearchBundle\Logger\LoggerInterface;
+use DynamicSearchBundle\OutputChannel\Modifier\OutputChannelModifierFilterInterface;
+use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeOptionsBuilderInterface;
+use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterface;
 use DynamicSearchBundle\Registry\OutputChannelRegistryInterface;
 
 class OutputChannelManager implements OutputChannelManagerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected ConfigurationInterface $configuration;
+    protected OutputChannelRegistryInterface $outputChannelRegistry;
 
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
-
-    /**
-     * @var OutputChannelRegistryInterface
-     */
-    protected $outputChannelRegistry;
-
-    /**
-     * @param LoggerInterface                $logger
-     * @param ConfigurationInterface         $configuration
-     * @param OutputChannelRegistryInterface $outputChannelRegistry
-     */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
@@ -40,11 +28,10 @@ class OutputChannelManager implements OutputChannelManagerInterface
         $this->outputChannelRegistry = $outputChannelRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannel)
-    {
+    public function getOutputChannel(
+        ContextDefinitionInterface $contextDefinition,
+        string $outputChannel
+    ): ?OutputChannelInterface {
         $outputChannelServiceName = $contextDefinition->getOutputChannelServiceName($outputChannel);
 
         // output channel is disabled by default.
@@ -60,39 +47,28 @@ class OutputChannelManager implements OutputChannelManagerInterface
             return null;
         }
 
-        $outputChannel = $this->outputChannelRegistry->getOutputChannelService($outputChannelServiceName);
-
-        return $outputChannel;
+        return $this->outputChannelRegistry->getOutputChannelService($outputChannelServiceName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelRuntimeQueryProvider(string $provider)
+    public function getOutputChannelRuntimeQueryProvider(string $provider): ?RuntimeQueryProviderInterface
     {
         if (!$this->outputChannelRegistry->hasOutputChannelRuntimeQueryProvider($provider)) {
-            return [];
+            return null;
         }
 
         return $this->outputChannelRegistry->getOutputChannelRuntimeQueryProvider($provider);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelRuntimeOptionsBuilder(string $provider)
+    public function getOutputChannelRuntimeOptionsBuilder(string $provider): ?RuntimeOptionsBuilderInterface
     {
         if (!$this->outputChannelRegistry->hasOutputChannelRuntimeOptionsBuilder($provider)) {
-            return [];
+            return null;
         }
 
         return $this->outputChannelRegistry->getOutputChannelRuntimeOptionsBuilder($provider);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action)
+    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action): array
     {
         if (!$this->outputChannelRegistry->hasOutputChannelModifierAction($outputChannelServiceName, $action)) {
             return [];
@@ -101,11 +77,10 @@ class OutputChannelManager implements OutputChannelManagerInterface
         return $this->outputChannelRegistry->getOutputChannelModifierAction($outputChannelServiceName, $action);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter)
-    {
+    public function getOutputChannelModifierFilter(
+        string $outputChannelServiceName,
+        string $filter
+    ): ?OutputChannelModifierFilterInterface {
         if (!$this->outputChannelRegistry->hasOutputChannelModifierFilter($outputChannelServiceName, $filter)) {
             return null;
         }

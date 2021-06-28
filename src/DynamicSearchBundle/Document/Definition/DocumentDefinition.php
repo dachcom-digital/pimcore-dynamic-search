@@ -10,36 +10,12 @@ class DocumentDefinition implements DocumentDefinitionInterface
      * @var string|int
      */
     protected $currentLevel;
-
-    /**
-     * @var int
-     */
-    protected $levelCount = 0;
-
-    /**
-     * @var string
-     */
-    protected $dataNormalizerIdentifier;
-
-    /**
-     * @var array
-     */
-    protected $definitionOptions;
-
-    /**
-     * @var array
-     */
-    protected $documentConfiguration;
-
-    /**
-     * @var array
-     */
-    protected $optionFieldDefinitions;
-
-    /**
-     * @var array
-     */
-    protected $indexFieldDefinitions;
+    protected int $levelCount = 0;
+    protected string $dataNormalizerIdentifier;
+    protected array $definitionOptions = [];
+    protected array $documentConfiguration = [];
+    protected array $optionFieldDefinitions = [];
+    protected array $indexFieldDefinitions = [];
 
     /**
      * @param string $dataNormalizerIdentifier
@@ -62,42 +38,27 @@ class DocumentDefinition implements DocumentDefinitionInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataNormalizerIdentifier()
+    public function getDataNormalizerIdentifier(): string
     {
         return $this->dataNormalizerIdentifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCurrentLevel($currentLevel)
+    public function setCurrentLevel($currentLevel): void
     {
         $this->currentLevel = $currentLevel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDocumentConfiguration(array $documentConfiguration)
+    public function setDocumentConfiguration(array $documentConfiguration): void
     {
         $this->documentConfiguration = $documentConfiguration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDocumentConfiguration()
+    public function getDocumentConfiguration(): array
     {
-        return empty($this->documentConfiguration) ? [] : $this->documentConfiguration;
+        return $this->documentConfiguration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addOptionFieldDefinition(array $definition)
+    public function addOptionFieldDefinition(array $definition): static
     {
         $resolver = new OptionsResolver();
         $resolver->setRequired(['name', 'data_transformer']);
@@ -123,18 +84,12 @@ class DocumentDefinition implements DocumentDefinitionInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptionFieldDefinitions(): array
     {
-        return !is_array($this->optionFieldDefinitions) ? [] : $this->optionFieldDefinitions;
+        return $this->optionFieldDefinitions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addSimpleDocumentFieldDefinition(array $definition)
+    public function addSimpleDocumentFieldDefinition(array $definition): static
     {
         $resolver = new OptionsResolver();
 
@@ -173,10 +128,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addPreProcessFieldDefinition(array $definition, \Closure $closure)
+    public function addPreProcessFieldDefinition(array $definition, \Closure $closure): static
     {
         if ($this->definitionOptions['allowPreProcessFieldDefinitions'] === false) {
             throw new \Exception('Pre process field definitions are not allowed in current context (Maybe you are using a pre configured index provider)');
@@ -208,9 +160,6 @@ class DocumentDefinition implements DocumentDefinitionInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDocumentFieldDefinitions(): array
     {
         return !isset($this->indexFieldDefinitions[$this->currentLevel]) || !is_array($this->indexFieldDefinitions[$this->currentLevel])

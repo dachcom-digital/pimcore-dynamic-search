@@ -6,17 +6,7 @@ use DynamicSearchBundle\Provider\IndexProviderInterface;
 
 interface IndexProviderRegistryInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has(string $identifier);
+    public function has(string $identifier): bool;
 
-    /**
-     * @param string $identifier
-     *
-     * @return IndexProviderInterface
-     */
-    public function get(string $identifier);
+    public function get(string $identifier): IndexProviderInterface;
 }

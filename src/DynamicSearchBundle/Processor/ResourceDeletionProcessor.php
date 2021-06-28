@@ -14,26 +14,10 @@ use DynamicSearchBundle\Provider\IndexProviderInterface;
 
 class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected IndexManagerInterface $indexManager;
+    protected ResourceHarmonizerInterface $resourceHarmonizer;
 
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
-     * @var ResourceHarmonizerInterface
-     */
-    protected $resourceHarmonizer;
-
-    /**
-     * @param LoggerInterface             $logger
-     * @param IndexManagerInterface       $indexManager
-     * @param ResourceHarmonizerInterface $resourceHarmonizer
-     */
     public function __construct(
         LoggerInterface $logger,
         IndexManagerInterface $indexManager,
@@ -44,10 +28,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
         $this->resourceHarmonizer = $resourceHarmonizer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContextDefinitionInterface $contextDefinition, $resource)
+    public function process(ContextDefinitionInterface $contextDefinition, $resource): void
     {
         $indexProvider = $this->getIndexProvider($contextDefinition);
 
@@ -85,10 +66,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta)
+    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta): void
     {
         $indexProvider = $this->getIndexProvider($contextDefinition);
 
@@ -97,12 +75,7 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
         $this->sendIndexDocumentToIndexProvider($contextDefinition, $indexProvider, $indexDocument);
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     *
-     * @return IndexProviderInterface
-     */
-    protected function getIndexProvider(ContextDefinitionInterface $contextDefinition)
+    protected function getIndexProvider(ContextDefinitionInterface $contextDefinition): IndexProviderInterface
     {
         try {
             $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);
@@ -119,12 +92,11 @@ class ResourceDeletionProcessor implements ResourceDeletionProcessorInterface
         return $indexProvider;
     }
 
-    /**
-     * @param ContextDefinitionInterface   $contextDefinition
-     * @param IndexProviderInterface $indexProvider
-     * @param IndexDocument          $indexDocument
-     */
-    protected function sendIndexDocumentToIndexProvider(ContextDefinitionInterface $contextDefinition, IndexProviderInterface $indexProvider, IndexDocument $indexDocument)
+    protected function sendIndexDocumentToIndexProvider(
+        ContextDefinitionInterface $contextDefinition,
+        IndexProviderInterface $indexProvider,
+        IndexDocument $indexDocument
+    ): void
     {
         $this->logger->debug(
             sprintf(

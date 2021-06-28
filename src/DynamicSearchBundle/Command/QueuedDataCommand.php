@@ -9,23 +9,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class QueuedDataCommand extends Command
 {
-    /**
-     * @var DataProcessorInterface
-     */
-    protected $dataProcessor;
+    protected DataProcessorInterface $dataProcessor;
 
-    /**
-     * @param DataProcessorInterface $dataProcessor
-     */
     public function __construct(DataProcessorInterface $dataProcessor)
     {
         parent::__construct();
+
         $this->dataProcessor = $dataProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this
@@ -34,10 +26,7 @@ class QueuedDataCommand extends Command
             ->setDescription('For internal use only');
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->dataProcessor->process([]);
 
