@@ -13,32 +13,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DataProcessingEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected ContextDefinitionBuilderInterface $contextDefinitionBuilder;
+    protected ResourceModificationProcessorInterface $resourceModificationProcessor;
+    protected ResourceValidatorInterface $resourceValidator;
 
-    /**
-     * @var ContextDefinitionBuilderInterface
-     */
-    protected $contextDefinitionBuilder;
-
-    /**
-     * @var ResourceModificationProcessorInterface
-     */
-    protected $resourceModificationProcessor;
-
-    /**
-     * @var ResourceValidatorInterface
-     */
-    protected $resourceValidator;
-
-    /**
-     * @param LoggerInterface                        $logger
-     * @param ContextDefinitionBuilderInterface      $contextDefinitionBuilder
-     * @param ResourceModificationProcessorInterface $resourceModificationProcessor
-     * @param ResourceValidatorInterface             $resourceValidator
-     */
     public function __construct(
         LoggerInterface $logger,
         ContextDefinitionBuilderInterface $contextDefinitionBuilder,
@@ -51,22 +30,20 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
         $this->resourceValidator = $resourceValidator;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DynamicSearchEvents::NEW_DATA_AVAILABLE => ['dispatchResourceModification'],
         ];
     }
 
-    /**
-     * @param NewDataEvent $event
-     */
-    public function dispatchResourceModification(NewDataEvent $event)
+    public function dispatchResourceModification(NewDataEvent $event): void
     {
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($event->getContextName(), $event->getContextDispatchType());
+
+        if (null === $contextDefinition) {
+            return;
+        }
 
         try {
             // validate and allow rewriting resource based on current data behaviour

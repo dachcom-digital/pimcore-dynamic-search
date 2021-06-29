@@ -14,26 +14,10 @@ use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 
 class ResourceHarmonizer implements ResourceHarmonizerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected TransformerManagerInterface $transformerManager;
+    protected NormalizerManagerInterface $normalizerManager;
 
-    /**
-     * @var TransformerManagerInterface
-     */
-    protected $transformerManager;
-
-    /**
-     * @var NormalizerManagerInterface
-     */
-    protected $normalizerManager;
-
-    /**
-     * @param LoggerInterface             $logger
-     * @param TransformerManagerInterface $transformerManager
-     * @param NormalizerManagerInterface  $normalizerManager
-     */
     public function __construct(
         LoggerInterface $logger,
         TransformerManagerInterface $transformerManager,
@@ -44,10 +28,7 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
         $this->normalizerManager = $normalizerManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function harmonizeUntilNormalizedResourceStack(ContextDefinitionInterface $contextDefinition, $resource)
+    public function harmonizeUntilNormalizedResourceStack(ContextDefinitionInterface $contextDefinition, $resource): ?array
     {
         $resourceContainer = $this->harmonizeUntilResourceContainer($contextDefinition, $resource);
 
@@ -114,10 +95,7 @@ class ResourceHarmonizer implements ResourceHarmonizerInterface
         return $normalizedResourceStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function harmonizeUntilResourceContainer(ContextDefinitionInterface $contextDefinition, $resource)
+    public function harmonizeUntilResourceContainer(ContextDefinitionInterface $contextDefinition, $resource): ?ResourceContainer
     {
         $resourceScaffolderContainer = $this->transformerManager->getResourceScaffolder($contextDefinition, $resource);
         if (!$resourceScaffolderContainer instanceof ResourceScaffolderContainerInterface) {

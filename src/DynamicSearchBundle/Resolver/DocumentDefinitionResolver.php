@@ -9,23 +9,14 @@ use DynamicSearchBundle\Registry\DefinitionBuilderRegistryInterface;
 
 class DocumentDefinitionResolver implements DocumentDefinitionResolverInterface
 {
-    /**
-     * @var DefinitionBuilderRegistryInterface
-     */
-    protected $definitionBuilderRegistry;
+    protected DefinitionBuilderRegistryInterface $definitionBuilderRegistry;
 
-    /**
-     * @param DefinitionBuilderRegistryInterface $definitionBuilderRegistry
-     */
     public function __construct(DefinitionBuilderRegistryInterface $definitionBuilderRegistry)
     {
         $this->definitionBuilderRegistry = $definitionBuilderRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveForContext(string $contextName)
+    public function resolveForContext(string $contextName): array
     {
         $builder = [];
         foreach ($this->definitionBuilderRegistry->getAllDocumentDefinitionBuilder() as $documentDefinitionBuilder) {
@@ -46,10 +37,7 @@ class DocumentDefinitionResolver implements DocumentDefinitionResolverInterface
         return $builder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(string $contextName, ResourceMetaInterface $resourceMeta)
+    public function resolve(string $contextName, ResourceMetaInterface $resourceMeta): array
     {
         $builder = [];
         foreach ($this->definitionBuilderRegistry->getAllDocumentDefinitionBuilder() as $documentDefinitionBuilder) {

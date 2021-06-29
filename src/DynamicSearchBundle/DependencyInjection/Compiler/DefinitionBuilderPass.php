@@ -14,10 +14,7 @@ final class DefinitionBuilderPass implements CompilerPassInterface
     public const DOCUMENT_DEFINITION_BUILDER = 'dynamic_search.document_definition_builder';
     public const FILTER_DEFINITION_BUILDER = 'dynamic_search.filter_definition_builder';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(DefinitionBuilderRegistry::class);
 

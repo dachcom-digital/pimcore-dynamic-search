@@ -15,20 +15,9 @@ class SearchCommand extends Command
 {
     use SignalWatchTrait;
 
-    /**
-     * @var ContextRunnerInterface
-     */
-    protected $contextRunner;
+    protected ContextRunnerInterface $contextRunner;
+    protected LockServiceInterface $lockService;
 
-    /**
-     * @var LockServiceInterface
-     */
-    protected $lockService;
-
-    /**
-     * @param ContextRunnerInterface $contextRunner
-     * @param LockServiceInterface   $lockService
-     */
     public function __construct(ContextRunnerInterface $contextRunner, LockServiceInterface $lockService)
     {
         parent::__construct();
@@ -37,9 +26,6 @@ class SearchCommand extends Command
         $this->lockService = $lockService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this
@@ -54,10 +40,7 @@ class SearchCommand extends Command
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // should we skip context indexing if queue index is running?
         // currently we think it's not required:

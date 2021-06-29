@@ -9,37 +9,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface OutputChannelInterface
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public static function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver): void;
 
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options);
+    public function setOptions(array $options): void;
 
-    /**
-     * @param OutputChannelContextInterface $outputChannelContext
-     */
-    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext);
+    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext): void;
 
-    /**
-     * @param OutputChannelModifierEventDispatcher $eventDispatcher
-     */
-    public function setEventDispatcher(OutputChannelModifierEventDispatcher $eventDispatcher);
+    public function setEventDispatcher(OutputChannelModifierEventDispatcher $eventDispatcher): void;
 
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
     public function getQuery();
 
-    /**
-     * @param SearchContainerInterface $searchContainer
-     *
-     * @return SearchContainerInterface
-     * @throws \Exception
-     */
     public function getResult(SearchContainerInterface $searchContainer): SearchContainerInterface;
 }

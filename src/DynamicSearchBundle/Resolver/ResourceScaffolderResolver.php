@@ -5,27 +5,19 @@ namespace DynamicSearchBundle\Resolver;
 use DynamicSearchBundle\Exception\Resolver\ResourceScaffolderNotFoundException;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
 use DynamicSearchBundle\Resource\ResourceScaffolderContainer;
+use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 use DynamicSearchBundle\Resource\ResourceScaffolderInterface;
 
 class ResourceScaffolderResolver implements ResourceScaffolderResolverInterface
 {
-    /**
-     * @var TransformerRegistryInterface
-     */
-    protected $transformerRegistry;
+    protected TransformerRegistryInterface $transformerRegistry;
 
-    /**
-     * @param TransformerRegistryInterface $transformerRegistry
-     */
     public function __construct(TransformerRegistryInterface $transformerRegistry)
     {
         $this->transformerRegistry = $transformerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(string $dataProviderName, $resource)
+    public function resolve(string $dataProviderName, $resource): ResourceScaffolderContainerInterface
     {
         $validScaffolder = null;
         $validScaffolderName = null;

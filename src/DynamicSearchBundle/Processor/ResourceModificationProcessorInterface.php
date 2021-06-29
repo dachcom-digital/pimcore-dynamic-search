@@ -8,20 +8,7 @@ use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 interface ResourceModificationProcessorInterface
 {
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param mixed                      $resource
-     *
-     * @throws RuntimeException
-     */
-    public function process(ContextDefinitionInterface $contextDefinition, $resource);
+    public function process(ContextDefinitionInterface $contextDefinition, $resource): void;
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param ResourceMetaInterface      $resourceMeta
-     * @param mixed                      $resource
-     *
-     * @throws RuntimeException
-     */
-    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta, $resource);
+    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta, $resource): void;
 }

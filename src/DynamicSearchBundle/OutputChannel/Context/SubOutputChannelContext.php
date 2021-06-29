@@ -4,9 +4,6 @@ namespace DynamicSearchBundle\OutputChannel\Context;
 
 class SubOutputChannelContext extends OutputChannelContext implements SubOutputChannelContextInterface
 {
-    /**
-     * @param OutputChannelContextInterface $parent
-     */
     public function __construct(OutputChannelContextInterface $parent)
     {
         $this->setRuntimeQueryProvider($parent->getRuntimeQueryProvider());

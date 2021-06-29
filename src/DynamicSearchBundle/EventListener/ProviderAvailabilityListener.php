@@ -9,35 +9,27 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ProviderAvailabilityListener implements EventSubscriberInterface
 {
-    /**
-     * @var ProviderBundleManagerInterface
-     */
-    protected $providerBundleManager;
+    protected ProviderBundleManagerInterface $providerBundleManager;
 
-    /**
-     * @param ProviderBundleManagerInterface $providerBundleManager
-     */
     public function __construct(ProviderBundleManagerInterface $providerBundleManager)
     {
         $this->providerBundleManager = $providerBundleManager;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ConsoleEvents::COMMAND => 'onConsoleCommand'
         ];
     }
 
-    /**
-     * @param ConsoleCommandEvent $event
-     */
-    public function onConsoleCommand(ConsoleCommandEvent $event)
+    public function onConsoleCommand(ConsoleCommandEvent $event): void
     {
         $command = $event->getCommand();
+
+        if ($command === null) {
+            return;
+        }
 
         if ($command->getName() !== 'cache:clear') {
             return;

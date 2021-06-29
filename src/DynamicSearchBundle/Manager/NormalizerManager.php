@@ -3,27 +3,20 @@
 namespace DynamicSearchBundle\Manager;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
+use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
+use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 use DynamicSearchBundle\Registry\ResourceNormalizerRegistryInterface;
 
 class NormalizerManager implements NormalizerManagerInterface
 {
-    /**
-     * @var ResourceNormalizerRegistryInterface
-     */
-    protected $resourceNormalizerRegistry;
+    protected ResourceNormalizerRegistryInterface $resourceNormalizerRegistry;
 
-    /**
-     * @param ResourceNormalizerRegistryInterface $resourceNormalizerRegistry
-     */
     public function __construct(ResourceNormalizerRegistryInterface $resourceNormalizerRegistry)
     {
         $this->resourceNormalizerRegistry = $resourceNormalizerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceNormalizer(ContextDefinitionInterface $contextDefinition)
+    public function getResourceNormalizer(ContextDefinitionInterface $contextDefinition): ?ResourceNormalizerInterface
     {
         $normalizerName = $contextDefinition->getResourceNormalizerName();
         $dataProviderName = $contextDefinition->getDataProviderName();
@@ -46,10 +39,7 @@ class NormalizerManager implements NormalizerManagerInterface
         return $normalizer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDocumentNormalizerForOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannelName)
+    public function getDocumentNormalizerForOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannelName): ?DocumentNormalizerInterface
     {
         $normalizerName = $contextDefinition->getOutputChannelNormalizerName($outputChannelName);
         $indexProviderName = $contextDefinition->getIndexProviderName();

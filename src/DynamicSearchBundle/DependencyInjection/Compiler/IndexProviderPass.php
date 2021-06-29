@@ -13,10 +13,7 @@ final class IndexProviderPass implements CompilerPassInterface
 {
     public const INDEX_PROVIDER_TAG = 'dynamic_search.index_provider';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(IndexProviderRegistry::class);
 
@@ -35,11 +32,7 @@ final class IndexProviderPass implements CompilerPassInterface
         $this->validateOptions($container, $serviceDefinitionStack);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array            $serviceDefinitionStack
-     */
-    protected function validateOptions(ContainerBuilder $container, array $serviceDefinitionStack)
+    protected function validateOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
@@ -60,6 +53,8 @@ final class IndexProviderPass implements CompilerPassInterface
 
             $contextDefinitionFactory->addMethodCall('replaceContextConfig', [$contextName, $contextConfig]);
         }
+
+        unset($contextConfig);
 
         $container->setParameter('dynamic_search.context.full_configuration', $contextConfiguration);
     }

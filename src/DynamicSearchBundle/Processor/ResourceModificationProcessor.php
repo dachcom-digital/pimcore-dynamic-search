@@ -20,44 +20,13 @@ use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 
 class ResourceModificationProcessor implements ResourceModificationProcessorInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected ContextDefinitionBuilderInterface $contextDefinitionBuilder;
+    protected IndexDocumentGeneratorInterface $indexDocumentGenerator;
+    protected IndexManagerInterface $indexManager;
+    protected ResourceHarmonizerInterface $resourceHarmonizer;
+    protected ContextGuardRegistryInterface $contextGuardRegistry;
 
-    /**
-     * @var ContextDefinitionBuilderInterface
-     */
-    protected $contextDefinitionBuilder;
-
-    /**
-     * @var IndexDocumentGeneratorInterface
-     */
-    protected $indexDocumentGenerator;
-
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
-     * @var ResourceHarmonizerInterface
-     */
-    protected $resourceHarmonizer;
-
-    /**
-     * @var ContextGuardRegistryInterface
-     */
-    protected $contextGuardRegistry;
-
-    /**
-     * @param LoggerInterface                   $logger
-     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
-     * @param IndexDocumentGeneratorInterface   $indexDocumentGenerator
-     * @param IndexManagerInterface             $indexManager
-     * @param ResourceHarmonizerInterface       $resourceHarmonizer
-     * @param ContextGuardRegistryInterface     $contextGuardRegistry
-     */
     public function __construct(
         LoggerInterface $logger,
         ContextDefinitionBuilderInterface $contextDefinitionBuilder,
@@ -74,10 +43,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         $this->contextGuardRegistry = $contextGuardRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContextDefinitionInterface $contextDefinition, $resource)
+    public function process(ContextDefinitionInterface $contextDefinition, $resource): void
     {
         $indexProvider = $this->getIndexProvider($contextDefinition);
 
@@ -138,17 +104,14 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta, $resource)
+    public function processByResourceMeta(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta, $resource): void
     {
         $indexProvider = $this->getIndexProvider($contextDefinition);
 
         $resourceContainer = $this->resourceHarmonizer->harmonizeUntilResourceContainer($contextDefinition, $resource);
         if (!$resourceContainer instanceof ResourceContainerInterface) {
             // nothing to log: done by harmonizer
-            return null;
+            return;
         }
 
         if (empty($resourceMeta->getDocumentId())) {
@@ -187,18 +150,12 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         $this->validateAndSubmitIndexDocument($contextDefinition, $indexProvider, $indexDocument, $resourceContainer->getResourceScaffolderIdentifier());
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param IndexProviderInterface     $indexProvider
-     * @param IndexDocument              $indexDocument
-     * @param string                     $resourceScaffolderName
-     */
     protected function validateAndSubmitIndexDocument(
         ContextDefinitionInterface $contextDefinition,
         IndexProviderInterface $indexProvider,
         IndexDocument $indexDocument,
         string $resourceScaffolderName
-    ) {
+    ): void {
         $logType = 'debug';
         $logMessage = null;
         $contextDispatchType = $contextDefinition->getContextDispatchType();
@@ -233,16 +190,11 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         $this->sendIndexDocumentToIndexProvider($contextDefinition, $indexProvider, $indexDocument);
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param IndexProviderInterface     $indexProvider
-     * @param IndexDocument              $indexDocument
-     */
     protected function sendIndexDocumentToIndexProvider(
         ContextDefinitionInterface $contextDefinition,
         IndexProviderInterface $indexProvider,
         IndexDocument $indexDocument
-    ) {
+    ): void {
         try {
             $indexProvider->processDocument($contextDefinition, $indexDocument);
         } catch (\Throwable $e) {
@@ -254,13 +206,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
     }
 
-    /**
-     * @param string                $contextName
-     * @param ResourceMetaInterface $resourceMeta
-     *
-     * @return bool
-     */
-    protected function invokeContextGuard(string $contextName, ResourceMetaInterface $resourceMeta)
+    protected function invokeContextGuard(string $contextName, ResourceMetaInterface $resourceMeta): bool
     {
         foreach ($this->contextGuardRegistry->getAllGuards() as $contextGuard) {
             if ($contextGuard->verifyResourceMetaForContext($contextName, $resourceMeta) === false) {
@@ -271,12 +217,7 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         return true;
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     *
-     * @return IndexProviderInterface
-     */
-    protected function getIndexProvider(ContextDefinitionInterface $contextDefinition)
+    protected function getIndexProvider(ContextDefinitionInterface $contextDefinition): IndexProviderInterface
     {
         try {
             $indexProvider = $this->indexManager->getIndexProvider($contextDefinition);

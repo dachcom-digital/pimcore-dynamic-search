@@ -10,10 +10,10 @@ interface DefinitionBuilderRegistryInterface
     /**
      * @return DocumentDefinitionBuilderInterface[]
      */
-    public function getAllDocumentDefinitionBuilder();
+    public function getAllDocumentDefinitionBuilder(): array;
 
     /**
      * @return FilterDefinitionBuilderInterface[]
      */
-    public function getAllFilterDefinitionBuilder();
+    public function getAllFilterDefinitionBuilder(): array;
 }

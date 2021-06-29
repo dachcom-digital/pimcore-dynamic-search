@@ -9,67 +9,32 @@ use DynamicSearchBundle\Paginator\AdapterInterface;
 
 class DynamicSearchAdapter implements AdapterInterface
 {
-    /**
-     * @var ContextDefinitionInterface
-     */
-    protected $contextDefinition;
+    protected ?ContextDefinitionInterface $contextDefinition = null;
+    protected ?string $outputChannelName = null;
+    protected ?DocumentNormalizerInterface $documentNormalizer = null;
+    protected RawResultInterface $rawResult;
 
-    /**
-     * @var string
-     */
-    protected $outputChannelName;
-
-    /**
-     * @var DocumentNormalizerInterface
-     */
-    protected $documentNormalizer;
-
-    /**
-     * @var RawResultInterface
-     */
-    protected $rawResult;
-
-    /**
-     * @param RawResultInterface $rawResult
-     */
     public function __construct(RawResultInterface $rawResult)
     {
         $this->rawResult = $rawResult;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setContextDefinition(ContextDefinitionInterface $contextDefinition)
+    public function setContextDefinition(ContextDefinitionInterface $contextDefinition): void
     {
         $this->contextDefinition = $contextDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOutputChannelName(string $outputChannelName)
+    public function setOutputChannelName(string $outputChannelName): void
     {
         $this->outputChannelName = $outputChannelName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDocumentNormalizer(?DocumentNormalizerInterface $documentNormalizer)
+    public function setDocumentNormalizer(?DocumentNormalizerInterface $documentNormalizer): void
     {
         $this->documentNormalizer = $documentNormalizer;
     }
 
-    /**
-     * @param int $offset           Page offset
-     * @param int $itemCountPerPage Number of items per page
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $data = $this->rawResult->getData();
 
@@ -90,12 +55,7 @@ class DynamicSearchAdapter implements AdapterInterface
         return $data;
     }
 
-    /**
-     * Returns the total number of rows in the array.
-     *
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return $this->rawResult->getHitCount();
     }

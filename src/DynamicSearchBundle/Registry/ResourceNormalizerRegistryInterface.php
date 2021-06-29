@@ -7,35 +7,11 @@ use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 
 interface ResourceNormalizerRegistryInterface
 {
-    /**
-     * @param string $dataProviderName
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasResourceNormalizerForDataProvider(string $dataProviderName, string $identifier);
+    public function hasResourceNormalizerForDataProvider(string $dataProviderName, string $identifier): bool;
 
-    /**
-     * @param string $dataProviderName
-     * @param string $identifier
-     *
-     * @return ResourceNormalizerInterface
-     */
-    public function getResourceNormalizerForDataProvider(string $dataProviderName, string $identifier);
+    public function getResourceNormalizerForDataProvider(string $dataProviderName, string $identifier): ResourceNormalizerInterface;
 
-    /**
-     * @param string $indexProviderName
-     * @param string $identifier
-     *
-     * @return DocumentNormalizerInterface
-     */
-    public function getDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier);
+    public function getDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier): DocumentNormalizerInterface;
 
-    /**
-     * @param string $indexProviderName
-     * @param string $identifier
-     *
-     * @return DocumentNormalizerInterface
-     */
-    public function hasDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier);
+    public function hasDocumentNormalizerForIndexProvider(string $indexProviderName, string $identifier): bool;
 }

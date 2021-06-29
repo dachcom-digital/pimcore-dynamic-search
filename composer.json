@@ -34,8 +34,8 @@
         }
     },
     "require": {
-        "symfony/symfony": "^4|^5",
-        "pimcore/pimcore": "^6.6"
+        "pimcore/pimcore": "^10.0",
+        "laminas/laminas-paginator": "^2.10"
     },
     "require-dev": {
         "codeception/codeception": "~2.4.0",

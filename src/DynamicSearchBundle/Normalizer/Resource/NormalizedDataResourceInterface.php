@@ -6,13 +6,7 @@ use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 
 interface NormalizedDataResourceInterface
 {
-    /**
-     * @return ResourceContainerInterface|null
-     */
-    public function getResourceContainer();
+    public function getResourceContainer(): ?ResourceContainerInterface;
 
-    /**
-     * @return ResourceMetaInterface
-     */
-    public function getResourceMeta();
+    public function getResourceMeta(): ResourceMetaInterface;
 }

@@ -7,44 +7,13 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterfa
 
 class OutputChannelResult implements OutputChannelResultInterface
 {
-    /**
-     * @var string
-     */
-    protected $contextName;
+    protected string $contextName;
+    protected int $hitCount;
+    protected OutputChannelAllocatorInterface $outputChannelAllocator;
+    protected array $filter;
+    protected \ArrayObject $runtimeOptions;
+    protected RuntimeQueryProviderInterface $runtimeQueryProvider;
 
-    /**
-     * @var int
-     */
-    protected $hitCount;
-
-    /**
-     * @var OutputChannelAllocatorInterface
-     */
-    protected $outputChannelAllocator;
-
-    /**
-     * @var array
-     */
-    protected $filter;
-
-    /**
-     * @var \ArrayObject
-     */
-    protected $runtimeOptions;
-
-    /**
-     * @var RuntimeQueryProviderInterface
-     */
-    protected $runtimeQueryProvider;
-
-    /**
-     * @param string                          $contextName
-     * @param int                             $hitCount
-     * @param OutputChannelAllocatorInterface $outputChannelAllocator
-     * @param array                           $filter
-     * @param \ArrayObject                    $runtimeOptions
-     * @param RuntimeQueryProviderInterface   $runtimeQueryProvider
-     */
     public function __construct(
         string $contextName,
         int $hitCount,
@@ -61,50 +30,32 @@ class OutputChannelResult implements OutputChannelResultInterface
         $this->runtimeQueryProvider = $runtimeQueryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getContextName()
+    public function getContextName(): string
     {
         return $this->contextName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getHitCount()
+    public function getHitCount(): int
     {
         return $this->hitCount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelAllocator()
+    public function getOutputChannelAllocator(): OutputChannelAllocatorInterface
     {
         return $this->outputChannelAllocator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFilter()
+    public function getFilter(): array
     {
         return $this->filter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRuntimeQueryProvider()
+    public function getRuntimeQueryProvider(): RuntimeQueryProviderInterface
     {
         return $this->runtimeQueryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRuntimeOptions()
+    public function getRuntimeOptions(): \ArrayObject
     {
         return $this->runtimeOptions;
     }

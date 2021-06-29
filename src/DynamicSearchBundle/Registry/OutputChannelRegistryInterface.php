@@ -10,77 +10,26 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterfa
 
 interface OutputChannelRegistryInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasOutputChannelService(string $identifier);
+    public function hasOutputChannelService(string $identifier): bool;
+
+    public function getOutputChannelService(string $identifier): OutputChannelInterface;
+
+    public function hasOutputChannelRuntimeQueryProvider(string $identifier): bool;
+
+    public function getOutputChannelRuntimeQueryProvider(string $identifier): RuntimeQueryProviderInterface;
+
+    public function hasOutputChannelRuntimeOptionsBuilder(string $identifier): bool;
+
+    public function getOutputChannelRuntimeOptionsBuilder(string $identifier): RuntimeOptionsBuilderInterface;
+
+    public function hasOutputChannelModifierAction(string $outputChannelServiceName, string $action): bool;
 
     /**
-     * @param string $identifier
-     *
-     * @return OutputChannelInterface
+     * @return OutputChannelModifierActionInterface[]
      */
-    public function getOutputChannelService(string $identifier);
+    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action): array;
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasOutputChannelRuntimeQueryProvider(string $identifier);
+    public function hasOutputChannelModifierFilter(string $outputChannelServiceName, string $filter): bool;
 
-    /**
-     * @param string $identifier
-     *
-     * @return RuntimeQueryProviderInterface
-     */
-    public function getOutputChannelRuntimeQueryProvider(string $identifier);
-
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasOutputChannelRuntimeOptionsBuilder(string $identifier);
-
-    /**
-     * @param string $identifier
-     *
-     * @return RuntimeOptionsBuilderInterface
-     */
-    public function getOutputChannelRuntimeOptionsBuilder(string $identifier);
-
-    /**
-     * @param string $outputChannelServiceName
-     * @param string $action
-     *
-     * @return bool
-     */
-    public function hasOutputChannelModifierAction(string $outputChannelServiceName, string $action);
-
-    /**
-     * @param string $outputChannelServiceName
-     * @param string $action
-     *
-     * @return array|OutputChannelModifierActionInterface[]
-     */
-    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action);
-
-    /**
-     * @param string $outputChannelServiceName
-     * @param string $filter
-     *
-     * @return bool
-     */
-    public function hasOutputChannelModifierFilter(string $outputChannelServiceName, string $filter);
-
-    /**
-     * @param string $outputChannelServiceName
-     * @param string $filter
-     *
-     * @return OutputChannelModifierFilterInterface
-     */
-    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter);
+    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter): OutputChannelModifierFilterInterface;
 }

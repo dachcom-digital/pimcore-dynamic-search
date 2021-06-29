@@ -13,10 +13,7 @@ final class ContextGuardPass implements CompilerPassInterface
 
     use PriorityTaggedServiceTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(ContextGuardRegistry::class);
         foreach ($this->findAndSortTaggedServices(self::CONTEXT_GUARD_TAG, $container) as $reference) {

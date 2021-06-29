@@ -8,26 +8,15 @@ use DynamicSearchBundle\OutputChannel\Result\OutputChannelArrayResultInterface;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResultInterface;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelResultInterface;
 use DynamicSearchBundle\Processor\OutputChannelProcessorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Pimcore\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchController extends Controller
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected ConfigurationInterface $configuration;
+    protected OutputChannelProcessorInterface $outputChannelWorkflowProcessor;
 
-    /**
-     * @var OutputChannelProcessorInterface
-     */
-    protected $outputChannelWorkflowProcessor;
-
-    /**
-     * @param ConfigurationInterface          $configuration
-     * @param OutputChannelProcessorInterface $outputChannelWorkflowProcessor
-     */
     public function __construct(
         ConfigurationInterface $configuration,
         OutputChannelProcessorInterface $outputChannelWorkflowProcessor
@@ -36,14 +25,7 @@ class SearchController extends Controller
         $this->outputChannelWorkflowProcessor = $outputChannelWorkflowProcessor;
     }
 
-    /**
-     * @param Request $request
-     * @param string  $contextName
-     * @param string  $outputChannelName
-     *
-     * @return JsonResponse
-     */
-    public function jsonSearchAction(Request $request, string $contextName, string $outputChannelName)
+    public function jsonSearchAction(Request $request, string $contextName, string $outputChannelName): JsonResponse
     {
         $outputChannelName = str_replace('-', '_', $outputChannelName);
 
@@ -71,7 +53,7 @@ class SearchController extends Controller
         if ($outputChannelResult instanceof MultiOutputChannelResultInterface) {
             $params = [];
             foreach ($outputChannelResult->getResults() as $resultBlockIdentifier => $resultBlock) {
-                $params[] = $this->getOutputParameters($outputChannelResult);
+                $params[] = $this->getOutputParameters($resultBlock);
             }
 
             return $this->json($params);
@@ -80,12 +62,7 @@ class SearchController extends Controller
         return $this->json(['result' => []]);
     }
 
-    /**
-     * @param OutputChannelResultInterface $outputChannelResult
-     *
-     * @return array
-     */
-    protected function getOutputParameters(OutputChannelResultInterface $outputChannelResult)
+    protected function getOutputParameters(OutputChannelResultInterface $outputChannelResult): array
     {
         $data = null;
 
@@ -103,13 +80,7 @@ class SearchController extends Controller
         ];
     }
 
-    /**
-     * @param string $contextName
-     * @param string $outputChannelName
-     *
-     * @return bool
-     */
-    protected function outputChannelExists(string $contextName, string $outputChannelName)
+    protected function outputChannelExists(string $contextName, string $outputChannelName): bool
     {
         $contextConfig = $this->getParameter('dynamic_search.context.full_configuration');
 

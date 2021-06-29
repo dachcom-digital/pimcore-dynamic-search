@@ -59,7 +59,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
      */
     public function getInstaller()
     {
-        return $this->container->get(Install::class);
+        return null;
     }
 
     /**

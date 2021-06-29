@@ -10,15 +10,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class DynamicSearchEventDispatcher implements DynamicSearchEventDispatcherInterface
 {
-    /**
-     * @var ImmutableEventDispatcher
-     */
-    protected $eventDispatcher;
+    protected ImmutableEventDispatcher $eventDispatcher;
 
-    /**
-     * @param DataProcessingEventSubscriber $dataProcessingEventSubscriber
-     * @param ErrorEventSubscriber          $errorEventSubscriber
-     */
     public function __construct(
         DataProcessingEventSubscriber $dataProcessingEventSubscriber,
         ErrorEventSubscriber $errorEventSubscriber
@@ -30,10 +23,7 @@ class DynamicSearchEventDispatcher implements DynamicSearchEventDispatcherInterf
         $this->eventDispatcher = new ImmutableEventDispatcher($eventDispatcher);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatch(Event $event, $eventName)
+    public function dispatch(Event $event, string $eventName): void
     {
         $this->eventDispatcher->dispatch($event, $eventName);
     }

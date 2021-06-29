@@ -12,10 +12,7 @@ final class IndexPass implements CompilerPassInterface
     public const INDEX_FIELD_TAG = 'dynamic_search.index.field';
     public const INDEX_FILTER_TAG = 'dynamic_search.index.filter';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         foreach ($container->findTaggedServiceIds(self::INDEX_FIELD_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(IndexRegistry::class);

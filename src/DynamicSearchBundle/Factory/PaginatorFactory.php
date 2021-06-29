@@ -10,29 +10,20 @@ use DynamicSearchBundle\Paginator\PaginatorInterface;
 
 class PaginatorFactory implements PaginatorFactoryInterface
 {
-    /**
-     * @var string
-     */
-    protected $paginatorClass;
+    protected string $paginatorClass;
 
-    /**
-     * @param string $paginatorClass
-     */
     public function __construct(string $paginatorClass)
     {
         $this->paginatorClass = $paginatorClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(
         string $adapterClass,
         string $outputChannelName,
         RawResultInterface $rawResult,
         ContextDefinitionInterface $contextDefinition,
         ?DocumentNormalizerInterface $documentNormalizer
-    ) {
+    ): PaginatorInterface {
         $paginatorClassName = $this->paginatorClass;
 
         /** @var AdapterInterface $adapter */

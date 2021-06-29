@@ -6,32 +6,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ErrorEvent extends Event
 {
-    /**
-     * @var string
-     */
-    protected $contextName;
+    protected string $contextName;
+    protected ?string $providerName = null;
+    protected string $message;
+    protected ?\Exception $exception;
 
-    /**
-     * @var string|null
-     */
-    protected $providerName;
-
-    /**
-     * @var string
-     */
-    protected $message;
-
-    /**
-     * @var \Exception
-     */
-    protected $exception;
-
-    /**
-     * @param string          $contextName
-     * @param string          $message
-     * @param string|null     $providerName
-     * @param \Exception|null $exception
-     */
     public function __construct(string $contextName, string $message, string $providerName = null, \Exception $exception = null)
     {
         $this->contextName = $contextName;
@@ -40,34 +19,22 @@ class ErrorEvent extends Event
         $this->exception = $exception;
     }
 
-    /**
-     * @return string
-     */
-    public function getContextName()
+    public function getContextName(): string
     {
         return $this->contextName;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getProviderName()
+    public function getProviderName(): ?string
     {
         return $this->providerName;
     }
 
-    /**
-     * @return string
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    /**
-     * @return \Exception|null
-     */
-    public function getException()
+    public function getException(): ?\Exception
     {
         return $this->exception;
     }

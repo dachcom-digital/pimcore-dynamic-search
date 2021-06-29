@@ -12,31 +12,11 @@ class ProxyResource implements ProxyResourceInterface
      */
     protected $resource;
 
-    /**
-     * @var string
-     */
-    protected $contextDispatchType;
-
-    /**
-     * @var string
-     */
-    protected $contextName;
-
-    /**
-     * @var mixed|null
-     */
+    protected string $contextDispatchType;
+    protected string $contextName;
     protected $proxyResource;
+    protected ?string $proxyContextDispatchType = null;
 
-    /**
-     * @var string|null
-     */
-    protected $proxyContextDispatchType;
-
-    /**
-     * @param mixed  $resource
-     * @param string $contextDispatchType
-     * @param string $contextName
-     */
     public function __construct($resource, string $contextDispatchType, string $contextName)
     {
         $this->resource = $resource;
@@ -44,66 +24,42 @@ class ProxyResource implements ProxyResourceInterface
         $this->contextName = $contextName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getOriginalResource()
     {
         return $this->resource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getOriginalContextDispatchType()
+    public function getOriginalContextDispatchType(): string
     {
         return $this->contextDispatchType;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setProxyResource($proxyResource)
+    public function setProxyResource($proxyResource): void
     {
         $this->proxyResource = $proxyResource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getProxyResource()
     {
         return $this->proxyResource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function hasProxyResource()
+    public function hasProxyResource(): bool
     {
         return $this->proxyResource !== null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setProxyContextDispatchType(string $proxyContextDispatchType)
+    public function setProxyContextDispatchType(string $proxyContextDispatchType): void
     {
         $this->proxyContextDispatchType = $proxyContextDispatchType;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getProxyContextDispatchType()
+    public function getProxyContextDispatchType(): string
     {
         return $this->proxyContextDispatchType;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function hasProxyContextDispatchType()
+    public function hasProxyContextDispatchType(): bool
     {
         return $this->proxyContextDispatchType !== null;
     }

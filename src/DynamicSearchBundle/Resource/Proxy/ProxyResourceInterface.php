@@ -7,43 +7,19 @@ namespace DynamicSearchBundle\Resource\Proxy;
  */
 interface ProxyResourceInterface
 {
-    /**
-     * @return mixed
-     */
     public function getOriginalResource();
 
-    /**
-     * @return string
-     */
-    public function getOriginalContextDispatchType();
+    public function getOriginalContextDispatchType(): string;
 
-    /**
-     * @param mixed $proxyResource
-     */
-    public function setProxyResource($proxyResource);
+    public function setProxyResource($proxyResource): void;
 
-    /**
-     * @return mixed|null
-     */
     public function getProxyResource();
 
-    /**
-     * @return bool
-     */
-    public function hasProxyResource();
+    public function hasProxyResource(): bool;
 
-    /**
-     * @param string $proxyContextDispatchType
-     */
-    public function setProxyContextDispatchType(string $proxyContextDispatchType);
+    public function setProxyContextDispatchType(string $proxyContextDispatchType): void;
 
-    /**
-     * @return string|null
-     */
-    public function getProxyContextDispatchType();
+    public function getProxyContextDispatchType(): ?string;
 
-    /**
-     * @return bool
-     */
-    public function hasProxyContextDispatchType();
+    public function hasProxyContextDispatchType(): bool;
 }

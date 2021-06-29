@@ -4,33 +4,15 @@ namespace DynamicSearchBundle\Service;
 
 interface LockServiceInterface
 {
-    const CONTEXT_INDEXING = 'context_indexing';
+    public const CONTEXT_INDEXING = 'context_indexing';
 
-    const QUEUE_INDEXING = 'queue_indexing';
+    public const QUEUE_INDEXING = 'queue_indexing';
 
-    /**
-     * @param string $token
-     *
-     * @return bool
-     */
-    public function isLocked(string $token);
+    public function isLocked(string $token): bool;
 
-    /**
-     * @param string $token
-     *
-     * @return string
-     */
-    public function getLockMessage(string $token);
+    public function getLockMessage(string $token): string;
 
-    /**
-     * @param string $token
-     * @param string $executor
-     * @param int    $lifeTime default 4h
-     */
-    public function lock(string $token, string $executor, $lifeTime = 14400);
+    public function lock(string $token, string $executor, int $lifeTime = 14400): void;
 
-    /**
-     * @param string $token
-     */
-    public function unlock(string $token);
+    public function unlock(string $token): void;
 }

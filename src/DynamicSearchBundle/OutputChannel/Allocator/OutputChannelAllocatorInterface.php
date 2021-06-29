@@ -4,18 +4,9 @@ namespace DynamicSearchBundle\OutputChannel\Allocator;
 
 interface OutputChannelAllocatorInterface
 {
-    /**
-     * @return string
-     */
-    public function getOutputChannelName();
+    public function getOutputChannelName(): string;
 
-    /**
-     * @return string|null
-     */
-    public function getParentOutputChannelName();
+    public function getParentOutputChannelName(): ?string;
 
-    /**
-     * @return string|null
-     */
-    public function getSubOutputChannelIdentifier();
+    public function getSubOutputChannelIdentifier(): ?string;
 }

@@ -8,20 +8,14 @@ use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 
 interface TransformerManagerInterface
 {
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param mixed                $resource
-     *
-     * @returns null|ResourceScaffolderContainerInterface
-     */
-    public function getResourceScaffolder(ContextDefinitionInterface $contextDefinition, $resource);
+    public function getResourceScaffolder(
+        ContextDefinitionInterface $contextDefinition,
+        $resource
+    ): ?ResourceScaffolderContainerInterface;
 
-    /**
-     * @param string $dispatchTransformerName
-     * @param string $fieldTransformerName
-     * @param array  $transformerOptions
-     *
-     * @return null|FieldTransformerInterface
-     */
-    public function getResourceFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = []);
+    public function getResourceFieldTransformer(
+        string $dispatchTransformerName,
+        string $fieldTransformerName,
+        array $transformerOptions = []
+    ): ?FieldTransformerInterface;
 }

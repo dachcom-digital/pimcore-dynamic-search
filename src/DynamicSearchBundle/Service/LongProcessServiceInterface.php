@@ -4,7 +4,7 @@ namespace DynamicSearchBundle\Service;
 
 interface LongProcessServiceInterface
 {
-    public function boot();
+    public function boot(): void;
 
-    public function shutdown();
+    public function shutdown(): void;
 }

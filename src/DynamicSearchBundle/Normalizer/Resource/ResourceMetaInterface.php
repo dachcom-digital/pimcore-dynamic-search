@@ -9,47 +9,25 @@ interface ResourceMetaInterface
      */
     public function getDocumentId();
 
-    /**
-     * @return string
-     */
-    public function getResourceCollectionType();
+    public function getResourceCollectionType(): string;
 
-    /**
-     * @return string
-     */
-    public function getResourceType();
+    public function getResourceType(): string;
 
-    /**
-     * @return string|null
-     */
-    public function getResourceSubType();
+    public function getResourceSubType(): ?string;
 
     /**
      * @return mixed
      */
     public function getResourceId();
 
-    /**
-     * @return array
-     */
-    public function getResourceOptions();
+    public function getResourceOptions(): array;
+
+    public function hasNormalizerOption(string $option): bool;
 
     /**
-     * @param string $option
-     *
-     * @return bool
-     */
-    public function hasNormalizerOption(string $option);
-
-    /**
-     * @param string $option
-     *
      * @return mixed
      */
     public function getNormalizerOption(string $option);
 
-    /**
-     * @return array
-     */
-    public function getNormalizerOptions();
+    public function getNormalizerOptions(): array;
 }

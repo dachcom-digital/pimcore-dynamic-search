@@ -12,27 +12,21 @@ final class ResourceTransformerPass implements CompilerPassInterface
     public const RESOURCE_SCAFFOLDER_TAG = 'dynamic_search.resource.scaffolder';
     public const RESOURCE_FIELD_TRANSFORMER = 'dynamic_search.resource.field_transformer';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->processResourceScaffolder($container);
         $this->processResourceFieldTransformer($container);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function processResourceScaffolder(ContainerBuilder $container)
+    public function processResourceScaffolder(ContainerBuilder $container): void
     {
         $transformerRegistryDefinition = $container->getDefinition(TransformerRegistry::class);
 
         $services = [];
         foreach ($container->findTaggedServiceIds(self::RESOURCE_SCAFFOLDER_TAG, true) as $serviceId => $attributes) {
-            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
-            $alias = isset($attributes[0]['identifier']) ? $attributes[0]['identifier'] : null;
-            $dataProvider = isset($attributes[0]['data_provider']) ? $attributes[0]['data_provider'] : null;
+            $priority = $attributes[0]['priority'] ?? 0;
+            $alias = $attributes[0]['identifier'] ?? null;
+            $dataProvider = $attributes[0]['data_provider'] ?? null;
             $services[$priority][] = [new Reference($serviceId), $serviceId, $alias, $dataProvider];
         }
 
@@ -41,23 +35,20 @@ final class ResourceTransformerPass implements CompilerPassInterface
         }
 
         krsort($services);
-        $services = \call_user_func_array('array_merge', $services);
+        $services = array_merge(...$services);
 
         foreach ($services as $service) {
             $transformerRegistryDefinition->addMethodCall('registerResourceScaffolder', [$service[0], $service[1], $service[2], $service[3]]);
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function processResourceFieldTransformer(ContainerBuilder $container)
+    public function processResourceFieldTransformer(ContainerBuilder $container): void
     {
         $transformerRegistryDefinition = $container->getDefinition(TransformerRegistry::class);
 
         foreach ($container->findTaggedServiceIds(self::RESOURCE_FIELD_TRANSFORMER, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $alias = $attributes['identifier'] ?? null;
                 $transformerRegistryDefinition->addMethodCall(
                     'registerResourceFieldTransformer',
                     [new Reference($id), $id, $alias, $attributes['resource_scaffolder']]

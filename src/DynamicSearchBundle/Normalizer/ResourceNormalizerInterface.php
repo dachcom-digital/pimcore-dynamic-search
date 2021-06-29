@@ -10,20 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface ResourceNormalizerInterface
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public static function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver): void;
+
+    public function setOptions(array $options): void;
 
     /**
-     * @param array $options
-     */
-    public function setOptions(array $options);
-
-    /***
-     * @param ContextDefinitionInterface       $contextDefinition
-     * @param ResourceContainerInterface $resourceContainer
-     *
      * @return array|NormalizedDataResourceInterface[]
      * @throws NormalizerException
      */

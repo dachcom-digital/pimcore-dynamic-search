@@ -8,30 +8,16 @@ use Symfony\Component\Yaml\Yaml;
 
 class ProviderConfig
 {
-    /**
-     * @var FileSystem
-     */
-    protected $fileSystem;
-
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var string
-     */
-    protected $file;
+    protected FileSystem $fileSystem;
+    protected array $config = [];
+    protected ?string $file = null;
 
     public function __construct()
     {
         $this->fileSystem = new FileSystem();
     }
 
-    /**
-     * @return array
-     */
-    public function getAvailableProviderBundles()
+    public function getAvailableProviderBundles(): array
     {
         $config = $this->loadConfig();
 
@@ -46,10 +32,7 @@ class ProviderConfig
         return $config['dynamic_search_provider_bundles'];
     }
 
-    /**
-     * @param array $config
-     */
-    public function saveConfig(array $config)
+    public function saveConfig(array $config): void
     {
         $this->config = $config;
 
@@ -60,10 +43,7 @@ class ProviderConfig
         $this->fileSystem->dumpFile($this->locateConfigFile(), Yaml::dump($config));
     }
 
-    /**
-     * @return array
-     */
-    protected function loadConfig()
+    protected function loadConfig(): array
     {
         if (!$this->config) {
             if ($this->configFileExists()) {
@@ -78,10 +58,7 @@ class ProviderConfig
         return $this->config;
     }
 
-    /**
-     * @return bool
-     */
-    public function configFileExists()
+    public function configFileExists(): bool
     {
         if (null !== $file = $this->locateConfigFile()) {
             return $this->fileSystem->exists($file);
@@ -90,10 +67,7 @@ class ProviderConfig
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function locateConfigFile()
+    public function locateConfigFile(): string
     {
         if ($this->file === null) {
             $this->file = sprintf('%s/%s', $this->locateConfigDir(), 'enabled_providers.yml');
@@ -102,10 +76,7 @@ class ProviderConfig
         return $this->file;
     }
 
-    /**
-     * @return string
-     */
-    public function locateConfigDir()
+    public function locateConfigDir(): string
     {
         return ConfigurationInterface::BUNDLE_PATH;
     }

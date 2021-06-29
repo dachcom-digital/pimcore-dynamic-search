@@ -9,34 +9,13 @@ interface ResourceValidatorInterface
 {
     /**
      * @deprecated since 1.0.0 and will be removed in 2.0.0
-     *
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param mixed  $resource
-     *
-     * @return ProxyResourceInterface|null
      */
-    public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource);
+    public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource): ?ProxyResourceInterface;
 
     /**
      * @deprecated since 1.0.0 and will be removed in 2.0.0
-     *
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param mixed  $resource
-     *
-     * @return bool
      */
-    public function validateUntrustedResource(string $contextName, string $dispatchType, $resource);
+    public function validateUntrustedResource(string $contextName, string $dispatchType, $resource): bool;
 
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param bool   $isUnknownResource
-     * @param bool   $isImmutableResource
-     * @param mixed  $resource
-     *
-     * @return ResourceCandidateInterface
-     */
-    public function validateResource(string $contextName, string $dispatchType, bool $isUnknownResource, bool $isImmutableResource, $resource);
+    public function validateResource(string $contextName, string $dispatchType, bool $isUnknownResource, bool $isImmutableResource, $resource): ResourceCandidateInterface;
 }

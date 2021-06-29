@@ -6,19 +6,7 @@ use DynamicSearchBundle\Exception\SilentException;
 
 interface ContextRunnerInterface
 {
-    /**
-     * @return void
-     *
-     * @throws SilentException
-     */
-    public function runFullContextCreation();
+    public function runFullContextCreation(): void;
 
-    /**
-     * @param string $contextName
-     *
-     * @return void
-     *
-     * @throws SilentException
-     */
-    public function runSingleContextCreation(string $contextName);
+    public function runSingleContextCreation(string $contextName): void;
 }

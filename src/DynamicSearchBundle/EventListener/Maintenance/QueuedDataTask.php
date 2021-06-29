@@ -7,23 +7,14 @@ use Pimcore\Maintenance\TaskInterface;
 
 class QueuedDataTask implements TaskInterface
 {
-    /**
-     * @var DataProcessorInterface
-     */
-    protected $dataProcessor;
+    protected DataProcessorInterface $dataProcessor;
 
-    /**
-     * @param DataProcessorInterface $dataProcessor
-     */
     public function __construct(DataProcessorInterface $dataProcessor)
     {
         $this->dataProcessor = $dataProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function execute()
+    public function execute(): void
     {
         $this->dataProcessor->process([]);
     }

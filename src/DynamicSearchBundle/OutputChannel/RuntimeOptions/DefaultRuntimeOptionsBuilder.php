@@ -6,23 +6,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class DefaultRuntimeOptionsBuilder implements RuntimeOptionsBuilderInterface
 {
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildOptions(?string $prefix)
+    public function buildOptions(?string $prefix): \ArrayObject
     {
         $obj = new \ArrayObject();
 
@@ -34,12 +25,7 @@ class DefaultRuntimeOptionsBuilder implements RuntimeOptionsBuilderInterface
         return $obj;
     }
 
-    /**
-     * @param string $prefix
-     *
-     * @return array
-     */
-    protected function getRequestQueryVars(?string $prefix)
+    protected function getRequestQueryVars(?string $prefix): array
     {
         $queryData = $this->requestStack->getCurrentRequest()->query->all();
 
@@ -50,30 +36,17 @@ class DefaultRuntimeOptionsBuilder implements RuntimeOptionsBuilderInterface
         return $queryData;
     }
 
-    /**
-     * @param string $prefix
-     *
-     * @return string
-     */
-    protected function getPageIdentifier(?string $prefix)
+    protected function getPageIdentifier(?string $prefix): string
     {
         return is_null($prefix) ? 'page' : sprintf('%s_page', $prefix);
     }
 
-    /**
-     * @param string $prefix
-     *
-     * @return mixed
-     */
-    protected function getCurrentPage(?string $prefix)
+    protected function getCurrentPage(?string $prefix): int
     {
-        return $this->requestStack->getCurrentRequest()->query->get($this->getPageIdentifier($prefix), 1);
+        return (int)$this->requestStack->getCurrentRequest()->query->get($this->getPageIdentifier($prefix), 1);
     }
 
-    /**
-     * @return array
-     */
-    protected function getAdditionalParameter()
+    protected function getAdditionalParameter(): array
     {
         return [];
     }

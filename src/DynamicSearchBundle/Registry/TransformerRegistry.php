@@ -8,58 +8,34 @@ use DynamicSearchBundle\Resource\FieldTransformerInterface;
 
 class TransformerRegistry implements TransformerRegistryInterface
 {
-    /**
-     * @var RegistryStorage
-     */
-    protected $registryStorage;
+    protected RegistryStorage $registryStorage;
 
     public function __construct()
     {
         $this->registryStorage = new RegistryStorage();
     }
 
-    /**
-     * @param ResourceScaffolderInterface $service
-     * @param string                      $identifier
-     * @param string|null                 $alias
-     * @param string                      $dataProvider
-     */
-    public function registerResourceScaffolder($service, string $identifier, ?string $alias, string $dataProvider)
+    public function registerResourceScaffolder(ResourceScaffolderInterface $service, string $identifier, ?string $alias, string $dataProvider)
     {
         $this->registryStorage->store($service, ResourceScaffolderInterface::class, $dataProvider, $identifier, $alias);
     }
 
-    /**
-     * @param FieldTransformerInterface $service
-     * @param string                    $identifier
-     * @param string|null               $alias
-     * @param string                    $resourceScaffolder
-     */
-    public function registerResourceFieldTransformer($service, string $identifier, ?string $alias, string $resourceScaffolder)
+    public function registerResourceFieldTransformer(FieldTransformerInterface $service, string $identifier, ?string $alias, string $resourceScaffolder)
     {
         $this->registryStorage->store($service, FieldTransformerInterface::class, $resourceScaffolder, $identifier, $alias);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasResourceFieldTransformer(string $resourceScaffolderName, string $identifier)
+    public function hasResourceFieldTransformer(string $resourceScaffolderName, string $identifier): bool
     {
         return $this->registryStorage->has($resourceScaffolderName, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceFieldTransformer(string $resourceScaffolderName, string $identifier)
+    public function getResourceFieldTransformer(string $resourceScaffolderName, string $identifier): FieldTransformerInterface
     {
         return $this->registryStorage->get($resourceScaffolderName, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllResourceScaffolderForDataProvider(string $dataProviderName)
+    public function getAllResourceScaffolderForDataProvider(string $dataProviderName): array
     {
         return $this->registryStorage->getByNamespace($dataProviderName);
     }

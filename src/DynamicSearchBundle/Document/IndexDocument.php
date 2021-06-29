@@ -5,107 +5,65 @@ namespace DynamicSearchBundle\Document;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 use DynamicSearchBundle\Resource\Container\IndexFieldContainerInterface;
 use DynamicSearchBundle\Resource\Container\OptionFieldContainerInterface;
+use DynamicSearchBundle\Resource\ResourceCandidate;
 
 class IndexDocument
 {
-    /**
-     * @var ResourceMetaInterface|null
-     */
-    protected $resourceMeta;
+    protected ?ResourceMetaInterface $resourceMeta = null;
+    protected array $documentConfiguration = [];
+    protected array $optionFields = [];
+    protected array $indexFields = [];
 
-    /**
-     * @var array
-     */
-    protected $documentConfiguration;
-
-    /**
-     * @var array
-     */
-    protected $optionFields;
-
-    /**
-     * @var array
-     */
-    protected $indexFields;
-
-    /**
-     * @param ResourceMetaInterface|null $resourceMeta
-     * @param array                      $documentConfiguration
-     */
     public function __construct(?ResourceMetaInterface $resourceMeta, array $documentConfiguration = [])
     {
         $this->resourceMeta = $resourceMeta;
         $this->documentConfiguration = $documentConfiguration;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDocumentId()
+    public function getDocumentId(): ?int
     {
         return $this->resourceMeta instanceof ResourceMetaInterface ? $this->resourceMeta->getDocumentId() : null;
     }
 
-    /**
-     * @return ResourceMetaInterface
-     */
-    public function getResourceMeta()
+    public function getResourceMeta(): ?ResourceMetaInterface
     {
         return $this->resourceMeta;
     }
 
-    /**
-     * @return array
-     */
-    public function getDocumentConfiguration()
+    public function getDocumentConfiguration(): array
     {
         return $this->documentConfiguration;
     }
 
-    /**
-     * @param OptionFieldContainerInterface $fieldContainer
-     */
-    public function addOptionField(OptionFieldContainerInterface $fieldContainer)
+    public function addOptionField(OptionFieldContainerInterface $fieldContainer): void
     {
         $this->optionFields[] = $fieldContainer;
     }
 
-    /**
-     * @param IndexFieldContainerInterface $fieldContainer
-     */
-    public function addIndexField(IndexFieldContainerInterface $fieldContainer)
+    public function addIndexField(IndexFieldContainerInterface $fieldContainer): void
     {
         $this->indexFields[] = $fieldContainer;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasIndexFields()
+    public function hasIndexFields(): bool
     {
         return is_array($this->indexFields) && count($this->indexFields) > 0;
     }
 
-    /**
-     * @return array|IndexFieldContainerInterface[]
-     */
-    public function getIndexFields()
+    public function getIndexFields(): array
     {
         return !$this->hasIndexFields() ? [] : $this->indexFields;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasOptionFields()
+    public function hasOptionFields(): bool
     {
         return is_array($this->optionFields) && count($this->optionFields) > 0;
     }
 
     /**
-     * @return array|OptionFieldContainerInterface[]
+     * @return OptionFieldContainerInterface[]
      */
-    public function getOptionFields()
+    public function getOptionFields(): array
     {
         return !$this->hasOptionFields() ? [] : $this->optionFields;
     }

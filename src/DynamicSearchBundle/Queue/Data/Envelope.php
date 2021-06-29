@@ -6,43 +6,12 @@ use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 class Envelope
 {
-    /**
-     * @var string
-     */
-    protected $id;
+    protected string $id;
+    protected string $contextName;
+    protected string $dispatchType;
+    protected array $resourceMetaStack;
+    protected array $options;
 
-    /**
-     * @var string
-     */
-    protected $contextName;
-
-    /**
-     * @var string
-     */
-    protected $dispatchType;
-
-    /**
-     * @var ResourceMetaInterface[]
-     */
-    protected $resourceMetaStack;
-
-    /**
-     * @var int
-     */
-    protected $resourceId;
-
-    /**
-     * @var array
-     */
-    protected $options;
-
-    /**
-     * @param string $id
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param array  $resourceMetaStack
-     * @param array  $options
-     */
     public function __construct(string $id, string $contextName, string $dispatchType, array $resourceMetaStack, array $options)
     {
         $this->id = $id;
@@ -52,50 +21,30 @@ class Envelope
         $this->options = $options;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getContextName()
+    public function getContextName(): string
     {
         return $this->contextName;
     }
 
-    /**
-     * @return string
-     */
-    public function getDispatchType()
+    public function getDispatchType(): string
     {
         return $this->dispatchType;
     }
 
     /**
-     * @return array|ResourceMetaInterface[]
+     * @return ResourceMetaInterface[]
      */
-    public function getResourceMetaStack()
+    public function getResourceMetaStack(): array
     {
         return $this->resourceMetaStack;
     }
 
-    /**
-     * @return int
-     */
-    public function getResourceId()
-    {
-        return $this->resourceId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }

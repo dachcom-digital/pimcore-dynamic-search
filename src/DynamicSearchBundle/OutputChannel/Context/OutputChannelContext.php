@@ -8,128 +8,69 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterfa
 
 class OutputChannelContext implements OutputChannelContextInterface
 {
-    /**
-     * @var ContextDefinitionInterface
-     */
-    protected $contextDefinition;
+    protected ContextDefinitionInterface $contextDefinition;
+    protected RuntimeQueryProviderInterface $runtimeQueryProvider;
+    protected \ArrayObject $runtimeOptions;
+    protected array $indexProviderOptions;
+    protected OutputChannelAllocatorInterface $outputChannelAllocator;
+    protected string $outputChannelServiceName;
 
-    /**
-     * @var RuntimeQueryProviderInterface
-     */
-    protected $runtimeQueryProvider;
-
-    /**
-     * @var \ArrayObject
-     */
-    protected $runtimeOptions;
-
-    /**
-     * @var array
-     */
-    protected $indexProviderOptions;
-
-    /**
-     * @var OutputChannelAllocatorInterface
-     */
-    protected $outputChannelAllocator;
-
-    /**
-     * @var string
-     */
-    protected $outputChannelServiceName;
-
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     */
-    public function setContextDefinition(ContextDefinitionInterface $contextDefinition)
+    public function setContextDefinition(ContextDefinitionInterface $contextDefinition): void
     {
         $this->contextDefinition = $contextDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getContextDefinition()
+    public function getContextDefinition(): ContextDefinitionInterface
     {
         return $this->contextDefinition;
     }
 
-    /**
-     * @param RuntimeQueryProviderInterface $runtimeQueryProvider
-     */
-    public function setRuntimeQueryProvider(RuntimeQueryProviderInterface $runtimeQueryProvider)
+    public function setRuntimeQueryProvider(RuntimeQueryProviderInterface $runtimeQueryProvider): void
     {
         $this->runtimeQueryProvider = $runtimeQueryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRuntimeQueryProvider()
+    public function getRuntimeQueryProvider(): RuntimeQueryProviderInterface
     {
         return $this->runtimeQueryProvider;
     }
 
-    /**
-     * @param \ArrayObject $runtimeOptions
-     */
-    public function setRuntimeOptions(\ArrayObject $runtimeOptions)
+    public function setRuntimeOptions(\ArrayObject $runtimeOptions): void
     {
         $this->runtimeOptions = $runtimeOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRuntimeOptions()
+    public function getRuntimeOptions(): \ArrayObject
     {
         return $this->runtimeOptions;
     }
 
-    /**
-     * @param array $indexProviderOptions
-     */
-    public function setIndexProviderOptions(array $indexProviderOptions)
+    public function setIndexProviderOptions(array $indexProviderOptions): void
     {
         $this->indexProviderOptions = $indexProviderOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIndexProviderOptions()
+    public function getIndexProviderOptions(): array
     {
         return $this->indexProviderOptions;
     }
 
-    /**
-     * @param OutputChannelAllocatorInterface $outputChannelAllocator
-     */
-    public function setOutputChannelAllocator(OutputChannelAllocatorInterface $outputChannelAllocator)
+    public function setOutputChannelAllocator(OutputChannelAllocatorInterface $outputChannelAllocator): void
     {
         $this->outputChannelAllocator = $outputChannelAllocator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelAllocator()
+    public function getOutputChannelAllocator(): OutputChannelAllocatorInterface
     {
         return $this->outputChannelAllocator;
     }
 
-    /**
-     * @param string $outputChannelServiceName
-     */
-    public function setOutputChannelServiceName(string $outputChannelServiceName)
+    public function setOutputChannelServiceName(string $outputChannelServiceName): void
     {
         $this->outputChannelServiceName = $outputChannelServiceName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelServiceName()
+    public function getOutputChannelServiceName(): string
     {
         return $this->outputChannelServiceName;
     }

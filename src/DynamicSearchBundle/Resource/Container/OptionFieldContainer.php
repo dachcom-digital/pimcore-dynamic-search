@@ -11,40 +11,21 @@ class OptionFieldContainer implements OptionFieldContainerInterface
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    protected $indexType;
-
-    /**
-     * @param string $name
-     * @param mixed  $data
-     */
     public function __construct(string $name, $data)
     {
         $this->name = $name;
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData()
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

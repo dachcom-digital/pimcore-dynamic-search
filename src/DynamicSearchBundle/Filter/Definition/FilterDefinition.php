@@ -6,15 +6,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterDefinition implements FilterDefinitionInterface
 {
-    /**
-     * @var array
-     */
-    protected $filterDefinitions;
+    protected array $filterDefinitions;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addFilterDefinition(array $definition)
+    public function addFilterDefinition(array $definition): static
     {
         $resolver = new OptionsResolver();
 
@@ -36,9 +30,6 @@ class FilterDefinition implements FilterDefinitionInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFilterDefinitions(): array
     {
         return !is_array($this->filterDefinitions) ? [] : $this->filterDefinitions;
