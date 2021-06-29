@@ -93,7 +93,7 @@ class RegistryStorage
     protected function getByIdentifier(string $namespace, string $identififer)
     {
         foreach ($this->store as $entry) {
-            if ($entry['namespace'] === $namespace && $entry['identifier'] === $identififer) {
+            if (isset($entry['namespace'], $entry['identifier']) && $entry['namespace'] === $namespace && $entry['identifier'] === $identififer) {
                 return $entry['service'];
             }
         }
@@ -101,14 +101,14 @@ class RegistryStorage
         return null;
     }
 
-    protected function getByAlias(string $namespace, string $alias)
+    protected function getByAlias(string $namespace, ?string $alias = null)
     {
         if ($alias === null) {
             return null;
         }
 
         foreach ($this->store as $entry) {
-            if ($entry['namespace'] === $namespace && $entry['alias'] === $alias) {
+            if (isset($entry['namespace'], $entry['alias']) && $entry['namespace'] === $namespace && $entry['alias'] === $alias) {
                 return $entry['service'];
             }
         }

@@ -15,13 +15,13 @@ class IndexRegistry implements IndexRegistryInterface
         $this->registryStorage = new RegistryStorage();
     }
 
-    public function registerField(IndexFieldInterface $service, string $identifier, ?string $alias, string $indexProviderName)
+    public function registerField(IndexFieldInterface $service, string $identifier, ?string $alias, string $indexProviderName): void
     {
         $namespace = sprintf('fields_%s', $indexProviderName);
         $this->registryStorage->store($service, IndexFieldInterface::class, $namespace, $identifier, $alias);
     }
 
-    public function registerFilter(IndexFieldInterface $service, string $identifier, ?string $alias, string $indexProviderName)
+    public function registerFilter(FilterInterface $service, string $identifier, ?string $alias, string $indexProviderName): void
     {
         $namespace = sprintf('filter_%s', $indexProviderName);
         $this->registryStorage->store($service, FilterInterface::class, $namespace, $identifier, $alias);
