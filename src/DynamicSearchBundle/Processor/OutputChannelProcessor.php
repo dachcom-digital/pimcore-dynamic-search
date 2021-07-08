@@ -243,7 +243,9 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         // fetch result of each sub query
         $results = [];
-        foreach ($multiOutputChannelService->getMultiSearchResult(new MultiSearchContainer($multiSearchContainer)) as $searchContainer) {
+        $multiSearchResult = $multiOutputChannelService->getMultiSearchResult(new MultiSearchContainer($multiSearchContainer));
+
+        foreach ($multiSearchResult->getSearchContainer() as $searchContainer) {
 
             $subOutputChannelIdentifier = $searchContainer->getIdentifier();
 

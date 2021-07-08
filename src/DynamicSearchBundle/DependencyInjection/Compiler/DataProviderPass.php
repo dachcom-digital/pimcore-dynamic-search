@@ -22,10 +22,8 @@ final class DataProviderPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds(self::DATA_PROVIDER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(DataProviderRegistry::class);
             foreach ($tags as $attributes) {
-
                 $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
                 $serviceName = $alias !== null ? $alias : $id;
-
                 $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
                 $definition->addMethodCall('register', [new Reference($id), $id, $alias]);
             }

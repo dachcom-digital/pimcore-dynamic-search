@@ -32,10 +32,8 @@ final class OutputChannelPass implements CompilerPassInterface
         $serviceDefinitionStack = [];
         foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-
                 $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
                 $serviceName = $alias !== null ? $alias : $id;
-
                 $outputChannelServices[] = $serviceName;
                 $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
                 $definition->addMethodCall('registerOutputChannelService', [new Reference($id), $id, $alias]);

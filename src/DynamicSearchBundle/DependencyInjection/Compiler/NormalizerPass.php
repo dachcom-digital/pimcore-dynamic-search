@@ -23,10 +23,8 @@ final class NormalizerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds(self::RESOURCE_NORMALIZER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
-
                 $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
                 $serviceName = $alias !== null ? $alias : $id;
-
                 $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
                 $definition->addMethodCall('registerResourceNormalizer', [new Reference($id), $id, $alias, $attributes['data_provider']]);
             }
@@ -38,10 +36,8 @@ final class NormalizerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds(self::DOCUMENT_NORMALIZER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
-
                 $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
                 $serviceName = $alias !== null ? $alias : $id;
-
                 $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
                 $definition->addMethodCall('registerDocumentNormalizer', [new Reference($id), $id, $alias, $attributes['index_provider']]);
             }
