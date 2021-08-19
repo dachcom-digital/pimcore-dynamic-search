@@ -14,13 +14,3 @@ monolog:
             path: '%kernel.project_dir%/var/bundles/DynamicSearchBundle/dynamic_search.log'
             channels: ['dynamic_search']
             formatter: dynamic_search.log.formatter.stream.provider
-
-        dynamic_search_console_logging:
-            type: console
-            verbosity_levels:
-                VERBOSITY_NORMAL: DEBUG
-                VERBOSITY_VERBOSE: DEBUG
-                VERBOSITY_VERY_VERBOSE: DEBUG
-                VERBOSITY_DEBUG: DEBUG
-            channels: ['dynamic_search']
-            formatter: dynamic_search.log.formatter.console.provider
