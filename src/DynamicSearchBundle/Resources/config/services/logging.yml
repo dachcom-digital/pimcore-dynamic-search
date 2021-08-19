@@ -13,10 +13,6 @@ services:
         tags:
             - { name: monolog.processor, handler: dynamic_search_stream_logging }
 
-    DynamicSearchBundle\Logger\ProviderContextConsoleProcessor:
-        tags:
-            - { name: monolog.processor, handler: dynamic_search_console_logging }
-
     DynamicSearchBundle\Logger\LoggerInterface: '@DynamicSearchBundle\Logger\Logger'
     DynamicSearchBundle\Logger\Logger:
         tags:
