@@ -34,7 +34,7 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 ## Further Information
 - [Example Setup](docs/0_ExampleSetup.md)
 - [Configuration](#)
-    - [Context Guard](#)
+    - [Context Guard](docs/1_Configuration/0_Context Guard.md)
     - [Document Definition](#)
     - [Logging](#)
 - [Data Creation](#)

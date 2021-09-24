@@ -3,9 +3,9 @@
 ### composer.json
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search": "~0.7.0",
-    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.7.0",
-    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.7.0",
+    "dachcom-digital/dynamic-search": "~1.0.0",
+    "dachcom-digital/dynamic-search-data-provider-trinity": "~1.0.0",
+    "dachcom-digital/dynamic-search-index-provider-lucene": "~1.0.0",
 }
 ```
 
