@@ -4,12 +4,7 @@ namespace DynamicSearchBundle\Exception;
 
 final class ProviderException extends \Exception
 {
-    /**
-     * @param string          $message
-     * @param string|null     $providerName
-     * @param \Exception|null $previousException
-     */
-    public function __construct(string $message, string $providerName = null, $previousException = null)
+    public function __construct(string $message, ?string $providerName = null, ?\Exception $previousException = null)
     {
         $providerName = is_null($providerName) ? '' : sprintf(' (%s)', $providerName);
 

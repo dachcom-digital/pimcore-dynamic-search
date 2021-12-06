@@ -10,144 +10,70 @@ interface ContextDefinitionInterface
      * Index: Complete data indexing
      * (full context indexing for example)
      */
-    const CONTEXT_DISPATCH_TYPE_INDEX = 'index';
+    public const CONTEXT_DISPATCH_TYPE_INDEX = 'index';
 
     /*
      * Insert: Add single resource to index
      */
-    const CONTEXT_DISPATCH_TYPE_INSERT = 'insert';
+    public const CONTEXT_DISPATCH_TYPE_INSERT = 'insert';
 
     /*
      * Update: Update single resource in index
      */
-    const CONTEXT_DISPATCH_TYPE_UPDATE = 'update';
+    public const CONTEXT_DISPATCH_TYPE_UPDATE = 'update';
 
     /*
      * Delete: Remove single resource from index
      */
-    const CONTEXT_DISPATCH_TYPE_DELETE = 'delete';
+    public const CONTEXT_DISPATCH_TYPE_DELETE = 'delete';
 
     /*
      * Load data from index
      * and pass query data to output channel
      */
-    const CONTEXT_DISPATCH_TYPE_FETCH = 'fetch';
+    public const CONTEXT_DISPATCH_TYPE_FETCH = 'fetch';
 
     /*
      * Allowed dispatch types for queue
      */
-    const ALLOWED_QUEUE_DISPATCH_TYPES = ['insert', 'update', 'delete'];
+    public const ALLOWED_QUEUE_DISPATCH_TYPES = ['insert', 'update', 'delete'];
+
+    public function getName(): string;
+
+    public function getContextDispatchType(): string;
+
+    public function updateRuntimeValue(string $key, mixed $value): void;
+
+    public function getRuntimeValues(): array;
+
+    public function getDataProviderOptions(string $providerBehaviour): array;
+
+    public function getIndexProviderOptions(): array;
+
+    public function getResourceNormalizerOptions(): array;
+
+    public function getOutputChannelDocumentNormalizerOptions(string $outputChannelName): array;
 
     /**
-     * @return string
-     */
-    public function getName();
-
-    /**
-     * @return string
-     */
-    public function getContextDispatchType();
-
-    /**
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return mixed
-     */
-    public function updateRuntimeValue(string $key, $value);
-
-    /**
-     * @return array
-     */
-    public function getRuntimeValues();
-
-    /**
-     * @param string $providerBehaviour
-     *
-     * @return array
-     */
-    public function getDataProviderOptions(string $providerBehaviour);
-
-    /**
-     * @return array
-     */
-    public function getIndexProviderOptions();
-
-    /**
-     * @return array
-     */
-    public function getResourceNormalizerOptions();
-
-    /**
-     * @param string $outputChannelName
-     *
-     * @return array
-     */
-    public function getOutputChannelDocumentNormalizerOptions(string $outputChannelName);
-
-    /**
-     * @param string $outputChannelName
-     *
-     * @return array
-     *
      * @throws ContextConfigurationException
      */
-    public function getOutputChannelOptions(string $outputChannelName);
+    public function getOutputChannelOptions(string $outputChannelName): array;
 
-    /**
-     * @param string $outputChannelName
-     *
-     * @return array
-     */
-    public function getOutputChannelPaginatorOptions(string $outputChannelName);
+    public function getOutputChannelPaginatorOptions(string $outputChannelName): array;
 
-    /**
-     * @return string
-     */
-    public function getDataProviderName();
+    public function getDataProviderName(): string;
 
-    /**
-     * @return string
-     */
-    public function getIndexProviderName();
+    public function getIndexProviderName(): string;
 
-    /**
-     * @return string
-     */
-    public function getResourceNormalizerName();
+    public function getResourceNormalizerName(): string;
 
-    /**
-     * @param string $outputChannelName
-     *
-     * @return string|null
-     */
-    public function getOutputChannelNormalizerName(string $outputChannelName);
+    public function getOutputChannelNormalizerName(string $outputChannelName): ?string;
 
-    /**
-     * @param string $outputChannelName
-     *
-     * @return string|null
-     */
-    public function getOutputChannelServiceName(string $outputChannelName);
+    public function getOutputChannelServiceName(string $outputChannelName): ?string;
 
-    /**
-     * @param string $outputChannelName
-     *
-     * @return array
-     */
-    public function getOutputChannelEnvironment(string $outputChannelName);
+    public function getOutputChannelEnvironment(string $outputChannelName): array;
 
-    /**
-     * @param string $outputChannelName
-     *
-     * @return string|null
-     */
-    public function getOutputChannelRuntimeQueryProvider(string $outputChannelName);
+    public function getOutputChannelRuntimeQueryProvider(string $outputChannelName): ?string;
 
-    /**
-     * @param string $outputChannelName
-     *
-     * @return string|null
-     */
-    public function getOutputChannelRuntimeOptionsBuilder(string $outputChannelName);
+    public function getOutputChannelRuntimeOptionsBuilder(string $outputChannelName): ?string;
 }

@@ -14,18 +14,15 @@ final class NormalizerPass implements CompilerPassInterface
     public const RESOURCE_NORMALIZER_TAG = 'dynamic_search.resource_normalizer';
     public const DOCUMENT_NORMALIZER_TAG = 'dynamic_search.document_normalizer';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $serviceDefinitionStack = [];
         foreach ($container->findTaggedServiceIds(self::RESOURCE_NORMALIZER_TAG, true) as $id => $tags) {
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
 
-                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
-                $serviceName = $alias !== null ? $alias : $id;
+                $alias = $attributes['identifier'] ?? null;
+                $serviceName = $alias ?? $id;
 
                 $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
                 $definition->addMethodCall('registerResourceNormalizer', [new Reference($id), $id, $alias, $attributes['data_provider']]);
@@ -39,8 +36,8 @@ final class NormalizerPass implements CompilerPassInterface
             $definition = $container->getDefinition(ResourceNormalizerRegistry::class);
             foreach ($tags as $attributes) {
 
-                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
-                $serviceName = $alias !== null ? $alias : $id;
+                $alias = $attributes['identifier'] ?? null;
+                $serviceName = $alias ?? $id;
 
                 $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
                 $definition->addMethodCall('registerDocumentNormalizer', [new Reference($id), $id, $alias, $attributes['index_provider']]);
@@ -50,11 +47,7 @@ final class NormalizerPass implements CompilerPassInterface
         $this->validateDocumentNormalizerOptions($container, $serviceDefinitionStack);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array            $serviceDefinitionStack
-     */
-    protected function validateResourceNormalizerOptions(ContainerBuilder $container, array $serviceDefinitionStack)
+    protected function validateResourceNormalizerOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
@@ -83,11 +76,7 @@ final class NormalizerPass implements CompilerPassInterface
         $container->setParameter('dynamic_search.context.full_configuration', $contextConfiguration);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array            $serviceDefinitionStack
-     */
-    protected function validateDocumentNormalizerOptions(ContainerBuilder $container, array $serviceDefinitionStack)
+    protected function validateDocumentNormalizerOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;

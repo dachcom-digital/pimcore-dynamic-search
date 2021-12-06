@@ -6,10 +6,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class RegistryStorage
 {
-    /**
-     * @var array
-     */
-    protected $store;
+    protected array $store;
 
     public function __construct()
     {
@@ -17,17 +14,16 @@ class RegistryStorage
     }
 
     /**
-     * @param Reference   $service
-     * @param string      $requiredInterface
-     * @param string      $namespace
-     * @param string      $identifier
-     * @param string|null $alias
-     * @param bool        $allowMultipleAppearance
-     *
      * @throws \Exception
      */
-    public function store($service, $requiredInterface, $namespace, $identifier, $alias = null, $allowMultipleAppearance = false)
-    {
+    public function store(
+        Reference $service,
+        string $requiredInterface,
+        string $namespace,
+        string $identifier,
+        ?string $alias = null,
+        bool $allowMultipleAppearance = false
+    ): void {
         if (!isset($this->store[$namespace])) {
             $this->store[$namespace] = [];
         }
@@ -66,60 +62,40 @@ class RegistryStorage
         ];
     }
 
-    /**
-     * @param string $namespace
-     * @param string $identififer
-     *
-     * @return bool
-     */
-    public function has($namespace, $identififer)
+    public function has(string $namespace, string $identififer): bool
     {
         return $this->get($namespace, $identififer) !== null;
     }
 
-    /**
-     * @param string $namespace
-     *
-     * @return array
-     */
-    public function hasOneByNamespace($namespace)
+    public function hasOneByNamespace(string $namespace): bool
     {
-        return count(array_filter($this->store, function ($entry) use ($namespace) {
+        return count(array_filter($this->store, static function ($entry) use ($namespace) {
                 return $entry['namespace'] === $namespace;
             })) > 0;
     }
 
-    /**
-     * @param string $namespace
-     * @param string $identififer
-     *
-     * @return mixed|null
-     */
-    public function get($namespace, $identififer)
+    public function get(string $namespace, string $identififer): mixed
     {
         if (null !== $byIdentifier = $this->getByIdentifier($namespace, $identififer)) {
             return $byIdentifier;
-        } elseif (null !== $byAlias = $this->getByAlias($namespace, $identififer)) {
+        }
+
+        if (null !== $byAlias = $this->getByAlias($namespace, $identififer)) {
             return $byAlias;
         }
 
         return null;
     }
 
-    /**
-     * @param string $namespace
-     *
-     * @return array
-     */
-    public function getByNamespace($namespace)
+    public function getByNamespace(string $namespace): array
     {
-        $validRows = array_filter($this->store, function ($entry) use ($namespace) {
+        $validRows = array_filter($this->store, static function ($entry) use ($namespace) {
             return $entry['namespace'] === $namespace;
         });
 
         $items = [];
         foreach ($validRows as $row) {
-            $identifier = $row['alias'] !== null ? $row['alias'] : $row['identifier'];
+            $identifier = $row['alias'] ?? $row['identifier'];
             if ($identifier === null) {
                 $items[] = $row['service'];
             } else {
@@ -130,13 +106,7 @@ class RegistryStorage
         return $items;
     }
 
-    /**
-     * @param string $namespace
-     * @param string $identififer
-     *
-     * @return mixed|null
-     */
-    protected function getByIdentifier($namespace, $identififer)
+    protected function getByIdentifier(string $namespace, string $identififer): mixed
     {
         foreach ($this->store as $entry) {
             if ($entry['namespace'] === $namespace && $entry['identifier'] === $identififer) {
@@ -147,13 +117,7 @@ class RegistryStorage
         return null;
     }
 
-    /**
-     * @param string      $namespace
-     * @param string|null $alias
-     *
-     * @return mixed|null
-     */
-    protected function getByAlias($namespace, $alias)
+    protected function getByAlias(string $namespace, ?string $alias): mixed
     {
         if ($alias === null) {
             return null;
@@ -167,5 +131,4 @@ class RegistryStorage
 
         return null;
     }
-
 }

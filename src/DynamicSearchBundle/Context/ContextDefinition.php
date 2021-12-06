@@ -4,32 +4,11 @@ namespace DynamicSearchBundle\Context;
 
 class ContextDefinition implements ContextDefinitionInterface
 {
-    /**
-     * @var string
-     */
-    private $dispatchType;
+    private string $dispatchType;
+    private string $contextName;
+    private array $contextOptions;
+    private array $runtimeValues;
 
-    /**
-     * @var string
-     */
-    private $contextName;
-
-    /**
-     * @var array
-     */
-    private $contextOptions;
-
-    /**
-     * @var array
-     */
-    private $runtimeValues;
-
-    /**
-     * @param string $dispatchType
-     * @param string $contextName
-     * @param array  $options
-     * @param array  $runtimeValues
-     */
     public function __construct(string $dispatchType, string $contextName, array $options, array $runtimeValues = [])
     {
         $this->dispatchType = $dispatchType;
@@ -38,42 +17,27 @@ class ContextDefinition implements ContextDefinitionInterface
         $this->runtimeValues = $runtimeValues;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->contextName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getContextDispatchType()
+    public function getContextDispatchType(): string
     {
         return $this->dispatchType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateRuntimeValue(string $key, $value)
+    public function updateRuntimeValue(string $key, mixed $value): void
     {
         $this->runtimeValues[$key] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRuntimeValues()
+    public function getRuntimeValues(): array
     {
         return $this->runtimeValues;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataProviderOptions(string $providerBehaviour)
+    public function getDataProviderOptions(string $providerBehaviour): array
     {
         $alwaysOptions = [];
         if (isset($this->contextOptions['data_provider']['options']['always'])) {
@@ -88,10 +52,7 @@ class ContextDefinition implements ContextDefinitionInterface
         return array_merge($alwaysOptions, $behaviourOptions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIndexProviderOptions()
+    public function getIndexProviderOptions(): array
     {
         $options = [];
         if (isset($this->contextOptions['index_provider']['options'])) {
@@ -101,10 +62,7 @@ class ContextDefinition implements ContextDefinitionInterface
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceNormalizerOptions()
+    public function getResourceNormalizerOptions(): array
     {
         $options = [];
         if (isset($this->contextOptions['data_provider']['normalizer']['options'])) {
@@ -114,10 +72,7 @@ class ContextDefinition implements ContextDefinitionInterface
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelDocumentNormalizerOptions(string $outputChannelName)
+    public function getOutputChannelDocumentNormalizerOptions(string $outputChannelName): array
     {
         $options = [];
         if (isset($this->contextOptions['output_channels'][$outputChannelName]['normalizer']['options'])) {
@@ -127,10 +82,7 @@ class ContextDefinition implements ContextDefinitionInterface
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelOptions(string $outputChannelName)
+    public function getOutputChannelOptions(string $outputChannelName): array
     {
         if (!isset($this->contextOptions['output_channels'][$outputChannelName])) {
             return [];
@@ -144,42 +96,27 @@ class ContextDefinition implements ContextDefinitionInterface
         return $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelPaginatorOptions(string $outputChannelName)
+    public function getOutputChannelPaginatorOptions(string $outputChannelName): array
     {
         return $this->contextOptions['output_channels'][$outputChannelName]['paginator'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataProviderName()
+    public function getDataProviderName(): string
     {
         return $this->contextOptions['data_provider']['service'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIndexProviderName()
+    public function getIndexProviderName(): string
     {
         return $this->contextOptions['index_provider']['service'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceNormalizerName()
+    public function getResourceNormalizerName(): string
     {
         return $this->contextOptions['data_provider']['normalizer']['service'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelNormalizerName(string $outputChannelName)
+    public function getOutputChannelNormalizerName(string $outputChannelName): ?string
     {
         if (!isset($this->contextOptions['output_channels'][$outputChannelName]['normalizer']['service'])) {
             return null;
@@ -188,10 +125,7 @@ class ContextDefinition implements ContextDefinitionInterface
         return $this->contextOptions['output_channels'][$outputChannelName]['normalizer']['service'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelServiceName(string $outputChannelName)
+    public function getOutputChannelServiceName(string $outputChannelName): ?string
     {
         if (!isset($this->contextOptions['output_channels'][$outputChannelName])) {
             return null;
@@ -200,10 +134,7 @@ class ContextDefinition implements ContextDefinitionInterface
         return $this->contextOptions['output_channels'][$outputChannelName]['service'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelEnvironment(string $outputChannelName)
+    public function getOutputChannelEnvironment(string $outputChannelName): array
     {
         if (!isset($this->contextOptions['output_channels'][$outputChannelName])) {
             return [];
@@ -219,10 +150,7 @@ class ContextDefinition implements ContextDefinitionInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelRuntimeQueryProvider(string $outputChannelName)
+    public function getOutputChannelRuntimeQueryProvider(string $outputChannelName): ?string
     {
         if (!isset($this->contextOptions['output_channels'][$outputChannelName])) {
             return null;
@@ -231,10 +159,7 @@ class ContextDefinition implements ContextDefinitionInterface
         return $this->contextOptions['output_channels'][$outputChannelName]['runtime_query_provider'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelRuntimeOptionsBuilder(string $outputChannelName)
+    public function getOutputChannelRuntimeOptionsBuilder(string $outputChannelName): ?string
     {
         if (!isset($this->contextOptions['output_channels'][$outputChannelName])) {
             return null;

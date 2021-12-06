@@ -4,19 +4,16 @@ namespace DynamicSearchBundle\Command\Traits;
 
 trait SignalWatchTrait
 {
-    protected $key;
+    protected ?string $key;
 
-    /**
-     * @param string|null $lockKey
-     */
-    public function watchSignalWithLockKey($lockKey = null)
+    public function watchSignalWithLockKey(?string $lockKey = null): void
     {
         $this->key = $lockKey;
 
         $this->watchSignal('parseProcessControlSignalWithLockKey');
     }
 
-    public function watchSignal($dispatchMethod = 'parseProcessControlSignal')
+    public function watchSignal($dispatchMethod = 'parseProcessControlSignal'): void
     {
         if (!function_exists('pcntl_signal')) {
             return;
@@ -28,12 +25,12 @@ trait SignalWatchTrait
         pcntl_signal(SIGQUIT, [$this, $dispatchMethod]);
     }
 
-    public function parseProcessControlSignal()
+    public function parseProcessControlSignal(): void
     {
         // implement logic in your service.
     }
 
-    public function parseProcessControlSignalWithLockKey()
+    public function parseProcessControlSignalWithLockKey(): void
     {
         if (is_null($this->key)) {
             return;
@@ -42,7 +39,7 @@ trait SignalWatchTrait
         $this->lockService->unlock($this->key);
     }
 
-    protected function dispatchProcessControlSignal()
+    protected function dispatchProcessControlSignal(): void
     {
         pcntl_signal_dispatch();
     }

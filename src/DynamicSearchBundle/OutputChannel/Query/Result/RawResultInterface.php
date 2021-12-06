@@ -4,49 +4,19 @@ namespace DynamicSearchBundle\OutputChannel\Query\Result;
 
 interface RawResultInterface
 {
-    /**
-     * @param mixed $data
-     */
-    public function setData($data);
+    public function setData(mixed $data): void;
 
-    /**
-     * @return mixed
-     */
-    public function getData();
+    public function getData(): mixed;
 
-    /**
-     * @param int $hitCount
-     */
-    public function setHitCount(int $hitCount);
+    public function setHitCount(int $hitCount): void;
 
-    /**
-     * @return int
-     */
-    public function getHitCount();
+    public function getHitCount(): int;
 
-    /**
-     * @param string $key
-     * @param mixed  $value
-     */
-    public function addParameter($key, $value);
+    public function addParameter(string $key, mixed $value): void;
 
-    /**
-     * @param string $key
-     * @param mixed  $value
-     */
-    public function setParameter($key, $value);
+    public function setParameter(string $key, mixed $value): void;
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function hasParameter($key);
+    public function hasParameter(string $key): bool;
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getParameter($key);
+    public function getParameter(string $key): mixed;
 }

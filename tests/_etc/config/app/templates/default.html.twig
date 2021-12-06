@@ -10,7 +10,7 @@
     <div id="site">
         <div class="content">
             {% if document is defined %}
-                <span id="page-id">{{ document.getId() }}</span>
+                <span id="page-id">{{ document.id }}</span>
             {% endif %}
         </div>
         {% block content %}

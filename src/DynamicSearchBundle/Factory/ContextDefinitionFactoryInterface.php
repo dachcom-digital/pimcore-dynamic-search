@@ -6,20 +6,10 @@ use DynamicSearchBundle\Context\ContextDefinitionInterface;
 
 interface ContextDefinitionFactoryInterface
 {
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param array  $runtimeValues
-     *
-     * @return ContextDefinitionInterface|null
-     */
-    public function createSingle(string $contextName, string $dispatchType, array $runtimeValues = []);
+    public function createSingle(string $contextName, string $dispatchType, array $runtimeValues = []): ?ContextDefinitionInterface;
 
     /**
-     * @param string $dispatchType
-     * @param array  $runtimeValues
-     *
-     * @return ContextDefinitionInterface[]
+     * @return array<int, ContextDefinitionInterface>
      */
-    public function createStack(string $dispatchType, array $runtimeValues = []);
+    public function createStack(string $dispatchType, array $runtimeValues = []): array;
 }

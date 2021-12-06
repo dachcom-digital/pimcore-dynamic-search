@@ -6,23 +6,14 @@ use DynamicSearchBundle\Paginator\PaginatorInterface;
 
 class OutputChannelPaginatorResult extends OutputChannelResult implements OutputChannelPaginatorResultInterface
 {
-    /**
-     * @var PaginatorInterface
-     */
-    protected $paginator;
+    protected PaginatorInterface $paginator;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setPaginator(PaginatorInterface $paginator)
+    public function setPaginator(PaginatorInterface $paginator): void
     {
         $this->paginator = $paginator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPaginator()
+    public function getPaginator(): PaginatorInterface
     {
         return $this->paginator;
     }

@@ -8,33 +8,15 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterfa
 
 interface OutputChannelContextInterface
 {
-    /**
-     * @return ContextDefinitionInterface
-     */
-    public function getContextDefinition();
+    public function getContextDefinition(): ContextDefinitionInterface;
 
-    /**
-     * @return RuntimeQueryProviderInterface
-     */
-    public function getRuntimeQueryProvider();
+    public function getRuntimeQueryProvider(): RuntimeQueryProviderInterface;
 
-    /**
-     * @return \ArrayObject
-     */
-    public function getRuntimeOptions();
+    public function getRuntimeOptions(): \ArrayObject;
 
-    /**
-     * @return array
-     */
-    public function getIndexProviderOptions();
+    public function getIndexProviderOptions(): array;
 
-    /**
-     * @return OutputChannelAllocatorInterface
-     */
-    public function getOutputChannelAllocator();
+    public function getOutputChannelAllocator(): OutputChannelAllocatorInterface;
 
-    /**
-     * @return string
-     */
-    public function getOutputChannelServiceName();
+    public function getOutputChannelServiceName(): string;
 }

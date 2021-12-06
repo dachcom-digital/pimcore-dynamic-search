@@ -22,12 +22,9 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
 {
     use PackageVersionTrait;
 
-    const PACKAGE_NAME = 'dachcom-digital/dynamic-search';
+    public const PACKAGE_NAME = 'dachcom-digital/dynamic-search';
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
@@ -41,10 +38,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
         $container->addCompilerPass(new ContextGuardPass());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $providerConfig = new ProviderConfig();
         if ($providerConfig->configFileExists()) {
@@ -54,37 +48,23 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getInstaller()
+    public function getInstaller(): Install
     {
         return $this->container->get(Install::class);
     }
 
-    /**
-     * @return string[]
-     */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
-        return [
-
-        ];
+        return [ ];
     }
 
-    /**
-     * @return array
-     */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [
             '/bundles/dynamicsearch/css/admin.css'
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getComposerPackageName(): string
     {
         return self::PACKAGE_NAME;

@@ -6,20 +6,14 @@ use Pimcore\Model\Tool\TmpStore;
 
 class LockService implements LockServiceInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function isLocked(string $token)
+    public function isLocked(string $token): bool
     {
         $tmpStore = $this->getLockToken($token);
 
         return $tmpStore instanceof TmpStore;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLockMessage(string $token)
+    public function getLockMessage(string $token): string
     {
         if (!$this->isLocked($token)) {
             return 'not-locked';
@@ -39,10 +33,7 @@ class LockService implements LockServiceInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function lock(string $token, string $executor, $lifeTime = 14400)
+    public function lock(string $token, string $executor, $lifeTime = 14400): void
     {
         if ($this->isLocked($token)) {
             return;
@@ -51,33 +42,17 @@ class LockService implements LockServiceInterface
         TmpStore::add($this->getNamespacedToken($token), $executor, null, $lifeTime);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function unlock(string $token)
+    public function unlock(string $token): void
     {
         TmpStore::delete($this->getNamespacedToken($token));
     }
 
-    /**
-     * @param string $token
-     *
-     * @return TmpStore|null
-     */
-    protected function getLockToken(string $token)
+    protected function getLockToken(string $token): ?TmpStore
     {
-        $key = TmpStore::get($this->getNamespacedToken($token));
-
-        return $key;
+        return TmpStore::get($this->getNamespacedToken($token));
     }
 
-    /**
-     * @param string $token
-     * @param string $namespace
-     *
-     * @return string
-     */
-    protected function getNamespacedToken(string $token, string $namespace = 'dynamic_search')
+    protected function getNamespacedToken(string $token, string $namespace = 'dynamic_search'): string
     {
         return sprintf('%s_%s', $namespace, $token);
     }

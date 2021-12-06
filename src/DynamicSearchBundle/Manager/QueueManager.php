@@ -8,23 +8,14 @@ use Pimcore\Model\Tool\TmpStore;
 
 class QueueManager implements QueueManagerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearQueue()
+    public function clearQueue(): void
     {
         try {
             $activeJobs = $this->getActiveJobs();
@@ -37,10 +28,7 @@ class QueueManager implements QueueManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueuedEnvelopes()
+    public function getQueuedEnvelopes(): array
     {
         $jobs = $this->getActiveJobs();
 
@@ -59,7 +47,7 @@ class QueueManager implements QueueManagerInterface
          * -> only return [ resource_meta, corresponding envelope ]
          */
 
-        usort($jobs, function (TmpStore $a, TmpStore $b) {
+        usort($jobs, static function (TmpStore $a, TmpStore $b) {
             if ($a->getDate() === $b->getDate()) {
                 return 0;
             }
@@ -103,10 +91,7 @@ class QueueManager implements QueueManagerInterface
         return $filteredResourceStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteEnvelope(Envelope $envelope)
+    public function deleteEnvelope(Envelope $envelope): void
     {
         try {
             TmpStore::delete($envelope->getId());
@@ -115,20 +100,14 @@ class QueueManager implements QueueManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addJobToQueue(string $jobId, string $contextName, string $dispatchType, array $metaResources, array $options)
+    public function addJobToQueue(string $jobId, string $contextName, string $dispatchType, array $metaResources, array $options): void
     {
         $envelope = new Envelope($jobId, $contextName, $dispatchType, $metaResources, $options);
 
         TmpStore::add($jobId, $envelope, self::QUEUE_IDENTIFIER);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasActiveJobs()
+    public function hasActiveJobs(): bool
     {
         $activeJobs = TmpStore::getIdsByTag(self::QUEUE_IDENTIFIER);
 
@@ -139,10 +118,7 @@ class QueueManager implements QueueManagerInterface
         return count($activeJobs) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getActiveJobs()
+    public function getActiveJobs(): array
     {
         $activeJobs = TmpStore::getIdsByTag(self::QUEUE_IDENTIFIER);
 
@@ -163,12 +139,7 @@ class QueueManager implements QueueManagerInterface
         return $jobs;
     }
 
-    /**
-     * @param string $processId
-     *
-     * @return TmpStore|null
-     */
-    protected function getJob($processId)
+    protected function getJob(string $processId): ?TmpStore
     {
         $job = null;
 

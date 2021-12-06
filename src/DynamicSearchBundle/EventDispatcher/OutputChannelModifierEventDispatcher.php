@@ -8,41 +8,23 @@ use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
 
 class OutputChannelModifierEventDispatcher
 {
-    /**
-     * @var OutputChannelContextInterface
-     */
-    protected $outputChannelContext;
+    protected OutputChannelContextInterface $outputChannelContext;
+    protected OutputChannelManagerInterface $outputChannelManager;
 
-    /**
-     * @var OutputChannelManagerInterface
-     */
-    protected $outputChannelManager;
-
-    /**
-     * @param OutputChannelManagerInterface $outputChannelManager
-     */
     public function __construct(OutputChannelManagerInterface $outputChannelManager)
     {
         $this->outputChannelManager = $outputChannelManager;
     }
 
-    /**
-     * @param OutputChannelContextInterface $outputChannelContext
-     */
-    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext)
+    public function setOutputChannelContext(OutputChannelContextInterface $outputChannelContext): void
     {
         $this->outputChannelContext = $outputChannelContext;
     }
 
     /**
      * Action can be dispatched several times and are optional
-     *
-     * @param string $action
-     * @param array  $options
-     *
-     * @return OutputModifierEvent
      */
-    public function dispatchAction(string $action, array $options)
+    public function dispatchAction(string $action, array $options): OutputModifierEvent
     {
         $outputChannelServiceName = $this->outputChannelContext->getOutputChannelServiceName();
 
@@ -59,14 +41,9 @@ class OutputChannelModifierEventDispatcher
     /**
      * Filters can be dispatched only once and at least one filter is required
      *
-     * @param string $filterService
-     * @param array  $options
-     *
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public function dispatchFilter(string $filterService, array $options = [])
+    public function dispatchFilter(string $filterService, array $options = []): mixed
     {
         $outputChannelServiceName = $this->outputChannelContext->getOutputChannelServiceName();
         $channelModifierFilter = $this->outputChannelManager->getOutputChannelModifierFilter($outputChannelServiceName, $filterService);

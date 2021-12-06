@@ -21,38 +21,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
 {
-    /**
-     * @var ContextDefinitionBuilderInterface
-     */
-    protected $contextDefinitionBuilder;
+    protected ContextDefinitionBuilderInterface $contextDefinitionBuilder;
+    protected TransformerManagerInterface $transformerManager;
+    protected IndexManagerInterface $indexManager;
+    protected ResourceHarmonizerInterface $resourceHarmonizer;
+    protected DocumentDefinitionManagerInterface $documentDefinitionManager;
 
-    /**
-     * @var TransformerManagerInterface
-     */
-    protected $transformerManager;
-
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
-     * @var ResourceHarmonizerInterface
-     */
-    protected $resourceHarmonizer;
-
-    /**
-     * @var DocumentDefinitionManagerInterface
-     */
-    protected $documentDefinitionManager;
-
-    /**
-     * @param ContextDefinitionBuilderInterface  $contextDefinitionBuilder
-     * @param TransformerManagerInterface        $transformerManager
-     * @param IndexManagerInterface              $indexManager
-     * @param ResourceHarmonizerInterface        $resourceHarmonizer
-     * @param DocumentDefinitionManagerInterface $documentDefinitionManager
-     */
     public function __construct(
         ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         TransformerManagerInterface $transformerManager,
@@ -67,15 +41,12 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         $this->documentDefinitionManager = $documentDefinitionManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function generate(
         ContextDefinitionInterface $contextDefinition,
         ResourceMetaInterface $resourceMeta,
         ResourceContainerInterface $resourceContainer,
         array $options = []
-    ) {
+    ): IndexDocument {
         $generatorOptions = $this->buildOptions($options);
         $documentDefinition = $this->generateDocumentDefinition($contextDefinition, $resourceMeta, $generatorOptions);
         $indexDocument = $this->generateIndexDocument($resourceMeta, $documentDefinition);
@@ -83,13 +54,10 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         return $this->populateIndexDocument($contextDefinition, $indexDocument, $resourceContainer, $documentDefinition);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function generateWithoutData(
         ContextDefinitionInterface $contextDefinition,
         array $options = []
-    ) {
+    ): IndexDocument {
 
         $generatorOptions = $this->buildOptions($options);
         $documentDefinition = $this->generateDocumentDefinition($contextDefinition, null, $generatorOptions);
@@ -108,7 +76,7 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         return $indexDocument;
     }
 
-    protected function buildOptions(array $options)
+    protected function buildOptions(array $options): array
     {
         $resolver = new OptionsResolver();
         $resolver->setRequired(['preConfiguredIndexProvider']);
@@ -121,12 +89,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
     }
 
     /**
-     * @param ContextDefinitionInterface  $contextDefinition
-     * @param IndexDocument               $indexDocument
-     * @param ResourceContainerInterface  $resourceContainer
-     * @param DocumentDefinitionInterface $documentDefinition
-     *
-     * @return IndexDocument
      * @throws \Exception
      */
     protected function populateIndexDocument(
@@ -134,7 +96,7 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         IndexDocument $indexDocument,
         ResourceContainerInterface $resourceContainer,
         DocumentDefinitionInterface $documentDefinition
-    ) {
+    ): IndexDocument {
 
         $resourceScaffolderName = $resourceContainer->getResourceScaffolderIdentifier();
 
@@ -167,13 +129,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
     }
 
     /**
-     * @param ContextDefinitionInterface  $contextDefinition
-     * @param IndexDocument               $indexDocument
-     * @param ResourceContainerInterface  $resourceContainer
-     * @param DocumentDefinitionInterface $documentDefinition
-     * @param array                       $fieldDefinitionOptions
-     * @param string                      $resourceScaffolderName
-     *
      * @throws \Exception
      */
     protected function processDocumentDataTransformerField(
@@ -183,7 +138,7 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         DocumentDefinitionInterface $documentDefinition,
         array $fieldDefinitionOptions,
         string $resourceScaffolderName
-    ) {
+    ): void {
         $fieldType = $fieldDefinitionOptions['_field_type'];
         $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
 
@@ -217,18 +172,13 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         }
     }
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param IndexDocument              $indexDocument
-     * @param array                      $fieldDefinitionOptions
-     * @param mixed                      $transformedData
-     */
     protected function processDocumentIndexTransformerField(
         ContextDefinitionInterface $contextDefinition,
         IndexDocument $indexDocument,
         array $fieldDefinitionOptions,
-        $transformedData
-    ) {
+        mixed $transformedData
+    ): void {
+
         $fieldName = $fieldDefinitionOptions['name'];
         $indexTransformerOptions = $fieldDefinitionOptions['index_transformer'];
 
@@ -243,15 +193,9 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
     }
 
     /**
-     * @param array                      $options
-     * @param string                     $dispatchTransformerName
-     * @param ResourceContainerInterface $resourceContainer
-     *
-     * @return mixed|null
-     *
      * @throws \Exception
      */
-    protected function dispatchResourceFieldTransformer(array $options, string $dispatchTransformerName, ResourceContainerInterface $resourceContainer)
+    protected function dispatchResourceFieldTransformer(array $options, string $dispatchTransformerName, ResourceContainerInterface $resourceContainer): mixed
     {
         $fieldTransformerName = $options['type'];
         $fieldTransformerConfiguration = $options['configuration'];
@@ -281,16 +225,9 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
     }
 
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string                     $indexFieldName
-     * @param array                      $options
-     * @param mixed                      $transformedData
-     *
-     * @return mixed|null
-     *
      * @throws \Exception
      */
-    protected function dispatchIndexTransformer(ContextDefinitionInterface $contextDefinition, string $indexFieldName, array $options, $transformedData)
+    protected function dispatchIndexTransformer(ContextDefinitionInterface $contextDefinition, string $indexFieldName, array $options, mixed $transformedData): mixed
     {
         $indexTypeName = $options['type'];
         $indexTypeConfiguration = $options['configuration'];
@@ -304,7 +241,8 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
             $indexFieldData = $indexFieldBuilder->build($indexFieldName, $transformedData, $indexTypeConfiguration);
         } catch (\Throwable $e) {
             throw new \Exception(
-                sprintf('Error while transform field index with service "%s": %s', $indexTypeName, $e->getMessage()));
+                sprintf('Error while transform field index with service "%s": %s', $indexTypeName, $e->getMessage())
+            );
         }
 
         if ($indexFieldData === null) {
@@ -315,17 +253,14 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
     }
 
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param ResourceMetaInterface|null $resourceMeta
-     * @param array                      $generatorOptions
-     *
-     * @return DocumentDefinitionInterface
-     *
      * @throws \Exception
      * @throws SilentException
      */
-    protected function generateDocumentDefinition(ContextDefinitionInterface $contextDefinition, ?ResourceMetaInterface $resourceMeta, array $generatorOptions)
-    {
+    protected function generateDocumentDefinition(
+        ContextDefinitionInterface $contextDefinition,
+        ?ResourceMetaInterface $resourceMeta,
+        array $generatorOptions
+    ): DocumentDefinitionInterface {
         $options = [
             'allowPreProcessFieldDefinitions' => $generatorOptions['preConfiguredIndexProvider'] === false
         ];
@@ -337,32 +272,18 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         }
 
         if (!$documentDefinition instanceof DocumentDefinitionInterface) {
-            throw new \Exception(sprintf('No document definition generated. Probably no applicable document definition builder was found. Skipping...'));
+            throw new \Exception('No document definition generated. Probably no applicable document definition builder was found. Skipping...');
         }
 
         if (count($documentDefinition->getDocumentFieldDefinitions()) === 0) {
-            throw new SilentException(sprintf('Document Definition does not have any defined field. Skipping...'));
+            throw new SilentException('Document Definition does not have any defined field. Skipping...');
         }
 
         return $documentDefinition;
     }
 
-    /**
-     * @param ResourceMetaInterface|null  $resourceMeta
-     * @param DocumentDefinitionInterface $documentDefinition
-     *
-     * @return IndexDocument
-     *
-     * @throws \Exception
-     */
-    protected function generateIndexDocument(?ResourceMetaInterface $resourceMeta, DocumentDefinitionInterface $documentDefinition)
+    protected function generateIndexDocument(?ResourceMetaInterface $resourceMeta, DocumentDefinitionInterface $documentDefinition): IndexDocument
     {
-        $indexDocument = new IndexDocument($resourceMeta, $documentDefinition->getDocumentConfiguration());
-
-        if (!$indexDocument instanceof IndexDocument) {
-            throw new \Exception(sprintf('Index Document needs to be instance of %s. Skipping...', IndexDocument::class));
-        }
-
-        return $indexDocument;
+        return new IndexDocument($resourceMeta, $documentDefinition->getDocumentConfiguration());
     }
 }

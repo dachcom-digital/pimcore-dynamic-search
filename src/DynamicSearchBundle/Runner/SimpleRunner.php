@@ -12,26 +12,10 @@ use Pimcore\Model\Element\ElementInterface;
 
 class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
 {
-    /**
-     * @var ResourceHarmonizerInterface
-     */
-    protected $resourceHarmonizer;
+    protected ResourceHarmonizerInterface $resourceHarmonizer;
+    protected ResourceValidatorInterface $resourceValidator;
+    protected ResourceDeletionProcessorInterface $resourceDeletionProcessor;
 
-    /**
-     * @var ResourceValidatorInterface
-     */
-    protected $resourceValidator;
-
-    /**
-     * @var ResourceDeletionProcessorInterface
-     */
-    protected $resourceDeletionProcessor;
-
-    /**
-     * @param ResourceHarmonizerInterface        $resourceHarmonizer
-     * @param ResourceValidatorInterface         $resourceValidator
-     * @param ResourceDeletionProcessorInterface $resourceDeletionProcessor
-     */
     public function __construct(
         ResourceHarmonizerInterface $resourceHarmonizer,
         ResourceValidatorInterface $resourceValidator,
@@ -42,26 +26,17 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
         $this->resourceDeletionProcessor = $resourceDeletionProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function runInsert(string $contextName, $resource)
+    public function runInsert(string $contextName, mixed $resource): void
     {
         $this->runModification($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT, $resource);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function runUpdate(string $contextName, $resource)
+    public function runUpdate(string $contextName, mixed $resource): void
     {
         $this->runModification($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE, $resource);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function runDelete(string $contextName, $resource)
+    public function runDelete(string $contextName, mixed $resource): void
     {
         $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT);
 
@@ -69,13 +44,9 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
     }
 
     /**
-     * @param string $contextName
-     * @param string $contextDispatchType
-     * @param mixed  $resource
-     *
      * @throws SilentException
      */
-    protected function runModification(string $contextName, string $contextDispatchType, $resource)
+    protected function runModification(string $contextName, string $contextDispatchType, mixed $resource): void
     {
         $contextDefinition = $this->setupContextDefinition($contextName, $contextDispatchType);
 

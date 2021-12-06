@@ -15,44 +15,13 @@ use Pimcore\Model\Element\ElementInterface;
 
 class DataCollector implements DataCollectorInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected ContextDefinitionBuilderInterface $contextDefinitionBuilder;
+    protected ResourceHarmonizerInterface $resourceHarmonizer;
+    protected ResourceValidatorInterface $resourceValidator;
+    protected QueueManagerInterface $queueManager;
+    protected LockServiceInterface $lockService;
 
-    /**
-     * @var ContextDefinitionBuilderInterface
-     */
-    protected $contextDefinitionBuilder;
-
-    /**
-     * @var ResourceHarmonizerInterface
-     */
-    protected $resourceHarmonizer;
-
-    /**
-     * @var ResourceValidatorInterface
-     */
-    protected $resourceValidator;
-
-    /**
-     * @var QueueManagerInterface
-     */
-    protected $queueManager;
-
-    /**
-     * @var LockServiceInterface
-     */
-    protected $lockService;
-
-    /**
-     * @param LoggerInterface                   $logger
-     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
-     * @param ResourceHarmonizerInterface       $resourceHarmonizer
-     * @param ResourceValidatorInterface        $resourceValidator
-     * @param QueueManagerInterface             $queueManager
-     * @param LockServiceInterface              $lockService
-     */
     public function __construct(
         LoggerInterface $logger,
         ContextDefinitionBuilderInterface $contextDefinitionBuilder,
@@ -69,10 +38,7 @@ class DataCollector implements DataCollectorInterface
         $this->lockService = $lockService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addToGlobalQueue(string $dispatchType, $resource, array $options = [])
+    public function addToGlobalQueue(string $dispatchType, mixed $resource, array $options = []): void
     {
         $contextDefinitions = $this->contextDefinitionBuilder->buildContextDefinitionStack(ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
@@ -91,10 +57,7 @@ class DataCollector implements DataCollectorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addToContextQueue(string $contextName, string $dispatchType, $resource, array $options = [])
+    public function addToContextQueue(string $contextName, string $dispatchType, mixed $resource, array $options = []): void
     {
         try {
             // validate and allow rewriting dispatch type and/or resource
@@ -118,7 +81,7 @@ class DataCollector implements DataCollectorInterface
         $resource = $resourceCandidate->getResource();
         $dispatchType = $resourceCandidate->getDispatchType();
 
-        if (!in_array($dispatchType, ContextDefinitionInterface::ALLOWED_QUEUE_DISPATCH_TYPES)) {
+        if (!in_array($dispatchType, ContextDefinitionInterface::ALLOWED_QUEUE_DISPATCH_TYPES, true)) {
             $this->logger->error(
                 sprintf('Wrong dispatch type "%s" for queue. Allowed types are: %s', $dispatchType, join(', ', ContextDefinitionInterface::ALLOWED_QUEUE_DISPATCH_TYPES)),
                 'queue',
@@ -139,13 +102,7 @@ class DataCollector implements DataCollectorInterface
         }
     }
 
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param mixed  $resource
-     * @param array  $options
-     */
-    protected function generateJob(string $contextName, string $dispatchType, $resource, array $options)
+    protected function generateJob(string $contextName, string $dispatchType, mixed $resource, array $options): void
     {
         $jobId = $this->generateJobId();
 
@@ -221,13 +178,9 @@ class DataCollector implements DataCollectorInterface
     }
 
     /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param mixed  $resource
-     *
-     * @return array|NormalizedDataResourceInterface[]
+     * @return array<int, NormalizedDataResourceInterface>
      */
-    protected function generateResourceMeta(string $contextName, string $dispatchType, $resource)
+    protected function generateResourceMeta(string $contextName, string $dispatchType, mixed $resource): array
     {
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
 
@@ -241,11 +194,8 @@ class DataCollector implements DataCollectorInterface
         return $normalizedResourceStack;
     }
 
-    /**
-     * @return string
-     */
-    protected function generateJobId()
+    protected function generateJobId(): string
     {
-        return uniqid('dynamic-search-envelope-');
+        return uniqid('dynamic-search-envelope-', false);
     }
 }

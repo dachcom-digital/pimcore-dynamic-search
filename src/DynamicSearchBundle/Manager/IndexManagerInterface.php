@@ -10,28 +10,9 @@ use DynamicSearchBundle\Provider\IndexProviderInterface;
 
 interface IndexManagerInterface
 {
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     *
-     * @return IndexProviderInterface
-     *
-     * @throws ProviderException
-     */
-    public function getIndexProvider(ContextDefinitionInterface $contextDefinition);
+    public function getIndexProvider(ContextDefinitionInterface $contextDefinition): IndexProviderInterface;
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string               $identifier
-     *
-     * @return IndexFieldInterface|null
-     */
-    public function getIndexField(ContextDefinitionInterface $contextDefinition, string $identifier);
+    public function getIndexField(ContextDefinitionInterface $contextDefinition, string $identifier): ?IndexFieldInterface;
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string               $identifier
-     *
-     * @return FilterInterface|null
-     */
-    public function getFilter(ContextDefinitionInterface $contextDefinition, string $identifier);
+    public function getFilter(ContextDefinitionInterface $contextDefinition, string $identifier): ?FilterInterface;
 }

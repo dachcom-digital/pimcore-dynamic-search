@@ -4,20 +4,9 @@ namespace DynamicSearchBundle\OutputChannel\Query\Result;
 
 class RawResult implements RawResultInterface
 {
-    /**
-     * @var mixed
-     */
-    protected $data;
-
-    /**
-     * @var int
-     */
-    protected $hitCount;
-
-    /**
-     * @var array
-     */
-    protected $parameter;
+    protected mixed $data;
+    protected int $hitCount;
+    protected array $parameter;
 
     public function __construct()
     {
@@ -25,66 +14,42 @@ class RawResult implements RawResultInterface
         $this->parameter = [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setData($data)
+    public function setData(mixed $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setHitCount(int $hitCount)
+    public function setHitCount(int $hitCount): void
     {
         $this->hitCount = $hitCount;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getHitCount()
+    public function getHitCount(): int
     {
         return $this->hitCount;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function addParameter($key, $value)
+    public function addParameter(string $key, mixed $value): void
     {
         $this->setParameter($key, $value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setParameter($key, $value)
+    public function setParameter(string $key, mixed $value): void
     {
         $this->parameter[$key] = $value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function hasParameter($key)
+    public function hasParameter(string $key): bool
     {
         return isset($this->parameter[$key]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getParameter($key)
+    public function getParameter(string $key): mixed
     {
         return $this->parameter[$key];
     }

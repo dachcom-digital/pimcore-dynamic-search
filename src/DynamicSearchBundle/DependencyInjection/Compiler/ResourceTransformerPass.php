@@ -12,19 +12,13 @@ final class ResourceTransformerPass implements CompilerPassInterface
     public const RESOURCE_SCAFFOLDER_TAG = 'dynamic_search.resource.scaffolder';
     public const RESOURCE_FIELD_TRANSFORMER = 'dynamic_search.resource.field_transformer';
 
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container)
     {
         $this->processResourceScaffolder($container);
         $this->processResourceFieldTransformer($container);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function processResourceScaffolder(ContainerBuilder $container)
+    public function processResourceScaffolder(ContainerBuilder $container): void
     {
         $transformerRegistryDefinition = $container->getDefinition(TransformerRegistry::class);
 
@@ -41,17 +35,14 @@ final class ResourceTransformerPass implements CompilerPassInterface
         }
 
         krsort($services);
-        $services = \call_user_func_array('array_merge', $services);
+        $services = array_merge(...$services);
 
         foreach ($services as $service) {
             $transformerRegistryDefinition->addMethodCall('registerResourceScaffolder', [$service[0], $service[1], $service[2], $service[3]]);
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function processResourceFieldTransformer(ContainerBuilder $container)
+    public function processResourceFieldTransformer(ContainerBuilder $container): void
     {
         $transformerRegistryDefinition = $container->getDefinition(TransformerRegistry::class);
 

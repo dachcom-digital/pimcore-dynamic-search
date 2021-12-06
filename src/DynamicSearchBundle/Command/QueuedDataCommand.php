@@ -9,35 +9,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class QueuedDataCommand extends Command
 {
-    /**
-     * @var DataProcessorInterface
-     */
-    protected $dataProcessor;
+    protected static $defaultName = 'dynamic-search:check-queue';
+    protected static $defaultDescription = 'For internal use only';
 
-    /**
-     * @param DataProcessorInterface $dataProcessor
-     */
+    protected DataProcessorInterface $dataProcessor;
+
     public function __construct(DataProcessorInterface $dataProcessor)
     {
         parent::__construct();
         $this->dataProcessor = $dataProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setHidden(true)
-            ->setName('dynamic-search:check-queue')
-            ->setDescription('For internal use only');
+        $this->setHidden(true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->dataProcessor->process([]);
 

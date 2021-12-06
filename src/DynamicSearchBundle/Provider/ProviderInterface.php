@@ -8,34 +8,21 @@ use DynamicSearchBundle\Exception\ProviderException;
 
 interface ProviderInterface
 {
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options);
+    public function setOptions(array $options): void;
 
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     *
      * @throws ProviderException
      * @throws ProcessCancelledException
      */
-    public function warmUp(ContextDefinitionInterface $contextDefinition);
+    public function warmUp(ContextDefinitionInterface $contextDefinition): void;
 
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     *
      * @throws ProviderException
      * @throws ProcessCancelledException
      */
-    public function coolDown(ContextDefinitionInterface $contextDefinition);
+    public function coolDown(ContextDefinitionInterface $contextDefinition): void;
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     */
-    public function cancelledShutdown(ContextDefinitionInterface $contextDefinition);
+    public function cancelledShutdown(ContextDefinitionInterface $contextDefinition): void;
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     */
-    public function emergencyShutdown(ContextDefinitionInterface $contextDefinition);
+    public function emergencyShutdown(ContextDefinitionInterface $contextDefinition): void;
 }

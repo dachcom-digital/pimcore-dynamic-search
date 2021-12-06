@@ -4,63 +4,39 @@ namespace DynamicSearchBundle\Logger;
 
 class Logger implements LoggerInterface
 {
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
+    protected \Psr\Log\LoggerInterface $logger;
 
-    /**
-     * @param \Psr\Log\LoggerInterface $logger
-     */
     public function __construct(\Psr\Log\LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPsrLogger()
+    public function getPsrLogger(): \Psr\Log\LoggerInterface
     {
         return $this->logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function log($level, $message, string $provider, string $contextName)
+    public function log(mixed $level, string $message, string $provider, string $contextName): void
     {
         $this->logger->log($level, $message, ['provider' => $provider, 'contextName' => $contextName]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function debug($message, string $provider, string $contextName)
+    public function debug(string $message, string $provider, string $contextName): void
     {
         $this->log('DEBUG', $message, $provider, $contextName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function info($message, string $provider, string $contextName)
+    public function info(string $message, string $provider, string $contextName): void
     {
         $this->log('INFO', $message, $provider, $contextName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function warning($message, string $provider, string $contextName)
+    public function warning(string $message, string $provider, string $contextName): void
     {
         $this->log('WARNING', $message, $provider, $contextName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function error($message, string $provider, string $contextName)
+    public function error(string $message, string $provider, string $contextName): void
     {
         $this->log('ERROR', $message, $provider, $contextName);
     }

@@ -4,57 +4,36 @@ namespace DynamicSearchBundle\Resource\Container;
 
 class IndexFieldContainer implements IndexFieldContainerInterface
 {
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $indexType;
+    protected string $indexType;
 
-    /**
-     * @param string $name
-     * @param string $indexType
-     * @param mixed  $data
-     */
-    public function __construct(string $name, string $indexType, $data)
+    public function __construct(string $name, string $indexType, mixed $data)
     {
         $this->name = $name;
         $this->indexType = $indexType;
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIndexType()
+    public function getIndexType(): string
     {
         return $this->indexType;
     }

@@ -7,8 +7,8 @@ services:
 
     DynamicSearchBundle\Command\SearchCommand:
         tags:
-            - { name: console.command, command: 'dynamic-search:run' }
+            - { name: console.command }
 
     DynamicSearchBundle\Command\QueuedDataCommand:
         tags:
-            - { name: console.command, command: 'dynamic-search:check-queue' }
+            - { name: console.command }

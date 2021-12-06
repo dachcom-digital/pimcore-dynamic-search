@@ -3,9 +3,9 @@
 ### composer.json
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search": "~0.7.0",
-    "dachcom-digital/dynamic-search-data-provider-trinity": "~0.7.0",
-    "dachcom-digital/dynamic-search-index-provider-lucene": "~0.7.0",
+    "dachcom-digital/dynamic-search": "~2.0.0",
+    "dachcom-digital/dynamic-search-data-provider-trinity": "~2.0.0",
+    "dachcom-digital/dynamic-search-index-provider-lucene": "~2.00",
 }
 ```
 
@@ -20,7 +20,7 @@ dynamic_search_frontend:
 
 services:
 
-    AppBundle\DynamicSearch\IndexDefinition\Trinity\Definition:
+    App\DynamicSearch\IndexDefinition\Trinity\Definition:
         tags:
             - { name: dynamic_search.document_definition_builder }
             
@@ -87,11 +87,11 @@ dynamic_search:
 
 ```
 
-### AppBundle\DynamicSearch\IndexDefinition\Trinity\Definition.php
+### App\DynamicSearch\IndexDefinition\Trinity\Definition.php
 ```php
 <?php
 
-namespace AppBundle\DynamicSearch\IndexDefinition\Trinity;
+namespace App\DynamicSearch\IndexDefinition\Trinity;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
@@ -99,10 +99,7 @@ use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 class Definition implements DocumentDefinitionBuilderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta)
+    public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta): bool
     {
         if ($resourceMeta->getResourceCollectionType() !== 'object') {
             return false;
@@ -111,10 +108,7 @@ class Definition implements DocumentDefinitionBuilderInterface
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions)
+    public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions): DocumentDefinitionInterface
     {
         $definition
             ->addSimpleDocumentFieldDefinition([

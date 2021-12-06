@@ -29,14 +29,5 @@ interface ResourceValidatorInterface
      */
     public function validateUntrustedResource(string $contextName, string $dispatchType, $resource);
 
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param bool   $isUnknownResource
-     * @param bool   $isImmutableResource
-     * @param mixed  $resource
-     *
-     * @return ResourceCandidateInterface
-     */
-    public function validateResource(string $contextName, string $dispatchType, bool $isUnknownResource, bool $isImmutableResource, $resource);
+    public function validateResource(string $contextName, string $dispatchType, bool $isUnknownResource, bool $isImmutableResource, mixed $resource): ResourceCandidateInterface;
 }

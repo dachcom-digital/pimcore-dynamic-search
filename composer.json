@@ -21,29 +21,24 @@
     "autoload-dev": {
         "psr-4": {
             "": "src/"
-        },
-        "classmap": [
-            "app/TestKernel.php"
-        ]
+        }
     },
     "extra": {
         "pimcore": {
             "bundles": [
                 "DynamicSearchBundle\\DynamicSearchBundle"
             ]
-        },
-        "branch-alias": {
-            "dev-master": "2.0-dev"
         }
     },
     "require": {
-        "pimcore/pimcore": "^10.0",
-        "symfony/symfony": "^5.0"
+        "pimcore/pimcore": "^10.1"
     },
     "require-dev": {
-        "codeception/codeception": "~2.4.0",
+        "codeception/codeception": "^4.1",
+        "codeception/module-webdriver": "^1.4",
+        "codeception/module-symfony": "^1.6",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
-        "symplify/easy-coding-standard": "^8.0"
+        "symplify/easy-coding-standard": "^9.0"
     }
 }

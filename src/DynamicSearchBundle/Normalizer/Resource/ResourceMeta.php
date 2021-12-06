@@ -4,53 +4,17 @@ namespace DynamicSearchBundle\Normalizer\Resource;
 
 class ResourceMeta implements ResourceMetaInterface
 {
-    /**
-     * @var mixed
-     */
-    public $documentId;
+    public string|int $documentId;
+    public string|int $resourceId;
+    public string $resourceCollectionType;
+    public string $resourceType;
+    public ?string $resourceSubType;
+    public array $resourceOptions;
+    public array $normalizerOptions;
 
-    /**
-     * @var mixed
-     */
-    public $resourceId;
-
-    /**
-     * @var mixed
-     */
-    public $resourceCollectionType;
-
-    /**
-     * @var mixed
-     */
-    public $resourceType;
-
-    /**
-     * @var mixed
-     */
-    public $resourceSubType;
-
-    /**
-     * @var array
-     */
-    public $resourceOptions;
-
-    /**
-     * @var array
-     */
-    public $normalizerOptions;
-
-    /**
-     * @param mixed       $documentId
-     * @param string      $resourceCollectionType
-     * @param string      $resourceType
-     * @param string|null $resourceSubType
-     * @param mixed       $resourceId
-     * @param array       $resourceOptions
-     * @param array       $normalizerOptions
-     */
     public function __construct(
-        $documentId,
-        $resourceId,
+        string|int $documentId,
+        string|int $resourceId,
         string $resourceCollectionType,
         string $resourceType,
         ?string $resourceSubType,
@@ -66,74 +30,47 @@ class ResourceMeta implements ResourceMetaInterface
         $this->normalizerOptions = $normalizerOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDocumentId()
+    public function getDocumentId(): string|int
     {
         return $this->documentId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceCollectionType()
-    {
-        return $this->resourceCollectionType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceType()
-    {
-        return $this->resourceType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceSubType()
-    {
-        return $this->resourceSubType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceId()
+    public function getResourceId(): string|int
     {
         return $this->resourceId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceOptions()
+    public function getResourceCollectionType(): string
+    {
+        return $this->resourceCollectionType;
+    }
+
+    public function getResourceType(): string
+    {
+        return $this->resourceType;
+    }
+
+    public function getResourceSubType(): ?string
+    {
+        return $this->resourceSubType;
+    }
+
+    public function getResourceOptions(): array
     {
         return $this->resourceOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasNormalizerOption(string $option)
+    public function hasNormalizerOption(string $option): bool
     {
         return isset($this->normalizerOptions[$option]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getNormalizerOption(string $option)
+    public function getNormalizerOption(string $option): mixed
     {
         return $this->normalizerOptions[$option];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getNormalizerOptions()
+    public function getNormalizerOptions(): array
     {
         return is_array($this->normalizerOptions) ? $this->normalizerOptions : [];
     }

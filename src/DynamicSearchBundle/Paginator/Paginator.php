@@ -2,16 +2,15 @@
 
 namespace DynamicSearchBundle\Paginator;
 
-class Paginator extends \Zend\Paginator\Paginator implements PaginatorInterface
+class Paginator implements PaginatorInterface
 {
     /**
      * Returns a foreach-compatible iterator.
      * We need to overwrite this method to catch more meaningful exceptions.
      *
-     * @return \Traversable
      * @throws \RuntimeException
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         try {
             return $this->getCurrentItems();

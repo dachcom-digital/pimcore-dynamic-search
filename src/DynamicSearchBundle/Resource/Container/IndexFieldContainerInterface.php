@@ -4,18 +4,9 @@ namespace DynamicSearchBundle\Resource\Container;
 
 interface IndexFieldContainerInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @return mixed
-     */
-    public function getData();
+    public function getData(): mixed;
 
-    /**
-     * @return string
-     */
-    public function getIndexType();
+    public function getIndexType(): string;
 }
