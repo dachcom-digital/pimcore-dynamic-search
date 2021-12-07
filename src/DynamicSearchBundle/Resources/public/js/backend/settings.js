@@ -11,7 +11,8 @@ pimcore.plugin.search.settings = Class.create({
 
     getTabPanel: function () {
 
-        var _ = this;
+        var _ = this,
+        tabPanel;
 
         this.loadMask = pimcore.globalmanager.get('loadingmask');
 
@@ -28,19 +29,16 @@ pimcore.plugin.search.settings = Class.create({
 
             });
 
-            var tabPanel = Ext.getCmp('pimcore_panel_tabs');
+            tabPanel = Ext.getCmp('pimcore_panel_tabs');
             tabPanel.add(this.panel);
             tabPanel.setActiveItem('search_settings');
 
             this.panel.on('destroy', function () {
-
                 pimcore.globalmanager.remove('search_settings');
                 Ext.TaskManager.destroy(this.task);
-
             }.bind(this));
 
             this.container = Ext.create('Ext.Container', {
-
                 autoScroll: true,
                 scrollable: true,
                 layout: {
@@ -52,12 +50,10 @@ pimcore.plugin.search.settings = Class.create({
             this.panel.add(this.container);
 
             this.statusLayout = Ext.create('Ext.form.Panel', {
-
                 id: 'LSstatusFormPanel',
                 border: false,
                 bodyStyle: 'background-color: #F7F7F7; padding:5px 10px;',
                 autoScroll: false,
-
                 items:[
                     {
                         xtype:'displayfield',

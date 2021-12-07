@@ -17,10 +17,7 @@ final class OutputChannelPass implements CompilerPassInterface
     public const OUTPUT_CHANNEL_MODIFIER_ACTION_TAG = 'dynamic_search.output_channel.modifier.action';
     public const OUTPUT_CHANNEL_MODIFIER_FILTER_TAG = 'dynamic_search.output_channel.modifier.filter';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $outputChannelServices = [];
         $definition = $container->getDefinition(OutputChannelRegistry::class);
@@ -33,8 +30,8 @@ final class OutputChannelPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
 
-                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
-                $serviceName = $alias !== null ? $alias : $id;
+                $alias = $attributes['identifier'] ?? null;
+                $serviceName = $alias ?? $id;
 
                 $outputChannelServices[] = $serviceName;
                 $serviceDefinitionStack[] = ['serviceName' => $serviceName, 'id' => $id];
@@ -50,7 +47,7 @@ final class OutputChannelPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_RUNTIME_QUERY_BUILDER_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $alias = $attributes['identifier'] ?? null;
                 $definition->addMethodCall('registerOutputChannelRuntimeQueryProvider', [new Reference($id), $id, $alias]);
             }
         }
@@ -61,7 +58,7 @@ final class OutputChannelPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_RUNTIME_OPTIONS_BUILDER_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-                $alias = isset($attributes['identifier']) ? $attributes['identifier'] : null;
+                $alias = $attributes['identifier'] ?? null;
                 $definition->addMethodCall('registerOutputChannelRuntimeOptionsBuilder', [new Reference($id), $id, $alias]);
             }
         }
@@ -80,9 +77,9 @@ final class OutputChannelPass implements CompilerPassInterface
             }
 
             foreach ($tags as $attributes) {
-                $priority = isset($attributes['priority']) ? $attributes['priority'] : 0;
-                $outputChannelService = isset($attributes['output_channel_service_identifier']) ? $attributes['output_channel_service_identifier'] : 'all';
-                if (!in_array($outputChannelService, $validModifierChannelServices)) {
+                $priority = $attributes['priority'] ?? 0;
+                $outputChannelService = $attributes['output_channel_service_identifier'] ?? 'all';
+                if (!in_array($outputChannelService, $validModifierChannelServices, true)) {
                     throw new \InvalidArgumentException(
                         sprintf(
                             '"%s" is an invalid output channel type for filter. Channel needs to be one of %s',
@@ -112,7 +109,7 @@ final class OutputChannelPass implements CompilerPassInterface
 
         krsort($outputChannelModifierActionServices);
         if (count($outputChannelModifierActionServices) > 0) {
-            $outputChannelModifierActionServices = \call_user_func_array('array_merge', $outputChannelModifierActionServices);
+            $outputChannelModifierActionServices = array_merge(...$outputChannelModifierActionServices);
             foreach ($outputChannelModifierActionServices as $serviceData) {
                 $definition->addMethodCall('registerOutputChannelModifierAction', $serviceData);
             }
@@ -130,9 +127,9 @@ final class OutputChannelPass implements CompilerPassInterface
             }
 
             foreach ($tags as $attributes) {
-                $priority = isset($attributes['priority']) ? $attributes['priority'] : 0;
-                $outputChannelService = isset($attributes['output_channel_service_identifier']) ? $attributes['output_channel_service_identifier'] : 'all';
-                if (!in_array($outputChannelService, $outputChannelServices)) {
+                $priority = $attributes['priority'] ?? 0;
+                $outputChannelService = $attributes['output_channel_service_identifier'] ?? 'all';
+                if (!in_array($outputChannelService, $outputChannelServices, true)) {
                     throw new \InvalidArgumentException(
                         sprintf(
                             '"%s" is an invalid output channel type for filter. Channel needs to be one of %s',
@@ -163,11 +160,11 @@ final class OutputChannelPass implements CompilerPassInterface
         krsort($outputChannelModifierFilterServices);
         if (count($outputChannelModifierFilterServices) > 0) {
             $dispatchedFilter = [];
-            $outputChannelModifierFilterServices = \call_user_func_array('array_merge', $outputChannelModifierFilterServices);
+            $outputChannelModifierFilterServices = array_merge(...$outputChannelModifierFilterServices);
             foreach ($outputChannelModifierFilterServices as $serviceData) {
                 // highest priority filter wins.
                 $key = sprintf('%s_%s', $serviceData[1], $serviceData[2]);
-                if (in_array($key, $dispatchedFilter)) {
+                if (in_array($key, $dispatchedFilter, true)) {
                     continue;
                 }
                 $dispatchedFilter[] = $key;
@@ -176,11 +173,7 @@ final class OutputChannelPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array            $serviceDefinitionStack
-     */
-    protected function validateOutputChannelOptions(ContainerBuilder $container, array $serviceDefinitionStack)
+    protected function validateOutputChannelOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;

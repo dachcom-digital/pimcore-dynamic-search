@@ -2,35 +2,24 @@
 
 namespace DynamicSearchBundle\Builder;
 
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Factory\ContextDefinitionFactoryInterface;
 
 class ContextDefinitionBuilder implements ContextDefinitionBuilderInterface
 {
-    /**
-     * @var ContextDefinitionFactoryInterface
-     */
-    protected $contextDefinitionFactory;
+    protected ContextDefinitionFactoryInterface $contextDefinitionFactory;
 
-    /**
-     * @param ContextDefinitionFactoryInterface $contextDefinitionFactory
-     */
     public function __construct(ContextDefinitionFactoryInterface $contextDefinitionFactory)
     {
         $this->contextDefinitionFactory = $contextDefinitionFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildContextDefinition(string $contextName, string $dispatchType, array $runtimeValues = [])
+    public function buildContextDefinition(string $contextName, string $dispatchType, array $runtimeValues = []): ?ContextDefinitionInterface
     {
         return $this->contextDefinitionFactory->createSingle($contextName, $dispatchType, $runtimeValues);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildContextDefinitionStack(string $dispatchType, array $runtimeValues = [])
+    public function buildContextDefinitionStack(string $dispatchType, array $runtimeValues = []): array
     {
         return $this->contextDefinitionFactory->createStack($dispatchType, $runtimeValues);
     }

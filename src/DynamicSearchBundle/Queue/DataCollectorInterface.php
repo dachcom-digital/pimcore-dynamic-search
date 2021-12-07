@@ -4,18 +4,7 @@ namespace DynamicSearchBundle\Queue;
 
 interface DataCollectorInterface
 {
-    /**
-     * @param string $dispatchType
-     * @param mixed  $resource
-     * @param array  $options
-     */
-    public function addToGlobalQueue(string $dispatchType, $resource, array $options = []);
+    public function addToGlobalQueue(string $dispatchType, mixed $resource, array $options = []): void;
 
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param mixed  $resource
-     * @param array  $options
-     */
-    public function addToContextQueue(string $contextName, string $dispatchType, $resource, array $options = []);
+    public function addToContextQueue(string $contextName, string $dispatchType, mixed $resource, array $options = []): void;
 }

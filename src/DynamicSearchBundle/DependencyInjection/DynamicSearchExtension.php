@@ -8,7 +8,6 @@ use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Factory\ContextDefinitionFactory;
 use DynamicSearchBundle\Filter\Definition\FilterDefinitionBuilderInterface;
 use DynamicSearchBundle\Guard\ContextGuardInterface;
-use DynamicSearchBundle\Paginator\Paginator;
 use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Definition;
@@ -20,13 +19,7 @@ use DynamicSearchBundle\Configuration\Configuration as BundleConfiguration;
 
 class DynamicSearchExtension extends Extension
 {
-    /**
-     * @param array            $configs
-     * @param ContainerBuilder $container
-     *
-     * @throws \Exception
-     */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
 
@@ -40,21 +33,14 @@ class DynamicSearchExtension extends Extension
         $this->setupProviderBundles($container);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    protected function buildAutoconfiguration($container)
+    protected function buildAutoconfiguration(ContainerBuilder $container): void
     {
         $container->registerForAutoconfiguration(DocumentDefinitionBuilderInterface::class)->addTag(DefinitionBuilderPass::DOCUMENT_DEFINITION_BUILDER);
         $container->registerForAutoconfiguration(FilterDefinitionBuilderInterface::class)->addTag(DefinitionBuilderPass::FILTER_DEFINITION_BUILDER);
         $container->registerForAutoconfiguration(ContextGuardInterface::class)->addTag(ContextGuardPass::CONTEXT_GUARD_TAG);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array            $config
-     */
-    protected function setupConfiguration(ContainerBuilder $container, array $config)
+    protected function setupConfiguration(ContainerBuilder $container, array $config): void
     {
         $contextConfig = $config['context'];
 
@@ -64,19 +50,15 @@ class DynamicSearchExtension extends Extension
         $configManagerDefinition->addMethodCall('setConfig', [$config]);
 
         $container->setParameter('dynamic_search.context.full_configuration', $contextConfig);
-        $container->setParameter('dynamic_search_default_paginator_class', Paginator::class);
 
         $contextDefinitionFactory = $container->getDefinition(ContextDefinitionFactory::class);
 
-        foreach ($contextConfig as $contextName => $config) {
-            $contextDefinitionFactory->addMethodCall('addContextConfig', [$contextName, $config]);
+        foreach ($contextConfig as $contextName => $contextConfigNode) {
+            $contextDefinitionFactory->addMethodCall('addContextConfig', [$contextName, $contextConfigNode]);
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    protected function setupProviderBundles(ContainerBuilder $container)
+    protected function setupProviderBundles(ContainerBuilder $container): void
     {
         $providerConfig = new ProviderConfig();
 

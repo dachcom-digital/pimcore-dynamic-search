@@ -7,26 +7,17 @@ use DynamicSearchBundle\Exception\SilentException;
 interface SimpleRunnerInterface
 {
     /**
-     * @param string $contextName
-     * @param mixed  $resource
-     *
      * @throws SilentException
      */
-    public function runInsert(string $contextName, $resource);
+    public function runInsert(string $contextName, mixed $resource): void;
 
     /**
-     * @param string $contextName
-     * @param mixed  $resource
-     *
      * @throws SilentException
      */
-    public function runUpdate(string $contextName, $resource);
+    public function runUpdate(string $contextName, mixed $resource): void;
 
     /**
-     * @param string $contextName
-     * @param mixed  $resource
-     *
      * @throws SilentException
      */
-    public function runDelete(string $contextName, $resource);
+    public function runDelete(string $contextName, mixed $resource): void;
 }

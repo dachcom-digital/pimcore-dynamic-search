@@ -10,21 +10,12 @@ use DynamicSearchBundle\Normalizer\ResourceNormalizerInterface;
 interface NormalizerManagerInterface
 {
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     *
-     * @return ResourceNormalizerInterface|null
-     *
      * @throws NormalizerException
      */
-    public function getResourceNormalizer(ContextDefinitionInterface $contextDefinition);
+    public function getResourceNormalizer(ContextDefinitionInterface $contextDefinition): ?ResourceNormalizerInterface;
 
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string               $outputChannelName
-     *
-     * @return DocumentNormalizerInterface|null
-     *
      * @throws NormalizerException
      */
-    public function getDocumentNormalizerForOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannelName);
+    public function getDocumentNormalizerForOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannelName): ?DocumentNormalizerInterface;
 }

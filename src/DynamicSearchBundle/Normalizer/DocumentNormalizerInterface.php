@@ -9,24 +9,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface DocumentNormalizerInterface
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public static function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver): void;
+
+    public function setOptions(array $options): void;
 
     /**
-     * @param array $options
-     */
-    public function setOptions(array $options);
-
-    /**
-     * @param RawResultInterface         $rawResult
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string                     $outputChannelName
-     *
-     * @return mixed
-     *
      * @throws NormalizerException
      */
-    public function normalize(RawResultInterface $rawResult, ContextDefinitionInterface $contextDefinition, string $outputChannelName);
+    public function normalize(RawResultInterface $rawResult, ContextDefinitionInterface $contextDefinition, string $outputChannelName): mixed;
 }

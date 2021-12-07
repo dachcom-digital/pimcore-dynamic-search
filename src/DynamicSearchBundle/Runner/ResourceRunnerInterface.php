@@ -8,50 +8,32 @@ use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 interface ResourceRunnerInterface
 {
     /**
-     * @param string                $contextName
-     * @param ResourceMetaInterface $resourceMeta
-     *
      * @throws SilentException
      */
-    public function runInsert(string $contextName, ResourceMetaInterface $resourceMeta);
+    public function runInsert(string $contextName, ResourceMetaInterface $resourceMeta): void;
 
     /**
-     * @param string                        $contextName
-     * @param array|ResourceMetaInterface[] $resourceMetaStack
-     *
      * @throws SilentException
      */
-    public function runInsertStack(string $contextName, array $resourceMetaStack);
+    public function runInsertStack(string $contextName, array $resourceMetaStack): void;
 
     /**
-     * @param string                $contextName
-     * @param ResourceMetaInterface $resourceMeta
-     *
      * @throws SilentException
      */
-    public function runUpdate(string $contextName, ResourceMetaInterface $resourceMeta);
+    public function runUpdate(string $contextName, ResourceMetaInterface $resourceMeta): void;
 
     /**
-     * @param string                        $contextName
-     * @param array|ResourceMetaInterface[] $resourceMetaStack
-     *
      * @throws SilentException
      */
-    public function runUpdateStack(string $contextName, array $resourceMetaStack);
+    public function runUpdateStack(string $contextName, array $resourceMetaStack): void;
 
     /**
-     * @param string                $contextName
-     * @param ResourceMetaInterface $resourceMeta
-     *
      * @throws SilentException
      */
-    public function runDelete(string $contextName, ResourceMetaInterface $resourceMeta);
+    public function runDelete(string $contextName, ResourceMetaInterface $resourceMeta): void;
 
     /**
-     * @param string                        $contextName
-     * @param array|ResourceMetaInterface[] $resourceMetaStack
-     *
      * @throws SilentException
      */
-    public function runDeleteStack(string $contextName, array $resourceMetaStack);
+    public function runDeleteStack(string $contextName, array $resourceMetaStack): void;
 }

@@ -4,5 +4,5 @@ namespace DynamicSearchBundle\Provider\Extension;
 
 interface ProviderBundleLocatorInterface
 {
-    public function findProviderBundles();
+    public function findProviderBundles(): array;
 }

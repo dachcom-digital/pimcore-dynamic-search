@@ -3,28 +3,18 @@
 namespace DynamicSearchBundle\Factory;
 
 use DynamicSearchBundle\Context\ContextDefinition;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 
 class ContextDefinitionFactory implements ContextDefinitionFactoryInterface
 {
-    /**
-     * @var array
-     */
-    protected $contextConfig = [];
+    protected array $contextConfig = [];
 
-    /**
-     * @param string $contextName
-     * @param array  $contextConfig
-     */
-    public function addContextConfig(string $contextName, array $contextConfig)
+    public function addContextConfig(string $contextName, array $contextConfig): void
     {
         $this->contextConfig[$contextName] = $contextConfig;
     }
 
-    /**
-     * @param string $contextName
-     * @param array  $contextConfig
-     */
-    public function replaceContextConfig(string $contextName, array $contextConfig)
+    public function replaceContextConfig(string $contextName, array $contextConfig): void
     {
         if (!isset($this->contextConfig[$contextName])) {
             return;
@@ -33,10 +23,7 @@ class ContextDefinitionFactory implements ContextDefinitionFactoryInterface
         $this->contextConfig[$contextName] = $contextConfig;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createSingle(string $contextName, string $dispatchType, array $runtimeValues = [])
+    public function createSingle(string $contextName, string $dispatchType, array $runtimeValues = []): ?ContextDefinitionInterface
     {
         if (!isset($this->contextConfig[$contextName])) {
             return null;
@@ -45,10 +32,7 @@ class ContextDefinitionFactory implements ContextDefinitionFactoryInterface
         return new ContextDefinition($dispatchType, $contextName, $this->contextConfig[$contextName], $runtimeValues);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createStack(string $dispatchType, array $runtimeValues = [])
+    public function createStack(string $dispatchType, array $runtimeValues = []): array
     {
         $contextStack = [];
         foreach ($this->contextConfig as $contextName => $contextConfig) {

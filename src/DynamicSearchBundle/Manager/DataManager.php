@@ -5,29 +5,16 @@ namespace DynamicSearchBundle\Manager;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\ProviderException;
+use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Registry\DataProviderRegistryInterface;
 
 class DataManager implements DataManagerInterface
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected ConfigurationInterface $configuration;
+    protected DataProviderRegistryInterface $dataProviderRegistry;
 
-    /**
-     * @var DataProviderRegistryInterface
-     */
-    protected $dataProviderRegistry;
+    protected array $validProviders;
 
-    /**
-     * @var array
-     */
-    protected $validProviders;
-
-    /**
-     * @param ConfigurationInterface        $configuration
-     * @param DataProviderRegistryInterface $dataProviderRegistry
-     */
     public function __construct(
         ConfigurationInterface $configuration,
         DataProviderRegistryInterface $dataProviderRegistry
@@ -36,10 +23,7 @@ class DataManager implements DataManagerInterface
         $this->dataProviderRegistry = $dataProviderRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataProvider(ContextDefinitionInterface $contextDefinition, string $providerBehaviour)
+    public function getDataProvider(ContextDefinitionInterface $contextDefinition, string $providerBehaviour): DataProviderInterface
     {
         $dataProviderName = $contextDefinition->getDataProviderName();
         $cacheKey = sprintf('%s_%s', $contextDefinition->getName(), $dataProviderName);

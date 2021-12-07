@@ -4,12 +4,15 @@
 
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/dynamic-search.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/dynamic-search)
-[![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-dynamic-search/Codeception?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-dynamic-search/actions?query=workflow%3A%22Codeception%22)
-[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-dynamic-search/PHP%20Stan?style=flat-square&logo=github&label=phpstan%20level%202)](https://github.com/dachcom-digital/pimcore-dynamic-search/actions?query=workflow%3A%22PHP%20Stan%22)
+[![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-dynamic-search/Codeception/master?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-dynamic-search/actions?query=workflow%3ACodeception+branch%3Amaster)
+[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-dynamic-search/PHP%20Stan/master?style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-dynamic-search/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
 
-## Requirements
-* Pimcore >= 6.6
-* Symfony >= 4.4
+### Release Plan
+
+| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained                       | Branch     |
+|---------|-----------------------------------|----------------------------|--------------|----------------------------------|------------|
+| **2.x** | `10.0`                            | `^5.2`                     | no release   | Yes (Bugs, Features)             | master     |
+| **1.x** | `6.6` - `6.9`                     | `^4.4`                     | 18.04.2021   | Yes (Bugs, Features if required) | [1.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/1.x) |
 
 ## Introduction
 The Dynamic Search Bundle allows you to redefine your search strategy. It's based on several data- and index providers.
@@ -27,9 +30,15 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search" : "~1.0.0"
+    "dachcom-digital/dynamic-search" : "~2.0.0"
 }
 ```
+
+- Execute: `$ bin/console pimcore:bundle:enable DynamicSearchBundle`
+- Execute: `$ bin/console pimcore:bundle:install DynamicSearchBundle`
+
+## Upgrading
+- Execute: `$ bin/console doctrine:migrations:migrate --prefix 'DynamicSearchBundle\Migrations'`
 
 ## Further Information
 - [Example Setup](docs/0_ExampleSetup.md)
@@ -47,26 +56,6 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
     - [Filter (Faceted Search / Aggregation)](#)
         - [Create Filter Definition](#)
 - [API](#)
-
-### Installation via Extension Manager
-After you have installed the Dynamic Search Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
-- Click the green `+` Button in `Enable / Disable` row
-- Click the green `+` Button in `Install/Uninstall` row
-
-## Upgrading
-
-### Upgrading via Extension Manager
-After you have updated the Dynamic Search Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
-- Click the green `+` Button in `Update` row
-
-### Upgrading via CommandLine
-After you have updated the Dynamic Search Bundle via composer:
-- Execute: `$ bin/console pimcore:bundle:update DynamicSearchBundle`
-
-### Migrate via CommandLine
-Does actually the same as the update command and preferred in CI-Workflow:
-- Execute: `$ bin/console pimcore:migrations:migrate -b DynamicSearchBundle`
-
 
 ## Copyright and License
 Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)  

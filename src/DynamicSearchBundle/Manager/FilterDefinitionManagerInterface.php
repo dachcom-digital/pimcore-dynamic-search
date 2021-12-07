@@ -8,11 +8,5 @@ use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 
 interface FilterDefinitionManagerInterface
 {
-    /**
-     * @param ContextDefinitionInterface      $contextDefinition
-     * @param OutputChannelAllocatorInterface $outputChannelAllocator
-     *
-     * @return FilterDefinition|null
-     */
-    public function generateFilterDefinition(ContextDefinitionInterface $contextDefinition, OutputChannelAllocatorInterface $outputChannelAllocator);
+    public function generateFilterDefinition(ContextDefinitionInterface $contextDefinition, OutputChannelAllocatorInterface $outputChannelAllocator): ?FilterDefinition;
 }

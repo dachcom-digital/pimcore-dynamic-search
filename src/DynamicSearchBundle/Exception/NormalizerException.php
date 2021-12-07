@@ -4,12 +4,7 @@ namespace DynamicSearchBundle\Exception;
 
 final class NormalizerException extends \Exception
 {
-    /**
-     * @param string          $message
-     * @param string|null     $normalizerName
-     * @param \Exception|null $previousException
-     */
-    public function __construct(string $message, string $normalizerName = null, $previousException = null)
+    public function __construct(string $message, ?string $normalizerName = null, ?\Exception $previousException = null)
     {
         $normalizerName = is_null($normalizerName) ? '' : sprintf(' (%s)', $normalizerName);
 

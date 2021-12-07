@@ -4,59 +4,30 @@ namespace DynamicSearchBundle\Document\Definition;
 
 interface DocumentDefinitionInterface
 {
-    /**
-     * @return string
-     */
-    public function getDataNormalizerIdentifier();
+    public function getDataNormalizerIdentifier(): string;
+
+    public function setCurrentLevel(string|int $currentLevel): void;
+
+    public function setDocumentConfiguration(array $documentConfiguration): void;
+
+    public function getDocumentConfiguration(): array;
 
     /**
-     * @param string|int $currentLevel
-     */
-    public function setCurrentLevel($currentLevel);
-
-    /**
-     * @param array $documentConfiguration
-     */
-    public function setDocumentConfiguration(array $documentConfiguration);
-
-    /**
-     * @return array
-     */
-    public function getDocumentConfiguration();
-
-    /**
-     * @param array $definition
-     *
-     * @return $this
      * @throws \Exception
      */
-    public function addOptionFieldDefinition(array $definition);
+    public function addOptionFieldDefinition(array $definition): static;
 
-    /**
-     * @return array
-     */
     public function getOptionFieldDefinitions(): array;
 
     /**
-     * @param array $definition
-     *
-     * @return $this
      * @throws \Exception
      */
-    public function addSimpleDocumentFieldDefinition(array $definition);
+    public function addSimpleDocumentFieldDefinition(array $definition): static;
 
     /**
-     * @param array    $preProcessTransformer
-     * @param \Closure $closure
-     *
-     * @return $this
      * @throws \Exception
-     *
      */
-    public function addPreProcessFieldDefinition(array $preProcessTransformer, \Closure $closure);
+    public function addPreProcessFieldDefinition(array $definition, \Closure $closure):  static;
 
-    /**
-     * @return array
-     */
     public function getDocumentFieldDefinitions(): array;
 }

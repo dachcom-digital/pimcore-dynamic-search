@@ -11,13 +11,6 @@ use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 interface IndexDocumentGeneratorInterface
 {
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param ResourceMetaInterface      $resourceMeta
-     * @param ResourceContainerInterface $resourceContainer
-     * @param array                      $options
-     *
-     * @return IndexDocument
-     *
      * @throws \Exception
      * @throws SilentException
      */
@@ -26,19 +19,14 @@ interface IndexDocumentGeneratorInterface
         ResourceMetaInterface $resourceMeta,
         ResourceContainerInterface $resourceContainer,
         array $options = []
-    );
+    ): IndexDocument;
 
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param array                      $options
-     *
-     * @return IndexDocument
-     *
      * @throws \Exception
      * @throws SilentException
      */
     public function generateWithoutData(
         ContextDefinitionInterface $contextDefinition,
         array $options = []
-    );
+    ): IndexDocument;
 }

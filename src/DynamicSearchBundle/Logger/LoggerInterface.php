@@ -4,10 +4,7 @@ namespace DynamicSearchBundle\Logger;
 
 interface LoggerInterface
 {
-    /**
-     * @return \Psr\Log\LoggerInterface
-     */
-    public function getPsrLogger();
+    public function getPsrLogger(): \Psr\Log\LoggerInterface;
 
     /**
      * DEBUG (100)
@@ -18,39 +15,14 @@ interface LoggerInterface
      * CRITICAL (500)
      * ALERT (550)
      * EMERGENCY (600).
-     *
-     * @param string $level
-     * @param string $message
-     * @param string $provider
-     * @param string $contextName
      */
-    public function log(string $level, string $message, string $provider, string $contextName);
+    public function log(string $level, string $message, string $provider, string $contextName): void;
 
-    /**
-     * @param string $message
-     * @param string $provider
-     * @param string $contextName
-     */
-    public function debug($message, string $provider, string $contextName);
+    public function debug(string $message, string $provider, string $contextName): void;
 
-    /**
-     * @param string $message
-     * @param string $provider
-     * @param string $contextName
-     */
-    public function info($message, string $provider, string $contextName);
+    public function info(string $message, string $provider, string $contextName): void;
 
-    /**
-     * @param string $message
-     * @param string $provider
-     * @param string $contextName
-     */
-    public function warning($message, string $provider, string $contextName);
+    public function warning(string $message, string $provider, string $contextName): void;
 
-    /**
-     * @param string $message
-     * @param string $provider
-     * @param string $contextName
-     */
-    public function error($message, string $provider, string $contextName);
+    public function error(string $message, string $provider, string $contextName): void;
 }

@@ -13,26 +13,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FilterStackWorker
 {
-    /**
-     * @var OutputChannelContextInterface
-     */
-    protected $context;
+    protected OutputChannelContextInterface $context;
+    protected FilterDefinitionManagerInterface $filterDefinitionManager;
+    protected IndexManagerInterface $indexManager;
 
-    /**
-     * @var FilterDefinitionManagerInterface
-     */
-    protected $filterDefinitionManager;
-
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
-     * @param OutputChannelContextInterface    $context
-     * @param FilterDefinitionManagerInterface $filterDefinitionManager
-     * @param IndexManagerInterface            $indexManager
-     */
     public function __construct(
         OutputChannelContextInterface $context,
         FilterDefinitionManagerInterface $filterDefinitionManager,
@@ -49,7 +33,7 @@ class FilterStackWorker
      *
      * @return mixed
      */
-    public function enrichStackQuery(array $filterStack, $query)
+    public function enrichStackQuery(array $filterStack, mixed $query): mixed
     {
         foreach ($filterStack as $filterService) {
             $query = $this->prepareFilter($filterService)->enrichQuery($query);

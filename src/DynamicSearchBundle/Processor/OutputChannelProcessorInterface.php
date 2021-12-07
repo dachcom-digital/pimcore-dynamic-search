@@ -3,17 +3,13 @@
 namespace DynamicSearchBundle\Processor;
 
 use DynamicSearchBundle\Exception\OutputChannelException;
+use DynamicSearchBundle\OutputChannel\Result\MultiOutputChannelResultInterface;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelResultInterface;
 
 interface OutputChannelProcessorInterface
 {
     /**
-     * @param string $contextName
-     * @param string $outputChannelName
-     *
-     * @return OutputChannelResultInterface
-     *
      * @throws OutputChannelException
      */
-    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName);
+    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName): OutputChannelResultInterface|MultiOutputChannelResultInterface;
 }

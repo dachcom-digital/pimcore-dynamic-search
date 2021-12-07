@@ -4,13 +4,7 @@ namespace DynamicSearchBundle\Resource;
 
 interface ResourceScaffolderContainerInterface
 {
-    /**
-     * @return ResourceScaffolderInterface
-     */
-    public function getScaffolder();
+    public function getScaffolder(): ResourceScaffolderInterface;
 
-    /**
-     * @return string
-     */
-    public function getIdentifier();
+    public function getIdentifier(): string;
 }

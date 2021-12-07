@@ -7,7 +7,7 @@ use DynamicSearchBundle\Guard\ContextGuardInterface;
 interface ContextGuardRegistryInterface
 {
     /**
-     * @return array|ContextGuardInterface[]
+     * @return array<int, ContextGuardInterface>
      */
-    public function getAllGuards();
+    public function getAllGuards(): array;
 }

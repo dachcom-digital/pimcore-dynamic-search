@@ -4,13 +4,7 @@ namespace DynamicSearchBundle\Resource\Container;
 
 interface OptionFieldContainerInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @return mixed
-     */
-    public function getData();
+    public function getData(): mixed;
 }

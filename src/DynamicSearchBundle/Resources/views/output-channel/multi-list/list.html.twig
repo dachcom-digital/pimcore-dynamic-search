@@ -1,5 +1,5 @@
 {% extends '@DynamicSearch/layout.html.twig' %}
-{% import '@DynamicSearch/Common/Macro/counter.htmlt.twig' as counter %}
+{% import '@DynamicSearch/common/macro/counter.htmlt.twig' as counter %}
 
 {% set active_tab = app.request.query.has('ds-selected-tab') ? app.request.query.get('ds-selected-tab') : null %}
 
@@ -11,7 +11,7 @@
 
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-        {% include '@DynamicSearch/Common/_search_form.html.twig' %}
+        {% include '@DynamicSearch/common/_search_form.html.twig' %}
 
         {% if search_active == true %}
 
@@ -33,7 +33,7 @@
                     {% for identifier, block in blocks %}
                         {% set active = active_tab is not empty ? active_tab == identifier : loop.first %}
                         <div class="tab-pane fade show {{ active ? 'active' : '' }}" id="{{ identifier }}" role="tabpanel" aria-labelledby="{{ identifier }}-tab">
-                            {% include '@DynamicSearch/Common/List/_wrapper.html.twig' with {
+                            {% include '@DynamicSearch/common/list/_wrapper.html.twig' with {
                                 filter: block.filter,
                                 paginator: block.paginator,
                                 current_page: block.current_page,

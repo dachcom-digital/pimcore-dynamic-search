@@ -16,20 +16,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PimcoreElementListener implements EventSubscriberInterface
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected ConfigurationInterface $configuration;
+    protected DataCollectorInterface $dataCollector;
 
-    /**
-     * @var DataCollectorInterface
-     */
-    protected $dataCollector;
-
-    /**
-     * @param ConfigurationInterface $configuration
-     * @param DataCollectorInterface $dataCollector
-     */
     public function __construct(
         ConfigurationInterface $configuration,
         DataCollectorInterface $dataCollector
@@ -38,10 +27,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         $this->dataCollector = $dataCollector;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DocumentEvents::POST_UPDATE => 'onDocumentPostUpdate',
@@ -56,10 +42,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param DocumentEvent $event
-     */
-    public function onDocumentPostUpdate(DocumentEvent $event)
+    public function onDocumentPostUpdate(DocumentEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -79,10 +62,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param DocumentEvent $event
-     */
-    public function onDocumentPreDelete(DocumentEvent $event)
+    public function onDocumentPreDelete(DocumentEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -98,10 +78,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function onObjectPostUpdate(DataObjectEvent $event)
+    public function onObjectPostUpdate(DataObjectEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -122,10 +99,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function onObjectPreDelete(DataObjectEvent $event)
+    public function onObjectPreDelete(DataObjectEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -137,10 +111,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPostAdd(AssetEvent $event)
+    public function onAssetPostAdd(AssetEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -152,10 +123,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPostUpdate(AssetEvent $event)
+    public function onAssetPostUpdate(AssetEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -167,10 +135,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPreDelete(AssetEvent $event)
+    public function onAssetPreDelete(AssetEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;

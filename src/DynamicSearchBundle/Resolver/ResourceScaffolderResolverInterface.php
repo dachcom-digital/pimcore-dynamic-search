@@ -8,12 +8,7 @@ use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 interface ResourceScaffolderResolverInterface
 {
     /**
-     * @param string $dataProviderName
-     * @param mixed  $resource
-     *
-     * @return ResourceScaffolderContainerInterface
-     *
      * @throws ResourceScaffolderNotFoundException
      */
-    public function resolve(string $dataProviderName, $resource);
+    public function resolve(string $dataProviderName, mixed $resource): ResourceScaffolderContainerInterface;
 }

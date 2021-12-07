@@ -7,30 +7,16 @@ use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 
 class ProviderBundleManager implements ProviderBundleManagerInterface
 {
-    /**
-     * @var ProviderBundleLocatorInterface
-     */
-    protected $providerBundleLocator;
+    protected ProviderBundleLocatorInterface $providerBundleLocator;
+    protected ProviderConfig $providerConfig;
 
-    /**
-     * @var ProviderConfig
-     */
-    protected $providerConfig;
-
-    /**
-     * @param ProviderBundleLocatorInterface $providerBundleLocator
-     * @param ProviderConfig                 $providerConfig
-     */
     public function __construct(ProviderBundleLocatorInterface $providerBundleLocator, ProviderConfig $providerConfig)
     {
         $this->providerBundleLocator = $providerBundleLocator;
         $this->providerConfig = $providerConfig;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkAvailableProviderBundles()
+    public function checkAvailableProviderBundles(): void
     {
         $bundles = $this->providerBundleLocator->findProviderBundles();
 

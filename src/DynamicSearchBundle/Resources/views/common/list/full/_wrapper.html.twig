@@ -1,7 +1,7 @@
 <div class="list-group mb-4">
     {% if data is iterable and data|length > 0 %}
         {% for document in data %}
-            {% include '@DynamicSearch/Common/List/Item/_wrapper.html.twig' with { document: document, oc_allocator: oc_allocator  } only %}
+            {% include '@DynamicSearch/common/list/item/_wrapper.html.twig' with { document: document, oc_allocator: oc_allocator  } only %}
         {% endfor %}
     {% else %}
         <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>

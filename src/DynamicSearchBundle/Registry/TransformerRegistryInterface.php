@@ -7,26 +7,12 @@ use DynamicSearchBundle\Resource\ResourceScaffolderInterface;
 
 interface TransformerRegistryInterface
 {
-    /**
-     * @param string $resourceScaffolderName
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasResourceFieldTransformer(string $resourceScaffolderName, string $identifier);
+    public function hasResourceFieldTransformer(string $resourceScaffolderName, string $identifier): bool;
+
+    public function getResourceFieldTransformer(string $resourceScaffolderName, string $identifier): FieldTransformerInterface;
 
     /**
-     * @param string $resourceScaffolderName
-     * @param string $identifier
-     *
-     * @return FieldTransformerInterface
+     * @return array<int, ResourceScaffolderInterface>
      */
-    public function getResourceFieldTransformer(string $resourceScaffolderName, string $identifier);
-
-    /**
-     * @param string $dataProviderName
-     *
-     * @return array|ResourceScaffolderInterface[]
-     */
-    public function getAllResourceScaffolderForDataProvider(string $dataProviderName);
+    public function getAllResourceScaffolderForDataProvider(string $dataProviderName): array;
 }

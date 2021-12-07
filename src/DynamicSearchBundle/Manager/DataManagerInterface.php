@@ -9,12 +9,7 @@ use DynamicSearchBundle\Provider\DataProviderInterface;
 interface DataManagerInterface
 {
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string               $providerBehaviour
-     *
-     * @return DataProviderInterface
-     *
      * @throws ProviderException
      */
-    public function getDataProvider(ContextDefinitionInterface $contextDefinition, string $providerBehaviour);
+    public function getDataProvider(ContextDefinitionInterface $contextDefinition, string $providerBehaviour): DataProviderInterface;
 }

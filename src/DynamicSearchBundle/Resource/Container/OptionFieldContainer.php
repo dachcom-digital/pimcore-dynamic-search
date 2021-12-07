@@ -4,47 +4,30 @@ namespace DynamicSearchBundle\Resource\Container;
 
 class OptionFieldContainer implements OptionFieldContainerInterface
 {
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $indexType;
+    protected string $indexType;
 
-    /**
-     * @param string $name
-     * @param mixed  $data
-     */
-    public function __construct(string $name, $data)
+    public function __construct(string $name, mixed $data)
     {
         $this->name = $name;
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

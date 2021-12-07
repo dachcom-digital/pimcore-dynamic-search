@@ -8,7 +8,7 @@
 
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-        {% include '@DynamicSearch/Common/_search_form.html.twig' %}
+        {% include '@DynamicSearch/common/_search_form.html.twig' %}
 
         {% if search_active == true %}
             {% if total_count > 0 %}
@@ -19,7 +19,7 @@
                     {{ 'dynamic_search.ui.result_subline'|trans({'%badge%' : badge_markup, '%query%' : query_markup})|raw }}
                 </small>
             {% endif %}
-            {% include '@DynamicSearch/Common/List/_wrapper.html.twig' %}
+            {% include '@DynamicSearch/common/list/_wrapper.html.twig' %}
         {% endif %}
 
         {{ form_end(form) }}
