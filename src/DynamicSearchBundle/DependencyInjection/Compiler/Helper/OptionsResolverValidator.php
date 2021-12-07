@@ -29,7 +29,7 @@ final class OptionsResolverValidator
 
         foreach ($serviceDefinitionStack as $optionProviderClass) {
             if ($service === $optionProviderClass['serviceName']) {
-                $definition = $container->getDefinition($optionProviderClass['id']) ? $container->getDefinition($optionProviderClass['id']) : null;
+                $definition = $container->hasDefinition($optionProviderClass['id']) ? $container->getDefinition($optionProviderClass['id']) : null;
                 break;
             }
         }

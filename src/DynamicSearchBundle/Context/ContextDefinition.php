@@ -101,17 +101,17 @@ class ContextDefinition implements ContextDefinitionInterface
         return $this->contextOptions['output_channels'][$outputChannelName]['paginator'];
     }
 
-    public function getDataProviderName(): string
+    public function getDataProviderName(): ?string
     {
         return $this->contextOptions['data_provider']['service'];
     }
 
-    public function getIndexProviderName(): string
+    public function getIndexProviderName(): ?string
     {
         return $this->contextOptions['index_provider']['service'];
     }
 
-    public function getResourceNormalizerName(): string
+    public function getResourceNormalizerName(): ?string
     {
         return $this->contextOptions['data_provider']['normalizer']['service'];
     }

@@ -19,7 +19,7 @@ class QueueManager implements QueueManagerInterface
     {
         try {
             $activeJobs = $this->getActiveJobs();
-            $this->logger->debug(sprintf('data queue cleared. Affected jobs: %d', (is_array($activeJobs) ? count($activeJobs) : 0)), 'queue', 'maintenance');
+            $this->logger->debug(sprintf('data queue cleared. Affected jobs: %d', count($activeJobs)), 'queue', 'maintenance');
             foreach ($activeJobs as $envelope) {
                 TmpStore::delete($envelope->getId());
             }

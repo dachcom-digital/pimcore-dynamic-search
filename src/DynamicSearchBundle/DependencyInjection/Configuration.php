@@ -216,7 +216,7 @@ class Configuration implements ConfigurationInterface
                             return $values;
                         }
 
-                        if (!isset($values['view_name']) || $values['view_name'] !== null) {
+                        if (isset($values['view_name']) && $values['view_name'] !== null) {
                             return $values;
                         }
 

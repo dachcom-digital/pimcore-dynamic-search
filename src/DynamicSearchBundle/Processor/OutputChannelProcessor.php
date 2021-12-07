@@ -25,6 +25,7 @@ use DynamicSearchBundle\OutputChannel\Query\MultiSearchContainer;
 use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
 use DynamicSearchBundle\OutputChannel\Query\SearchContainer;
 use DynamicSearchBundle\OutputChannel\Result\MultiOutputChannelResult;
+use DynamicSearchBundle\OutputChannel\Result\MultiOutputChannelResultInterface;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelArrayResult;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResult;
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelResultInterface;
@@ -56,7 +57,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         $this->paginatorFactory = $paginatorFactory;
     }
 
-    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName): OutputChannelResultInterface
+    public function dispatchOutputChannelQuery(string $contextName, string $outputChannelName): OutputChannelResultInterface|MultiOutputChannelResultInterface
     {
         $contextDefinition = $this->getContextDefinition($contextName, $outputChannelName);
         $indexProviderOptions = $contextDefinition->getIndexProviderOptions();
@@ -196,7 +197,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
 
         // fetch result of each sub query
         $results = [];
-        foreach ($multiOutputChannelService->getMultiSearchResult(new MultiSearchContainer($multiSearchContainer)) as $searchContainer) {
+        foreach ($multiOutputChannelService->getMultiSearchResult(new MultiSearchContainer($multiSearchContainer))->getSearchContainer() as $searchContainer) {
 
             $subOutputChannelIdentifier = $searchContainer->getIdentifier();
 

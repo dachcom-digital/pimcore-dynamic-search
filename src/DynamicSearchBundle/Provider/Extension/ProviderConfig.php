@@ -60,11 +60,9 @@ class ProviderConfig
 
     public function configFileExists(): bool
     {
-        if (null !== $file = $this->locateConfigFile()) {
-            return $this->fileSystem->exists($file);
-        }
+        $file = $this->locateConfigFile();
 
-        return false;
+        return $this->fileSystem->exists($file);
     }
 
     public function locateConfigFile(): string

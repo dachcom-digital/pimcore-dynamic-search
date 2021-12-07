@@ -61,11 +61,11 @@ interface ContextDefinitionInterface
 
     public function getOutputChannelPaginatorOptions(string $outputChannelName): array;
 
-    public function getDataProviderName(): string;
+    public function getDataProviderName(): ?string;
 
-    public function getIndexProviderName(): string;
+    public function getIndexProviderName(): ?string;
 
-    public function getResourceNormalizerName(): string;
+    public function getResourceNormalizerName(): ?string;
 
     public function getOutputChannelNormalizerName(string $outputChannelName): ?string;
 

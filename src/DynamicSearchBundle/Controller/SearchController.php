@@ -46,10 +46,6 @@ class SearchController extends AbstractController
             );
         }
 
-        if ($outputChannelResult instanceof OutputChannelResultInterface) {
-            return $this->json($this->getOutputParameters($outputChannelResult));
-        }
-
         if ($outputChannelResult instanceof MultiOutputChannelResultInterface) {
             $params = [];
             foreach ($outputChannelResult->getResults() as $resultBlockIdentifier => $resultBlock) {
@@ -59,7 +55,7 @@ class SearchController extends AbstractController
             return $this->json($params);
         }
 
-        return $this->json(['result' => []]);
+        return $this->json($this->getOutputParameters($outputChannelResult));
     }
 
     protected function getOutputParameters(OutputChannelResultInterface $outputChannelResult): array

@@ -6,4 +6,5 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     symfony:
         container_xml_path: %currentWorkingDirectory%/var/cache/test/TestKernelTestDebugContainer.xml
+        constant_hassers: false
     ignoreErrors:

@@ -72,6 +72,6 @@ class ResourceMeta implements ResourceMetaInterface
 
     public function getNormalizerOptions(): array
     {
-        return is_array($this->normalizerOptions) ? $this->normalizerOptions : [];
+        return $this->normalizerOptions;
     }
 }

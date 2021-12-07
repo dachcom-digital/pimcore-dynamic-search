@@ -60,10 +60,8 @@ class TransformerManager implements TransformerManagerInterface
         $fieldTransformer = $this->transformerRegistry->getResourceFieldTransformer($dispatchTransformerName, $fieldTransformerName);
 
         $optionsResolver = new OptionsResolver();
-        $requiredOptionsResolver = $fieldTransformer->configureOptions($optionsResolver);
-        $options = $requiredOptionsResolver === false ? [] : $optionsResolver->resolve($transformerOptions);
-
-        $fieldTransformer->setOptions($options);
+        $fieldTransformer->configureOptions($optionsResolver);
+        $fieldTransformer->setOptions($optionsResolver->resolve($transformerOptions));
 
         return $fieldTransformer;
     }

@@ -59,10 +59,6 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     {
         $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);
 
-        if ($providers === null) {
-            return;
-        }
-
         $this->warmUpProvider($contextDefinition, $providers);
 
         $this->logger->log(
