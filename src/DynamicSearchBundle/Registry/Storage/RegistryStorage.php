@@ -2,8 +2,6 @@
 
 namespace DynamicSearchBundle\Registry\Storage;
 
-use Symfony\Component\DependencyInjection\Reference;
-
 class RegistryStorage
 {
     protected array $store;
@@ -17,16 +15,13 @@ class RegistryStorage
      * @throws \Exception
      */
     public function store(
-        Reference $service,
+        mixed $service,
         string $requiredInterface,
         string $namespace,
-        string $identifier,
+        ?string $identifier,
         ?string $alias = null,
         bool $allowMultipleAppearance = false
     ): void {
-        if (!isset($this->store[$namespace])) {
-            $this->store[$namespace] = [];
-        }
 
         if (!in_array($requiredInterface, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -62,9 +57,9 @@ class RegistryStorage
         ];
     }
 
-    public function has(string $namespace, string $identififer): bool
+    public function has(string $namespace, string $identifier): bool
     {
-        return $this->get($namespace, $identififer) !== null;
+        return $this->get($namespace, $identifier) !== null;
     }
 
     public function hasOneByNamespace(string $namespace): bool
@@ -74,13 +69,13 @@ class RegistryStorage
             })) > 0;
     }
 
-    public function get(string $namespace, string $identififer): mixed
+    public function get(string $namespace, string $identifier): mixed
     {
-        if (null !== $byIdentifier = $this->getByIdentifier($namespace, $identififer)) {
+        if (null !== $byIdentifier = $this->getByIdentifier($namespace, $identifier)) {
             return $byIdentifier;
         }
 
-        if (null !== $byAlias = $this->getByAlias($namespace, $identififer)) {
+        if (null !== $byAlias = $this->getByAlias($namespace, $identifier)) {
             return $byAlias;
         }
 
@@ -106,10 +101,10 @@ class RegistryStorage
         return $items;
     }
 
-    protected function getByIdentifier(string $namespace, string $identififer): mixed
+    protected function getByIdentifier(string $namespace, string $identifier): mixed
     {
         foreach ($this->store as $entry) {
-            if ($entry['namespace'] === $namespace && $entry['identifier'] === $identififer) {
+            if ($entry['namespace'] === $namespace && $entry['identifier'] === $identifier) {
                 return $entry['service'];
             }
         }

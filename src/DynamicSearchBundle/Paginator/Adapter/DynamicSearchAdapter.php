@@ -13,6 +13,8 @@ class DynamicSearchAdapter implements AdapterInterface
     protected string $outputChannelName;
     protected DocumentNormalizerInterface $documentNormalizer;
     protected RawResultInterface $rawResult;
+    protected int $itemCountPerPage;
+    protected int $currentPageNumber;
 
     public function __construct(RawResultInterface $rawResult)
     {
@@ -58,10 +60,17 @@ class DynamicSearchAdapter implements AdapterInterface
         return $data;
     }
 
-    /**
-     * Returns the total number of rows in the array.
-     */
-    public function count(): int
+    public function setItemCountPerPage(int $itemCountPerPage): void
+    {
+        $this->itemCountPerPage = $itemCountPerPage;
+    }
+
+    public function setCurrentPageNumber(int $currentPageNumber): void
+    {
+        $this->currentPageNumber = $currentPageNumber;
+    }
+
+    public function getCount(): int
     {
         return $this->rawResult->getHitCount();
     }

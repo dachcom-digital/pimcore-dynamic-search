@@ -8,7 +8,6 @@ use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Factory\ContextDefinitionFactory;
 use DynamicSearchBundle\Filter\Definition\FilterDefinitionBuilderInterface;
 use DynamicSearchBundle\Guard\ContextGuardInterface;
-use DynamicSearchBundle\Paginator\Paginator;
 use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Definition;
@@ -51,7 +50,6 @@ class DynamicSearchExtension extends Extension
         $configManagerDefinition->addMethodCall('setConfig', [$config]);
 
         $container->setParameter('dynamic_search.context.full_configuration', $contextConfig);
-        $container->setParameter('dynamic_search_default_paginator_class', Paginator::class);
 
         $contextDefinitionFactory = $container->getDefinition(ContextDefinitionFactory::class);
 

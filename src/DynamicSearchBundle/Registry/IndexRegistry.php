@@ -21,7 +21,7 @@ class IndexRegistry implements IndexRegistryInterface
         $this->registryStorage->store($service, IndexFieldInterface::class, $namespace, $identifier, $alias);
     }
 
-    public function registerFilter(IndexFieldInterface $service, string $identifier, ?string $alias, string $indexProviderName): void
+    public function registerFilter(FilterInterface $service, string $identifier, ?string $alias, string $indexProviderName): void
     {
         $namespace = sprintf('filter_%s', $indexProviderName);
         $this->registryStorage->store($service, FilterInterface::class, $namespace, $identifier, $alias);

@@ -11,8 +11,8 @@ class DocumentDefinition implements DocumentDefinitionInterface
     protected string $dataNormalizerIdentifier;
     protected array $definitionOptions;
     protected array $documentConfiguration;
-    protected array $optionFieldDefinitions;
-    protected array $indexFieldDefinitions;
+    protected array $optionFieldDefinitions = [];
+    protected array $indexFieldDefinitions = [];
 
     public function __construct(string $dataNormalizerIdentifier, array $definitionOptions = [])
     {

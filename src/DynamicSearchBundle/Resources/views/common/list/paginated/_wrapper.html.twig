@@ -1,5 +1,7 @@
+{% set pagination_data = paginator.paginationData %}
+
 <div class="list-group mb-4">
-    {% if paginator.count == 0 %}
+    {% if pagination_data.totalCount == 0 %}
         <span class="no-result">{{ 'dynamic_search.ui.no_results'|trans }}</span>
     {% else %}
         {% for document in paginator %}
@@ -18,12 +20,13 @@
     {% set paginator_filter = paginator_filter|merge({'ds-selected-tab': active_tab}) %}
 {% endif %}
 
+
 {% include '@DynamicSearch/common/pagination/_default.html.twig' with {
     current_filters: paginator_filter,
     page_identifier: page_identifier,
     current_page: current_page,
     pagination_path: search_route_name,
-    last_page: paginator.count,
+    last_page: pagination_data.last,
     show_always_first_and_last: true,
     extreme_pages_limit: 5,
     nearby_pages_limit: 2
@@ -36,7 +39,7 @@
         page_identifier: page_identifier,
         current_page: current_page,
         pagination_path: 'dynamic_search_frontend_search_list',
-        last_page: paginator.count(),
+        last_page: pagination_data.last,
         show_always_first_and_last: true,
     } only %}
 

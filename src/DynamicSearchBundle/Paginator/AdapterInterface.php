@@ -12,4 +12,12 @@ interface AdapterInterface
     public function setOutputChannelName(string $outputChannelName): void;
 
     public function setDocumentNormalizer(?DocumentNormalizerInterface $documentNormalizer): void;
+
+    public function setItemCountPerPage(int $itemCountPerPage): void;
+
+    public function setCurrentPageNumber(int $currentPageNumber): void;
+
+    public function getItems(int $offset, int $itemCountPerPage): array;
+
+    public function getCount(): int;
 }

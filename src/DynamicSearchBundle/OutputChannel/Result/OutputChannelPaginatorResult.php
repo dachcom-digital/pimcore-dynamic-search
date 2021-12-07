@@ -2,18 +2,18 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
-use DynamicSearchBundle\Paginator\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 
 class OutputChannelPaginatorResult extends OutputChannelResult implements OutputChannelPaginatorResultInterface
 {
-    protected PaginatorInterface $paginator;
+    protected PaginationInterface $paginator;
 
-    public function setPaginator(PaginatorInterface $paginator): void
+    public function setPaginator(PaginationInterface $paginator): void
     {
         $this->paginator = $paginator;
     }
 
-    public function getPaginator(): PaginatorInterface
+    public function getPaginator(): PaginationInterface
     {
         return $this->paginator;
     }

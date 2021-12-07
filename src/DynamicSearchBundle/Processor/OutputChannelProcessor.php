@@ -243,14 +243,13 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         if ($paginatorOptions['enabled'] === true) {
             $paginator = $this->paginatorFactory->create(
                 $paginatorOptions['adapter_class'],
+                $paginatorOptions['max_per_page'],
+                $runtimeOptions['current_page'],
                 $outputChannelName,
                 $rawResult,
                 $contextDefinition,
                 $documentNormalizer
             );
-
-            $paginator->setItemCountPerPage($paginatorOptions['max_per_page']);
-            $paginator->setCurrentPageNumber($runtimeOptions['current_page']);
 
             $paginatorOutputResult = new OutputChannelPaginatorResult(
                 $contextDefinition->getName(),

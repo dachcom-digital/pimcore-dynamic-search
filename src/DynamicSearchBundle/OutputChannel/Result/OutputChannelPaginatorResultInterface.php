@@ -2,9 +2,9 @@
 
 namespace DynamicSearchBundle\OutputChannel\Result;
 
-use DynamicSearchBundle\Paginator\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 
 interface OutputChannelPaginatorResultInterface
 {
-    public function getPaginator(): PaginatorInterface;
+    public function getPaginator(): PaginationInterface;
 }

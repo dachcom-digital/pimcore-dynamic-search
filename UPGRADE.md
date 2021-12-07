@@ -3,9 +3,21 @@
 ## Migrating from Version 1.x to Version 2.0.0
 
 ### Global Changes
+
 - PHP8 return type declarations added: you may have to adjust your extensions accordingly
 - All Folders in `views` are lowercase/dashed now (`views/common`, `views/output-channel`, ...)
 - `FieldTransformerInterface::configureOptions` return type changed to `void`
+- Paginator changed:
+    - Removed Zend Paginator
+    - Use Paginator from `KnpPaginatorBundle` which is included in PX by default
+        - `AdapterInterface` changes (This affects you only if you're using a custom paginator `adapter_class`):
+            - `count()` renamed to `getCount()`
+            - `setItemCountPerPage()` added
+            - `setCurrentPageNumber()` added
+    - `dynamic_search_default_paginator_class` container parameter removed. If you want to modify the paginator items, just us
+      the `knp_pager.items` event
+    - `views/common/list/paginated/_wrapper.html.twig`, `views/common/pagination/_default.html.twig` mark-up changed, check your views
+      accordingly
 
 ### Fixes
 --
