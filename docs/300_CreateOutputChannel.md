@@ -17,15 +17,15 @@
 
 ## Example
 
-**app/config/services.yaml**
+**config/services.yaml**
 ```yaml
 services:
-    AppBundle\DynamicSearch\OutputChannel\MyOutputChannel:
+    App\DynamicSearch\OutputChannel\MyOutputChannel:
         tags:
             - { name: dynamic_search.output_channel, identifier: my_output_channel }
 ```
 
-**app/config/config.yaml**
+**config/config.yaml**
   ```yaml
 dynamic_search:
     context:
@@ -39,10 +39,10 @@ dynamic_search:
                         result_option: false
 ```
 
-**AppBundle/DynamicSearch/OutputChannel/MyOutputChannel.php** 
+**src/DynamicSearch/OutputChannel/MyOutputChannel.php** 
 ```php
 
-namespace AppBundle\DynamicSearch\OutputChannel;
+namespace App\DynamicSearch\OutputChannel;
 
 use DynamicSearchBundle\EventDispatcher\OutputChannelModifierEventDispatcher;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;

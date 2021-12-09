@@ -24,18 +24,18 @@ Dynamic search offers the ability to modify the query by listening to actions.
 
 The following example shows how to modify the query in the `SearchOutputChannel` of the [elastic search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch) package:
 
-**app/config/services.yaml**
+**config/services.yaml**
 ```yaml
-    AppBundle\DynamicSearch\OutputChannel\Action\Search\MySearchAction:
+    App\DynamicSearch\OutputChannel\Action\Search\MySearchAction:
         tags:
             - { name: dynamic_search.output_channel.modifier.action, output_channel_service_identifier: all, action: post_query_build }
 ```
 
-**AppBundle/DynamicSearch/OutputChannel/Action/Search/MySearchAction.php**
+**src/DynamicSearch/OutputChannel/Action/Search/MySearchAction.php**
 ```php
 <?php
 
-namespace AppBundle\DynamicSearch\OutputChannel\Action\Search;
+namespace App\DynamicSearch\OutputChannel\Action\Search;
 
 use DynamicSearchBundle\Event\OutputModifierEvent;
 use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
