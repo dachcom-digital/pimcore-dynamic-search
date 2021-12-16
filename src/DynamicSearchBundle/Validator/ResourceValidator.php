@@ -29,36 +29,6 @@ class ResourceValidator implements ResourceValidatorInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @deprecated
-     */
-    public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource)
-    {
-        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
-        $dataProvider = $this->getDataProvider($contextName, $dispatchType);
-
-        if (!$dataProvider instanceof DataProviderInterface) {
-            return null;
-        }
-
-        return $dataProvider->checkUntrustedResourceProxy($contextDefinition, $resource);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function validateUntrustedResource(string $contextName, string $dispatchType, $resource)
-    {
-        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
-        $dataProvider = $this->getDataProvider($contextName, $dispatchType);
-
-        if (!$dataProvider instanceof DataProviderInterface) {
-            return false;
-        }
-
-        return $dataProvider->validateUntrustedResource($contextDefinition, $resource);
-    }
-
     public function validateResource(
         string $contextName,
         string $dispatchType,

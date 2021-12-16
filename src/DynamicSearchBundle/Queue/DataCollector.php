@@ -4,7 +4,6 @@ namespace DynamicSearchBundle\Queue;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
-use DynamicSearchBundle\Resource\Proxy\ProxyResourceInterface;
 use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Manager\QueueManagerInterface;
@@ -112,27 +111,6 @@ class DataCollector implements DataCollectorInterface
             $resourceType = get_class($resource);
         } else {
             $resourceType = gettype($resource);
-        }
-
-        // check for proxy resource (deprecated)
-        $proxyResource = $this->resourceValidator->checkUntrustedResourceProxy($contextName, $dispatchType, $resource);
-
-        if ($proxyResource instanceof ProxyResourceInterface) {
-            $resource = $proxyResource->hasProxyResource() ? $proxyResource->getProxyResource() : $resource;
-            $dispatchType = $proxyResource->hasProxyContextDispatchType() ? $proxyResource->getProxyContextDispatchType() : $dispatchType;
-        }
-
-        // check for proxy validity (deprecated)
-        $resourcedIsValid = $this->resourceValidator->validateUntrustedResource($contextName, $dispatchType, $resource);
-
-        if ($resourcedIsValid === false) {
-            $this->logger->debug(
-                sprintf('[DEPRECATED] Resource has been marked as untrusted. Skipping...'),
-                'queue',
-                $contextName
-            );
-
-            return;
         }
 
         $normalizedResourceStack = $this->generateResourceMeta($contextName, $dispatchType, $resource);
