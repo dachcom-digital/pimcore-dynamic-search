@@ -58,18 +58,6 @@ class SimpleRunner extends AbstractRunner implements SimpleRunnerInterface
             $resourceType = gettype($resource);
         }
 
-        $resourcedIsValid = $this->resourceValidator->validateUntrustedResource($contextDefinition->getName(), $contextDefinition->getContextDispatchType(), $resource);
-
-        if ($resourcedIsValid === false) {
-            $this->logger->debug(
-                sprintf('Resource has been marked as untrusted. Skipping...'),
-                $contextDefinition->getDataProviderName(),
-                $contextDefinition->getName()
-            );
-
-            return;
-        }
-
         $normalizedResourceStack = $this->resourceHarmonizer->harmonizeUntilNormalizedResourceStack($contextDefinition, $resource);
 
         if ($normalizedResourceStack === null) {

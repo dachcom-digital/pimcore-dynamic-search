@@ -3,7 +3,6 @@
 ## Migrating from Version 1.x to Version 2.0.0
 
 ### Global Changes
-
 - PHP8 return type declarations added: you may have to adjust your extensions accordingly
 - All Folders in `views` are lowercase/dashed now (`views/common`, `views/output-channel`, ...)
 - `FieldTransformerInterface::configureOptions` return type changed to `void`
@@ -18,6 +17,11 @@
       the `knp_pager.items` event
     - `views/common/list/paginated/_wrapper.html.twig`, `views/common/pagination/_default.html.twig` mark-up changed, check your views
       accordingly
+- Resource (Untrusted/Proxy) validation has been removed, you need to use the [resource validator](docs/40_ResourceValidator.md)
+  now:
+    - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `DataProviderInterface` has been removed. Use `DataProviderValidationAwareInterface::validateResource` instead.
+    - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `ResourceValidatorInterface` has been removed.
+    - Class `ProxyResource` has been removed.
 
 ### Fixes
 --

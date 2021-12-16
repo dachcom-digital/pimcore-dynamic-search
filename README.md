@@ -42,20 +42,21 @@ The Dynamic Search Bundle allows you to redefine your search strategy. It's base
 
 ## Further Information
 - [Example Setup](docs/0_ExampleSetup.md)
-- [Configuration](#)
-    - [Context Guard](#)
-    - [Document Definition](#)
-    - [Logging](#)
-- [Data Creation](#)
-    - [Enable automatic Update / Insert / Delete Service](#)
-- [Data Fetching](#)
+- Configuration
+    - Context Guard
+    - Document Definition
+    - Logging
+- Data Creation
+    - [Resource Validation](docs/40_ResourceValidator.md)
+    - Enable automatic Update / Insert / Delete Service
+- Data Fetching
     - [Output Channels](docs/30_OutputChannels.md)
         - [Create Output Channel](docs/300_CreateOutputChannel.md)
-        - [Multi Search Channels](#)
         - [Channel Filter / Actions](docs/302_ChannelFilterActions.md)
-    - [Filter (Faceted Search / Aggregation)](#)
-        - [Create Filter Definition](#)
-- [API](#)
+        - Multi Search Channels
+    - Filter (Faceted Search / Aggregation)
+        - Create Filter Definition
+- API
 
 ## Copyright and License
 Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)  
