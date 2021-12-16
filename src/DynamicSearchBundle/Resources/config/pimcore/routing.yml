@@ -1,6 +1,6 @@
 dynamic_search.controller.admin.get_state:
     path: /admin/dynamic-search/settings/health-state
-    defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::healStateAction }
+    defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::healthStateAction }
 dynamic_search.controller.admin.get_provider:
     path: /admin/dynamic-search/settings/provider
     defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::providerAction }

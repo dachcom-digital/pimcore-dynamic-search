@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SettingsController extends AdminController
 {
-    public function healStateAction(HealthStateRegistryInterface $healthStateRegistry): JsonResponse
+    public function healthStateAction(HealthStateRegistryInterface $healthStateRegistry): JsonResponse
     {
         $stateLines = [];
         foreach ($healthStateRegistry->all() as $healthStateService) {
@@ -40,10 +40,8 @@ class SettingsController extends AdminController
 
     public function providerAction(ProviderBundleLocator $providerBundleLocator): JsonResponse
     {
-        $providerBundles = $providerBundleLocator->findProviderBundles();
-
         return $this->json([
-            'provider' => $providerBundles
+            'provider' => $providerBundleLocator->findProviderBundles()
         ]);
     }
 }

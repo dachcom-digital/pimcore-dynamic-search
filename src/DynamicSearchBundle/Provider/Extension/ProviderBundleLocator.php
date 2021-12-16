@@ -22,7 +22,6 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
     {
         $data = [];
         foreach ($this->findComposerBundles() as $bundleClass) {
-
             $data[] = [
                 'path'   => $bundleClass,
                 'active' => in_array($bundleClass, $this->availableBundles, true)
