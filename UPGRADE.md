@@ -3,6 +3,7 @@
 ## Migrating from Version 1.x to Version 2.0.0
 
 ### Global Changes
+- Directory `var/bundles/DynamicSearchBundle` can be removed safely since it is not required anymore
 - PHP8 return type declarations added: you may have to adjust your extensions accordingly
 - All Folders in `views` are lowercase/dashed now (`views/common`, `views/output-channel`, ...)
 - `FieldTransformerInterface::configureOptions` return type changed to `void`
@@ -16,18 +17,18 @@
             - `setCurrentPageNumber()` added
     - `dynamic_search_default_paginator_class` container parameter removed. If you want to modify the paginator items, just us
       the `knp_pager.items` event
-    - `views/common/list/paginated/_wrapper.html.twig`, `views/common/pagination/_default.html.twig` mark-up changed, check your views
-      accordingly
+    - `views/common/list/paginated/_wrapper.html.twig`, `views/common/pagination/_default.html.twig` mark-up changed, check your views accordingly
 - Resource (Untrusted/Proxy) validation has been removed, you need to use the [resource validator](docs/40_ResourceValidator.md) now:
     - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `DataProviderInterface` has been removed. Use `DataProviderValidationAwareInterface::validateResource` instead.
     - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `ResourceValidatorInterface` has been removed.
     - Class `ProxyResource` has been removed.
+- Logfile has been moved to symphony's default log base
 
 ### Fixes
---
+- Improve Logger [#40](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/40)
 
 ### New Features
-- Settings panel added.
+- Introducing backend panel and HealthState [#34](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/34)
 
 ***
 

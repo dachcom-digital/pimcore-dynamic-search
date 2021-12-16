@@ -29,7 +29,7 @@ There are several data- and index providers available:
 - [Elastic Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch) | Index data with an elasticsearch instance.
 - _apisearch.io_ | _coming soon_
 
-### Installation  
+## Installation  
 
 ```json
 "require" : {
@@ -46,6 +46,21 @@ There are several data- and index providers available:
 ## Provider Installation
 You need at least one data- and one index provider. They have to be installed separately. 
 Please check out install instruction of each provider (see list above).
+
+## Add Routes
+```yaml
+# app/config/routing.yml
+dynamic_search_frontend:
+    resource: '@DynamicSearchBundle/Resources/config/pimcore/routing/frontend_routing.yml'
+```
+
+## Dispatch Dynamic Search
+After you've added [a definition](docs/0_ExampleSetup.md), you're ready to start the engine.
+Always use the verbose `-v` flag, otherwise you won't get any process information about the ongoing data / index providing process.
+
+```bash
+$ bin/console dynamic-search:run -v
+```
 
 ## Further Information
 ![image](https://user-images.githubusercontent.com/700119/146414238-ad2964e6-e873-4607-a89b-bc2ec2e5b95c.png)

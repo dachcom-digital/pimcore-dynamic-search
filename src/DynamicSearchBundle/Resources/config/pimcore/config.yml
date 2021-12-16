@@ -22,7 +22,8 @@ monolog:
         dynamic_search_console_logging:
             type: console
             verbosity_levels:
-                VERBOSITY_NORMAL: DEBUG
+                VERBOSITY_QUIET: EMERGENCY
+                VERBOSITY_NORMAL: EMERGENCY
                 VERBOSITY_VERBOSE: DEBUG
                 VERBOSITY_VERY_VERBOSE: DEBUG
                 VERBOSITY_DEBUG: DEBUG
