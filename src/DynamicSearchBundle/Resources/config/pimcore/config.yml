@@ -15,7 +15,7 @@ monolog:
         dynamic_search_stream_logging:
             type: rotating_file
             max_files: 1
-            path: '%kernel.logs_dir%/dynamic_search-%kernel.environment%.log"
+            path: '%kernel.logs_dir%/dynamic_search-%kernel.environment%.log'
             channels: ['dynamic_search']
             formatter: dynamic_search.log.formatter.stream.provider
 
