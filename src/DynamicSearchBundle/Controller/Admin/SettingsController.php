@@ -40,10 +40,8 @@ class SettingsController extends AdminController
 
     public function providerAction(ProviderBundleLocator $providerBundleLocator): JsonResponse
     {
-        $providerBundles = $providerBundleLocator->findProviderBundles();
-
         return $this->json([
-            'provider' => $providerBundles
+            'provider' => $providerBundleLocator->findProviderBundles()
         ]);
     }
 }

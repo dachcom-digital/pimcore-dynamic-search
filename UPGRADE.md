@@ -18,8 +18,7 @@
       the `knp_pager.items` event
     - `views/common/list/paginated/_wrapper.html.twig`, `views/common/pagination/_default.html.twig` mark-up changed, check your views
       accordingly
-- Resource (Untrusted/Proxy) validation has been removed, you need to use the [resource validator](docs/40_ResourceValidator.md)
-  now:
+- Resource (Untrusted/Proxy) validation has been removed, you need to use the [resource validator](docs/40_ResourceValidator.md) now:
     - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `DataProviderInterface` has been removed. Use `DataProviderValidationAwareInterface::validateResource` instead.
     - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `ResourceValidatorInterface` has been removed.
     - Class `ProxyResource` has been removed.
