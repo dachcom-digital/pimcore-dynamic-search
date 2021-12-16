@@ -1,0 +1,14 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\State\IndexProviderHealthState:
+        tags:
+            - { name: 'dynamic_search.health_state' }
+
+    DynamicSearchBundle\State\DataProviderHealthState:
+        tags:
+            - { name: 'dynamic_search.health_state' }

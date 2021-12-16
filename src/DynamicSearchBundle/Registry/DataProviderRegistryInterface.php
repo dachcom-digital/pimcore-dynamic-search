@@ -9,4 +9,6 @@ interface DataProviderRegistryInterface
     public function has(string $identifier): bool;
 
     public function get(string $identifier): ?DataProviderInterface;
+
+    public function all(): array;
 }

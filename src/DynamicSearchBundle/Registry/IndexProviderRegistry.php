@@ -28,4 +28,9 @@ class IndexProviderRegistry implements IndexProviderRegistryInterface
     {
         return $this->registryStorage->get('indexProvider', $identifier);
     }
+
+    public function all(): array
+    {
+        return $this->registryStorage->getByNamespace('indexProvider');
+    }
 }
