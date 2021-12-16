@@ -8,9 +8,6 @@ use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Factory\ContextDefinitionFactory;
 use DynamicSearchBundle\Filter\Definition\FilterDefinitionBuilderInterface;
 use DynamicSearchBundle\Guard\ContextGuardInterface;
-use DynamicSearchBundle\Provider\Extension\ProviderConfig;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -30,7 +27,6 @@ class DynamicSearchExtension extends Extension
 
         $this->buildAutoconfiguration($container);
         $this->setupConfiguration($container, $config);
-        $this->setupProviderBundles($container);
     }
 
     protected function buildAutoconfiguration(ContainerBuilder $container): void
@@ -55,20 +51,6 @@ class DynamicSearchExtension extends Extension
 
         foreach ($contextConfig as $contextName => $contextConfigNode) {
             $contextDefinitionFactory->addMethodCall('addContextConfig', [$contextName, $contextConfigNode]);
-        }
-    }
-
-    protected function setupProviderBundles(ContainerBuilder $container): void
-    {
-        $providerConfig = new ProviderConfig();
-
-        $providerConfigDefinition = new Definition();
-        $providerConfigDefinition->setClass(ProviderConfig::class);
-
-        $container->setDefinition(ProviderConfig::class, $providerConfigDefinition);
-
-        if ($providerConfig->configFileExists()) {
-            $container->addResource(new FileResource($providerConfig->locateConfigFile()));
         }
     }
 }

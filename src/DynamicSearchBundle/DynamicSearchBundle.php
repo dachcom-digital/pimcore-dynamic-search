@@ -5,20 +5,18 @@ namespace DynamicSearchBundle;
 use DynamicSearchBundle\DependencyInjection\Compiler\ContextGuardPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\DataProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\DefinitionBuilderPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\HealthStatePass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\OutputChannelPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\NormalizerPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\ResourceTransformerPass;
-use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use DynamicSearchBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
-use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBundleInterface
+class DynamicSearchBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
@@ -36,16 +34,7 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
         $container->addCompilerPass(new IndexPass());
         $container->addCompilerPass(new OutputChannelPass());
         $container->addCompilerPass(new ContextGuardPass());
-    }
-
-    public static function registerDependentBundles(BundleCollection $collection): void
-    {
-        $providerConfig = new ProviderConfig();
-        if ($providerConfig->configFileExists()) {
-            foreach ($providerConfig->getAvailableProviderBundles() as $providerBundle) {
-                $collection->addBundle(new $providerBundle());
-            }
-        }
+        $container->addCompilerPass(new HealthStatePass());
     }
 
     public function getInstaller(): Install
@@ -55,7 +44,10 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
 
     public function getJsPaths(): array
     {
-        return [ ];
+        return [
+            '/bundles/dynamicsearch/js/backend/startup.js',
+            '/bundles/dynamicsearch/js/backend/settings.js',
+        ];
     }
 
     public function getCssPaths(): array

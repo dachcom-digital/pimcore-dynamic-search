@@ -2,7 +2,6 @@
 
 namespace DynamicSearchBundle\Tool;
 
-use DynamicSearchBundle\Manager\ProviderBundleManagerInterface;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\Translation;
@@ -10,13 +9,6 @@ use Pimcore\Tool\Admin;
 
 class Install extends SettingsStoreAwareInstaller
 {
-    protected ProviderBundleManagerInterface $providerBundleManager;
-
-    public function setProviderBundleManager(ProviderBundleManagerInterface $providerBundleManager): void
-    {
-        $this->providerBundleManager = $providerBundleManager;
-    }
-
     public function install(): void
     {
         $this->installTranslations();

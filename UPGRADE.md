@@ -6,6 +6,7 @@
 - PHP8 return type declarations added: you may have to adjust your extensions accordingly
 - All Folders in `views` are lowercase/dashed now (`views/common`, `views/output-channel`, ...)
 - `FieldTransformerInterface::configureOptions` return type changed to `void`
+- Provider bundles registration process has changed: There not automatically registered. You need to this by yourself. [Example](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity#installation).
 - Paginator changed:
     - Removed Zend Paginator
     - Use Paginator from `KnpPaginatorBundle` which is included in PX by default
@@ -27,7 +28,7 @@
 --
 
 ### New Features
---
+- Settings panel added.
 
 ***
 

@@ -28,4 +28,9 @@ class DataProviderRegistry implements DataProviderRegistryInterface
     {
         return $this->registryStorage->get('dataProvider', $identifier);
     }
+
+    public function all(): array
+    {
+        return $this->registryStorage->getByNamespace('dataProvider');
+    }
 }

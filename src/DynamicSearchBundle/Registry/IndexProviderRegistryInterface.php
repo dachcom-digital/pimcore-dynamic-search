@@ -9,4 +9,6 @@ interface IndexProviderRegistryInterface
     public function has(string $identifier): bool;
 
     public function get(string $identifier): ?IndexProviderInterface;
+
+    public function all(): array;
 }

@@ -10,20 +10,26 @@ use Symfony\Component\Finder\SplFileInfo;
 class ProviderBundleLocator implements ProviderBundleLocatorInterface
 {
     protected Composer\PackageInfo $composerPackageInfo;
+    protected array $availableBundles;
 
-    public function __construct(Composer\PackageInfo $composerPackageInfo)
+    public function __construct(Composer\PackageInfo $composerPackageInfo, array $availableBundles)
     {
         $this->composerPackageInfo = $composerPackageInfo;
+        $this->availableBundles = $availableBundles;
     }
 
     public function findProviderBundles(): array
     {
-        $result = $this->findComposerBundles();
-        sort($result);
+        $data = [];
+        foreach ($this->findComposerBundles() as $bundleClass) {
 
-        return [
-            'dynamic_search_provider_bundles' => $result
-        ];
+            $data[] = [
+                'path'   => $bundleClass,
+                'active' => in_array($bundleClass, $this->availableBundles, true)
+            ];
+        }
+
+        return $data;
     }
 
     /**

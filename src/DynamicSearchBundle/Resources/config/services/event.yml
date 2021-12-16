@@ -19,7 +19,3 @@ services:
     DynamicSearchBundle\EventListener\PimcoreElementListener:
         tags:
             - { name: kernel.event_subscriber }
-
-    DynamicSearchBundle\EventListener\ProviderAvailabilityListener:
-        tags:
-            - { name: kernel.event_subscriber }
