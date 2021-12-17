@@ -66,6 +66,7 @@ $ bin/console dynamic-search:run -v
 ![image](https://user-images.githubusercontent.com/700119/146414238-ad2964e6-e873-4607-a89b-bc2ec2e5b95c.png)
 
 - [Example Setup](docs/0_ExampleSetup.md)
+- [Dispatch Workflow](docs/01_DispatchWorkflow.md)
 - Configuration
     - Context Guard
     - Document Definition

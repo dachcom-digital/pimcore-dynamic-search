@@ -29,6 +29,7 @@
 
 ### New Features
 - Introducing backend panel and HealthState [#34](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/34)
+- Provide inherited element dispatcher [#42](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/42)
 
 ***
 

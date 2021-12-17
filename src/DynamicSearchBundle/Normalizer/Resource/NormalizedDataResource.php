@@ -6,7 +6,7 @@ use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 
 class NormalizedDataResource implements NormalizedDataResourceInterface
 {
-    protected ResourceContainerInterface $resourceContainer;
+    protected ?ResourceContainerInterface $resourceContainer;
     protected ResourceMetaInterface $resourceMeta;
 
     public function __construct(?ResourceContainerInterface $resourceContainer, $resourceMeta)
