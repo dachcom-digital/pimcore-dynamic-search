@@ -17,6 +17,13 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->booleanNode('enable_pimcore_element_listener')->defaultFalse()->end()
+                ->arrayNode('element_inheritance')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enabled')->defaultFalse()->end()
+                        ->enumNode('origin_dispatch')->values(['user', 'all'])->defaultValue('user')->end()
+                    ->end()
+                ->end()
                 ->arrayNode('context')
                     ->useAttributeAsKey('name')
                     ->arrayPrototype()
