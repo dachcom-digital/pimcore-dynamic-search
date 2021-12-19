@@ -10,7 +10,7 @@
 ### Release Plan
 | Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained                       | Branch     |
 |---------|-----------------------------------|----------------------------|--------------|----------------------------------|------------|
-| **2.x** | `10.0`                            | `^5.4`                     | no release   | Yes (Bugs, Features)             | master     |
+| **2.x** | `10.0`                            | `^5.4`                     | 19.12.2021   | Yes (Bugs, Features)             | master     |
 | **1.x** | `6.6` - `6.9`                     | `^4.4`                     | 18.04.2021   | No | [1.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/1.x) |
 
 ## Introduction
