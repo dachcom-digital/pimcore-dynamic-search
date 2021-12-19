@@ -43,9 +43,9 @@ class IndexProviderHealthState implements HealthStateInterface
             return 'No index provider available';
         }
 
-        return sprintf('Available Providers: %s', implode(', ', array_map(static function (IndexProviderInterface $provider) {
-            return get_class($provider);
-        }, $indexProviders)));
+        return implode(', ', array_map(static function (IndexProviderInterface $provider) {
+            return (new \ReflectionClass($provider))->getShortName();
+        }, $indexProviders));
     }
 
 }

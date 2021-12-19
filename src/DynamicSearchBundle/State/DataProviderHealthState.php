@@ -43,9 +43,9 @@ class DataProviderHealthState implements HealthStateInterface
             return 'No data provider available';
         }
 
-        return sprintf('Available Providers: %s', implode(', ', array_map(static function (DataProviderInterface $provider) {
-            return get_class($provider);
-        }, $dataProviders)));
+        return implode(', ', array_map(static function (DataProviderInterface $provider) {
+            return (new \ReflectionClass($provider))->getShortName();
+        }, $dataProviders));
     }
 
 }
