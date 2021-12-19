@@ -10,8 +10,8 @@ class IndexDocument
 {
     protected ?ResourceMetaInterface $resourceMeta;
     protected array $documentConfiguration;
-    protected array $optionFields;
-    protected array $indexFields;
+    protected array $optionFields = [];
+    protected array $indexFields = [];
 
     public function __construct(?ResourceMetaInterface $resourceMeta, array $documentConfiguration = [])
     {
