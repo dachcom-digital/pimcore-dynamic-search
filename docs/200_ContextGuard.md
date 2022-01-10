@@ -8,7 +8,7 @@ To  implement a guard add a service that would implement `ContextGuardInterface`
 
 ``` yaml
 services:
-  AppBundle\DynamicSearch\Guard\DefaultContextGuard:
+  App\DynamicSearch\Guard\DefaultContextGuard:
     tags:
       - { name: dynamic_search.context_guard }
 ```
@@ -17,7 +17,7 @@ This simple guard will prevent the document with the id 1 (it is the root docume
 ``` php
 <?php
 
-namespace AppBundle\DynamicSearch\Guard;
+namespace App\DynamicSearch\Guard;
 
 use DynamicSearchBundle\Guard\ContextGuardInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;

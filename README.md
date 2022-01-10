@@ -49,7 +49,7 @@ After you have installed the Dynamic Search Bundle via composer, open pimcore ba
 - Execute: `$ bin/console doctrine:migrations:migrate --prefix 'DynamicSearchBundle\Migrations'`
 
 ## Provider Installation
-You need at least one data- and one index provider. They have to be installed separately. 
+You need at least one data- and one index provider. They have to be installed separately.
 Please check out install instruction of each provider (see list above).
 
 ## Add Routes
@@ -89,8 +89,8 @@ $ bin/console dynamic-search:run -v
 - API
 
 ## Copyright and License
-Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)  
+Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)
 For licensing details please visit [LICENSE.md](LICENSE.md)
 
 ## Upgrade Info
-Before updating, please [check our upgrade notes!](UPGRADE.md)  
+Before updating, please [check our upgrade notes!](UPGRADE.md)
