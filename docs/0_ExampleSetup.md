@@ -3,33 +3,28 @@
 ### composer.json
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search": "~1.0.0",
-    "dachcom-digital/dynamic-search-data-provider-trinity": "~1.0.0",
-    "dachcom-digital/dynamic-search-index-provider-lucene": "~1.0.0",
+    "dachcom-digital/dynamic-search": "~2.0.0",
+    "dachcom-digital/dynamic-search-data-provider-trinity": "~2.0.0",
+    "dachcom-digital/dynamic-search-index-provider-lucene": "~2.0.0",
 }
 ```
 
-### app/config/routing.yml
 ```yaml
-dynamic_search_frontend:
-    resource: '@DynamicSearchBundle/Resources/config/pimcore/routing/frontend_routing.yml'
-```
-
-### app/config/config.yml
-```yaml
-
+# app/config/config.yml
 services:
 
-    AppBundle\DynamicSearch\IndexDefinition\Trinity\Definition:
+    App\DynamicSearch\IndexDefinition\Trinity\Definition:
         tags:
             - { name: dynamic_search.document_definition_builder }
             
 dynamic_search:
 
     context:
-
+        
+        # set a context with name "default"
         default:
-
+            
+            # set data provider
             data_provider:
                 service: 'trinity_data'
                 options:
@@ -42,18 +37,21 @@ dynamic_search:
                     full_dispatch:
                         object_limit: 20
                         document_limit: 10
-
                 normalizer:
                     service: 'trinity_localized_resource_normalizer'
-
+                    
+            # set index provider
             index_provider:
                 service: 'lucene'
                 options:
                     database_name: 'my_index_database'
 
+            # build output channels
             output_channels:
+                
                 autocomplete:
                     service: 'lucene_autocomplete'
+                    
                 suggestions:
                     service: 'lucene_suggestions'
                     #options:
@@ -63,6 +61,7 @@ dynamic_search:
                         service: 'lucene_document_key_value_normalizer'
                         #options:
                         #    skip_fields: ['title']
+                        
                 search:
                     service: 'lucene_search'
                     internal: false
@@ -75,6 +74,7 @@ dynamic_search:
                         service: 'lucene_document_key_value_normalizer'
                         #options:
                         #    skip_fields: ['title']
+                        
                 multi_search:
                     multiple: true
                     service: 'lucene_multi_search'
@@ -87,11 +87,10 @@ dynamic_search:
 
 ```
 
-### AppBundle\DynamicSearch\IndexDefinition\Trinity\Definition.php
+## Definition
 ```php
 <?php
-
-namespace AppBundle\DynamicSearch\IndexDefinition\Trinity;
+namespace App\DynamicSearch\IndexDefinition\Trinity;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
@@ -99,10 +98,7 @@ use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
 class Definition implements DocumentDefinitionBuilderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta)
+    public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta): bool
     {
         if ($resourceMeta->getResourceCollectionType() !== 'object') {
             return false;
@@ -111,10 +107,7 @@ class Definition implements DocumentDefinitionBuilderInterface
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions)
+    public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions): DocumentDefinitionInterface
     {
         $definition
             ->addSimpleDocumentFieldDefinition([

@@ -4,26 +4,10 @@ namespace DynamicSearchBundle\OutputChannel\Allocator;
 
 class OutputChannelAllocator implements OutputChannelAllocatorInterface
 {
-    /**
-     * @var string
-     */
-    protected $outputChannelName;
+    protected string $outputChannelName;
+    protected ?string $parentOutputChannelName;
+    protected ?string $subOutputChannelIdentifier;
 
-    /**
-     * @var string
-     */
-    protected $parentOutputChannelName;
-
-    /**
-     * @var string
-     */
-    protected $subOutputChannelIdentifier;
-
-    /**
-     * @param string      $outputChannelName
-     * @param string|null $parentOutputChannelName
-     * @param string|null $subOutputChannelIdentifier
-     */
     public function __construct(
         string $outputChannelName,
         ?string $parentOutputChannelName,
@@ -34,26 +18,17 @@ class OutputChannelAllocator implements OutputChannelAllocatorInterface
         $this->subOutputChannelIdentifier = $subOutputChannelIdentifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOutputChannelName()
+    public function getOutputChannelName(): string
     {
         return $this->outputChannelName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParentOutputChannelName()
+    public function getParentOutputChannelName(): ?string
     {
         return $this->parentOutputChannelName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubOutputChannelIdentifier()
+    public function getSubOutputChannelIdentifier(): ?string
     {
         return $this->subOutputChannelIdentifier;
     }

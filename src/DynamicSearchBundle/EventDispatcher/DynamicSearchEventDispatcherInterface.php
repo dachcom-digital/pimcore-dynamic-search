@@ -6,9 +6,5 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 interface DynamicSearchEventDispatcherInterface
 {
-    /**
-     * @param Event  $event
-     * @param string $eventName
-     */
-    public function dispatch(Event $event, $eventName);
+    public function dispatch(Event $event, string $eventName): void;
 }

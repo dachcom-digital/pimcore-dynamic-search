@@ -4,52 +4,21 @@ namespace DynamicSearchBundle\Normalizer\Resource;
 
 interface ResourceMetaInterface
 {
-    /**
-     * @return string|int
-     */
-    public function getDocumentId();
+    public function getDocumentId(): string|int;
 
-    /**
-     * @return string
-     */
-    public function getResourceCollectionType();
+    public function getResourceId(): string|int;
 
-    /**
-     * @return string
-     */
-    public function getResourceType();
+    public function getResourceCollectionType(): string;
 
-    /**
-     * @return string|null
-     */
-    public function getResourceSubType();
+    public function getResourceType(): string;
 
-    /**
-     * @return mixed
-     */
-    public function getResourceId();
+    public function getResourceSubType(): ?string;
 
-    /**
-     * @return array
-     */
-    public function getResourceOptions();
+    public function getResourceOptions(): array;
 
-    /**
-     * @param string $option
-     *
-     * @return bool
-     */
-    public function hasNormalizerOption(string $option);
+    public function hasNormalizerOption(string $option): bool;
 
-    /**
-     * @param string $option
-     *
-     * @return mixed
-     */
-    public function getNormalizerOption(string $option);
+    public function getNormalizerOption(string $option): mixed;
 
-    /**
-     * @return array
-     */
-    public function getNormalizerOptions();
+    public function getNormalizerOptions(): array;
 }

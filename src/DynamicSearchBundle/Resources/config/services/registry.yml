@@ -28,3 +28,6 @@ services:
 
     DynamicSearchBundle\Registry\ContextGuardRegistryInterface: '@DynamicSearchBundle\Registry\ContextGuardRegistry'
     DynamicSearchBundle\Registry\ContextGuardRegistry: ~
+
+    DynamicSearchBundle\Registry\HealthStateRegistryInterface: '@DynamicSearchBundle\Registry\HealthStateRegistry'
+    DynamicSearchBundle\Registry\HealthStateRegistry: ~

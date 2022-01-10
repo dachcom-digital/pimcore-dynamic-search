@@ -12,34 +12,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ErrorEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var bool
-     */
-    protected $dispatched;
+    protected bool $dispatched;
+    protected LoggerInterface $logger;
+    protected IndexManagerInterface $indexManager;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var IndexManagerInterface
-     */
-    protected $indexManager;
-
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->dispatched = false;
         $this->logger = $logger;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DynamicSearchEvents::ERROR_DISPATCH_ABORT    => ['onAbort'],
@@ -48,11 +31,9 @@ class ErrorEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param ErrorEvent $event
-     *
      * @throws ProcessCancelledException
      */
-    public function onAbort(ErrorEvent $event)
+    public function onAbort(ErrorEvent $event): void
     {
         $this->logger->error($event->getMessage(), $event->getProviderName(), $event->getContextName());
 
@@ -60,11 +41,9 @@ class ErrorEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param ErrorEvent $event
-     *
      * @throws RuntimeException
      */
-    public function onCritical(ErrorEvent $event)
+    public function onCritical(ErrorEvent $event): void
     {
         if ($this->dispatched === true) {
             return;

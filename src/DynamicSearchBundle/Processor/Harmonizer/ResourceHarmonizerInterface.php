@@ -9,18 +9,9 @@ use DynamicSearchBundle\Resource\Container\ResourceContainerInterface;
 interface ResourceHarmonizerInterface
 {
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param mixed                      $resource
-     *
-     * @return array|NormalizedDataResourceInterface[]|null
+     * @return null|array<int, NormalizedDataResourceInterface>
      */
-    public function harmonizeUntilNormalizedResourceStack(ContextDefinitionInterface $contextDefinition, $resource);
+    public function harmonizeUntilNormalizedResourceStack(ContextDefinitionInterface $contextDefinition, mixed $resource): ?array;
 
-    /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param mixed                      $resource
-     *
-     * @return null|ResourceContainerInterface
-     */
-    public function harmonizeUntilResourceContainer(ContextDefinitionInterface $contextDefinition, $resource);
+    public function harmonizeUntilResourceContainer(ContextDefinitionInterface $contextDefinition, mixed $resource): ?ResourceContainerInterface;
 }

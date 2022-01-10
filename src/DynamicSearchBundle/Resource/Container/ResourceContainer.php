@@ -4,33 +4,12 @@ namespace DynamicSearchBundle\Resource\Container;
 
 class ResourceContainer implements ResourceContainerInterface
 {
-    /**
-     * @var mixed
-     */
-    protected $resource;
+    protected mixed $resource;
+    protected bool $isBaseResource;
+    protected string $resourceScaffolderIdentifier;
+    protected array $attributes;
 
-    /**
-     * @var bool
-     */
-    protected $isBaseResource;
-
-    /**
-     * @var string
-     */
-    protected $resourceScaffolderIdentifier;
-
-    /**
-     * @var array
-     */
-    protected $attributes;
-
-    /**
-     * @param mixed  $resource
-     * @param bool   $isBaseResource
-     * @param string $resourceScaffolderIdentifier
-     * @param array  $attributes
-     */
-    public function __construct($resource, bool $isBaseResource, $resourceScaffolderIdentifier, array $attributes = [])
+    public function __construct(mixed $resource, bool $isBaseResource, string $resourceScaffolderIdentifier, array $attributes = [])
     {
         $this->resource = $resource;
         $this->isBaseResource = $isBaseResource;
@@ -38,58 +17,37 @@ class ResourceContainer implements ResourceContainerInterface
         $this->attributes = $attributes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasResource()
+    public function hasResource(): bool
     {
         return $this->resource !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isBaseResource()
+    public function isBaseResource(): bool
     {
         return $this->isBaseResource === true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResource()
+    public function getResource(): mixed
     {
         return $this->resource;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceScaffolderIdentifier()
+    public function getResourceScaffolderIdentifier(): string
     {
         return $this->resourceScaffolderIdentifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasAttribute($attribute)
+    public function hasAttribute(string $attribute): bool
     {
         return isset($this->attributes[$attribute]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttribute($attribute)
+    public function getAttribute(string $attribute): mixed
     {
         return $this->attributes[$attribute];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }

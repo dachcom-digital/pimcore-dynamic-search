@@ -5,43 +5,34 @@ namespace DynamicSearchBundle\EventListener;
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Queue\DataCollectorInterface;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PimcoreElementListener implements EventSubscriberInterface
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected ConfigurationInterface $configuration;
+    protected DataCollectorInterface $dataCollector;
+    protected TokenStorageUserResolver $userResolver;
 
-    /**
-     * @var DataCollectorInterface
-     */
-    protected $dataCollector;
-
-    /**
-     * @param ConfigurationInterface $configuration
-     * @param DataCollectorInterface $dataCollector
-     */
     public function __construct(
         ConfigurationInterface $configuration,
-        DataCollectorInterface $dataCollector
+        DataCollectorInterface $dataCollector,
+        TokenStorageUserResolver $userResolver
     ) {
         $this->configuration = $configuration;
         $this->dataCollector = $dataCollector;
+        $this->userResolver = $userResolver;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DocumentEvents::POST_UPDATE => 'onDocumentPostUpdate',
@@ -56,10 +47,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param DocumentEvent $event
-     */
-    public function onDocumentPostUpdate(DocumentEvent $event)
+    public function onDocumentPostUpdate(DocumentEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -79,10 +67,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param DocumentEvent $event
-     */
-    public function onDocumentPreDelete(DocumentEvent $event)
+    public function onDocumentPreDelete(DocumentEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -98,34 +83,30 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function onObjectPostUpdate(DataObjectEvent $event)
+    public function onObjectPostUpdate(DataObjectEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
         }
 
-        /** @var Concrete $object */
+        /** @var DataObject\Concrete $object */
         $object = $event->getObject();
 
-        $dispatchType = method_exists($object, 'isPublished')
-            ? $object->isPublished() === false
-                ? ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE
-                : ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE
-            : ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
+        $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
+        if (method_exists($object, 'isPublished') && $object->isPublished() === false) {
+            $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE;
+        }
 
         $this->dataCollector->addToGlobalQueue(
             $dispatchType,
             $event->getObject()
         );
+
+        $this->checkInheritanceIndex($object);
+
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function onObjectPreDelete(DataObjectEvent $event)
+    public function onObjectPreDelete(DataObjectEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -137,10 +118,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPostAdd(AssetEvent $event)
+    public function onAssetPostAdd(AssetEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -152,10 +130,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPostUpdate(AssetEvent $event)
+    public function onAssetPostUpdate(AssetEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -167,10 +142,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPreDelete(AssetEvent $event)
+    public function onAssetPreDelete(AssetEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
@@ -181,4 +153,51 @@ class PimcoreElementListener implements EventSubscriberInterface
             $event->getAsset()
         );
     }
+
+    protected function checkInheritanceIndex(ElementInterface $element): void
+    {
+        // currently, only objects are allowed.
+
+        if (!$element instanceof DataObject\Concrete) {
+            return;
+        }
+
+        $inheritanceConfiguration = $this->configuration->get('element_inheritance');
+
+        if ($inheritanceConfiguration['enabled'] === false) {
+            return;
+        }
+
+        $classDefinition = DataObject\ClassDefinition::getById($element->getClassId());
+
+        if (!$classDefinition instanceof DataObject\ClassDefinition) {
+            return;
+        }
+
+        if ($classDefinition->getAllowInherit() === false) {
+            return;
+        }
+
+        // we mostly want to fetch child elements if this comes from a real user (e.g. from backend)
+        // if user is null we're most probably in a CLI process which handles children/variants by itself!
+        // this can be changed by set origin_dispatch to "all"
+        if ($inheritanceConfiguration['origin_dispatch'] === 'user' && $this->userResolver->getUser() === null) {
+            return;
+        }
+
+        $list = new DataObject\Listing();
+        $list->setCondition('o_path LIKE ' . $list->quote($element->getRealFullPath() . '/%'));
+        $list->setUnpublished(false);
+        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+
+        foreach ($list->getObjects() as $childObject) {
+            $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
+            if (method_exists($childObject, 'isPublished') && $childObject->isPublished() === false) {
+                $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE;
+            }
+
+            $this->dataCollector->addToGlobalQueue($dispatchType, $childObject);
+        }
+    }
+
 }

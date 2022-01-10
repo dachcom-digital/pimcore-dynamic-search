@@ -1,7 +1,3 @@
-.search_icon_settings {
-    background: url(/bundles/dynamicsearch/img/services.svg) center center no-repeat !important;
-}
-
-.search_icon_plugins {
-    background: url(/bundles/dynamicsearch/img/img/plugin.png) no-repeat scroll left center transparent !important;
+.dynamic_search_bundle {
+    background: url(/bundles/dynamicsearch/img/dynamic_search_igon_white.svg) no-repeat scroll left center transparent !important;
 }

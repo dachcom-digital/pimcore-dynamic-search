@@ -9,16 +9,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface IndexProviderInterface extends ProviderInterface
 {
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public static function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver): void;
 
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param IndexDocument              $indexDocument
-     *
      * @throws ProviderException
      */
-    public function processDocument(ContextDefinitionInterface $contextDefinition, IndexDocument $indexDocument);
+    public function processDocument(ContextDefinitionInterface $contextDefinition, IndexDocument $indexDocument): void;
 }

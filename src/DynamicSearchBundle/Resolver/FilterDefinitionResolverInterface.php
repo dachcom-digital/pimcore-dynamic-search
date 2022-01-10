@@ -9,12 +9,8 @@ use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 interface FilterDefinitionResolverInterface
 {
     /**
-     * @param string                          $contextName
-     * @param OutputChannelAllocatorInterface $outputChannelAllocator
-     *
-     * @return FilterDefinitionBuilderInterface[]
-     *
+     * @return array<int, FilterDefinitionBuilderInterface>
      * @throws DefinitionNotFoundException
      */
-    public function resolve(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator);
+    public function resolve(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator): array;
 }

@@ -1,25 +1,36 @@
 # Upgrade Notes
-![upgrade](https://user-images.githubusercontent.com/700119/31535145-3c01a264-affa-11e7-8d86-f04c33571f65.png)  
+
+## Migrating from Version 1.x to Version 2.0.0
+
+### Global Changes
+- Directory `var/bundles/DynamicSearchBundle` can be removed safely since it is not required anymore
+- PHP8 return type declarations added: you may have to adjust your extensions accordingly
+- All Folders in `views` are lowercase/dashed now (`views/common`, `views/output-channel`, ...)
+- `FieldTransformerInterface::configureOptions` return type changed to `void`
+- Provider bundles registration process has changed: There not automatically registered. You need to this by yourself. [Example](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity#installation).
+- Paginator changed:
+    - Removed Zend Paginator
+    - Use Paginator from `KnpPaginatorBundle` which is included in PX by default
+        - `AdapterInterface` changes (This affects you only if you're using a custom paginator `adapter_class`):
+            - `count()` renamed to `getCount()`
+            - `setItemCountPerPage()` added
+            - `setCurrentPageNumber()` added
+    - `dynamic_search_default_paginator_class` container parameter removed. If you want to modify the paginator items, just us
+      the `knp_pager.items` event
+    - `views/common/list/paginated/_wrapper.html.twig`, `views/common/pagination/_default.html.twig` mark-up changed, check your views accordingly
+- Resource (Untrusted/Proxy) validation has been removed, you need to use the [resource validator](docs/40_ResourceValidator.md) now:
+    - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `DataProviderInterface` has been removed. Use `DataProviderValidationAwareInterface::validateResource` instead.
+    - Methods `checkUntrustedResourceProxy` and `validateUntrustedResource` from `ResourceValidatorInterface` has been removed.
+    - Class `ProxyResource` has been removed.
+- Logfile has been moved to symphony's default log base
+
+### Fixes
+- Improve Logger [#40](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/40)
+
+### New Features
+- Introducing backend panel and HealthState [#34](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/34)
+- Provide inherited element dispatcher [#42](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/42)
 
 ***
 
-After every update you should check the pimcore extension manager. 
-Just click the "update" button or execute the migration command to finish the bundle update.
-
-#### Update from Version 1.0.0 to Version 1.0.1
-- **[IMPROVEMENT]**: Introduce ResourceCandidate [#24](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/24)
-
-#### Update from Version 0.x to Version 1.0.0
-- **[IMPROVEMENT]**: Better exception fetching and messaging
-- **[IMPROVEMENT|BC BREAK]**: Move all Configuration to Compiler [#18](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/18)
-- **[IMPROVEMENT|BC BREAK]**: Implement Output Workflow Condition [#19](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/19)
-- **[BC BREAK]**: translation `dynamic_search.ui.we-found` and `dynamic_search.ui.items-for` has been removed
-- **[BC BREAK]**: new translation keys added: `dynamic_search.ui.result_subline` (args: `%badge%` and `%query%`), `dynamic_search.ui.no_items` (args: `%count%`), `dynamic_search.ui.items` (args: `%count%`), `dynamic_search.ui.no_item` (args: `%count%`)
-- **[BC BREAK]**: `SearchContainerInterface`, `MultiSearchContainerInterface` and `RawResultInterface` added. If you're using custom output channel filter, adjust these classes accordingly:
-  - Method `getHitCount` removed from `OutputChannelInterface`. This needs to be defined in `RawResponse` class (available in `OutputChannelInterface::getResult(SearchContainerInterface $searchContainer)`).
-  - Method `addSubQuery` removed from `MultiOutputChannelInterface`. The sub queries will be passed within `MultiOutputChannelInterface::getMultiSearchResult(MultiSearchContainerInterface $multiSearchContainer)`
-  - Signature `OutputChannelInterface::getResult()` changed to `OutputChannelInterface::getResult(SearchContainerInterface $searchContainer): SearchContainerInterface`
-  - Signature `MultiOutputChannelInterface::getMultiSearchResult()` changed to `MultiOutputChannelInterface::getMultiSearchResult(MultiSearchContainerInterface $multiSearchContainer): MultiSearchContainerInterface`
-  - Signature `FilterInterface::findFilterValueInResult()` changed to `FilterInterface::findFilterValueInResult(RawResultInterface $rawResult)`
-  - Signature `FilterInterface::buildViewVars()` changed to `FilterInterface::buildViewVars(RawResultInterface $rawResult, $filterValues, $query)`
-  - Signature `DocumentNormalizerInterface::normalize()` changed to `DocumentNormalizerInterface::normalize(RawResultInterface $rawResult, ContextDefinitionInterface $contextDefinition, string $outputChannelName)`
+DynamicSearch 1.x Upgrade Notes: https://github.com/dachcom-digital/pimcore-dynamic-search/blob/1.x/UPGRADE.md

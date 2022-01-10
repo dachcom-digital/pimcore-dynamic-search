@@ -6,45 +6,30 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class DefaultRuntimeQueryProvider implements RuntimeQueryProviderInterface
 {
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserQuery()
+    public function getUserQuery(): ?string
     {
-        return $this->requestStack->getMasterRequest()->query->get($this->getQueryIdentifier(), null);
+        return $this->requestStack->getMainRequest()->query->get($this->getQueryIdentifier(), null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserLocale()
+    public function getUserLocale(): ?string
     {
-        $locale = $this->requestStack->getMasterRequest()->query->get('locale', null);
+        $locale = $this->requestStack->getMainRequest()->query->get('locale', null);
 
         if ($locale === null) {
-            $locale = $this->requestStack->getMasterRequest()->getLocale();
+            $locale = $this->requestStack->getMainRequest()?->getLocale();
         }
 
         return $locale;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueryIdentifier()
+    public function getQueryIdentifier(): string
     {
         return 'q';
     }

@@ -7,12 +7,12 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterfa
 interface MultiOutputChannelResultInterface
 {
     /**
-     * @return array|OutputChannelResultInterface[]
+     * @return array<int, OutputChannelResultInterface>
      */
-    public function getResults();
+    public function getResults(): array;
 
     /**
      * @return RuntimeQueryProviderInterface
      */
-    public function getRuntimeQueryProvider();
+    public function getRuntimeQueryProvider(): RuntimeQueryProviderInterface;
 }

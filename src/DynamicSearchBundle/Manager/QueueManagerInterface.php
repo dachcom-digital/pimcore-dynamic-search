@@ -7,39 +7,20 @@ use Pimcore\Model\Tool\TmpStore;
 
 interface QueueManagerInterface
 {
-    const QUEUE_IDENTIFIER = 'dynamic_search_index_queue';
+    public const QUEUE_IDENTIFIER = 'dynamic_search_index_queue';
+
+    public function clearQueue(): void;
+
+    public function getQueuedEnvelopes(): array;
+
+    public function deleteEnvelope(Envelope $envelope): void;
+
+    public function addJobToQueue(string $jobId, string $contextName, string $dispatchType, array $metaResources, array $options): void;
+
+    public function hasActiveJobs(): bool;
 
     /**
-     * @return mixed
+     * @return array<int, TmpStore>
      */
-    public function clearQueue();
-
-    /**
-     * @return array
-     */
-    public function getQueuedEnvelopes();
-
-    /**
-     * @param Envelope $envelope
-     */
-    public function deleteEnvelope(Envelope $envelope);
-
-    /**
-     * @param string $jobId
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param array  $metaResources
-     * @param array  $options
-     */
-    public function addJobToQueue(string $jobId, string $contextName, string $dispatchType, array $metaResources, array $options);
-
-    /**
-     * @return bool
-     */
-    public function hasActiveJobs();
-
-    /**
-     * @return array|TmpStore[]
-     */
-    public function getActiveJobs();
+    public function getActiveJobs(): array;
 }

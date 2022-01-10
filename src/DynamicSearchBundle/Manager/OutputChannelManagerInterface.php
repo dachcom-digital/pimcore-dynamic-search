@@ -13,42 +13,18 @@ use DynamicSearchBundle\OutputChannel\RuntimeOptions\RuntimeQueryProviderInterfa
 interface OutputChannelManagerInterface
 {
     /**
-     * @param ContextDefinitionInterface $contextDefinition
-     * @param string               $type
-     *
-     * @return OutputChannelInterface|null
-     *
      * @throws ProviderException
      */
-    public function getOutputChannel(ContextDefinitionInterface $contextDefinition, string $type);
+    public function getOutputChannel(ContextDefinitionInterface $contextDefinition, string $outputChannelName): ?OutputChannelInterface;
+
+    public function getOutputChannelRuntimeQueryProvider(string $provider): ?RuntimeQueryProviderInterface;
+
+    public function getOutputChannelRuntimeOptionsBuilder(string $provider): ?RuntimeOptionsBuilderInterface;
 
     /**
-     * @param string $provider
-     *
-     * @return RuntimeQueryProviderInterface
+     * @return array<int, OutputChannelModifierActionInterface>
      */
-    public function getOutputChannelRuntimeQueryProvider(string $provider);
+    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action): array;
 
-    /**
-     * @param string $provider
-     *
-     * @return RuntimeOptionsBuilderInterface
-     */
-    public function getOutputChannelRuntimeOptionsBuilder(string $provider);
-
-    /**
-     * @param string $outputChannelServiceName
-     * @param string $action
-     *
-     * @return array|OutputChannelModifierActionInterface[]
-     */
-    public function getOutputChannelModifierAction(string $outputChannelServiceName, string $action);
-
-    /**
-     * @param string $outputChannelServiceName
-     * @param string $filter
-     *
-     * @return null|OutputChannelModifierFilterInterface
-     */
-    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter);
+    public function getOutputChannelModifierFilter(string $outputChannelServiceName, string $filter): ?OutputChannelModifierFilterInterface;
 }

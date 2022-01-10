@@ -8,37 +8,17 @@ use DynamicSearchBundle\Exception\Resolver\ResourceScaffolderNotFoundException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Registry\TransformerRegistryInterface;
 use DynamicSearchBundle\Resolver\ResourceScaffolderResolverInterface;
+use DynamicSearchBundle\Resource\FieldTransformerInterface;
 use DynamicSearchBundle\Resource\ResourceScaffolderContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TransformerManager implements TransformerManagerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected ConfigurationInterface $configuration;
+    protected ResourceScaffolderResolverInterface $documentTransformerResolver;
+    protected TransformerRegistryInterface $transformerRegistry;
 
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
-
-    /**
-     * @var ResourceScaffolderResolverInterface
-     */
-    protected $documentTransformerResolver;
-
-    /**
-     * @var TransformerRegistryInterface
-     */
-    protected $transformerRegistry;
-
-    /**
-     * @param LoggerInterface                     $logger
-     * @param ConfigurationInterface              $configuration
-     * @param ResourceScaffolderResolverInterface $documentTransformerResolver
-     * @param TransformerRegistryInterface        $transformerRegistry
-     */
     public function __construct(
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
@@ -51,10 +31,7 @@ class TransformerManager implements TransformerManagerInterface
         $this->transformerRegistry = $transformerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceScaffolder(ContextDefinitionInterface $contextDefinition, $resource)
+    public function getResourceScaffolder(ContextDefinitionInterface $contextDefinition, $resource): ?ResourceScaffolderContainerInterface
     {
         $resourceScaffolderContainer = null;
         $dataProviderName = $contextDefinition->getDataProviderName();
@@ -74,10 +51,7 @@ class TransformerManager implements TransformerManagerInterface
         return $resourceScaffolderContainer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = [])
+    public function getResourceFieldTransformer(string $dispatchTransformerName, string $fieldTransformerName, array $transformerOptions = []): ?FieldTransformerInterface
     {
         if (!$this->transformerRegistry->hasResourceFieldTransformer($dispatchTransformerName, $fieldTransformerName)) {
             return null;
@@ -86,10 +60,8 @@ class TransformerManager implements TransformerManagerInterface
         $fieldTransformer = $this->transformerRegistry->getResourceFieldTransformer($dispatchTransformerName, $fieldTransformerName);
 
         $optionsResolver = new OptionsResolver();
-        $requiredOptionsResolver = $fieldTransformer->configureOptions($optionsResolver);
-        $options = $requiredOptionsResolver === false ? [] : $optionsResolver->resolve($transformerOptions);
-
-        $fieldTransformer->setOptions($options);
+        $fieldTransformer->configureOptions($optionsResolver);
+        $fieldTransformer->setOptions($optionsResolver->resolve($transformerOptions));
 
         return $fieldTransformer;
     }

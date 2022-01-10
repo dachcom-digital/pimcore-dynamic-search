@@ -6,17 +6,9 @@ use DynamicSearchBundle\Provider\DataProviderInterface;
 
 interface DataProviderRegistryInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier);
+    public function has(string $identifier): bool;
 
-    /**
-     * @param string $identifier
-     *
-     * @return DataProviderInterface
-     */
-    public function get($identifier);
+    public function get(string $identifier): ?DataProviderInterface;
+
+    public function all(): array;
 }

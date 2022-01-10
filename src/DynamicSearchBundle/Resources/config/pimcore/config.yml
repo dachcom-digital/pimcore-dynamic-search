@@ -1,3 +1,7 @@
+doctrine_migrations:
+    migrations_paths:
+        'DynamicSearchBundle\Migrations': '@DynamicSearchBundle/Migrations'
+
 monolog:
     channels: ['dynamic_search']
     handlers:
@@ -11,14 +15,15 @@ monolog:
         dynamic_search_stream_logging:
             type: rotating_file
             max_files: 1
-            path: '%kernel.project_dir%/var/bundles/DynamicSearchBundle/dynamic_search.log'
+            path: '%kernel.logs_dir%/dynamic_search-%kernel.environment%.log'
             channels: ['dynamic_search']
             formatter: dynamic_search.log.formatter.stream.provider
 
         dynamic_search_console_logging:
             type: console
             verbosity_levels:
-                VERBOSITY_NORMAL: DEBUG
+                VERBOSITY_QUIET: EMERGENCY
+                VERBOSITY_NORMAL: EMERGENCY
                 VERBOSITY_VERBOSE: DEBUG
                 VERBOSITY_VERY_VERBOSE: DEBUG
                 VERBOSITY_DEBUG: DEBUG

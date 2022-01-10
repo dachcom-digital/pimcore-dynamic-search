@@ -7,32 +7,22 @@ use DynamicSearchBundle\Doctrine\DBAL\ConnectionKeepAlive;
 
 class LongProcessService implements LongProcessServiceInterface
 {
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    protected Connection $connection;
+    protected ConnectionKeepAlive $keepAlive;
 
-    /**
-     * @var ConnectionKeepAlive
-     */
-    protected $keepAlive;
-
-    /**
-     * @param Connection $connection
-     */
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->keepAlive = new ConnectionKeepAlive();
         $this->keepAlive->addConnection($this->connection);
         $this->keepAlive->attach();
     }
 
-    public function shutdown()
+    public function shutdown(): void
     {
         $this->keepAlive->detach();
     }

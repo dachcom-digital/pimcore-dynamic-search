@@ -7,39 +7,30 @@ use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class DataProviderRegistry implements DataProviderRegistryInterface
 {
-    /**
-     * @var RegistryStorage
-     */
-    protected $registryStorage;
+    protected RegistryStorage $registryStorage;
 
     public function __construct()
     {
         $this->registryStorage = new RegistryStorage();
     }
 
-    /**
-     * @param DataProviderInterface $service
-     * @param string                $identifier
-     * @param string|null           $alias
-     */
-    public function register($service, string $identifier, ?string $alias)
+    public function register(DataProviderInterface $service, string $identifier, ?string $alias): void
     {
         $this->registryStorage->store($service, DataProviderInterface::class, 'dataProvider', $identifier, $alias);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($identifier)
+    public function has($identifier): bool
     {
         return $this->registryStorage->has('dataProvider', $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($identifier)
+    public function get($identifier): ?DataProviderInterface
     {
         return $this->registryStorage->get('dataProvider', $identifier);
+    }
+
+    public function all(): array
+    {
+        return $this->registryStorage->getByNamespace('dataProvider');
     }
 }

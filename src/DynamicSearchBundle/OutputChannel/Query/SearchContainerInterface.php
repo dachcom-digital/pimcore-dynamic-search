@@ -9,18 +9,9 @@ use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
  */
 interface SearchContainerInterface
 {
-    /**
-     * @return mixed
-     */
-    public function getQuery();
+    public function getQuery(): mixed;
 
-    /**
-     * @return string
-     */
-    public function getIdentifier();
+    public function getIdentifier(): string;
 
-    /**
-     * @return RawResultInterface
-     */
-    public function getRawResult();
+    public function getRawResult(): RawResultInterface;
 }

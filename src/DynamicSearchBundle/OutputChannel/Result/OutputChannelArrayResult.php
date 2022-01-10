@@ -4,23 +4,14 @@ namespace DynamicSearchBundle\OutputChannel\Result;
 
 class OutputChannelArrayResult extends OutputChannelResult implements OutputChannelArrayResultInterface
 {
-    /**
-     * @var array
-     */
-    protected $result;
+    protected array $result;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setResult(array $result)
+    public function setResult(array $result): void
     {
-        return $this->result = $result;
+        $this->result = $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResult()
+    public function getResult(): array
     {
         return $this->result;
     }

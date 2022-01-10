@@ -7,28 +7,19 @@ use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class ContextGuardRegistry implements ContextGuardRegistryInterface
 {
-    /**
-     * @var RegistryStorage
-     */
-    protected $registryStorage;
+    protected RegistryStorage $registryStorage;
 
     public function __construct()
     {
         $this->registryStorage = new RegistryStorage();
     }
 
-    /**
-     * @param ContextGuardInterface $service
-     */
-    public function register($service)
+    public function register(ContextGuardInterface $service): void
     {
         $this->registryStorage->store($service, ContextGuardInterface::class,'contextGuard', get_class($service));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllGuards()
+    public function getAllGuards(): array
     {
         return $this->registryStorage->getByNamespace('contextGuard');
     }

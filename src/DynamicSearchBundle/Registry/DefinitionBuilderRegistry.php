@@ -8,44 +8,29 @@ use DynamicSearchBundle\Registry\Storage\RegistryStorage;
 
 class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
 {
-    /**
-     * @var RegistryStorage
-     */
-    protected $registryStorage;
+    protected RegistryStorage $registryStorage;
 
     public function __construct()
     {
         $this->registryStorage = new RegistryStorage();
     }
 
-    /**
-     * @param DocumentDefinitionBuilderInterface $service
-     */
-    public function registerDocumentDefinition($service)
+    public function registerDocumentDefinition(DocumentDefinitionBuilderInterface $service): void
     {
         $this->registryStorage->store($service, DocumentDefinitionBuilderInterface::class, 'documentDefinitionBuilder', get_class($service));
     }
 
-    /**
-     * @param DocumentDefinitionBuilderInterface $service
-     */
-    public function registerFilterDefinition($service)
+    public function registerFilterDefinition(DocumentDefinitionBuilderInterface $service): void
     {
         $this->registryStorage->store($service, FilterDefinitionBuilderInterface::class, 'filterDefinitionBuilder', get_class($service));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllDocumentDefinitionBuilder()
+    public function getAllDocumentDefinitionBuilder(): array
     {
         return $this->registryStorage->getByNamespace('documentDefinitionBuilder');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllFilterDefinitionBuilder()
+    public function getAllFilterDefinitionBuilder(): array
     {
         return $this->registryStorage->getByNamespace('filterDefinitionBuilder');
     }

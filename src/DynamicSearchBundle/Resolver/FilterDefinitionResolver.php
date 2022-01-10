@@ -8,23 +8,14 @@ use DynamicSearchBundle\Registry\DefinitionBuilderRegistryInterface;
 
 class FilterDefinitionResolver implements FilterDefinitionResolverInterface
 {
-    /**
-     * @var DefinitionBuilderRegistryInterface
-     */
-    protected $definitionBuilderRegistry;
+    protected DefinitionBuilderRegistryInterface $definitionBuilderRegistry;
 
-    /**
-     * @param DefinitionBuilderRegistryInterface $definitionBuilderRegistry
-     */
     public function __construct(DefinitionBuilderRegistryInterface $definitionBuilderRegistry)
     {
         $this->definitionBuilderRegistry = $definitionBuilderRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator)
+    public function resolve(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator): array
     {
         $builder = [];
         foreach ($this->definitionBuilderRegistry->getAllFilterDefinitionBuilder() as $filterDefinitionBuilder) {

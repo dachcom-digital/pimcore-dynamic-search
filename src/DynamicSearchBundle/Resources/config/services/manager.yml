@@ -28,6 +28,3 @@ services:
 
     DynamicSearchBundle\Manager\QueueManagerInterface: '@DynamicSearchBundle\Manager\QueueManager'
     DynamicSearchBundle\Manager\QueueManager: ~
-
-    DynamicSearchBundle\Manager\ProviderBundleManagerInterface: '@DynamicSearchBundle\Manager\ProviderBundleManager'
-    DynamicSearchBundle\Manager\ProviderBundleManager: ~

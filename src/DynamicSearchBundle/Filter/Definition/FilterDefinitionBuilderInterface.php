@@ -6,18 +6,7 @@ use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocatorInterface;
 
 interface FilterDefinitionBuilderInterface
 {
-    /**
-     * @param string                          $contextName
-     * @param OutputChannelAllocatorInterface $outputChannelAllocator
-     *
-     * @return bool
-     */
-    public function isApplicable(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator);
+    public function isApplicable(string $contextName, OutputChannelAllocatorInterface $outputChannelAllocator): bool;
 
-    /**
-     * @param FilterDefinitionInterface $definition
-     *
-     * @return FilterDefinitionInterface
-     */
-    public function buildDefinition(FilterDefinitionInterface $definition);
+    public function buildDefinition(FilterDefinitionInterface $definition): FilterDefinitionInterface;
 }

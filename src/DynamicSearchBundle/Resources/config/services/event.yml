@@ -5,6 +5,10 @@ services:
         autoconfigure: true
         public: false
 
+    DynamicSearchBundle\EventSubscriber\PaginateRawResultSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
     DynamicSearchBundle\EventSubscriber\DataProcessingEventSubscriber: ~
 
     DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber: ~
@@ -13,9 +17,5 @@ services:
     DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher: ~
 
     DynamicSearchBundle\EventListener\PimcoreElementListener:
-        tags:
-            - { name: kernel.event_subscriber }
-
-    DynamicSearchBundle\EventListener\ProviderAvailabilityListener:
         tags:
             - { name: kernel.event_subscriber }

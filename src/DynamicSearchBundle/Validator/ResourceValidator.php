@@ -10,30 +10,15 @@ use DynamicSearchBundle\Manager\DataManagerInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Provider\DataProviderValidationAwareInterface;
 use DynamicSearchBundle\Resource\ResourceCandidate;
+use DynamicSearchBundle\Resource\ResourceCandidateInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ResourceValidator implements ResourceValidatorInterface
 {
-    /**
-     * @var ContextDefinitionBuilderInterface
-     */
-    protected $contextDefinitionBuilder;
+    protected ContextDefinitionBuilderInterface $contextDefinitionBuilder;
+    protected DataManagerInterface $dataManager;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var DataManagerInterface
-     */
-    protected $dataManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @param ContextDefinitionBuilderInterface $contextDefinitionBuilder
-     * @param DataManagerInterface              $dataManager
-     * @param EventDispatcherInterface          $eventDispatcher
-     */
     public function __construct(
         ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         DataManagerInterface $dataManager,
@@ -44,41 +29,14 @@ class ResourceValidator implements ResourceValidatorInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkUntrustedResourceProxy(string $contextName, string $dispatchType, $resource)
-    {
-        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
-        $dataProvider = $this->getDataProvider($contextName, $dispatchType);
+    public function validateResource(
+        string $contextName,
+        string $dispatchType,
+        bool $isUnknownResource,
+        bool $isImmutableResource,
+        mixed $resource
+    ): ResourceCandidateInterface {
 
-        if (!$dataProvider instanceof DataProviderInterface) {
-            return null;
-        }
-
-        return $dataProvider->checkUntrustedResourceProxy($contextDefinition, $resource);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateUntrustedResource(string $contextName, string $dispatchType, $resource)
-    {
-        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
-        $dataProvider = $this->getDataProvider($contextName, $dispatchType);
-
-        if (!$dataProvider instanceof DataProviderInterface) {
-            return false;
-        }
-
-        return $dataProvider->validateUntrustedResource($contextDefinition, $resource);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateResource(string $contextName, string $dispatchType, bool $isUnknownResource, bool $isImmutableResource, $resource)
-    {
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
         $dataProvider = $this->getDataProvider($contextName, $dispatchType);
 
@@ -97,20 +55,14 @@ class ResourceValidator implements ResourceValidatorInterface
         return $resourceCandidateEvent->getResourceCandidate();
     }
 
-    /**
-     * @param string $contextName
-     * @param string $dispatchType
-     *
-     * @return bool|DataProviderInterface
-     */
-    protected function getDataProvider(string $contextName, string $dispatchType)
+    protected function getDataProvider(string $contextName, string $dispatchType): ?DataProviderInterface
     {
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
 
         try {
             $dataProvider = $this->dataManager->getDataProvider($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);
         } catch (ProviderException $e) {
-            return false;
+            return null;
         }
 
         return $dataProvider;

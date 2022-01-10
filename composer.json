@@ -2,7 +2,7 @@
     "name": "dachcom-digital/dynamic-search",
     "type": "pimcore-bundle",
     "license": "GPL-3.0-or-later",
-    "description": "Pimcore >= 6.6 Dynamic Search Bundle",
+    "description": "Pimcore X Dynamic Search Bundle",
     "keywords": ["pimcore", "search"],
     "homepage": "https://github.com/dachcom-digital/pimcore-dynamic-search",
     "authors": [
@@ -21,12 +21,12 @@
     "autoload-dev": {
         "psr-4": {
             "": "src/"
-        },
-        "classmap": [
-            "app/TestKernel.php"
-        ]
+        }
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        },
         "pimcore": {
             "bundles": [
                 "DynamicSearchBundle\\DynamicSearchBundle"
@@ -34,13 +34,14 @@
         }
     },
     "require": {
-        "symfony/symfony": "^4|^5",
-        "pimcore/pimcore": "^6.6"
+        "pimcore/pimcore": "^10.1"
     },
     "require-dev": {
-        "codeception/codeception": "~2.4.0",
+        "codeception/codeception": "^4.1",
+        "codeception/module-webdriver": "^1.4",
+        "codeception/module-symfony": "^1.6",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
-        "symplify/easy-coding-standard": "^8.0"
+        "symplify/easy-coding-standard": "^9.0"
     }
 }

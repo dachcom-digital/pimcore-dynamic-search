@@ -11,7 +11,5 @@ services:
 
     DynamicSearchBundle\Tool\Install:
         public: true
-        calls:
-            - [setProviderBundleManager, ['@DynamicSearchBundle\Manager\ProviderBundleManager']]
         arguments:
             $bundle: "@=service('kernel').getBundle('DynamicSearchBundle')"

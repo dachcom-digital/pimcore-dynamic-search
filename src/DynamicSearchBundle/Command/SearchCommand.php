@@ -15,20 +15,12 @@ class SearchCommand extends Command
 {
     use SignalWatchTrait;
 
-    /**
-     * @var ContextRunnerInterface
-     */
-    protected $contextRunner;
+    protected static $defaultName = 'dynamic-search:run';
+    protected static $defaultDescription = 'Run Dynamic Search';
 
-    /**
-     * @var LockServiceInterface
-     */
-    protected $lockService;
+    protected ContextRunnerInterface $contextRunner;
+    protected LockServiceInterface $lockService;
 
-    /**
-     * @param ContextRunnerInterface $contextRunner
-     * @param LockServiceInterface   $lockService
-     */
     public function __construct(ContextRunnerInterface $contextRunner, LockServiceInterface $lockService)
     {
         parent::__construct();
@@ -37,14 +29,9 @@ class SearchCommand extends Command
         $this->lockService = $lockService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('dynamic-search:run')
-            ->setDescription('Run Dynamic Search')
             ->addOption('context', 'c', InputOption::VALUE_REQUIRED, 'Only perform on specific context')
             ->addOption(
                 'force',
@@ -54,13 +41,11 @@ class SearchCommand extends Command
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // should we skip context indexing if queue index is running?
-        // currently we think it's not required:
+        // currently, we think it's not required:
         // queue update is modifying stable index while the context cycle will generate a new one.
 
         // if ($this->lockService->isLocked(LockServiceInterface::QUEUE_INDEXING)) {

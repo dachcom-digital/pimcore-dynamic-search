@@ -8,12 +8,12 @@ use DynamicSearchBundle\Filter\Definition\FilterDefinitionBuilderInterface;
 interface DefinitionBuilderRegistryInterface
 {
     /**
-     * @return DocumentDefinitionBuilderInterface[]
+     * @return array<int, DocumentDefinitionBuilderInterface>
      */
-    public function getAllDocumentDefinitionBuilder();
+    public function getAllDocumentDefinitionBuilder(): array;
 
     /**
-     * @return FilterDefinitionBuilderInterface[]
+     * @return array<int, FilterDefinitionBuilderInterface>
      */
-    public function getAllFilterDefinitionBuilder();
+    public function getAllFilterDefinitionBuilder(): array;
 }

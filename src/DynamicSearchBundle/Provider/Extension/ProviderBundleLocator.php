@@ -9,39 +9,33 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class ProviderBundleLocator implements ProviderBundleLocatorInterface
 {
-    /**
-     * @var Composer\PackageInfo
-     */
-    protected $composerPackageInfo;
+    protected Composer\PackageInfo $composerPackageInfo;
+    protected array $availableBundles;
 
-    /**
-     * @param Composer\PackageInfo $composerPackageInfo
-     */
-    public function __construct(Composer\PackageInfo $composerPackageInfo)
+    public function __construct(Composer\PackageInfo $composerPackageInfo, array $availableBundles)
     {
         $this->composerPackageInfo = $composerPackageInfo;
+        $this->availableBundles = $availableBundles;
     }
 
-    /**
-     * @return array
-     */
-    public function findProviderBundles()
+    public function findProviderBundles(): array
     {
-        $result = $this->findComposerBundles();
-        sort($result);
+        $data = [];
+        foreach ($this->findComposerBundles() as $bundleClass) {
+            $data[] = [
+                'path'   => $bundleClass,
+                'active' => in_array($bundleClass, $this->availableBundles, true)
+            ];
+        }
 
-        return [
-            'dynamic_search_provider_bundles' => $result
-        ];
+        return $data;
     }
 
     /**
      * Finds composer bundles in /vendor
      * if composer package type is "dynamic-search-provider-bundle".
-     *
-     * @return array
      */
-    protected function findComposerBundles()
+    protected function findComposerBundles(): array
     {
         $pimcoreBundles = $this->composerPackageInfo->getInstalledPackages('dynamic-search-provider-bundle');
 
@@ -53,12 +47,7 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
         return $this->findBundlesInPaths($composerPaths);
     }
 
-    /**
-     * @param array $paths
-     *
-     * @return array
-     */
-    protected function findBundlesInPaths(array $paths)
+    protected function findBundlesInPaths(array $paths): array
     {
         if (empty($paths)) {
             return [];
@@ -89,11 +78,7 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
         return $result;
     }
 
-    /**
-     * @param string $bundle
-     * @param array  $result
-     */
-    protected function processBundleClass($bundle, array &$result)
+    protected function processBundleClass(?string $bundle, array &$result): void
     {
         if (empty($bundle) || !is_string($bundle)) {
             return;

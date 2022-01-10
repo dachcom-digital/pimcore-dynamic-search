@@ -5,29 +5,24 @@ namespace DynamicSearchBundle;
 use DynamicSearchBundle\DependencyInjection\Compiler\ContextGuardPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\DataProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\DefinitionBuilderPass;
+use DynamicSearchBundle\DependencyInjection\Compiler\HealthStatePass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\IndexProviderPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\OutputChannelPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\NormalizerPass;
 use DynamicSearchBundle\DependencyInjection\Compiler\ResourceTransformerPass;
-use DynamicSearchBundle\Provider\Extension\ProviderConfig;
 use DynamicSearchBundle\Tool\Install;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
-use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBundleInterface
+class DynamicSearchBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    const PACKAGE_NAME = 'dachcom-digital/dynamic-search';
+    public const PACKAGE_NAME = 'dachcom-digital/dynamic-search';
 
-    /**
-     * @param ContainerBuilder $container
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
@@ -39,52 +34,29 @@ class DynamicSearchBundle extends AbstractPimcoreBundle implements DependentBund
         $container->addCompilerPass(new IndexPass());
         $container->addCompilerPass(new OutputChannelPass());
         $container->addCompilerPass(new ContextGuardPass());
+        $container->addCompilerPass(new HealthStatePass());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function registerDependentBundles(BundleCollection $collection)
-    {
-        $providerConfig = new ProviderConfig();
-        if ($providerConfig->configFileExists()) {
-            foreach ($providerConfig->getAvailableProviderBundles() as $providerBundle) {
-                $collection->addBundle(new $providerBundle());
-            }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getInstaller()
+    public function getInstaller(): Install
     {
         return $this->container->get(Install::class);
     }
 
-    /**
-     * @return string[]
-     */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         return [
-
+            '/bundles/dynamicsearch/js/backend/startup.js',
+            '/bundles/dynamicsearch/js/backend/settings.js',
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [
             '/bundles/dynamicsearch/css/admin.css'
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getComposerPackageName(): string
     {
         return self::PACKAGE_NAME;

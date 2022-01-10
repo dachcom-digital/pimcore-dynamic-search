@@ -11,20 +11,9 @@ use DynamicSearchBundle\Resolver\DocumentDefinitionResolverInterface;
 
 class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
 {
-    /**
-     * @var ConfigurationInterface
-     */
-    protected $configuration;
+    protected ConfigurationInterface $configuration;
+    protected DocumentDefinitionResolverInterface $documentDefinitionResolver;
 
-    /**
-     * @var DocumentDefinitionResolverInterface
-     */
-    protected $documentDefinitionResolver;
-
-    /**
-     * @param ConfigurationInterface              $configuration
-     * @param DocumentDefinitionResolverInterface $documentDefinitionResolver
-     */
     public function __construct(
         ConfigurationInterface $configuration,
         DocumentDefinitionResolverInterface $documentDefinitionResolver
@@ -33,10 +22,10 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
         $this->documentDefinitionResolver = $documentDefinitionResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateDocumentDefinitionForContext(ContextDefinitionInterface $contextDefinition, array $definitionOptions = [])
+    public function generateDocumentDefinitionForContext(
+        ContextDefinitionInterface $contextDefinition,
+        array $definitionOptions = []
+    ): ?DocumentDefinition
     {
         try {
             $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolveForContext($contextDefinition->getName());
@@ -53,11 +42,12 @@ class DocumentDefinitionManager implements DocumentDefinitionManagerInterface
         return $documentDefinition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateDocumentDefinition(ContextDefinitionInterface $contextDefinition, ResourceMetaInterface $resourceMeta, array $definitionOptions = [])
-    {
+    public function generateDocumentDefinition(
+        ContextDefinitionInterface $contextDefinition,
+        ResourceMetaInterface $resourceMeta,
+        array $definitionOptions = []
+    ): ?DocumentDefinition {
+
         try {
             $documentDefinitionBuilderStack = $this->documentDefinitionResolver->resolve($contextDefinition->getName(), $resourceMeta);
         } catch (DefinitionNotFoundException $e) {

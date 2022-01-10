@@ -8,14 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class OptionsResolverValidator
 {
-    /**
-     * @param ContainerBuilder $container
-     * @param array            $contextService
-     * @param array            $serviceDefinitionStack
-     *
-     * @return array
-     */
-    public function validate(ContainerBuilder $container, array $contextService, array $serviceDefinitionStack)
+    public function validate(ContainerBuilder $container, array $contextService, array $serviceDefinitionStack): array
     {
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return [];
@@ -36,7 +29,7 @@ final class OptionsResolverValidator
 
         foreach ($serviceDefinitionStack as $optionProviderClass) {
             if ($service === $optionProviderClass['serviceName']) {
-                $definition = $container->getDefinition($optionProviderClass['id']) ? $container->getDefinition($optionProviderClass['id']) : null;
+                $definition = $container->hasDefinition($optionProviderClass['id']) ? $container->getDefinition($optionProviderClass['id']) : null;
                 break;
             }
         }

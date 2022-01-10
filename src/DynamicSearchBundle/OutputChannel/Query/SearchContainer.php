@@ -7,52 +7,28 @@ use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
 
 class SearchContainer implements SearchContainerInterface
 {
-    /**
-     * @var RawResultInterface
-     */
-    public $result;
+    public RawResultInterface $result;
+    protected string $identifier;
+    protected mixed $query;
 
-    /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var mixed
-     */
-    protected $query;
-
-    /**
-     * @param string $identifier
-     * @param mixed  $query
-     */
-    public function __construct(string $identifier, $query)
+    public function __construct(string $identifier, mixed $query)
     {
         $this->result = new RawResult();
         $this->identifier = $identifier;
         $this->query = $query;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getQuery()
+    public function getQuery(): mixed
     {
         return $this->query;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getRawResult()
+    public function getRawResult(): RawResultInterface
     {
         return $this->result;
     }

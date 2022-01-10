@@ -1,10 +1,9 @@
-pimcore.registerNS('pimcore.layout.toolbar');
-pimcore.registerNS('pimcore.plugin.search');
+pimcore.registerNS('pimcore.plugin.dynamicSearch');
 
-pimcore.plugin.search = Class.create(pimcore.plugin.admin, {
+pimcore.plugin.dynamicSearch = Class.create(pimcore.plugin.admin, {
 
     getClassName: function () {
-        return 'pimcore.plugin.search';
+        return 'pimcore.plugin.dynamic_search';
     },
 
     initialize: function () {
@@ -12,27 +11,38 @@ pimcore.plugin.search = Class.create(pimcore.plugin.admin, {
     },
 
     uninstall: function () {
+        // void
     },
 
     pimcoreReady: function (params, broker) {
-        var user = pimcore.globalmanager.get('user');
-        if (user.isAllowed('plugins')) {
-            var searchMenu = new Ext.Action({
-                id: 'search', text: t('search_settings'), iconCls: 'search_icon', handler: this.openSettings
-            });
 
+        var searchMenu, user = pimcore.globalmanager.get('user');
+
+        if (!user.isAllowed('plugins')) {
+            return;
+        }
+
+        searchMenu = new Ext.Action({
+            id: 'search',
+            text: t('dynamic_search_settings'),
+            iconCls: 'dynamic_search_bundle',
+            handler: this.openSettingsPanel.bind(this)
+        });
+
+        if (layoutToolbar.settingsMenu) {
             layoutToolbar.settingsMenu.add(searchMenu);
         }
+
     },
 
-    openSettings: function () {
+    openSettingsPanel: function () {
         try {
-            pimcore.globalmanager.get('search_settings').activate();
+            pimcore.globalmanager.get('dynamic_search_settings').activate();
         } catch (e) {
-            pimcore.globalmanager.add('search_settings', new pimcore.plugin.search.settings());
+            pimcore.globalmanager.add('dynamic_search_settings', new pimcore.plugin.dynamicSearch.settings());
         }
     }
 
 });
 
-new pimcore.plugin.search();
+new pimcore.plugin.dynamicSearch();

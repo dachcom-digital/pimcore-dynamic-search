@@ -5,20 +5,19 @@ namespace DynamicSearchBundle\Paginator;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 
-interface AdapterInterface extends \Zend\Paginator\Adapter\AdapterInterface
+interface AdapterInterface
 {
-    /**
-     * @param ContextDefinitionInterface $context
-     */
-    public function setContextDefinition(ContextDefinitionInterface $context);
+    public function setContextDefinition(ContextDefinitionInterface $contextDefinition): void;
 
-    /**
-     * @param string $outputChannelName
-     */
-    public function setOutputChannelName(string $outputChannelName);
+    public function setOutputChannelName(string $outputChannelName): void;
 
-    /**
-     * @param DocumentNormalizerInterface $documentNormalizer
-     */
-    public function setDocumentNormalizer(?DocumentNormalizerInterface $documentNormalizer);
+    public function setDocumentNormalizer(?DocumentNormalizerInterface $documentNormalizer): void;
+
+    public function setItemCountPerPage(int $itemCountPerPage): void;
+
+    public function setCurrentPageNumber(int $currentPageNumber): void;
+
+    public function getItems(int $offset, int $itemCountPerPage): array;
+
+    public function getCount(): int;
 }

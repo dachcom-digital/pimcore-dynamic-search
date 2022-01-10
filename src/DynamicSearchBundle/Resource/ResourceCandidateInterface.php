@@ -4,37 +4,21 @@ namespace DynamicSearchBundle\Resource;
 
 interface ResourceCandidateInterface
 {
-    /**
-     * @return bool
-     */
-    public function isAllowedToModifyDispatchType();
+    public function isAllowedToModifyDispatchType(): bool;
+
+    public function isAllowedToModifyResource(): bool;
 
     /**
-     * @return bool
-     */
-    public function isAllowedToModifyResource();
-
-    /**
-     * @param mixed|null $resource
-     *
      * @throws \Exception
      */
-    public function setResource($resource);
+    public function setResource($resource): void;
+
+    public function getResource(): mixed;
 
     /**
-     * @return mixed|null
-     */
-    public function getResource();
-
-    /**
-     * @param string $dispatchType
-     *
      * @throws \Exception
      */
-    public function setDispatchType(string $dispatchType);
+    public function setDispatchType(string $dispatchType): void;
 
-    /**
-     * @return string|null
-     */
-    public function getDispatchType();
+    public function getDispatchType(): string;
 }

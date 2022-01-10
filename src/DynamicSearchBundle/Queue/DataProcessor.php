@@ -12,32 +12,11 @@ use DynamicSearchBundle\Service\LockServiceInterface;
 
 class DataProcessor implements DataProcessorInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
+    protected QueueManagerInterface $queueManager;
+    protected LockServiceInterface $lockService;
+    protected ResourceRunnerInterface $resourceRunner;
 
-    /**
-     * @var QueueManagerInterface
-     */
-    protected $queueManager;
-
-    /**
-     * @var LockServiceInterface
-     */
-    protected $lockService;
-
-    /**
-     * @var ResourceRunnerInterface
-     */
-    protected $resourceRunner;
-
-    /**
-     * @param LoggerInterface         $logger
-     * @param QueueManagerInterface   $queueManager
-     * @param LockServiceInterface    $lockService
-     * @param ResourceRunnerInterface $resourceRunner
-     */
     public function __construct(
         LoggerInterface $logger,
         QueueManagerInterface $queueManager,
@@ -50,10 +29,7 @@ class DataProcessor implements DataProcessorInterface
         $this->resourceRunner = $resourceRunner;
     }
 
-    /**
-     * @param array $options
-     */
-    public function process(array $options)
+    public function process(array $options): void
     {
         if ($this->queueManager->hasActiveJobs() === false) {
             return;
@@ -78,7 +54,7 @@ class DataProcessor implements DataProcessorInterface
         $this->lockService->unlock(LockServiceInterface::QUEUE_INDEXING);
     }
 
-    protected function checkJobs()
+    protected function checkJobs(): void
     {
         $envelopeData = $this->queueManager->getQueuedEnvelopes();
 
@@ -112,13 +88,9 @@ class DataProcessor implements DataProcessorInterface
     }
 
     /**
-     * @param string $contextName
-     * @param string $dispatchType
-     * @param array  $dispatchEnvelopes
-     *
      * @throws SilentException
      */
-    protected function dispatchResourceRunner(string $contextName, string $dispatchType, array $dispatchEnvelopes)
+    protected function dispatchResourceRunner(string $contextName, string $dispatchType, array $dispatchEnvelopes): void
     {
         $resourceMetaStack = [];
         foreach ($dispatchEnvelopes as $envelopeData) {

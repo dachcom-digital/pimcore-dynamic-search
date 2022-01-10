@@ -4,38 +4,21 @@ namespace DynamicSearchBundle\Resource;
 
 class ResourceScaffolderContainer implements ResourceScaffolderContainerInterface
 {
-    /**
-     * @var ResourceScaffolderInterface
-     */
-    protected $scaffolder;
+    protected ResourceScaffolderInterface $scaffolder;
+    protected string $identifier;
 
-    /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @param ResourceScaffolderInterface $scaffolder
-     * @param string                      $identifier
-     */
     public function __construct(ResourceScaffolderInterface $scaffolder, string $identifier)
     {
         $this->scaffolder = $scaffolder;
         $this->identifier = $identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getScaffolder()
+    public function getScaffolder(): ResourceScaffolderInterface
     {
         return $this->scaffolder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
