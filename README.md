@@ -73,7 +73,7 @@ $ bin/console dynamic-search:run -v
 - [Example Setup](docs/0_ExampleSetup.md)
 - [Dispatch Workflow](docs/01_DispatchWorkflow.md)
 - Configuration
-    - [Context Guard](docs/1_Configuration/0_Context Guard.md)
+    - [Context Guard](docs/200_ContextGuard.md)
     - Document Definition
     - Logging
 - Data Creation
