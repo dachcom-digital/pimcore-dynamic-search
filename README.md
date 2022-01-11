@@ -36,7 +36,12 @@ There are several data- and index providers available:
     "dachcom-digital/dynamic-search" : "~2.0.0"
 }
 ```
+### Installation via Extension Manager
+After you have installed the Dynamic Search Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
+- Click the green `+` Button in `Enable / Disable` row
+- Click the green `+` Button in `Install/Uninstall` row
 
+### Installation via CLI
 - Execute: `$ bin/console pimcore:bundle:enable DynamicSearchBundle`
 - Execute: `$ bin/console pimcore:bundle:install DynamicSearchBundle`
 
@@ -44,7 +49,7 @@ There are several data- and index providers available:
 - Execute: `$ bin/console doctrine:migrations:migrate --prefix 'DynamicSearchBundle\Migrations'`
 
 ## Provider Installation
-You need at least one data- and one index provider. They have to be installed separately. 
+You need at least one data- and one index provider. They have to be installed separately.
 Please check out install instruction of each provider (see list above).
 
 ## Add Routes
@@ -68,7 +73,7 @@ $ bin/console dynamic-search:run -v
 - [Example Setup](docs/0_ExampleSetup.md)
 - [Dispatch Workflow](docs/01_DispatchWorkflow.md)
 - Configuration
-    - Context Guard
+    - [Context Guard](docs/200_ContextGuard.md)
     - Document Definition
     - Logging
 - Data Creation
@@ -84,8 +89,8 @@ $ bin/console dynamic-search:run -v
 - API
 
 ## Copyright and License
-Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)  
+Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)
 For licensing details please visit [LICENSE.md](LICENSE.md)
 
 ## Upgrade Info
-Before updating, please [check our upgrade notes!](UPGRADE.md)  
+Before updating, please [check our upgrade notes!](UPGRADE.md)

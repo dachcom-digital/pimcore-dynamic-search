@@ -1,64 +1,98 @@
 # Example Setup
 
-## Configuration
+This setup will allow you a quick start with the bundle. The setup is tested in the official pimcore demo and uses class names and properties as it is provided there.
 
-```yaml
-# app/config/config.yml
+## Installation
+
+Add folowing dependencies to your `composer.josn`
+
+```json
+"require" : {
+    "dachcom-digital/dynamic-search": "~2.0.0",
+    "dachcom-digital/dynamic-search-data-provider-trinity": "~2.0.0",
+    "dachcom-digital/dynamic-search-index-provider-lucene": "~2.0.0",
+}
+```
+
+And finalize the installation via command line
+
+``` bash
+composer upgrade
+bin/console pimcore:bundle:enable DynamicSearchBundle
+bin/console pimcore:bundle:install DynamicSearchBundle
+```
+
+You will also need to enable the bundles in your `config/bundles.php`
+
+``` php
+<?php
+
+return [
+    \DsTrinityDataBundle\DsTrinityDataBundle::class => ['all' => true],
+    \DsLuceneBundle\DsLuceneBundle::class => ['all' => true],
+];
+
+```
+
+## Symfony Configuration
+
+Create a YAML file in your configuration directory
+
+``` yaml
+# config/config/dynamic-search.yml
 services:
 
     App\DynamicSearch\IndexDefinition\Trinity\Definition:
         tags:
             - { name: dynamic_search.document_definition_builder }
-            
+
 dynamic_search:
 
     context:
-        
+
         # set a context with name "default"
         default:
-            
+
             # set data provider
             data_provider:
-                service: 'trinity_data'
+                service: trinity_data
                 options:
                     always:
                         index_object: true
                         object_class_names:
-                            - MyTestClass
-                        index_document: true
+                            - Car
+                        index_document: false
                         index_asset: false
                     full_dispatch:
-                        object_limit: 20
                         document_limit: 10
                 normalizer:
                     service: 'trinity_localized_resource_normalizer'
-                    
+
             # set index provider
             index_provider:
                 service: 'lucene'
                 options:
-                    database_name: 'my_index_database'
+                    database_name: 'example_index_database'
 
             # build output channels
             output_channels:
-                
+
                 autocomplete:
                     service: 'lucene_autocomplete'
-                    
+
                 suggestions:
                     service: 'lucene_suggestions'
                     #options:
                     #    restrict_search_fields:
-                    #        - 'sku'
+                    #        - 'series'
                     normalizer:
                         service: 'lucene_document_key_value_normalizer'
                         #options:
-                        #    skip_fields: ['title']
-                        
+                        #    skip_fields: ['name']
+
                 search:
                     service: 'lucene_search'
                     internal: false
-                    use_frontend_controller: true
                     paginator:
                         enabled: true
                         # adapter_class: ''
@@ -67,7 +101,7 @@ dynamic_search:
                         service: 'lucene_document_key_value_normalizer'
                         #options:
                         #    skip_fields: ['title']
-                        
+
                 multi_search:
                     multiple: true
                     service: 'lucene_multi_search'
@@ -77,12 +111,21 @@ dynamic_search:
                             reference: search
                         type2:
                             reference: search
+```
+
+And link it into your main config. To do so update the imports block at the top. Alternatively you cann just add another `imports` at the bottom.
+
+```yaml
+# config/config/config.yml
+imports:
+    - { resource: dynamic-search.yml }
 
 ```
 
 ## Definition
 ```php
 <?php
+
 namespace App\DynamicSearch\IndexDefinition\Trinity;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
@@ -104,23 +147,22 @@ class Definition implements DocumentDefinitionBuilderInterface
     {
         $definition
             ->addSimpleDocumentFieldDefinition([
-                'name'              => 'sku',
+                'name'              => 'id',
                 'index_transformer' => [
-                    'type' => 'text',
+                    'type' => 'keyword',
                 ],
                 'data_transformer'  => [
-                    'type'          => 'object_getter_extractor',
-                    'configuration' => ['method' => 'getSku']
+                    'type'          => 'element_id_extractor'
                 ]
             ])
             ->addSimpleDocumentFieldDefinition([
-                'name'              => 'title',
+                'name'              => 'name',
                 'index_transformer' => [
                     'type' => 'text',
                 ],
                 'data_transformer'  => [
                     'type'          => 'object_getter_extractor',
-                    'configuration' => ['method' => 'getTitle']
+                    'configuration' => ['method' => 'getName']
                 ]
             ])
             ->addPreProcessFieldDefinition([
@@ -136,10 +178,28 @@ class Definition implements DocumentDefinitionBuilderInterface
                         'index_transformer' => [
                             'type' => 'keyword',
                         ],
-                        'value'             => '1'
+                        'data_transformer'  => [
+                            'type'          => 'normalizer_value_callback',
+                            'configuration' => ['value' => '1']
+                        ]
                     ]);
                 }
             });
+
+        return $definition;
     }
 }
+
 ```
+
+## Indexing
+
+To index your data just execute folowing in the command line
+
+``` bash
+bin/console dynamic-search:run
+```
+
+## Test
+
+You can test your setup in browser using the URL `/dynamic-search/default/j-search?q=xk140` where the `q` parameter is the search queue.
