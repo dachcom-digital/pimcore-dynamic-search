@@ -20,7 +20,7 @@ class DefinitionBuilderRegistry implements DefinitionBuilderRegistryInterface
         $this->registryStorage->store($service, DocumentDefinitionBuilderInterface::class, 'documentDefinitionBuilder', get_class($service));
     }
 
-    public function registerFilterDefinition(DocumentDefinitionBuilderInterface $service): void
+    public function registerFilterDefinition(FilterDefinitionBuilderInterface $service): void
     {
         $this->registryStorage->store($service, FilterDefinitionBuilderInterface::class, 'filterDefinitionBuilder', get_class($service));
     }
