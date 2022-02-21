@@ -28,10 +28,6 @@ class RegistryStorage
      */
     public function store($service, $requiredInterface, $namespace, $identifier, $alias = null, $allowMultipleAppearance = false)
     {
-        if (!isset($this->store[$namespace])) {
-            $this->store[$namespace] = [];
-        }
-
         if (!in_array($requiredInterface, class_implements($service), true)) {
             throw new \InvalidArgumentException(
                 sprintf(

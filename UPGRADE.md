@@ -6,6 +6,12 @@
 After every update you should check the pimcore extension manager. 
 Just click the "update" button or execute the migration command to finish the bundle update.
 
+#### 1.0.3
+- **[BUGFIX]**: fix invalid array initialization in registry store
+
+#### 1.0.2
+- **[BUGFIX]**: fix multi search container iteration
+
 #### Update from Version 1.0.0 to Version 1.0.1
 - **[IMPROVEMENT]**: Introduce ResourceCandidate [#24](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/24)
 
