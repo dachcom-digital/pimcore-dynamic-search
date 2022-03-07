@@ -54,7 +54,7 @@ Please check out install instruction of each provider (see list above).
 
 ## Add Routes
 ```yaml
-# app/config/routing.yml
+# config/routes.yaml
 dynamic_search_frontend:
     resource: '@DynamicSearchBundle/Resources/config/pimcore/routing/frontend_routing.yml'
 ```

@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+### 2.0.1
+- [BUGFIX] Fix method argument definition in `DefinitionBuilderRegistry::registerFilterDefinition` [@ThisIsJustARandomGuy ](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/45)
+
 ## Migrating from Version 1.x to Version 2.0.0
 
 ### Global Changes
