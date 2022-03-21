@@ -1,10 +1,10 @@
 # Example Setup
 
-This setup will allow you a quick start with the bundle. The setup is tested in the official pimcore demo and uses class names and properties as it is provided there.
+This setup allows you a quick start with the bundle. The setup is tested within the official pimcore demo and uses class names and properties provided there.
 
 ## Installation
 
-Add folowing dependencies to your `composer.josn`
+Add the following dependencies to your `composer.json`
 
 ```json
 "require" : {
@@ -113,7 +113,7 @@ dynamic_search:
                             reference: search
 ```
 
-And link it into your main config. To do so update the imports block at the top. Alternatively you cann just add another `imports` at the bottom.
+And link it into your main config. To do so update the imports block at the top. Alternatively, you can just add another `imports` at the bottom.
 
 ```yaml
 # config/config/config.yml
@@ -194,7 +194,7 @@ class Definition implements DocumentDefinitionBuilderInterface
 
 ## Indexing
 
-To index your data just execute folowing in the command line
+To index your data, execute folowing in the command line
 
 ``` bash
 bin/console dynamic-search:run
