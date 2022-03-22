@@ -227,7 +227,7 @@ class Configuration implements ConfigurationInterface
                             return $values;
                         }
 
-                        $values['view_name'] = isset($values['multiple']) && $values['multiple'] === true ? 'MultiList' : 'List';
+                        $values['view_name'] = isset($values['multiple']) && $values['multiple'] === true ? 'multi-list' : 'list';
 
                         return $values;
                     })

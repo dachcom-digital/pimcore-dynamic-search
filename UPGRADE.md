@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+### 2.0.2
+- [BUGFIX] Fix `view_name` in default configuration `Configuration::buildContextOutputChannelsNode`
+
 ### 2.0.1
 - [BUGFIX] Fix method argument definition in `DefinitionBuilderRegistry::registerFilterDefinition` [@ThisIsJustARandomGuy ](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/45)
 
