@@ -39,10 +39,14 @@ return [
 Create a YAML file in your configuration directory
 
 ``` yaml
-# config/config/dynamic-search.yml
+# config/packages/dynamic-search.yaml
 services:
 
-    App\DynamicSearch\IndexDefinition\Trinity\Definition:
+    App\DynamicSearch\IndexDefinition\TrinityDocument:
+        tags:
+            - { name: dynamic_search.document_definition_builder }
+
+    App\DynamicSearch\IndexDefinition\Object\Car:
         tags:
             - { name: dynamic_search.document_definition_builder }
 
@@ -61,7 +65,7 @@ dynamic_search:
                         index_object: true
                         object_class_names:
                             - Car
-                        index_document: false
+                        index_document: true
                         index_asset: false
                     full_dispatch:
                         document_limit: 10
@@ -96,7 +100,7 @@ dynamic_search:
                     paginator:
                         enabled: true
                         # adapter_class: ''
-                        max_per_page: 1
+                        max_per_page: 10
                     normalizer:
                         service: 'lucene_document_key_value_normalizer'
                         #options:
@@ -113,26 +117,19 @@ dynamic_search:
                             reference: search
 ```
 
-And link it into your main config. To do so update the imports block at the top. Alternatively, you can just add another `imports` at the bottom.
+Symfony will detect the config in `config/packages` automaticly, you do not have to link it.
 
-```yaml
-# config/config/config.yml
-imports:
-    - { resource: dynamic-search.yml }
-
-```
-
-## Definition
+## Definition for a DataObject
 ```php
 <?php
 
-namespace App\DynamicSearch\IndexDefinition\Trinity;
+namespace App\DynamicSearch\IndexDefinition\Object;
 
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
 use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
 use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
 
-class Definition implements DocumentDefinitionBuilderInterface
+class Car implements DocumentDefinitionBuilderInterface
 {
     public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta): bool
     {
@@ -192,13 +189,90 @@ class Definition implements DocumentDefinitionBuilderInterface
 
 ```
 
+## Definition for a Document
+
+This definition will only save index for the id, title and meta dascription. If you want to save the content of the page you will have to use the [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) or read the content using callbacks. This might be a bit more complex, as you need to consider the concept of personalized content and your own set of bricks.
+
+``` php
+<?php
+
+namespace App\DynamicSearch\IndexDefinition;
+
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionBuilderInterface;
+use DynamicSearchBundle\Document\Definition\DocumentDefinitionInterface;
+use DynamicSearchBundle\Normalizer\Resource\ResourceMetaInterface;
+
+class TrinityDocument implements DocumentDefinitionBuilderInterface
+{
+    public function isApplicable(string $contextName, ResourceMetaInterface $resourceMeta): bool
+    {
+        if ($resourceMeta->getResourceCollectionType() !== 'document') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function buildDefinition(DocumentDefinitionInterface $definition, array $normalizerOptions): DocumentDefinitionInterface
+    {
+        $definition
+            ->addSimpleDocumentFieldDefinition([
+                'name'              => 'id',
+                'index_transformer' => [
+                    'type' => 'keyword',
+                ],
+                'data_transformer'  => [
+                    'type'          => 'element_id_extractor',
+                ]
+            ])
+            ->addSimpleDocumentFieldDefinition([
+                'name'              => 'path',
+                'index_transformer' => [
+                    'type' => 'text',
+                ],
+                'data_transformer'  => [
+                    'type'          => 'document_path_generator',
+                ]
+            ])
+            ->addSimpleDocumentFieldDefinition([
+                'name'              => 'title',
+                'index_transformer' => [
+                    'type' => 'text',
+                ],
+                'data_transformer'  => [
+                    'type'          => 'document_meta_extractor',
+                    'configuration' => [
+                        'type' => 'title',
+                    ],
+                ]
+            ])
+            ->addSimpleDocumentFieldDefinition([
+                'name'              => 'description',
+                'index_transformer' => [
+                    'type' => 'text',
+                ],
+                'data_transformer'  => [
+                    'type'          => 'document_meta_extractor',
+                    'configuration' => [
+                        'type' => 'description',
+                    ],
+                ]
+            ]);
+
+        return $definition;
+    }
+}
+```
+
 ## Indexing
 
 To index your data, execute folowing in the command line
 
 ``` bash
-bin/console dynamic-search:run
+bin/console dynamic-search:run -v
 ```
+
+The parameter `-v` will make thoe output more verbose and can help you to find anny problems in the config.
 
 ## Test
 
