@@ -117,7 +117,7 @@ dynamic_search:
                             reference: search
 ```
 
-Symfony will detect the config in `config/packages` automaticly, you do not have to link it.
+Symfony will detect the config in `config/packages` automatically, you do not have to link it.
 
 ## Definition for a DataObject
 ```php
@@ -191,7 +191,7 @@ class Car implements DocumentDefinitionBuilderInterface
 
 ## Definition for a Document
 
-This definition will only save index for the id, title and meta dascription. If you want to save the content of the page you will have to use the [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) or read the content using callbacks. This might be a bit more complex, as you need to consider the concept of personalized content and your own set of bricks.
+This definition will only save index for the id, title and meta description. If you want to save the content of the page you will have to use the [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) or read the content using callbacks. This might be a bit more complex, as you need to consider the concept of personalized content and your own set of bricks.
 
 ``` php
 <?php
@@ -266,13 +266,13 @@ class TrinityDocument implements DocumentDefinitionBuilderInterface
 
 ## Indexing
 
-To index your data, execute folowing in the command line
+To index your data, execute following in the command line
 
 ``` bash
 bin/console dynamic-search:run -v
 ```
 
-The parameter `-v` will make thoe output more verbose and can help you to find anny problems in the config.
+The parameter `-v` will make thoe output more verbose and can help you to find any problems in the config.
 
 ## Test
 
