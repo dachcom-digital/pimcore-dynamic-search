@@ -33,12 +33,13 @@ class FilterStackWorker
     {
         $filterBlocks = [];
         foreach ($filterStack as $filterService) {
+            $filterName = $filterService['name'] ?? uniqid();
             $preparedFilterService = $this->prepareFilter($filterService);
             if ($preparedFilterService->supportsFrontendView() === true) {
                 $filterValues = $preparedFilterService->findFilterValueInResult($searchContainer->getRawResult());
                 $viewVars = $preparedFilterService->buildViewVars($searchContainer->getRawResult(), $filterValues, $searchContainer->getQuery());
                 if ($viewVars !== null) {
-                    $filterBlocks[] = $viewVars;
+                    $filterBlocks[$filterName] = $viewVars;
                 }
             }
         }
