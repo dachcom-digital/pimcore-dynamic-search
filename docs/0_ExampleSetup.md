@@ -147,7 +147,7 @@ class Definition implements DocumentDefinitionBuilderInterface
     {
         $definition
             ->addSimpleDocumentFieldDefinition([
-                'name'              => 'id',
+                'name'              => 'pimcoreId',
                 'index_transformer' => [
                     'type' => 'keyword',
                 ],
@@ -189,7 +189,6 @@ class Definition implements DocumentDefinitionBuilderInterface
         return $definition;
     }
 }
-
 ```
 
 ## Indexing
@@ -201,5 +200,4 @@ bin/console dynamic-search:run
 ```
 
 ## Test
-
 You can test your setup in browser using the URL `/dynamic-search/default/j-search?q=xk140` where the `q` parameter is the search queue.
