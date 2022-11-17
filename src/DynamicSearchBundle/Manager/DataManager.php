@@ -36,7 +36,7 @@ class DataManager implements DataManagerInterface
             throw new ProviderException('Invalid requested data provider', $dataProviderName);
         }
 
-        $dataProvider = $this->dataProviderRegistry->get($dataProviderName);
+        $dataProvider = clone($this->dataProviderRegistry->get($dataProviderName));
         $dataProvider->setOptions($contextDefinition->getDataProviderOptions($providerBehaviour));
 
         $this->validProviders[$cacheKey] = $dataProvider;
