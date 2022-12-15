@@ -273,6 +273,10 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             } catch (\Exception $e) {
                 throw new OutputChannelException($outputChannelName, $e->getMessage(), $e);
             }
+        } elseif (is_array($rawResult->getData())) {
+            $result = $rawResult->getData();
+        } else {
+            throw new OutputChannelException($outputChannelName, 'Output channel result needs to be type of array. Please make sure you have defined a valid document normalizer');
         }
 
         $arrayOutputResult = new OutputChannelArrayResult(
