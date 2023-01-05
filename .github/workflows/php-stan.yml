@@ -38,11 +38,11 @@ jobs:
         strategy:
             matrix:
                 php: [ 8.0 ]
-                symfony: [ ^5.3 ]
-                pimcore: [ ~10.1.0 ]
+                symfony: [ ^5.4 ]
+                pimcore: [ ~10.5.0 ]
                 include:
-                    -   pimcore: ~10.1.0
-                        template_tag: v10.1.0
+                    -   pimcore: ~10.5.0
+                        template_tag: v10.2.0
         steps:
             -   uses: actions/checkout@v2
                 with:
@@ -113,4 +113,4 @@ jobs:
             -   name: Php Stan
                 run: |
                     bin/console cache:warmup --env=test
-                    vendor/bin/phpstan analyse -c${{ github.workspace }}/lib/test-bundle/phpstan.neon -a ${{ github.workspace }}/lib/test-bundle/tests/_phpstan-bootstrap.php ${{ github.workspace }}/lib/test-bundle/src -l 4
+                    vendor/bin/phpstan analyse -c ${{ github.workspace }}/lib/test-bundle/phpstan.neon -a ${{ github.workspace }}/lib/test-bundle/tests/_phpstan-bootstrap.php ${{ github.workspace }}/lib/test-bundle/src -l 4
