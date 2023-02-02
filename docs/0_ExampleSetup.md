@@ -2,12 +2,14 @@
 
 This setup allows you a quick start with the bundle. The setup is tested within the official pimcore demo and uses class names and properties provided there.
 
+Are you looking for an example of a more complex Pimcore setup? Here's another [example](02_MultiSiteMultiLocaleSetup.md).
+
 ## Installation
 
 Add the following dependencies to your `composer.json`
 
 ```json
-"require" : {
+"require": {
     "dachcom-digital/dynamic-search": "~2.0.0",
     "dachcom-digital/dynamic-search-data-provider-trinity": "~2.0.0",
     "dachcom-digital/dynamic-search-index-provider-lucene": "~2.0.0",
