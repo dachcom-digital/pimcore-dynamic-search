@@ -27,7 +27,7 @@ There are several data- and index providers available:
 ### Index Provider
 - [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene) | Use the php lucene index. Not super-fast but comes without any dependencies but php
 - [Elastic Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch) | Index data with an elasticsearch instance.
-- _apisearch.io_ | _coming soon_
+- [Open Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-opensearch) | Index data with an opensearch instance.
 
 ## Installation  
 
