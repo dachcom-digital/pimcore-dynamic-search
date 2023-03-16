@@ -42,4 +42,5 @@ options for the output channel go here
 
 Check out the following implementations of `OutputChannelInterface`:
 - [SearchOutputChannel](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch/blob/master/src/DsElasticSearchBundle/OutputChannel/SearchOutputChannel.php) of `pimcore-dynamic-search-index-provider-elasticsearch`
+- [SearchOutputChannel](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-opensearch/blob/main/src/DsOpenSearchBundle/OutputChannel/SearchOutputChannel.php) of `pimcore-dynamic-search-index-provider-opensearch`
 - [SearchOutputChannel](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene/blob/master/src/DsLuceneBundle/OutputChannel/SearchOutputChannel.php) of `pimcore-dynamic-search-index-provider-lucene`
