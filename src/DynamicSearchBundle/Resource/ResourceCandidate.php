@@ -23,6 +23,11 @@ class ResourceCandidate implements ResourceCandidateInterface
     {
         return $this->allowDispatchTypeModification === true;
     }
+    
+    public function getContextName(): string
+    {
+        return $this->contextName;
+    }
 
     public function isAllowedToModifyResource(): bool
     {
