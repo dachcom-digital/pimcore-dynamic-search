@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+### 2.1.1
+- [IMPROVEMENT] Added getter for `DynamicSearchBundle\Resource\ResourceCandidate::$contextName` [#55](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/55)
+
 ### 2.1.0
 - [IMPROVEMENT] return raw result data if no normalizer is defined [#63](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/63)
 ### 2.0.2
