@@ -49,7 +49,7 @@ class SearchController extends AbstractController
         if ($outputChannelResult instanceof MultiOutputChannelResultInterface) {
             $params = [];
             foreach ($outputChannelResult->getResults() as $resultBlockIdentifier => $resultBlock) {
-                $params[] = $this->getOutputParameters($outputChannelResult);
+                $params[] = $this->getOutputParameters($resultBlock);
             }
 
             return $this->json($params);
