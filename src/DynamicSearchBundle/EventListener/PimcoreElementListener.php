@@ -57,6 +57,13 @@ class PimcoreElementListener implements EventSubscriberInterface
             return;
         }
 
+        if (
+            ($event->hasArgument('saveVersionOnly') && $event->getArgument('saveVersionOnly') === true) ||
+            ($event->hasArgument('isAutoSave') && $event->getArgument('isAutoSave') === true)
+        ) {
+            return;
+        }
+
         $dispatchType = $event->getDocument()->isPublished() === false
             ? ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE
             : ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
@@ -86,6 +93,13 @@ class PimcoreElementListener implements EventSubscriberInterface
     public function onObjectPostUpdate(DataObjectEvent $event): void
     {
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
+            return;
+        }
+
+        if (
+            ($event->hasArgument('saveVersionOnly') && $event->getArgument('saveVersionOnly') === true) ||
+            ($event->hasArgument('isAutoSave') && $event->getArgument('isAutoSave') === true)
+        ) {
             return;
         }
 
