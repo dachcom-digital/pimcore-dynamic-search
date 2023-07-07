@@ -3,7 +3,8 @@
 ### 2.1.1
 - [IMPROVEMENT] Added getter for `DynamicSearchBundle\Resource\ResourceCandidate::$contextName` [#55](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/55)
 - [IMPROVEMENT] Ignore `isAutoSave`, `saveVersionOnly` in element listener [#62](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/62)
-- [BUGFIX] remove provider cache to avoid configuration sharing [#72](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/72)
+- [BUGFIX] Remove provider cache to avoid configuration sharing [#72](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/72)
+- [BUGFIX] Fix parameter assignment for multi channels [#71](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/71)
 
 ### 2.1.0
 - [IMPROVEMENT] return raw result data if no normalizer is defined [#63](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/63)
