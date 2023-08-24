@@ -1,20 +1,6 @@
-pimcore.registerNS('pimcore.plugin.dynamicSearch');
+class DynamicSearch {
 
-pimcore.plugin.dynamicSearch = Class.create(pimcore.plugin.admin, {
-
-    getClassName: function () {
-        return 'pimcore.plugin.dynamic_search';
-    },
-
-    initialize: function () {
-        pimcore.plugin.broker.registerPlugin(this);
-    },
-
-    uninstall: function () {
-        // void
-    },
-
-    pimcoreReady: function (params, broker) {
+    init() {
 
         var searchMenu, user = pimcore.globalmanager.get('user');
 
@@ -33,9 +19,9 @@ pimcore.plugin.dynamicSearch = Class.create(pimcore.plugin.admin, {
             layoutToolbar.settingsMenu.add(searchMenu);
         }
 
-    },
+    }
 
-    openSettingsPanel: function () {
+    openSettingsPanel() {
         try {
             pimcore.globalmanager.get('dynamic_search_settings').activate();
         } catch (e) {
@@ -43,6 +29,8 @@ pimcore.plugin.dynamicSearch = Class.create(pimcore.plugin.admin, {
         }
     }
 
-});
+}
 
-new pimcore.plugin.dynamicSearch();
+const dynamicSearchHandler = new DynamicSearch();
+
+document.addEventListener(pimcore.events.pimcoreReady, dynamicSearchHandler.init.bind(dynamicSearchHandler));

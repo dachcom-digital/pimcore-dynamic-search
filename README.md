@@ -10,7 +10,8 @@
 ### Release Plan
 | Release | Supported Pimcore Versions | Supported Symfony Versions | Release Date | Maintained           | Branch                                                                    |
 |---------|----------------------------|----------------------------|--------------|----------------------|---------------------------------------------------------------------------|
-| **2.x** | `10.0` - `10.6`            | `^5.4`                     | 19.12.2021   | Yes (Bugs, Features) | master                                                                    |
+| **3.x** | `11.0`                     | `^6.2`                     | --           | Yes (Bugs, Features) | master                                                                    |
+| **2.x** | `10.0` - `10.6`            | `^5.4`                     | 19.12.2021   | No                   | [2.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/2.x) |
 | **1.x** | `6.6` - `6.9`              | `^4.4`                     | 18.04.2021   | No                   | [1.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/1.x) |
 
 ## Introduction
@@ -25,24 +26,24 @@ There are several data- and index providers available:
 - [Trinity Data](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity) | Fetch pimcore entities: object, asset, document
 
 ### Index Provider
-- [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene) | Use the php lucene index. Not super-fast but comes without any dependencies but php
-- [Elastic Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch) | Index data with an elasticsearch instance.
-- [Open Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-opensearch) | Index data with an opensearch instance.
+- [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene) | Use the php lucene index. Not superfast but comes without any dependencies but php
+- [Elasticsearch](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch) | Index data with an elasticsearch instance.
+- [Open Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-opensearch) | Index data with an open search instance.
 
 ## Installation  
 
 ```json
 "require" : {
-    "dachcom-digital/dynamic-search" : "~2.0.0"
+    "dachcom-digital/dynamic-search" : "~3.0.0"
 }
 ```
-### Installation via Extension Manager
-After you have installed the Dynamic Search Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
-- Click the green `+` Button in `Enable / Disable` row
-- Click the green `+` Button in `Install/Uninstall` row
 
-### Installation via CLI
-- Execute: `$ bin/console pimcore:bundle:enable DynamicSearchBundle`
+Add Bundle to `bundles.php`:
+```php
+return [
+    DynamicSearchBundle\DynamicSearchBundle::class => ['all' => true],
+];
+
 - Execute: `$ bin/console pimcore:bundle:install DynamicSearchBundle`
 
 ## Upgrading
@@ -56,7 +57,7 @@ Please check out install instruction of each provider (see list above).
 ```yaml
 # config/routes.yaml
 dynamic_search_frontend:
-    resource: '@DynamicSearchBundle/Resources/config/pimcore/routing/frontend_routing.yml'
+    resource: '@DynamicSearchBundle/config/pimcore/routing/frontend_routing.yaml'
 ```
 
 ## Dispatch Dynamic Search

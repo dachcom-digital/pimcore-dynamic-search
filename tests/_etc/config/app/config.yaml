@@ -2,12 +2,18 @@ imports:
     - { resource: services.yaml }
     - { resource: 'local/' }
 
+services:
+    App\Controller\DefaultController:
+        public: true
+        autowire: true
+        autoconfigure: true
+        calls:
+            - [setContainer, ['@service_container']]
+
 doctrine:
     dbal:
         connections:
             default:
-                options:
-                    1002: 'SET SESSION wait_timeout=30;'
                 mapping_types:
                     enum: string
                     bit: boolean
