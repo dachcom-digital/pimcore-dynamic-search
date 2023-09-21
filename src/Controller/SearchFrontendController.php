@@ -10,6 +10,7 @@ use DynamicSearchBundle\OutputChannel\Result\OutputChannelPaginatorResultInterfa
 use DynamicSearchBundle\OutputChannel\Result\OutputChannelResultInterface;
 use DynamicSearchBundle\Processor\OutputChannelProcessorInterface;
 use Pimcore\Controller\FrontendController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class SearchFrontendController extends FrontendController
 {
     public function __construct(
+        protected FormFactoryInterface $formFactory,
         protected ConfigurationInterface $configuration,
         protected OutputChannelProcessorInterface $outputChannelWorkflowProcessor
     ) {
@@ -57,7 +59,7 @@ class SearchFrontendController extends FrontendController
         $outputChannelResult = null;
         $searchActive = false;
 
-        $form = $this->get('form.factory')->createNamed('', SearchFormType::class, null, ['method' => 'GET']);
+        $form = $this->formFactory->createNamed('', SearchFormType::class, null, ['method' => 'GET']);
 
         $form = $form->handleRequest($request);
 
