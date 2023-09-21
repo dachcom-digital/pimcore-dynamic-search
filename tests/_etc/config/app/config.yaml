@@ -1,0 +1,50 @@
+imports:
+    - { resource: services.yaml }
+    - { resource: 'local/' }
+
+doctrine:
+    dbal:
+        connections:
+            default:
+                options:
+                    1002: 'SET SESSION wait_timeout=30;'
+                mapping_types:
+                    enum: string
+                    bit: boolean
+
+pimcore:
+    config_location:
+        image_thumbnails:
+            write_target:
+                type: 'settings-store'
+        video_thumbnails:
+            write_target:
+                type: 'settings-store'
+        document_types:
+            write_target:
+                type: 'settings-store'
+        predefined_properties:
+            write_target:
+                type: 'settings-store'
+        predefined_asset_metadata:
+            write_target:
+                type: 'settings-store'
+        perspectives:
+            write_target:
+                type: 'settings-store'
+        custom_views:
+            write_target:
+                type: 'settings-store'
+        object_custom_layouts:
+            write_target:
+                type: 'settings-store'
+
+framework:
+    profiler:
+        enabled: true
+        collect: false
+    # don't send real emails in functional tests
+    mailer:
+        transports:
+            main: 'null://null'
+            pimcore_newsletter: 'null://null'
