@@ -54,6 +54,7 @@ class QueueManager implements QueueManagerInterface
 
         /** @var TmpStore $job */
         foreach ($jobs as $job) {
+
             /** @var Envelope $envelope */
             $envelope = $job->getData();
             $contextName = $envelope->getContextName();
@@ -63,7 +64,8 @@ class QueueManager implements QueueManagerInterface
             if (!isset($filteredResourceStack[$contextName])) {
                 $filteredResourceStack[$contextName] = [];
             }
-            if (!isset($filteredResourceStack[$contextName])) {
+
+            if (!isset($filteredResourceStack[$contextName][$dispatchType])) {
                 $filteredResourceStack[$contextName][$dispatchType] = [];
             }
 

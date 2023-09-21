@@ -85,11 +85,7 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
             return;
         }
 
-        try {
-            $reflector = new \ReflectionClass($bundle);
-        } catch (\ReflectionException $e) {
-            return;
-        }
+        $reflector = new \ReflectionClass($bundle);
 
         if (!$reflector->isInstantiable() || !$reflector->implementsInterface(ProviderBundleInterface::class)) {
             return;

@@ -14,10 +14,10 @@ class DefaultRuntimeOptionsBuilder implements RuntimeOptionsBuilderInterface
     {
         $obj = new \ArrayObject();
 
-        $obj['prefix'] = $prefix;
-        $obj['current_page'] = $this->getCurrentPage($prefix);
-        $obj['page_identifier'] = $this->getPageIdentifier($prefix);
-        $obj['request_query_vars'] = $this->getRequestQueryVars($prefix);
+        $obj->offsetSet('prefix', $prefix);
+        $obj->offsetSet('current_page', $this->getCurrentPage($prefix));
+        $obj->offsetSet('page_identifier', $this->getPageIdentifier($prefix));
+        $obj->offsetSet('request_query_vars', $this->getRequestQueryVars($prefix));
 
         return $obj;
     }

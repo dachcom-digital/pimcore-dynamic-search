@@ -49,6 +49,7 @@ final class NormalizerPass implements CompilerPassInterface
 
     protected function validateResourceNormalizerOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
+        /** @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
         }
@@ -78,6 +79,7 @@ final class NormalizerPass implements CompilerPassInterface
 
     protected function validateDocumentNormalizerOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
+        /** @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
         }

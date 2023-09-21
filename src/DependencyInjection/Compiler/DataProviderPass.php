@@ -33,6 +33,7 @@ final class DataProviderPass implements CompilerPassInterface
 
     protected function validateOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
+        /** @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
         }

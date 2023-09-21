@@ -10,6 +10,7 @@ final class OptionsResolverValidator
 {
     public function validate(ContainerBuilder $container, array $contextService, array $serviceDefinitionStack): array
     {
+        /** @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return [];
         }

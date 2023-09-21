@@ -175,6 +175,7 @@ final class OutputChannelPass implements CompilerPassInterface
 
     protected function validateOutputChannelOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
+        /** @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
         }
