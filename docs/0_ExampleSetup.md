@@ -39,7 +39,7 @@ return [
 Create a YAML file in your configuration directory
 
 ``` yaml
-# config/config/dynamic-search.yml
+# config/config/dynamic-search.yaml
 services:
 
     App\DynamicSearch\IndexDefinition\Trinity\Definition:
@@ -116,9 +116,9 @@ dynamic_search:
 And link it into your main config. To do so update the imports block at the top. Alternatively, you can just add another `imports` at the bottom.
 
 ```yaml
-# config/config/config.yml
+# config/config/config.yaml
 imports:
-    - { resource: dynamic-search.yml }
+    - { resource: dynamic-search.yaml }
 
 ```
 
@@ -193,7 +193,7 @@ class Definition implements DocumentDefinitionBuilderInterface
 
 ## Indexing
 
-To index your data, execute folowing in the command line
+To index your data, just execute:
 
 ``` bash
 bin/console dynamic-search:run
