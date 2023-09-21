@@ -43,6 +43,7 @@ Add Bundle to `bundles.php`:
 return [
     DynamicSearchBundle\DynamicSearchBundle::class => ['all' => true],
 ];
+```
 
 - Execute: `$ bin/console pimcore:bundle:install DynamicSearchBundle`
 
