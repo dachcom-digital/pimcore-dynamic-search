@@ -34,6 +34,7 @@
         }
     },
     "require": {
+        "symfony/form": "^6.2",
         "pimcore/pimcore": "^11.0"
     },
     "require-dev": {
