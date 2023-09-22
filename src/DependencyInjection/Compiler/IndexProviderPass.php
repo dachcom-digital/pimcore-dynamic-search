@@ -15,9 +15,9 @@ final class IndexProviderPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
+        $serviceDefinitionStack = [];
         $definition = $container->getDefinition(IndexProviderRegistry::class);
 
-        $serviceDefinitionStack = [];
         foreach ($container->findTaggedServiceIds(self::INDEX_PROVIDER_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
 
