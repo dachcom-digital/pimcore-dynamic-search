@@ -2,6 +2,10 @@
 
 ## Migrating from Version 2.x to Version 3.0.
 
+### Breaking Changes
+- filters will be passed to the view as associative array, having the filter names as keys (#59)  
+  filter names must match the pattern `/^[a-z0-9_\-\.]+$/i`
+
 ### Global Changes
 - Recommended folder structure by symfony adopted
 - [ROUTE] Route include changed from `DynamicSearchBundle/Resources/config/pimcore/routing/frontend_routing.yml` to `DynamicSearchBundle/config/pimcore/routing/frontend_routing.yaml`
