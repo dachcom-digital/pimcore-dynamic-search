@@ -3,6 +3,8 @@
 namespace DynamicSearchBundle\Filter\Definition;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Validation;
 
 class FilterDefinition implements FilterDefinitionInterface
 {
@@ -17,6 +19,8 @@ class FilterDefinition implements FilterDefinitionInterface
         $resolver->setAllowedTypes('name', ['string']);
         $resolver->setAllowedTypes('label', ['string', 'null']);
         $resolver->setAllowedTypes('configuration', ['array']);
+
+        $resolver->setAllowedValues('name', Validation::createIsValidCallable(new Regex('/^[a-z0-9_\-\.]+$/i')));
 
         $resolver->setDefaults([
             'label'         => null,
