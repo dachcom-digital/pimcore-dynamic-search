@@ -9,9 +9,9 @@ Add the following dependencies to your `composer.json`
 
 ```json
 "require": {
-  "dachcom-digital/dynamic-search": "^2.0",
-  "dachcom-digital/dynamic-search-data-provider-trinity": "^2.0",
-  "dachcom-digital/dynamic-search-index-provider-elasticsearch": "^2.0"
+  "dachcom-digital/dynamic-search": "^3.0",
+  "dachcom-digital/dynamic-search-data-provider-trinity": "^3.0",
+  "dachcom-digital/dynamic-search-index-provider-elasticsearch": "^3.0"
 }
 ```
 
