@@ -8,11 +8,11 @@
 [![PhpStan](https://img.shields.io/github/actions/workflow/status/dachcom-digital/pimcore-dynamic-search/.github/workflows/php-stan.yml?branch=master&style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-dynamic-search/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
 
 ### Release Plan
-| Release | Supported Pimcore Versions | Supported Symfony Versions | Release Date | Maintained           | Branch                                                                    |
-|---------|----------------------------|----------------------------|--------------|----------------------|---------------------------------------------------------------------------|
-| **3.x** | `11.0`                     | `^6.2`                     | --           | Yes (Bugs, Features) | master                                                                    |
-| **2.x** | `10.0` - `10.6`            | `^5.4`                     | 19.12.2021   | No                   | [2.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/2.x) |
-| **1.x** | `6.6` - `6.9`              | `^4.4`                     | 18.04.2021   | No                   | [1.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/1.x) |
+| Release | Supported Pimcore Versions | Supported Symfony Versions | Release Date | Maintained      | Branch                                                                    |
+|---------|----------------------------|----------------------------|--------------|-----------------|---------------------------------------------------------------------------|
+| **3.x** | `11.0`                     | `^6.2`                     | 28.09.2023   | Feature Branch  | master                                                                    |
+| **2.x** | `10.0` - `10.6`            | `^5.4`                     | 19.12.2021   | No              | [2.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/2.x) |
+| **1.x** | `6.6` - `6.9`              | `^4.4`                     | 18.04.2021   | No              | [1.x](https://github.com/dachcom-digital/pimcore-dynamic-search/tree/1.x) |
 
 ## Introduction
 The Dynamic Search Bundle allows you to redefine your search strategy. 
