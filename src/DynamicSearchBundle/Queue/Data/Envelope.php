@@ -11,14 +11,16 @@ class Envelope
     protected string $dispatchType;
     protected array $resourceMetaStack;
     protected array $options;
+    protected ?float $creationTime;
 
-    public function __construct(string $id, string $contextName, string $dispatchType, array $resourceMetaStack, array $options)
+    public function __construct(string $id, string $contextName, string $dispatchType, array $resourceMetaStack, array $options, ?float $creationTime = null)
     {
         $this->id = $id;
         $this->contextName = $contextName;
         $this->dispatchType = $dispatchType;
         $this->resourceMetaStack = $resourceMetaStack;
         $this->options = $options;
+        $this->creationTime = $creationTime;
     }
 
     public function getId(): string
@@ -47,5 +49,10 @@ class Envelope
     public function getOptions(): array
     {
         return $this->options;
+    }
+
+    public function getCreationTime(): ?float
+    {
+        return $this->creationTime;
     }
 }

@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+### 2.1.2
+- [BACKPORT][IMPROVEMENT] Use `microtime` for envelope queue to avoid wrong processing order. Execute `bin/console dynamic-search:check-queue` before updating to this version
+
 ### 2.1.1
 - [IMPROVEMENT] Added getter for `DynamicSearchBundle\Resource\ResourceCandidate::$contextName` [#55](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/55)
 - [IMPROVEMENT] Ignore `isAutoSave`, `saveVersionOnly` in element listener [#62](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/62)
