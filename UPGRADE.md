@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## 3.0.1
-- Use `microtime` for envelope queue to avoid wrong processing order. Execute `bin/console bin/console dynamic-search:check-queue'` before updating to this version
+- Use `microtime` for envelope queue to avoid wrong processing order. Execute `bin/console dynamic-search:check-queue'` before updating to this version
 
 ## Migrating from Version 2.x to Version 3.0.
 
