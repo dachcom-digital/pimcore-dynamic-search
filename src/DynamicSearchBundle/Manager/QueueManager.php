@@ -48,11 +48,17 @@ class QueueManager implements QueueManagerInterface
          */
 
         usort($jobs, static function (TmpStore $a, TmpStore $b) {
-            if ($a->getDate() === $b->getDate()) {
+
+             /** @var Envelope $envelopeA */
+            $envelopeA = $a->getData();
+             /** @var Envelope $envelopeB */
+            $envelopeB = $b->getData();
+
+            if ($envelopeA->getCreationTime() === $envelopeB->getCreationTime()) {
                 return 0;
             }
 
-            return $a->getDate() < $b->getDate() ? 1 : -1;
+            return $envelopeA->getCreationTime() < $envelopeB->getCreationTime() ? 1 : -1;
         });
 
         /** @var TmpStore $job */
@@ -102,7 +108,7 @@ class QueueManager implements QueueManagerInterface
 
     public function addJobToQueue(string $jobId, string $contextName, string $dispatchType, array $metaResources, array $options): void
     {
-        $envelope = new Envelope($jobId, $contextName, $dispatchType, $metaResources, $options);
+        $envelope = new Envelope($jobId, $contextName, $dispatchType, $metaResources, $options, microtime(true));
 
         TmpStore::add($jobId, $envelope, self::QUEUE_IDENTIFIER);
     }
