@@ -11,7 +11,8 @@ class Envelope
         protected string $contextName,
         protected string $dispatchType,
         protected array $resourceMetaStack,
-        protected array $options
+        protected array $options,
+        protected ?float $creationTime = null
     ) {
     }
 
@@ -41,5 +42,10 @@ class Envelope
     public function getOptions(): array
     {
         return $this->options;
+    }
+
+    public function getCreationTime(): ?float
+    {
+        return $this->creationTime;
     }
 }
