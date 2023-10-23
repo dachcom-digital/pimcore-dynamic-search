@@ -49,7 +49,7 @@ class DataProcessor implements DataProcessorInterface
     {
         $envelopeData = $this->queueManager->getQueuedEnvelopes();
 
-        if (empty($envelopeData) || !is_array($envelopeData)) {
+        if (empty($envelopeData)) {
             return;
         }
 
