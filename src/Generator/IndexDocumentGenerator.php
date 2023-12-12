@@ -202,14 +202,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
                 sprintf('Error while transform field resource with service "%s": %s', $fieldTransformerName, $e->getMessage()));
         }
 
-        if ($transformedData === null) {
-            return null;
-        }
-
-        if ($transformedData === '') {
-            return null;
-        }
-
         return $transformedData;
     }
 
