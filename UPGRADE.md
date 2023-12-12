@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 3.0.1
+- [BUGFIX] allow empty strings being submitted [#81](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/81)
 - Use `microtime` for envelope queue to avoid wrong processing order. Execute `bin/console dynamic-search:check-queue'` before updating to this version
 
 ## Migrating from Version 2.x to Version 3.0.
