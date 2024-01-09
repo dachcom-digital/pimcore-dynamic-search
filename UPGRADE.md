@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.1.0
+- [FEATURE] symfony messenger [#83](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/83). Execute `bin/console messenger:setup-transports` after update!
+
 ## 3.0.1
 - [BUGFIX] allow empty strings being submitted [#81](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/81)
 - Use `microtime` for envelope queue to avoid wrong processing order. Execute `bin/console dynamic-search:check-queue'` before updating to this version

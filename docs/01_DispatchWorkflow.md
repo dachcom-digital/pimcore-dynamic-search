@@ -23,23 +23,18 @@ At every modification/deletion event of every pimcore element,
 DynamicSearch will validate this element by calling [ResourceValidator](./40_ResourceValidator.md). 
 If the resource is still present, DynamicSearch creates an `Envelope` which will be passed to a dedicated queue.
 
-#### Element Processor
-Another maintenance task processes that queue (Interval depends on your maintenance cronjob).
-If available, the `Envelope` will be submitted to the index provider. 
+#### Queue Worker
+The queue is processed in batches in a symfony messenger process.
+If available, the transformed resource will be submitted to the index provider. 
 
-> DynamicSearch will sort envelopes by creation date. 
-> If you're updating your element multiple times before the element processor kicks in,
-> only the latest envelope will be used. This allows us to save some trees. 
-
-#### Element Process Command
-There is a secret command which allows you to dispatch the queue processor immediately. 
-This comes in handy if you're debugging your application:
-
-> Use the `-v flag to output some log information`
+To start the queue worker, execute
 
 ```bash
-$ bin/console dynamic-search:check-queue -v
+$ bin/console messenger:consume dynamic_search_queue
 ```
+
+> It is highly recommended to set up the worker to be always running with supervisor or systemd.  
+> More details about how to set up the queue worker are found [here](https://symfony.com/doc/current/messenger.html#consuming-messages-running-the-worker).
 
 #### Inheritance
 Inheritance is unknown to DynamicSearch. If you're updating an object, that very object will be transmitted to the queue.
