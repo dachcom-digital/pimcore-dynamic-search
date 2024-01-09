@@ -27,4 +27,6 @@ services:
     DynamicSearchBundle\Manager\NormalizerManager: ~
 
     DynamicSearchBundle\Manager\QueueManagerInterface: '@DynamicSearchBundle\Manager\QueueManager'
-    DynamicSearchBundle\Manager\QueueManager: ~
+    DynamicSearchBundle\Manager\QueueManager:
+        arguments:
+            $tableName: '%dynamic_search.queue.table_name%'

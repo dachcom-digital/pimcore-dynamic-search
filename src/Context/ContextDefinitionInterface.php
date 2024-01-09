@@ -36,7 +36,7 @@ interface ContextDefinitionInterface
     /*
      * Allowed dispatch types for queue
      */
-    public const ALLOWED_QUEUE_DISPATCH_TYPES = ['insert', 'update', 'delete'];
+    public const ALLOWED_QUEUE_DISPATCH_TYPES = ['index', 'insert', 'update', 'delete'];
 
     public function getName(): string;
 
