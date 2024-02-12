@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+### 2.1.4
+- [BUGFIX] Fix type-hint of Exceptions to match SPL Exception constructor signature [#54](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/54)
 
 ### 2.1.3
 - [BUGFIX] allow empty strings being submitted [#81](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/81)
