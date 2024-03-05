@@ -46,6 +46,7 @@ return [
 ```
 
 - Execute: `$ bin/console pimcore:bundle:install DynamicSearchBundle`
+- Execute: `$ bin/console messenger:setup-transports`
 
 ## Upgrading
 - Execute: `$ bin/console doctrine:migrations:migrate --prefix 'DynamicSearchBundle\Migrations'`
@@ -60,6 +61,14 @@ Please check out install instruction of each provider (see list above).
 dynamic_search_frontend:
     resource: '@DynamicSearchBundle/config/pimcore/routing/frontend_routing.yaml'
 ```
+
+## Start Queue Worker
+```
+$ bin/console messenger:consume dynamic_search_queue
+```
+
+Read more details about the queue worker and the recommended setup [here](docs/01_DispatchWorkflow.md#queue-worker).
+
 
 ## Dispatch Dynamic Search
 After you've added [a definition](docs/0_ExampleSetup.md), you're ready to start the engine.

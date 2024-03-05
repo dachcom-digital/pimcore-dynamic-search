@@ -24,8 +24,10 @@ DynamicSearch will validate this element by calling [ResourceValidator](./40_Res
 If the resource is still present, DynamicSearch creates an `Envelope` which will be passed to a dedicated queue.
 
 #### Queue Worker
-The queue is processed in batches in a symfony messenger process.
-If available, the transformed resource will be submitted to the index provider. 
+The queue is based on [symfony messenger](https://symfony.com/doc/current/messenger.html).
+Resources which are dispatched to the index are put into the queue and will be processed by the worker asynchronously.
+The queue is processed in batches.
+If available and resource validation passes, the transformed resource will be submitted to the index provider. 
 
 To start the queue worker, execute
 
