@@ -1,7 +1,11 @@
 # Upgrade Notes
 
-## 3.1.0
-- [FEATURE] symfony messenger [#83](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/83). Execute `bin/console messenger:setup-transports` after update!
+## Migrating from Version 3.x to Version 4.x
+
+### Breaking Changes 
+- The queue is now based on symfony messenger. ([#83](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/83)).   
+  Execute `bin/console messenger:setup-transports`  
+  read [how to setup the queue worker](docs/01_DispatchWorkflow.md#queue-worker)
 
 ## 3.0.1
 - [BUGFIX] allow empty strings being submitted [#81](https://github.com/dachcom-digital/pimcore-dynamic-search/issues/81)
