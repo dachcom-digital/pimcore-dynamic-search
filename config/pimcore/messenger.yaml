@@ -5,7 +5,7 @@ framework:
     messenger:
         transports:
             dynamic_search_queue:
-                dsn: 'doctrine://default'
+                dsn: 'microsecs-doctrine://default'
                 options:
                     table_name: '%dynamic_search.queue.table_name%'
         routing:
@@ -13,3 +13,9 @@ framework:
             DynamicSearchBundle\Queue\Message\ProcessResourceMessage: dynamic_search_queue
         buses:
             dynamic_search.bus: ~
+
+services:
+    DynamicSearchBundle\Queue\Transport\ExtendedDoctrineTransportFactory:
+        arguments:
+            - '@Doctrine\Persistence\ConnectionRegistry'
+        tags: [ messenger.transport_factory ]
