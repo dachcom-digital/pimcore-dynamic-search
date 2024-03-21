@@ -2,7 +2,6 @@
 
 namespace DynamicSearchBundle\Queue\MessageHandler;
 
-use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Exception\SilentException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Queue\Message\ProcessResourceMessage;
@@ -61,13 +60,7 @@ class ProcessResourceHandler implements BatchHandlerInterface
                 }
                 try {
 
-                    if (in_array($dispatchType, [ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INSERT, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX])) {
-                        $this->resourceRunner->runInsertStack($message->contextName, $resourceMetas);
-                    } elseif ($dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE) {
-                        $this->resourceRunner->runUpdateStack($message->contextName, $resourceMetas);
-                    } elseif ($dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
-                        $this->resourceRunner->runDeleteStack($message->contextName, $resourceMetas);
-                    }
+                    $this->resourceRunner->runResourceStack($contextName, $dispatchType, $resourceMetas);
 
                 } catch (SilentException $e) {
                     // do not raise errors in silent exception. this error has been logged already in the right channel.

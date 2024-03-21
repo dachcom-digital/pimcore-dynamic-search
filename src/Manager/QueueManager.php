@@ -17,13 +17,14 @@ class QueueManager implements QueueManagerInterface
     public function clearQueue(): void
     {
         try {
-            $stmt = sprintf('SELECT COUNT(*) FROM %s', $this->tableName);
-            $affectedRows = $this->connection->executeQuery($stmt)->fetchFirstColumn();
+            $qb = $this->connection->createQueryBuilder();
+            $qb->select('COUNT(id)')->from($this->tableName);
+            $affectedRows = current($qb->executeQuery()->fetchFirstColumn());
             $sql = $this->connection->getDatabasePlatform()->getTruncateTableSQL($this->tableName);
             $this->connection->executeStatement($sql);
-            $this->logger->debug(sprintf('data queue cleared. Affected jobs: %d', $affectedRows), 'queue', 'maintenance');
+            $this->logger->debug(sprintf('data queue cleared. Affected jobs: %d', $affectedRows), 'queue', 'default');
         } catch (\Throwable $e) {
-            $this->logger->error(sprintf('Error while clearing queue. Message was: %s', $e->getMessage()), 'queue', 'maintenance');
+            $this->logger->error(sprintf('Error while clearing queue. Message was: %s', $e->getMessage()), 'queue', 'default');
         }
     }
 }

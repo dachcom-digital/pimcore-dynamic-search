@@ -3,17 +3,14 @@
 namespace DynamicSearchBundle\EventSubscriber;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\DynamicSearchEvents;
 use DynamicSearchBundle\Event\NewDataEvent;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Processor\ResourceModificationProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
 use DynamicSearchBundle\Queue\DataCollectorInterface;
-use DynamicSearchBundle\Queue\Message\ProcessResourceMessage;
-use DynamicSearchBundle\Queue\Message\QueueResourceMessage;
-use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class DataProcessingEventSubscriber implements EventSubscriberInterface
 {
@@ -40,7 +37,7 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
             // data collector add to queue
             $this->dataCollector->addToContextQueue(
                 $contextDefinition->getName(),
-                $contextDefinition->getContextDispatchType(),
+                ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX,
                 $event->getData(),
                 [
                     'resourceValidation' => [
