@@ -7,4 +7,9 @@ parameters:
     symfony:
         container_xml_path: %currentWorkingDirectory%/var/cache/test/TestKernelTestDebugContainer.xml
         constant_hassers: false
+    excludePaths:
+        analyse:
+            - src/Queue/Transport/ExtendedDoctrineConnection.php
     ignoreErrors:
+        -
+            message: "#^Method DynamicSearchBundle\\\\Queue\\\\MessageHandler\\\\(.*)Handler\\:\\:(getBatchSize|process)\\(\\) is unused\\.$#"

@@ -46,18 +46,9 @@ class ProcessResourceHandler implements BatchHandlerInterface
         }
 
         foreach ($groupedResourceMetas as $contextName => $contextResourceMetas) {
-            if (!is_array($contextResourceMetas) || count($contextResourceMetas) === 0) {
-                continue;
-            }
-
             foreach ($contextResourceMetas as $dispatchType => $resourceMetas) {
-                if (!is_array($resourceMetas) || count($resourceMetas) === 0) {
-                    continue;
-                }
                 try {
-
                     $this->resourceRunner->runResourceStack($contextName, $dispatchType, $resourceMetas);
-
                 } catch (SilentException $e) {
                     // do not raise errors in silent exception. this error has been logged already in the right channel.
                 } catch (\Throwable $e) {
