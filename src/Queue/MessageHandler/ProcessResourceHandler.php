@@ -6,7 +6,6 @@ use DynamicSearchBundle\Exception\SilentException;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Queue\Message\ProcessResourceMessage;
 use DynamicSearchBundle\Runner\ResourceRunnerInterface;
-use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
@@ -29,9 +28,6 @@ class ProcessResourceHandler implements BatchHandlerInterface
 
     private function process(array $jobs): void
     {
-
-        TmpStore::set('dynamic_search_processor__last_batch', time());
-
         $groupedResourceMetas = [];
 
         /**
@@ -73,27 +69,6 @@ class ProcessResourceHandler implements BatchHandlerInterface
                 }
             }
         }
-    }
-
-    private function shouldFlush(): bool
-    {
-        if ($this->getBatchSize() <= count($this->jobs)) {
-            return true;
-        }
-        $lastRunEntry = TmpStore::get('dynamic_search_processor__last_batch');
-        if (!$lastRunEntry instanceof TmpStore) {
-            TmpStore::set('dynamic_search_processor__last_batch', time());
-            return false;
-        }
-        $lastRun = (int)$lastRunEntry->getData();
-        $now = time();
-        $shouldFlush = $lastRun + $this->getBatchMaxAge() <= $now;
-        return $shouldFlush;
-    }
-
-    private function getBatchMaxAge(): int
-    {
-        return 60;
     }
 
     private function getBatchSize(): int
