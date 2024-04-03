@@ -8,7 +8,3 @@ services:
     DynamicSearchBundle\Command\SearchCommand:
         tags:
             - { name: console.command }
-
-    DynamicSearchBundle\Command\QueuedDataCommand:
-        tags:
-            - { name: console.command }

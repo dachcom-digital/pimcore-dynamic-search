@@ -3,12 +3,13 @@
 namespace DynamicSearchBundle\EventSubscriber;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\DynamicSearchEvents;
 use DynamicSearchBundle\Event\NewDataEvent;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Processor\ResourceModificationProcessorInterface;
 use DynamicSearchBundle\Provider\DataProviderInterface;
-use DynamicSearchBundle\Validator\ResourceValidatorInterface;
+use DynamicSearchBundle\Queue\DataCollectorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DataProcessingEventSubscriber implements EventSubscriberInterface
@@ -17,7 +18,7 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
         protected LoggerInterface $logger,
         protected ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         protected ResourceModificationProcessorInterface $resourceModificationProcessor,
-        protected ResourceValidatorInterface $resourceValidator
+        protected DataCollectorInterface $dataCollector
     ) {
     }
 
@@ -32,32 +33,19 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
     {
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($event->getContextName(), $event->getContextDispatchType());
 
-        try {
-            // validate and allow rewriting resource based on current data behaviour
-            $isImmutableResource = $event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH;
-            $resourceCandidate = $this->resourceValidator->validateResource($event->getContextName(), $event->getContextDispatchType(), false, $isImmutableResource, $event->getData());
-        } catch (\Throwable $e) {
-            $this->logger->error(
-                sprintf(
-                    'Error while validate resource candidate: %s',
-                    $e->getMessage()), $contextDefinition->getDataProviderName(), $event->getContextName()
-            );
-
-            return;
-        }
-
-        if ($resourceCandidate->getResource() === null) {
-            $this->logger->debug(
-                sprintf(
-                    'Resource has been removed due to validation. Skipping...'),
-                $contextDefinition->getDataProviderName(), $contextDefinition->getName()
-            );
-
-            return;
-        }
-
         if ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH) {
-            $this->resourceModificationProcessor->process($contextDefinition, $resourceCandidate->getResource());
+            // data collector add to queue
+            $this->dataCollector->addToContextQueue(
+                $contextDefinition->getName(),
+                ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX,
+                $event->getData(),
+                [
+                    'resourceValidation' => [
+                        'unknownResource' => false,
+                        'immutableResource' => false
+                    ]
+                ]
+            );
         } elseif ($event->getProviderBehaviour() === DataProviderInterface::PROVIDER_BEHAVIOUR_SINGLE_DISPATCH) {
             $this->resourceModificationProcessor->processByResourceMeta($contextDefinition, $event->getResourceMeta(), $event->getData());
         } else {

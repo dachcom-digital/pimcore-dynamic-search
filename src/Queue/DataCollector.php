@@ -4,25 +4,24 @@ namespace DynamicSearchBundle\Queue;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
+use DynamicSearchBundle\Queue\Message\QueueResourceMessage;
 use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
-use DynamicSearchBundle\Manager\QueueManagerInterface;
-use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
-use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Service\LockServiceInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class DataCollector implements DataCollectorInterface
 {
     public function __construct(
         protected LoggerInterface $logger,
         protected ContextDefinitionBuilderInterface $contextDefinitionBuilder,
-        protected ResourceHarmonizerInterface $resourceHarmonizer,
         protected ResourceValidatorInterface $resourceValidator,
-        protected QueueManagerInterface $queueManager,
+        protected MessageBusInterface $messageBus,
         protected LockServiceInterface $lockService
-    ) {
-    }
+    )
+    {}
 
     public function addToGlobalQueue(string $dispatchType, mixed $resource, array $options = []): void
     {
@@ -30,7 +29,7 @@ class DataCollector implements DataCollectorInterface
 
         if (count($contextDefinitions) === 0) {
             $this->logger->error(
-                'No context configuration found. Please add them to the "dynamic_search.context" configuration nod',
+                'No context configuration found. Please add them to the "dynamic_search.context" configuration node',
                 'queue',
                 'global'
             );
@@ -45,9 +44,16 @@ class DataCollector implements DataCollectorInterface
 
     public function addToContextQueue(string $contextName, string $dispatchType, mixed $resource, array $options = []): void
     {
+        $isUnknownResource = true;
+        $isImmutableResource = false;
+        $resourceValidationOptions = $options['resourceValidation'] ?? null;
+        if (is_array($resourceValidationOptions)) {
+            $isUnknownResource = $resourceValidationOptions['unknownResource'] ?? $isUnknownResource;
+            $isImmutableResource = $resourceValidationOptions['immutableResource'] ?? $isImmutableResource;
+        }
         try {
             // validate and allow rewriting dispatch type and/or resource
-            $resourceCandidate = $this->resourceValidator->validateResource($contextName, $dispatchType, true, false, $resource);
+            $resourceCandidate = $this->resourceValidator->validateResource($contextName, $dispatchType, $isUnknownResource, $isImmutableResource, $resource);
         } catch (\Throwable $e) {
             $this->logger->error(sprintf('Error while validate resource candidate: %s', $e->getMessage()), 'queue', $contextName);
 
@@ -90,50 +96,17 @@ class DataCollector implements DataCollectorInterface
 
     protected function generateJob(string $contextName, string $dispatchType, mixed $resource, array $options): void
     {
-        $jobId = $this->generateJobId();
 
-        if ($resource instanceof ElementInterface) {
-            $resourceType = sprintf('%s-%s', $resource->getType(), $resource->getId());
+        if($resource instanceof ElementInterface) {
+            $resourceType = sprintf('%s-%s', Element\Service::getElementType($resource), $resource->getId());
+            $resource = null;
         } elseif (is_object($resource)) {
             $resourceType = get_class($resource);
         } else {
             $resourceType = gettype($resource);
         }
 
-        $normalizedResourceStack = $this->generateResourceMeta($contextName, $dispatchType, $resource);
-
-        if (count($normalizedResourceStack) === 0) {
-            $this->logger->error(
-                sprintf('Unable to assert stack for resource "%s". No queue job will be generated.', $resourceType),
-                'queue',
-                $contextName
-            );
-
-            return;
-        }
-
-        $metaResources = [];
-        foreach ($normalizedResourceStack as $normalizedDataResource) {
-            $resourceMeta = $normalizedDataResource->getResourceMeta();
-
-            if (empty($resourceMeta->getDocumentId())) {
-                $this->logger->error(
-                    sprintf('No valid document id for resource "%s" given. Skipping...', $resourceType),
-                    'queue',
-                    $contextName
-                );
-
-                continue;
-            }
-
-            $metaResources[] = $resourceMeta;
-        }
-
-        if (count($metaResources) === 0) {
-            return;
-        }
-
-        $this->queueManager->addJobToQueue($jobId, $contextName, $dispatchType, $metaResources, $options);
+        $this->messageBus->dispatch(new QueueResourceMessage($contextName, $dispatchType, $resourceType, $resource, $options));
 
         $this->logger->debug(
             sprintf('Envelope successfully added to queue ("%s" context)', $contextName),
@@ -142,25 +115,4 @@ class DataCollector implements DataCollectorInterface
         );
     }
 
-    /**
-     * @return array<int, NormalizedDataResourceInterface>
-     */
-    protected function generateResourceMeta(string $contextName, string $dispatchType, mixed $resource): array
-    {
-        $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
-
-        $normalizedResourceStack = $this->resourceHarmonizer->harmonizeUntilNormalizedResourceStack($contextDefinition, $resource);
-
-        if ($normalizedResourceStack === null) {
-            // nothing to log: done by harmonizer.
-            return [];
-        }
-
-        return $normalizedResourceStack;
-    }
-
-    protected function generateJobId(): string
-    {
-        return uniqid('dynamic-search-envelope-', false);
-    }
 }

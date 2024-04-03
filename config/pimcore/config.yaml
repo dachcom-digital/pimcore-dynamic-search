@@ -1,3 +1,6 @@
+imports:
+    - { resource: messenger.yaml }
+
 doctrine_migrations:
     migrations_paths:
         'DynamicSearchBundle\Migrations': '@DynamicSearchBundle/src/Migrations'

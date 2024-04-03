@@ -14,8 +14,8 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     public function __construct(
         protected QueueManagerInterface $queueManager,
         protected LongProcessServiceInterface $longProcessService
-    ) {
-    }
+    )
+    {}
 
     public function runFullContextCreation(): void
     {
@@ -52,9 +52,9 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
      */
     protected function dispatchContext(ContextDefinitionInterface $contextDefinition): void
     {
-        $providers = $this->setupProviders($contextDefinition, DataProviderInterface::PROVIDER_BEHAVIOUR_FULL_DISPATCH);
+        $dataProvider = $this->setupDataProvider($contextDefinition);
 
-        $this->warmUpProvider($contextDefinition, $providers);
+        $this->warmUpProvider($contextDefinition, [$dataProvider]);
 
         $this->logger->log(
             'DEBUG',
@@ -63,10 +63,7 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
             $contextDefinition->getName()
         );
 
-        /** @var DataProviderInterface $dataProvider */
-        $dataProvider = $providers['dataProvider'];
-
-        $this->callSaveMethod($contextDefinition, $dataProvider, 'provideAll', [$contextDefinition], $providers);
-        $this->coolDownProvider($contextDefinition, $providers);
+        $this->callSaveMethod($contextDefinition, $dataProvider, 'provideAll', [$contextDefinition], [$dataProvider]);
+        $this->coolDownProvider($contextDefinition, [$dataProvider]);
     }
 }
