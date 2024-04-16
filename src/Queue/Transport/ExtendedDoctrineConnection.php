@@ -45,6 +45,19 @@ final class ExtendedDoctrineConnection extends Connection
         $this->autoSetup = false;
     }
 
+    public function configureSchema(Schema $schema, DBALConnection $forConnection, \Closure $isSameDatabase): void
+    {
+        if ($schema->hasTable($this->configuration['table_name'])) {
+            return;
+        }
+
+        if ($forConnection !== $this->driverConnection && !$isSameDatabase($this->executeStatement(...))) {
+            return;
+        }
+
+        $this->addTableToSchema($schema);
+    }
+
     public function get(): ?array
     {
         if ($this->driverConnection->getDatabasePlatform() instanceof MySQLPlatform) {
