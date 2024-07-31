@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+# 4.0.1
+
+* fix resource deletion [#90](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/90)
+
 ## Migrating from Version 3.x to Version 4.x
 
 ### Breaking Changes 
