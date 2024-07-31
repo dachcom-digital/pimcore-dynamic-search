@@ -3,11 +3,15 @@
 namespace DynamicSearchBundle\Queue\MessageHandler;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
+use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Queue\Message\ProcessResourceMessage;
 use DynamicSearchBundle\Queue\Message\QueueResourceMessage;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
@@ -44,9 +48,20 @@ class QueuedResourcesHandler implements BatchHandlerInterface
                 $resource = $message->resource;
                 if (str_contains($message->resourceType, '-')) {
                     [$type, $id] = explode('-', $message->resourceType);
+                    if (is_numeric($id)) {
+                        $id = (int) $id;
+                    }
                     $resource = Element\Service::getElementById($type, $id);
-                    if (!$resource instanceof Element\ElementInterface) {
-                        continue;
+                    if (null === $resource && $message->dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
+                        // at this time, the resource is already deleted by pimcore
+                        // since we do not serialize the resource into the message,
+                        // we need to create a dummy resource to retrieve a valid resource meta for deletion
+                        $resource = match ($type) {
+                            'document' => new Document(),
+                            'asset' => new Asset(),
+                            'object' => new DataObject\Concrete(),
+                        };
+                        $resource->setId($id);
                     }
                 }
 
