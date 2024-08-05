@@ -96,8 +96,8 @@ class DataCollector implements DataCollectorInterface
 
     protected function generateJob(string $contextName, string $dispatchType, mixed $resource, array $options): void
     {
-
-        if($resource instanceof ElementInterface) {
+        // @todo: introduce generic "resource info" dto with resource information
+        if ($resource instanceof ElementInterface) {
             $resourceType = sprintf('%s-%s', Element\Service::getElementType($resource), $resource->getId());
             $resource = null;
         } elseif (is_object($resource)) {

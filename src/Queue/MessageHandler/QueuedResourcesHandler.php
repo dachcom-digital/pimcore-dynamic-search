@@ -46,13 +46,14 @@ class QueuedResourcesHandler implements BatchHandlerInterface
             try {
 
                 $resource = $message->resource;
+                // @todo: use introduced "resource info" dto to determinate resource / type
                 if (str_contains($message->resourceType, '-')) {
                     [$type, $id] = explode('-', $message->resourceType);
                     if (is_numeric($id)) {
                         $id = (int) $id;
                     }
                     $resource = Element\Service::getElementById($type, $id);
-                    if (null === $resource && $message->dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
+                    if ($resource === null && $message->dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
                         // at this time, the resource is already deleted by pimcore
                         // since we do not serialize the resource into the message,
                         // we need to create a dummy resource to retrieve a valid resource meta for deletion

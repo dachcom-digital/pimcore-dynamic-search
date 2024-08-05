@@ -99,6 +99,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         /** @var DataObject\Concrete $object */
         $object = $event->getObject();
 
+        // @deprecated since 5.0: published/unpublished must be handled by project-specific resource validation
         $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
         if (method_exists($object, 'isPublished') && $object->isPublished() === false) {
             $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE;
@@ -199,6 +200,7 @@ class PimcoreElementListener implements EventSubscriberInterface
 
         foreach ($list->getObjects() as $childObject) {
             $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_UPDATE;
+            // @deprecated since 5.0: published/unpublished must be handled by project-specific resource validation
             if (method_exists($childObject, 'isPublished') && $childObject->isPublished() === false) {
                 $dispatchType = ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE;
             }
