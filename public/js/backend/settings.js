@@ -20,16 +20,29 @@ pimcore.plugin.dynamicSearch.settings = Class.create({
             title: t('dynamic_search_settings'),
             iconCls: 'dynamic_search_bundle',
             border: false,
-            layout: 'border',
+            bodyPadding: 10,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
             closable: true,
+            items: [
+                this.buildStatusPanel(),
+                this.buildProviderGrid()
+            ]
         });
 
         this.panel.on('destroy', function () {
             pimcore.globalmanager.remove('dynamic_search_settings');
         }.bind(this));
 
-        this.panel.add(this.buildStatusPanel())
-        this.panel.add(this.buildProviderGrid())
+        const postBuildLayoutEvent = new CustomEvent('dynamic_search.event.settings.postBuildLayout', {
+            detail: {
+                subject: this
+            }
+        });
+
+        document.dispatchEvent(postBuildLayoutEvent);
 
         pimcoreSystemPanel.add(this.panel);
         pimcoreSystemPanel.setActiveItem('dynamic_search_settings');
@@ -41,8 +54,7 @@ pimcore.plugin.dynamicSearch.settings = Class.create({
             title: 'Health Status',
             layout: 'table',
             viewType: 'tableview',
-            region: 'north',
-            style: 'padding: 10px',
+            style: 'margin-bottom: 10px',
             border: false,
             columnLines: true,
             stripeRows: true,
@@ -56,7 +68,7 @@ pimcore.plugin.dynamicSearch.settings = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/dynamic-search/settings/health-state',
+                    url: Routing.generate('dynamic_search.controller.admin.get_state'),
                     reader: {
                         type: 'json',
                         rootProperty: 'lines'
@@ -109,9 +121,8 @@ pimcore.plugin.dynamicSearch.settings = Class.create({
 
         return new Ext.grid.GridPanel({
             title: 'Provider',
-            layout: 'fit',
-            region: 'center',
-            style: 'padding: 10px',
+            layout: 'table',
+            style: 'margin-bottom: 10px',
             columnLines: true,
             stripeRows: true,
             disableSelection: true,
@@ -123,7 +134,7 @@ pimcore.plugin.dynamicSearch.settings = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/dynamic-search/settings/provider',
+                    url: Routing.generate('dynamic_search.controller.admin.get_provider'),
                     reader: {
                         type: 'json',
                         rootProperty: 'provider'
