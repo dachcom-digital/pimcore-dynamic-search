@@ -98,7 +98,9 @@ $ bin/console dynamic-search:run -v
         - Multi Search Channels
     - Filter (Faceted Search / Aggregation)
         - Create Filter Definition
+- [Backend UI](docs/50_BackendUI.md)
 - API
+
 
 ## Copyright and License
 Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.com)
