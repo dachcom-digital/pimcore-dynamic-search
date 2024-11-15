@@ -19,6 +19,3 @@ services:
     DynamicSearchBundle\Queue\DataCollector:
         arguments:
             $messageBus: '@dynamic_search.bus'
-
-    DynamicSearchBundle\Queue\DataProcessorInterface: '@DynamicSearchBundle\Queue\DataProcessor'
-    DynamicSearchBundle\Queue\DataProcessor: ~
