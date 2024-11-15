@@ -23,11 +23,11 @@ It's based on several data- and index providers.
 There are several data- and index providers available:
 
 ### Data Provider
-- [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) | Fetch data by crawling urls 
+- [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) | Fetch data by crawling urls [_legacy, recommended_]
 - [Trinity Data](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity) | Fetch pimcore entities: object, asset, document
 
 ### Index Provider
-- [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene) | Use the php lucene index. Not superfast but comes without any dependencies but php
+- [Lucene Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-lucene) | Use the php lucene index. Not superfast but comes without any dependencies but php [_legacy, not recommended_]
 - [Elasticsearch](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-elasticsearch) | Index data with an elasticsearch instance.
 - [Open Search](https://github.com/dachcom-digital/pimcore-dynamic-search-index-provider-opensearch) | Index data with an open search instance.
 
