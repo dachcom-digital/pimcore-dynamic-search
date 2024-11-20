@@ -94,11 +94,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
             $dataTransformerOptions = $documentDefinitionOptions['data_transformer'];
             $transformedData = $this->dispatchResourceFieldTransformer($dataTransformerOptions, $resourceScaffolderName, $resourceContainer);
 
-            if ($transformedData === null) {
-                // no error: transformer is allowed to refuse data
-                continue;
-            }
-
             $optionFieldContainer = new OptionFieldContainer($fieldName, $transformedData);
             $indexDocument->addOptionField($optionFieldContainer);
         }
@@ -132,11 +127,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         $dataTransformerOptions = $fieldDefinitionOptions['data_transformer'];
 
         $transformedData = $this->dispatchResourceFieldTransformer($dataTransformerOptions, $resourceScaffolderName, $resourceContainer);
-
-        if ($transformedData === null) {
-            // no error: transformer is allowed to refuse data
-            return;
-        }
 
         if ($fieldType === 'pre_process_definition') {
 
@@ -202,6 +192,10 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
                 sprintf('Error while transform field resource with service "%s": %s', $fieldTransformerName, $e->getMessage()));
         }
 
+        if ($transformedData === '') {
+            return null;
+        }
+
         return $transformedData;
     }
 
@@ -224,10 +218,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
             throw new \Exception(
                 sprintf('Error while transform field index with service "%s": %s', $indexTypeName, $e->getMessage())
             );
-        }
-
-        if ($indexFieldData === null) {
-            return null;
         }
 
         return $indexFieldData;

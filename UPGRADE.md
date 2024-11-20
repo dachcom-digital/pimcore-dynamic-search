@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 4.0.3
+- fix null values in index [#95](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/95)
 ## 4.0.2
 - introduced backend ui event [#91](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/91)
 ## 4.0.1
