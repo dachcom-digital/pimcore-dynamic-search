@@ -8,17 +8,25 @@ class DynamicSearch {
             return;
         }
 
-        searchMenu = new Ext.Action({
-            id: 'search',
-            text: t('dynamic_search_settings'),
-            iconCls: 'dynamic_search_bundle',
-            handler: this.openSettingsPanel.bind(this)
+        Ext.Ajax.request({
+            url: Routing.generate('dynamic_search.controller.admin.get_context_full_configuration'),
+            success: function(response) {
+                const contextFullConfig = Ext.decode(response.responseText);
+                pimcore.globalmanager.add('dynamic_search.context.full_configuration', contextFullConfig);
+            },
+            callback: function() {
+                searchMenu = new Ext.Action({
+                    id: 'search',
+                    text: t('dynamic_search_settings'),
+                    iconCls: 'dynamic_search_bundle',
+                    handler: this.openSettingsPanel.bind(this)
+                });
+
+                if (layoutToolbar.settingsMenu) {
+                    layoutToolbar.settingsMenu.add(searchMenu);
+                }
+            }.bind(this)
         });
-
-        if (layoutToolbar.settingsMenu) {
-            layoutToolbar.settingsMenu.add(searchMenu);
-        }
-
     }
 
     openSettingsPanel() {

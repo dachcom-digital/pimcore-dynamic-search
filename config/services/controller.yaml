@@ -14,5 +14,7 @@ services:
             - 'controller.service_arguments'
 
     DynamicSearchBundle\Controller\Admin\SettingsController:
+        arguments:
+            $contextFullConfiguration: '%dynamic_search.context.full_configuration%'
         tags:
             - 'controller.service_arguments'

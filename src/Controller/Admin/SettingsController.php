@@ -10,6 +10,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SettingsController extends AdminAbstractController
 {
+    public function __construct(
+        private array $contextFullConfiguration
+    )
+    {
+    }
+
     public function healthStateAction(HealthStateRegistryInterface $healthStateRegistry): JsonResponse
     {
         $stateLines = [];
@@ -43,5 +49,10 @@ class SettingsController extends AdminAbstractController
         return $this->json([
             'provider' => $providerBundleLocator->findProviderBundles()
         ]);
+    }
+
+    public function contextFullConfigurationAction(ProviderBundleLocator $providerBundleLocator): JsonResponse
+    {
+        return $this->json($this->contextFullConfiguration);
     }
 }
