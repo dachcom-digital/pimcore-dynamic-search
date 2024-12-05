@@ -10,6 +10,12 @@ dynamic_search.controller.admin.get_provider:
     options:
         expose: true
 
+dynamic_search.controller.admin.get_context_full_configuration:
+    path: /admin/dynamic-search/settings/context-full-configuration
+    defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::contextFullConfigurationAction }
+    options:
+        expose: true
+
 dynamic_search.controller.json_search:
     path: /dynamic-search/{contextName}/j-{outputChannelName}
     defaults: { _controller: DynamicSearchBundle\Controller\SearchController::jsonSearchAction }
