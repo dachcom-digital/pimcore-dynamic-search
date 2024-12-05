@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 4.0.4
+- provide ds settings in backend ui [#96](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/96)
 ## 4.0.3
 - fix null values in index [#95](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/95)
 ## 4.0.2
