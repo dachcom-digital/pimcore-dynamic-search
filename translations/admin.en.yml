@@ -1,1 +1,15 @@
-dynamic_search_settings: 'Dynamic Search'
+dynamic_search.settings: 'Dynamic Search'
+
+dynamic_search.settings.health_status: 'Health Status'
+dynamic_search.settings.provider: 'Prodiver'
+dynamic_search.settings.index_queue: 'Index Queue'
+dynamic_search.settings.index_queue.table_name: 'Table name'
+dynamic_search.settings.index_queue.total_queued_items: 'Queued items'
+
+dynamic_search.actions.index_queue.queue_all_data: 'Queue all data for indexing'
+dynamic_search.actions.index_queue.queue_all_data.confirmation.message: 'This will queue all data for indexing which might take some time. Continue?'
+dynamic_search.actions.index_queue.queue_all_data.success: 'All data successfully added to queue'
+
+dynamic_search.actions.index_queue.clear: 'Clear index queue'
+dynamic_search.actions.index_queue.clear.confirmation.message: 'This will clear all data in the index queue (context independent)! Continue?'
+dynamic_search.actions.index_queue.clear.success: 'Successfully cleared index queue'

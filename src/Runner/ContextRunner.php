@@ -39,7 +39,6 @@ class ContextRunner extends AbstractRunner implements ContextRunnerInterface
     {
         $contextDefinition = $this->setupContextDefinition($contextName, ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_INDEX);
 
-        $this->queueManager->clearQueue();
         $this->longProcessService->boot();
 
         $this->dispatchContext($contextDefinition);

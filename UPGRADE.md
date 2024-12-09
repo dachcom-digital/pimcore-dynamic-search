@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 4.0.5
+- index queue backend ui [#97](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/97)
 ## 4.0.4
 - provide ds settings in backend ui [#96](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/96)
 ## 4.0.3
