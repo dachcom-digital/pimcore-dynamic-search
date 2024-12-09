@@ -17,7 +17,7 @@ class DynamicSearch {
             callback: function() {
                 searchMenu = new Ext.Action({
                     id: 'search',
-                    text: t('dynamic_search_settings'),
+                    text: t('dynamic_search.settings'),
                     iconCls: 'dynamic_search_bundle',
                     handler: this.openSettingsPanel.bind(this)
                 });
