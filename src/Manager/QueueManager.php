@@ -14,12 +14,23 @@ class QueueManager implements QueueManagerInterface
     )
     {}
 
+    public function getQueueTableName(): string
+    {
+        return $this->tableName;
+    }
+
+    public function getTotalQueuedItems(): int
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb->select('COUNT(id)')->from($this->tableName);
+
+        return (int)$qb->executeQuery()->fetchOne();
+    }
+
     public function clearQueue(): void
     {
         try {
-            $qb = $this->connection->createQueryBuilder();
-            $qb->select('COUNT(id)')->from($this->tableName);
-            $affectedRows = current($qb->executeQuery()->fetchFirstColumn());
+            $affectedRows = $this->getTotalQueuedItems();
             $sql = $this->connection->getDatabasePlatform()->getTruncateTableSQL($this->tableName);
             $this->connection->executeStatement($sql);
             $this->logger->debug(sprintf('data queue cleared. Affected jobs: %d', $affectedRows), 'queue', 'default');

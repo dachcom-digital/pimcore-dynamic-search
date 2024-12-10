@@ -2,11 +2,15 @@
 
 namespace DynamicSearchBundle\Controller\Admin;
 
+use DynamicSearchBundle\Manager\QueueManagerInterface;
 use DynamicSearchBundle\Provider\Extension\ProviderBundleLocator;
 use DynamicSearchBundle\Registry\HealthStateRegistryInterface;
+use DynamicSearchBundle\Runner\ContextRunnerInterface;
 use DynamicSearchBundle\State\HealthStateInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SettingsController extends AdminAbstractController
 {
@@ -51,7 +55,39 @@ class SettingsController extends AdminAbstractController
         ]);
     }
 
-    public function contextFullConfigurationAction(ProviderBundleLocator $providerBundleLocator): JsonResponse
+    public function indexQueueInfoAction(QueueManagerInterface $queueManager): JsonResponse
+    {
+        return $this->json([
+            'tableName' => $queueManager->getQueueTableName(),
+            'count' => $queueManager->getTotalQueuedItems()
+        ]);
+    }
+
+    public function indexQueueAllDataAction(Request $request, ContextRunnerInterface $contextRunner): Response
+    {
+        $contextName = $request->get('context');
+
+        if (empty($contextName)) {
+            return new Response('no context given', 400);
+        }
+
+        try {
+            $contextRunner->runSingleContextCreation($contextName);
+        } catch (\Throwable $e) {
+            return new Response($e->getMessage(), 500);
+        }
+
+        return new Response();
+    }
+
+    public function clearIndexQueueAction(QueueManagerInterface $queueManager): Response
+    {
+        $queueManager->clearQueue();
+
+        return new Response();
+    }
+
+    public function contextFullConfigurationAction(): JsonResponse
     {
         return $this->json($this->contextFullConfiguration);
     }
