@@ -83,6 +83,7 @@ class SettingsController extends AdminAbstractController
     public function clearIndexQueueAction(QueueManagerInterface $queueManager): Response
     {
         $queueManager->clearQueue();
+
         return new Response();
     }
 

@@ -23,6 +23,7 @@ class QueueManager implements QueueManagerInterface
     {
         $qb = $this->connection->createQueryBuilder();
         $qb->select('COUNT(id)')->from($this->tableName);
+
         return (int)$qb->executeQuery()->fetchOne();
     }
 

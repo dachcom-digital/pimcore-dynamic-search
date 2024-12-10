@@ -1,23 +1,27 @@
 dynamic_search.controller.admin.get_state:
     path: /admin/dynamic-search/settings/health-state
+    methods: [ GET ]
     defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::healthStateAction }
     options:
         expose: true
 
 dynamic_search.controller.admin.get_provider:
     path: /admin/dynamic-search/settings/provider
+    methods: [ GET ]
     defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::providerAction }
     options:
         expose: true
 
 dynamic_search.controller.admin.get_context_full_configuration:
     path: /admin/dynamic-search/settings/context-full-configuration
+    methods: [ GET ]
     defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::contextFullConfigurationAction }
     options:
         expose: true
 
 dynamic_search.controller.admin.index_queue.get_info:
     path: /admin/dynamic-search/settings/index-queue/info
+    methods: [ GET ]
     defaults: { _controller: DynamicSearchBundle\Controller\Admin\SettingsController::indexQueueInfoAction }
     options:
         expose: true
@@ -38,4 +42,5 @@ dynamic_search.controller.admin.index_queue.clear:
 
 dynamic_search.controller.json_search:
     path: /dynamic-search/{contextName}/j-{outputChannelName}
+    methods: [ GET ]
     defaults: { _controller: DynamicSearchBundle\Controller\SearchController::jsonSearchAction }

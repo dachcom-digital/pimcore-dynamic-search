@@ -1,7 +1,9 @@
 dynamic_search_frontend_search_list:
     path: /dynamic-search/{contextName}/{outputChannelName}
+    methods: [ GET ]
     defaults: { _controller: DynamicSearchBundle\Controller\SearchFrontendController::searchAction }
 
 dynamic_search_frontend_multi_search_list:
     path: /dynamic-search/{contextName}/collection/{outputChannelName}
+    methods: [ GET ]
     defaults: { _controller: DynamicSearchBundle\Controller\SearchFrontendController::multiSearchAction }
