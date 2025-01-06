@@ -96,7 +96,6 @@ class PimcoreElementListener implements EventSubscriberInterface
             return;
         }
 
-        /** @var ElementInterface $object */
         $object = $event->getObject();
 
         // @deprecated since 5.0: published/unpublished must be handled by project-specific resource validation

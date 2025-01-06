@@ -189,7 +189,7 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
             $subOutputChannelIdentifier = $searchContainer->getIdentifier();
 
             $filter = $filters[$subOutputChannelIdentifier];
-            /** @var OutputChannelContext $subOutputChannelContext */
+            /** @var SubOutputChannelContext $subOutputChannelContext */
             $subOutputChannelContext = $subContexts[$subOutputChannelIdentifier];
 
             if (!array_key_exists($subOutputChannelIdentifier, $outputChannelBlocks)) {
