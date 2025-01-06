@@ -1,0 +1,15 @@
+imports:
+    - { resource: services/*.yaml }
+
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Service\LockServiceInterface: '@DynamicSearchBundle\Service\LockService'
+    DynamicSearchBundle\Service\LockService: ~
+
+    DynamicSearchBundle\Service\LongProcessServiceInterface: '@DynamicSearchBundle\Service\LongProcessService'
+    DynamicSearchBundle\Service\LongProcessService: ~

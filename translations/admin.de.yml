@@ -1,0 +1,15 @@
+dynamic_search.settings: 'Dynamic Search'
+
+dynamic_search.settings.health_status: 'Health Status'
+dynamic_search.settings.provider: 'Anbieter'
+dynamic_search.settings.index_queue: 'Index-Warteschlange'
+dynamic_search.settings.index_queue.table_name: 'Tabellenname'
+dynamic_search.settings.index_queue.total_queued_items: 'Elemente in der Index-Warteschlange'
+
+dynamic_search.actions.index_queue.queue_all_data: 'Alle Daten zur Indizierung in die Index-Warteschlange stellen'
+dynamic_search.actions.index_queue.queue_all_data.confirmation.message: 'Es werden alle Daten zur Indizierung in die Index-Warteschlange gestellt, was einige Zeit dauern kann. Fortfahren?'
+dynamic_search.actions.index_queue.queue_all_data.success: 'Alle Daten erfolgreich zur Index-Warteschlange hinzugefügt'
+
+dynamic_search.actions.index_queue.clear: 'Index-Warteschlange leeren'
+dynamic_search.actions.index_queue.clear.confirmation.message: 'Dadurch werden alle Elemente in der Index-Warteschlange gelöscht (Kontextunabhängig)! Fortfahren?'
+dynamic_search.actions.index_queue.clear.success: 'Index-Warteschlange erfolgreich geleert'

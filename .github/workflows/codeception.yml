@@ -15,12 +15,12 @@ jobs:
             TEST_PROJECT_ROOT_DIR: "${{ github.workspace }}"
 
             PIMCORE_CODECEPTION_FRAMEWORK: "${{ github.workspace }}/pimcore-codeception-framework"
-            PIMCORE_CODECEPTION_VERSION: "2.0"
+            PIMCORE_CODECEPTION_VERSION: "3.0"
 
             APP_ENV: test
-            PIMCORE_TEST_DB_DSN: "mysql://root:root@127.0.0.1:3306/dachcom_bundle_test"
+            PIMCORE_TEST_DB_DSN: "mysql://test:test@127.0.0.1:3306/dachcom_bundle_test"
             PIMCORE_TEST_URL: "http://localhost"
-            PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/lib/test-bundle/tests/_output/var/classes/DataObject"
+            PIMCORE_CLASS_DIRECTORY: "${{ github.workspace }}/lib/test-bundle/tests/_output/var/classes"
 
             SYMFONY_DEPRECATIONS_HELPER: "weak"
             PIMCORE_PHP_ERROR_REPORTING: 32767
@@ -38,16 +38,15 @@ jobs:
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         strategy:
             matrix:
-                php: [8.0]
-                symfony: [ ^5.3 ]
-                pimcore: [ ~10.1.0, ~10.2.0 ]
+                php: [ 8.3 ]
+                symfony: [ ^6.4 ]
+                pimcore: [ ~11.4.0 ]
                 include:
-                    -   pimcore: ~10.1.0
-                        template_tag: v10.1.0
-                    -   pimcore: ~10.2.0
-                        template_tag: v10.1.4
+                    -   pimcore: ~11.4.0
+                        template_tag: 2024.3
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: nanasess/setup-chromedriver@v2
+            -   uses: actions/checkout@v4
                 with:
                     path: lib/test-bundle
 
@@ -84,26 +83,38 @@ jobs:
                 run: php -v
 
             -   name: Setup MySql
-                run: |
-                    sudo systemctl start mysql
-                    mysql -uroot -proot -h127.0.0.1 -e "CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;"
+                uses: shogo82148/actions-setup-mysql@v1
+                with:
+                    mysql-version: '8.0'
+                    user: test
+                    password: test
+                    root-password: root
+                    auto-start: true
+                    my-cnf: |
+                        max_allowed_packet=32505856
+                        max_connections=1000
+
+            -   name: Initial Database
+                run: mysql -utest -ptest -h127.0.0.1 -e 'CREATE DATABASE dachcom_bundle_test CHARSET=utf8mb4;'
 
             -   name: Setup Chromium
                 run: |
-                    nohup $CHROMEWEBDRIVER/chromedriver --url-base=/wd/hub /dev/null 2>&1 &
+                    export DISPLAY=:99
+                    chromedriver --url-base=/wd/hub --port=9515 &
+                    sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
-            -   name: Start Webserver and Chrome
+            -   name: Start Symfony Server
                 run: |
-                    wget https://get.symfony.com/cli/installer -O - | bash
-                    ~/.symfony/bin/symfony server:start --port=8080 --dir=public --force-php-discovery --allow-http --no-tls --daemon
+                    curl -sS https://get.symfony.com/cli/installer | bash -s -- --install-dir=$HOME/.symfony/bin
+                    ~/.symfony/bin/symfony server:start --port=8080 --dir=public --allow-http --no-tls --daemon
 
             -   name: Get Composer Cache Directory
                 id: composer-cache
                 run: |
-                    echo "::set-output name=dir::$(composer config cache-files-dir)"
+                    echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
             -   name: Cache Composer Downloads
-                uses: actions/cache@v1
+                uses: actions/cache@v4
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
                     key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
@@ -128,7 +139,7 @@ jobs:
                     vendor/bin/codecept run --env github -c ${{ github.workspace }}/lib/test-bundle
 
             -   name: Log Output
-                uses: actions/upload-artifact@v2
+                uses: actions/upload-artifact@v4
                 if: failure()
                 with:
                     name: "Logs (PHP ${{ matrix.php }}, Pimcore ${{ matrix.pimcore }}, Symfony ${{ matrix.symfony }})"

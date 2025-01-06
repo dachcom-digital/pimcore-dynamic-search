@@ -2,12 +2,14 @@
 
 This setup allows you a quick start with the bundle. The setup is tested within the official pimcore demo and uses class names and properties provided there.
 
+Are you looking for an example of a more complex Pimcore setup? Here's another [example](02_MultiSiteMultiLocaleSetup.md).
+
 ## Installation
 
 Add the following dependencies to your `composer.json`
 
 ```json
-"require" : {
+"require": {
     "dachcom-digital/dynamic-search": "~2.0.0",
     "dachcom-digital/dynamic-search-data-provider-trinity": "~2.0.0",
     "dachcom-digital/dynamic-search-index-provider-lucene": "~2.0.0",
@@ -144,7 +146,7 @@ class Car implements DocumentDefinitionBuilderInterface
     {
         $definition
             ->addSimpleDocumentFieldDefinition([
-                'name'              => 'id',
+                'name'              => 'pimcoreId',
                 'index_transformer' => [
                     'type' => 'keyword',
                 ],
@@ -186,7 +188,6 @@ class Car implements DocumentDefinitionBuilderInterface
         return $definition;
     }
 }
-
 ```
 
 ## Definition for a Document
@@ -266,7 +267,7 @@ class TrinityDocument implements DocumentDefinitionBuilderInterface
 
 ## Indexing
 
-To index your data, execute following in the command line
+To index your data, execute following in the command line:
 
 ``` bash
 bin/console dynamic-search:run -v
@@ -275,5 +276,4 @@ bin/console dynamic-search:run -v
 The parameter `-v` will make thoe output more verbose and can help you to find any problems in the config.
 
 ## Test
-
 You can test your setup in browser using the URL `/dynamic-search/default/j-search?q=xk140` where the `q` parameter is the search queue.

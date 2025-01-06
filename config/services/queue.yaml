@@ -1,0 +1,21 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\Queue\MessageHandler\QueuedResourcesHandler:
+        arguments:
+            $messageBus: '@dynamic_search.bus'
+        tags:
+            - { name: messenger.message_handler, bus: dynamic_search.bus }
+
+    DynamicSearchBundle\Queue\MessageHandler\ProcessResourceHandler:
+        tags:
+            - { name: messenger.message_handler, bus: dynamic_search.bus }
+
+    DynamicSearchBundle\Queue\DataCollectorInterface: '@DynamicSearchBundle\Queue\DataCollector'
+    DynamicSearchBundle\Queue\DataCollector:
+        arguments:
+            $messageBus: '@dynamic_search.bus'

@@ -1,0 +1,25 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    DynamicSearchBundle\EventListener\Admin\AssetListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    DynamicSearchBundle\EventSubscriber\PaginateRawResultSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    DynamicSearchBundle\EventSubscriber\DataProcessingEventSubscriber: ~
+
+    DynamicSearchBundle\EventSubscriber\ErrorEventSubscriber: ~
+
+    DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcherInterface: '@DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher'
+    DynamicSearchBundle\EventDispatcher\DynamicSearchEventDispatcher: ~
+
+    DynamicSearchBundle\EventListener\PimcoreElementListener:
+        tags:
+            - { name: kernel.event_subscriber }
