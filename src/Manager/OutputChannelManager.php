@@ -30,10 +30,6 @@ class OutputChannelManager implements OutputChannelManagerInterface
             return null;
         }
 
-        if (!is_string($outputChannelServiceName)) {
-            throw new ProviderException(sprintf('Invalid requested index output channel service "%s"', $outputChannelName));
-        }
-
         if (!$this->outputChannelRegistry->hasOutputChannelService($outputChannelServiceName)) {
             return null;
         }

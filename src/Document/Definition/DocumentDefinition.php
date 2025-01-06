@@ -79,7 +79,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
 
     public function getOptionFieldDefinitions(): array
     {
-        return !is_array($this->optionFieldDefinitions) ? [] : $this->optionFieldDefinitions;
+        return $this->optionFieldDefinitions;
     }
 
     public function addSimpleDocumentFieldDefinition(array $definition): static
