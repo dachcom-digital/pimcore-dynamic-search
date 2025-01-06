@@ -11,7 +11,7 @@ class DynamicSearchAdapter implements AdapterInterface
 {
     protected ContextDefinitionInterface $contextDefinition;
     protected string $outputChannelName;
-    protected DocumentNormalizerInterface $documentNormalizer;
+    protected ?DocumentNormalizerInterface $documentNormalizer = null;
     protected RawResultInterface $rawResult;
     protected int $itemCountPerPage;
     protected int $currentPageNumber;

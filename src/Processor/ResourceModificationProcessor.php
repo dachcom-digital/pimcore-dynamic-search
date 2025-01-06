@@ -41,16 +41,6 @@ class ResourceModificationProcessor implements ResourceModificationProcessorInte
         }
 
         foreach ($normalizedResourceStack as $normalizedResource) {
-            if (!$normalizedResource instanceof NormalizedDataResourceInterface) {
-                $this->logger->error(
-                    sprintf('Normalized resource needs to be instance of %s. Skipping...', NormalizedDataResourceInterface::class),
-                    $contextDefinition->getDataProviderName(),
-                    $contextDefinition->getName()
-                );
-
-                continue;
-            }
-
             $resourceMeta = $normalizedResource->getResourceMeta();
             if (empty($resourceMeta->getDocumentId())) {
                 $this->logger->error(

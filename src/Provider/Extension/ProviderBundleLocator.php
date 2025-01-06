@@ -77,7 +77,7 @@ class ProviderBundleLocator implements ProviderBundleLocatorInterface
 
     protected function processBundleClass(?string $bundle, array &$result): void
     {
-        if (empty($bundle) || !is_string($bundle)) {
+        if (empty($bundle)) {
             return;
         }
 

@@ -132,13 +132,6 @@ class SearchFrontendController extends FrontendController
         $blocks = [];
         if ($outputChannelResult instanceof MultiOutputChannelResultInterface) {
             foreach ($outputChannelResult->getResults() as $resultBlockIdentifier => $resultBlock) {
-                if (!$resultBlock instanceof OutputChannelResultInterface) {
-                    return $this->renderTemplate($viewName, [
-                        'has_error'     => true,
-                        'error_message' => sprintf('output channel "%s" for context "%s" should return OutputChannelResultInterface.', $outputChannelName, $contextName)
-                    ]);
-                }
-
                 $blocks[$resultBlockIdentifier] = $this->prepareQueryVars($resultBlock);
             }
         }

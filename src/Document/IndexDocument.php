@@ -44,7 +44,7 @@ class IndexDocument
 
     public function hasIndexFields(): bool
     {
-        return is_array($this->indexFields) && count($this->indexFields) > 0;
+        return count($this->indexFields) > 0;
     }
 
     /**
@@ -57,7 +57,7 @@ class IndexDocument
 
     public function hasOptionFields(): bool
     {
-        return is_array($this->optionFields) && count($this->optionFields) > 0;
+        return count($this->optionFields) > 0;
     }
 
     /**

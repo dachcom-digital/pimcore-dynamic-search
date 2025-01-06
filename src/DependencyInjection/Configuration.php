@@ -206,13 +206,13 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->beforeNormalization()
                     ->ifTrue(function ($values) {
-                        return isset($values['multiple'], $values['runtime_options_builder']) && $values['multiple'] === true && $values['runtime_options_builder'] !== null;
+                        return isset($values['multiple'], $values['runtime_options_builder']) && $values['multiple'] === true;
                     })
                     ->thenInvalid('Unrecognized multi search option "runtime_options_builder"')
                 ->end()
                 ->beforeNormalization()
                     ->ifTrue(function ($values) {
-                        return isset($values['use_frontend_controller'], $values['view_name']) && $values['use_frontend_controller'] !== true && $values['view_name'] !== null;
+                        return isset($values['use_frontend_controller'], $values['view_name']) && $values['use_frontend_controller'] !== true;
                     })
                     ->thenInvalid('Unrecognized option "view_name" in a non frontend controller based output channel')
                 ->end()
@@ -223,7 +223,7 @@ class Configuration implements ConfigurationInterface
                             return $values;
                         }
 
-                        if (isset($values['view_name']) && $values['view_name'] !== null) {
+                        if (isset($values['view_name'])) {
                             return $values;
                         }
 

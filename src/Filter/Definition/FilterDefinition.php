@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Validation;
 
 class FilterDefinition implements FilterDefinitionInterface
 {
-    protected array $filterDefinitions;
+    protected array $filterDefinitions = [];
 
     public function addFilterDefinition(array $definition): static
     {
@@ -36,6 +36,6 @@ class FilterDefinition implements FilterDefinitionInterface
 
     public function getFilterDefinitions(): array
     {
-        return !is_array($this->filterDefinitions) ? [] : $this->filterDefinitions;
+        return $this->filterDefinitions;
     }
 }
