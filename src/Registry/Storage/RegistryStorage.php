@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Registry\Storage;
 
 class RegistryStorage
@@ -22,7 +33,6 @@ class RegistryStorage
         ?string $alias = null,
         bool $allowMultipleAppearance = false
     ): void {
-
         if (!in_array($requiredInterface, class_implements($service), true)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -35,7 +45,6 @@ class RegistryStorage
         }
 
         if ($allowMultipleAppearance === false) {
-
             if ($identifier === $alias) {
                 throw new \Exception(sprintf('Alias "%s" for Service "%s" cannot be identical', $alias, $identifier));
             }
@@ -45,7 +54,6 @@ class RegistryStorage
             } elseif ($this->getByAlias($namespace, $alias) !== null) {
                 throw new \Exception(sprintf('Service "%s" for namespace "%s" with alias "%s" already has been registered', $identifier, $namespace, $alias));
             }
-
         }
 
         $this->store[] = [
@@ -65,8 +73,8 @@ class RegistryStorage
     public function hasOneByNamespace(string $namespace): bool
     {
         return count(array_filter($this->store, static function ($entry) use ($namespace) {
-                return $entry['namespace'] === $namespace;
-            })) > 0;
+            return $entry['namespace'] === $namespace;
+        })) > 0;
     }
 
     public function get(string $namespace, string $identifier): mixed

@@ -1,15 +1,26 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Queue;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
-use DynamicSearchBundle\Queue\Message\QueueResourceMessage;
-use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
+use DynamicSearchBundle\Queue\Message\QueueResourceMessage;
 use DynamicSearchBundle\Service\LockServiceInterface;
-use Pimcore\Model\Element\ElementInterface;
+use DynamicSearchBundle\Validator\ResourceValidatorInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class DataCollector implements DataCollectorInterface
@@ -20,8 +31,8 @@ class DataCollector implements DataCollectorInterface
         protected ResourceValidatorInterface $resourceValidator,
         protected MessageBusInterface $messageBus,
         protected LockServiceInterface $lockService
-    )
-    {}
+    ) {
+    }
 
     public function addToGlobalQueue(string $dispatchType, mixed $resource, array $options = []): void
     {
@@ -51,6 +62,7 @@ class DataCollector implements DataCollectorInterface
             $isUnknownResource = $resourceValidationOptions['unknownResource'] ?? $isUnknownResource;
             $isImmutableResource = $resourceValidationOptions['immutableResource'] ?? $isImmutableResource;
         }
+
         try {
             // validate and allow rewriting dispatch type and/or resource
             $resourceCandidate = $this->resourceValidator->validateResource($contextName, $dispatchType, $isUnknownResource, $isImmutableResource, $resource);
@@ -114,5 +126,4 @@ class DataCollector implements DataCollectorInterface
             $contextName
         );
     }
-
 }

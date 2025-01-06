@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Queue\Transport;
 
 use Doctrine\DBAL\Abstraction\Result as AbstractionResult;
@@ -70,6 +81,7 @@ final class ExtendedDoctrineConnection extends Connection
 
         get:
         $this->driverConnection->beginTransaction();
+
         try {
             $query = $this->createAvailableMessagesQueryBuilder()
                 ->orderBy('available_at_micro', 'ASC')
@@ -85,7 +97,7 @@ final class ExtendedDoctrineConnection extends Connection
             // Wrap the rownum query in a sub-query to allow writelocks without ORA-02014 error
             if ($this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
                 $query = $this->createQueryBuilder('w')
-                    ->where('w.id IN ('.str_replace('SELECT a.* FROM', 'SELECT a.id FROM', $sql).')')
+                    ->where('w.id IN (' . str_replace('SELECT a.* FROM', 'SELECT a.id FROM', $sql) . ')')
                     ->setParameters($query->getParameters(), $query->getParameterTypes());
 
                 if (method_exists(QueryBuilder::class, 'forUpdate')) {
@@ -95,6 +107,7 @@ final class ExtendedDoctrineConnection extends Connection
                 $sql = $query->getSQL();
             } elseif (method_exists(QueryBuilder::class, 'forUpdate')) {
                 $query->forUpdate();
+
                 try {
                     $sql = $query->getSQL();
                 } catch (DBALException $e) {
@@ -110,7 +123,7 @@ final class ExtendedDoctrineConnection extends Connection
 
             // use SELECT ... FOR UPDATE to lock table
             if (!method_exists(QueryBuilder::class, 'forUpdate')) {
-                $sql .= ' '.$this->driverConnection->getDatabasePlatform()->getWriteLockSQL();
+                $sql .= ' ' . $this->driverConnection->getDatabasePlatform()->getWriteLockSQL();
             }
 
             $stmt = $this->executeQuery(
@@ -163,16 +176,16 @@ final class ExtendedDoctrineConnection extends Connection
     {
         $now = new \DateTimeImmutable('UTC');
         $availableAt = $now->modify(sprintf('%+d seconds', $delay / 1000));
-        $availableAtMicro = ((int)$availableAt->format('U') * 1000000) + (int)$availableAt->format('u');
+        $availableAtMicro = ((int) $availableAt->format('U') * 1000000) + (int) $availableAt->format('u');
 
         $queryBuilder = $this->driverConnection->createQueryBuilder()
             ->insert($this->configuration['table_name'])
             ->values([
-                'body' => '?',
-                'headers' => '?',
-                'queue_name' => '?',
-                'created_at' => '?',
-                'available_at' => '?',
+                'body'               => '?',
+                'headers'            => '?',
+                'queue_name'         => '?',
+                'created_at'         => '?',
+                'available_at'       => '?',
                 'available_at_micro' => '?'
             ]);
 
@@ -221,15 +234,17 @@ final class ExtendedDoctrineConnection extends Connection
         $alias .= '.';
 
         if (!$this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
-            return $queryBuilder->select($alias.'*');
+            return $queryBuilder->select($alias . '*');
         }
 
         // Oracle databases use UPPER CASE on tables and column identifiers.
         // Column alias is added to force the result to be lowercase even when the actual field is all caps.
 
-        return $queryBuilder->select(str_replace(', ', ', '.$alias,
-            $alias.'id AS "id", body AS "body", headers AS "headers", queue_name AS "queue_name", '.
-            'created_at AS "created_at", available_at AS "available_at", '.
+        return $queryBuilder->select(str_replace(
+            ', ',
+            ', ' . $alias,
+            $alias . 'id AS "id", body AS "body", headers AS "headers", queue_name AS "queue_name", ' .
+            'created_at AS "created_at", available_at AS "available_at", ' .
             'delivered_at AS "delivered_at", available_at_micro AS "available_at_micro"'
         ));
     }
@@ -408,5 +423,4 @@ final class ExtendedDoctrineConnection extends Connection
             ? $comparator->compareSchemas($from, $to)
             : $comparator->compare($from, $to);
     }
-
 }

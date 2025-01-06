@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Queue\MessageHandler;
 
 use DynamicSearchBundle\Exception\SilentException;
@@ -12,14 +23,13 @@ use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 
 class ProcessResourceHandler implements BatchHandlerInterface
 {
-
     use BatchHandlerTrait;
 
     public function __construct(
         protected LoggerInterface $logger,
         protected ResourceRunnerInterface $resourceRunner
-    )
-    {}
+    ) {
+    }
 
     public function __invoke(ProcessResourceMessage $message, ?Acknowledger $ack)
     {
@@ -32,7 +42,7 @@ class ProcessResourceHandler implements BatchHandlerInterface
 
         /**
          * @var ProcessResourceMessage $message
-         * @var Acknowledger $ack
+         * @var Acknowledger           $ack
          */
         foreach ($jobs as [$message, $ack]) {
             if (!isset($groupedResourceMetas[$message->contextName])) {

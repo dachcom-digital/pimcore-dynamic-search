@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Generator;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
@@ -47,13 +58,11 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         ContextDefinitionInterface $contextDefinition,
         array $options = []
     ): IndexDocument {
-
         $generatorOptions = $this->buildOptions($options);
         $documentDefinition = $this->generateDocumentDefinition($contextDefinition, null, $generatorOptions);
         $indexDocument = $this->generateIndexDocument(null, $documentDefinition);
 
         foreach ($documentDefinition->getDocumentFieldDefinitions() as $fieldDefinitionOptions) {
-
             $fieldType = $fieldDefinitionOptions['_field_type'];
             if ($fieldType !== 'simple_definition') {
                 continue;
@@ -86,7 +95,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         ResourceContainerInterface $resourceContainer,
         DocumentDefinitionInterface $documentDefinition
     ): IndexDocument {
-
         $resourceScaffolderName = $resourceContainer->getResourceScaffolderIdentifier();
 
         foreach ($documentDefinition->getOptionFieldDefinitions() as $documentDefinitionOptions) {
@@ -129,7 +137,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         $transformedData = $this->dispatchResourceFieldTransformer($dataTransformerOptions, $resourceScaffolderName, $resourceContainer);
 
         if ($fieldType === 'pre_process_definition') {
-
             $documentDefinition->setCurrentLevel($fieldDefinitionOptions['level']);
 
             call_user_func($fieldDefinitionOptions['closure'], $documentDefinition, $transformedData);
@@ -157,7 +164,6 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
         array $fieldDefinitionOptions,
         mixed $transformedData
     ): void {
-
         $fieldName = $fieldDefinitionOptions['name'];
         $indexTransformerOptions = $fieldDefinitionOptions['index_transformer'];
 
@@ -189,7 +195,8 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
             $transformedData = $fieldTransformer->transformData($dispatchTransformerName, $resourceContainer);
         } catch (\Throwable $e) {
             throw new \Exception(
-                sprintf('Error while transform field resource with service "%s": %s', $fieldTransformerName, $e->getMessage()));
+                sprintf('Error while transform field resource with service "%s": %s', $fieldTransformerName, $e->getMessage())
+            );
         }
 
         if ($transformedData === '') {

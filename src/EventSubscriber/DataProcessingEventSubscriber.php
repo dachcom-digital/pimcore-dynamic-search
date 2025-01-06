@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\EventSubscriber;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
@@ -41,7 +52,7 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
                 $event->getData(),
                 [
                     'resourceValidation' => [
-                        'unknownResource' => false,
+                        'unknownResource'   => false,
                         'immutableResource' => false
                     ]
                 ]
@@ -51,7 +62,8 @@ class DataProcessingEventSubscriber implements EventSubscriberInterface
         } else {
             $this->logger->error(
                 sprintf('Invalid provider behaviour "%s". Cannot dispatch resource processor', $event->getProviderBehaviour()),
-                $contextDefinition->getDataProviderName(), $event->getContextName()
+                $contextDefinition->getDataProviderName(),
+                $event->getContextName()
             );
         }
     }

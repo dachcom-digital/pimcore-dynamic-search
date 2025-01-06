@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Command;
 
 use DynamicSearchBundle\Command\Traits\SignalWatchTrait;
@@ -23,7 +34,6 @@ class SearchCommand extends Command
         protected LockServiceInterface $lockService
     ) {
         parent::__construct();
-
     }
 
     protected function configure(): void
@@ -37,7 +47,6 @@ class SearchCommand extends Command
                 'Force Crawl Start'
             );
     }
-
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

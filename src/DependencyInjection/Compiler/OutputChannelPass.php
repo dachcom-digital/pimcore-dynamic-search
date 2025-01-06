@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\DependencyInjection\Compiler;
 
 use DynamicSearchBundle\DependencyInjection\Compiler\Helper\OptionsResolverValidator;
@@ -29,7 +40,6 @@ final class OutputChannelPass implements CompilerPassInterface
         $serviceDefinitionStack = [];
         foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-
                 $alias = $attributes['identifier'] ?? null;
                 $serviceName = $alias ?? $id;
 
@@ -71,7 +81,6 @@ final class OutputChannelPass implements CompilerPassInterface
 
         $outputChannelModifierActionServices = [];
         foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_MODIFIER_ACTION_TAG, true) as $id => $tags) {
-
             if (count($outputChannelServices) === 0) {
                 continue;
             }
@@ -121,7 +130,6 @@ final class OutputChannelPass implements CompilerPassInterface
 
         $outputChannelModifierFilterServices = [];
         foreach ($container->findTaggedServiceIds(self::OUTPUT_CHANNEL_MODIFIER_FILTER_TAG, true) as $id => $tags) {
-
             if (count($outputChannelServices) === 0) {
                 continue;
             }
@@ -173,9 +181,9 @@ final class OutputChannelPass implements CompilerPassInterface
         }
     }
 
-    protected function validateOutputChannelOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
+    private function validateOutputChannelOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
         }
@@ -185,13 +193,11 @@ final class OutputChannelPass implements CompilerPassInterface
         $contextConfiguration = $container->getParameter('dynamic_search.context.full_configuration');
 
         foreach ($contextConfiguration as $contextName => &$contextConfig) {
-
             if (!isset($contextConfig['output_channels']) || !is_array($contextConfig['output_channels'])) {
                 continue;
             }
 
             foreach ($contextConfig['output_channels'] as $outputChannelName => &$outputChannelConfig) {
-
                 $contextService = [
                     'serviceName' => $outputChannelConfig['service'] ?? null,
                     'options'     => $outputChannelConfig['options'] ?? null
