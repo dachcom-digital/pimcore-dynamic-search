@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 4.0.6
+- [LICENSE] Dual-License with GPL and Dachcom Commercial License (DCL) added
 ## 4.0.5
 - index queue backend ui [#97](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/97)
 ## 4.0.4
