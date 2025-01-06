@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Processor;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
@@ -15,11 +26,10 @@ use DynamicSearchBundle\Manager\NormalizerManagerInterface;
 use DynamicSearchBundle\Manager\OutputChannelManagerInterface;
 use DynamicSearchBundle\Normalizer\DocumentNormalizerInterface;
 use DynamicSearchBundle\OutputChannel\Allocator\OutputChannelAllocator;
-use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
-use DynamicSearchBundle\OutputChannel\Context\SubOutputChannelContextInterface;
-use DynamicSearchBundle\OutputChannel\MultiOutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Context\OutputChannelContext;
+use DynamicSearchBundle\OutputChannel\Context\OutputChannelContextInterface;
 use DynamicSearchBundle\OutputChannel\Context\SubOutputChannelContext;
+use DynamicSearchBundle\OutputChannel\MultiOutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\OutputChannelInterface;
 use DynamicSearchBundle\OutputChannel\Query\MultiSearchContainer;
 use DynamicSearchBundle\OutputChannel\Query\Result\RawResultInterface;
@@ -185,7 +195,6 @@ class OutputChannelProcessor implements OutputChannelProcessorInterface
         // fetch result of each sub query
         $results = [];
         foreach ($multiOutputChannelService->getMultiSearchResult(new MultiSearchContainer($multiSearchContainer))->getSearchContainer() as $searchContainer) {
-
             $subOutputChannelIdentifier = $searchContainer->getIdentifier();
 
             $filter = $filters[$subOutputChannelIdentifier];

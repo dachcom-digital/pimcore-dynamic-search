@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Validator;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
@@ -29,7 +40,6 @@ class ResourceValidator implements ResourceValidatorInterface
         bool $isImmutableResource,
         mixed $resource
     ): ResourceCandidateInterface {
-
         $contextDefinition = $this->contextDefinitionBuilder->buildContextDefinition($contextName, $dispatchType);
         $dataProvider = $this->getDataProvider($contextName, $dispatchType);
 

@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\DependencyInjection\Compiler\Helper;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -10,7 +21,7 @@ final class OptionsResolverValidator
 {
     public function validate(ContainerBuilder $container, array $contextService, array $serviceDefinitionStack): array
     {
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return [];
         }
@@ -31,6 +42,7 @@ final class OptionsResolverValidator
         foreach ($serviceDefinitionStack as $optionProviderClass) {
             if ($service === $optionProviderClass['serviceName']) {
                 $definition = $container->hasDefinition($optionProviderClass['id']) ? $container->getDefinition($optionProviderClass['id']) : null;
+
                 break;
             }
         }

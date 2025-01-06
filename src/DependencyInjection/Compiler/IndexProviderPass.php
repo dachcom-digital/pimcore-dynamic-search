@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\DependencyInjection\Compiler;
 
 use DynamicSearchBundle\DependencyInjection\Compiler\Helper\OptionsResolverValidator;
@@ -20,7 +31,6 @@ final class IndexProviderPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds(self::INDEX_PROVIDER_TAG, true) as $id => $tags) {
             foreach ($tags as $attributes) {
-
                 $alias = $attributes['identifier'] ?? null;
                 $serviceName = $alias ?? $id;
 
@@ -32,9 +42,9 @@ final class IndexProviderPass implements CompilerPassInterface
         $this->validateOptions($container, $serviceDefinitionStack);
     }
 
-    protected function validateOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
+    private function validateOptions(ContainerBuilder $container, array $serviceDefinitionStack): void
     {
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if (!$container->hasParameter('dynamic_search.context.full_configuration')) {
             return;
         }
@@ -44,7 +54,6 @@ final class IndexProviderPass implements CompilerPassInterface
         $contextConfiguration = $container->getParameter('dynamic_search.context.full_configuration');
 
         foreach ($contextConfiguration as $contextName => &$contextConfig) {
-
             $contextService = [
                 'serviceName' => $contextConfig['index_provider']['service'] ?? null,
                 'options'     => $contextConfig['index_provider']['options'] ?? null

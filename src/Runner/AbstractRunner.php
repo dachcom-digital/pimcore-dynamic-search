@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Runner;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
@@ -126,15 +137,18 @@ abstract class AbstractRunner
         try {
             $indexDocument = $this->indexDocumentGenerator->generateWithoutData($contextDefinition, ['preConfiguredIndexProvider' => true]);
         } catch (\Throwable $e) {
-            throw new \Exception(sprintf(
+            throw new \Exception(
+                sprintf(
                     '%s. (The current context index provider also requires pre-configured indices. Please make sure your document definition implements the "%s" interface)',
-                    $e->getMessage(), PreConfiguredIndexProviderInterface::class
+                    $e->getMessage(),
+                    PreConfiguredIndexProviderInterface::class
                 )
             );
         }
 
         if (!$indexDocument->hasIndexFields()) {
-            throw new \Exception(sprintf(
+            throw new \Exception(
+                sprintf(
                     'No Index Document found. The current context index provider requires pre-configured indices. Please make sure your document definition implements the "%s" interface',
                     PreConfiguredIndexProviderInterface::class
                 )
@@ -150,7 +164,6 @@ abstract class AbstractRunner
     protected function warmUpProvider(ContextDefinitionInterface $contextDefinition, array $providers): void
     {
         foreach ($providers as $provider) {
-
             $providerName = $provider instanceof DataProviderInterface ? $contextDefinition->getDataProviderName() : $contextDefinition->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('warm up provider'), $providerName, $contextDefinition->getName());
 
@@ -162,14 +175,18 @@ abstract class AbstractRunner
             } catch (RuntimeException $e) {
                 $this->dispatchFailOverToProviders(sprintf(
                     'Error pre configure index provider. Error was: %s [Line: %s, File %s]. FailOver has been initiated',
-                    $e->getMessage(), $e->getLine(), $e->getFile()
+                    $e->getMessage(),
+                    $e->getLine(),
+                    $e->getFile()
                 ), $contextDefinition, $providers);
 
                 throw new SilentException(sprintf('Error on warm up provider'));
             } catch (\Throwable $e) {
                 $this->dispatchFailOverToProviders(sprintf(
                     'Error while warming up provider. Error was: %s [Line: %s, File %s]. FailOver has been initiated',
-                    $e->getMessage(), $e->getLine(), $e->getFile()
+                    $e->getMessage(),
+                    $e->getLine(),
+                    $e->getFile()
                 ), $contextDefinition, $providers);
 
                 throw new SilentException(sprintf('Error on warm up provider'));
@@ -198,7 +215,9 @@ abstract class AbstractRunner
             } catch (\Throwable $e) {
                 $this->dispatchFailOverToProviders(sprintf(
                     'Error while cooling down provider. Error was: %s [Line: %s, File %s]. FailOver has been initiated',
-                    $e->getMessage(), $e->getLine(), $e->getFile()
+                    $e->getMessage(),
+                    $e->getLine(),
+                    $e->getFile()
                 ), $contextDefinition, $providers);
 
                 throw new SilentException(sprintf('Error on cooling down provider'));
@@ -223,7 +242,9 @@ abstract class AbstractRunner
         } catch (\Throwable $e) {
             $this->dispatchFailOverToProviders(sprintf(
                 'Error while executing data provider. Error was: %s [Line: %s, File %s]. FailOver has been initiated',
-                $e->getMessage(), $e->getLine(), $e->getFile()
+                $e->getMessage(),
+                $e->getLine(),
+                $e->getFile()
             ), $contextDefinition, $involvedProviders);
 
             throw new SilentException(sprintf('Error on calling save method'));
@@ -241,9 +262,13 @@ abstract class AbstractRunner
             try {
                 $provider->cancelledShutdown($contextDefinition);
             } catch (\Throwable $e) {
-                $this->logger->error(sprintf(
-                    'Error while dispatching cancelled process. Error was: %s.',
-                    $e->getMessage()), get_class($provider), $contextDefinition->getName()
+                $this->logger->error(
+                    sprintf(
+                        'Error while dispatching cancelled process. Error was: %s.',
+                        $e->getMessage()
+                    ),
+                    get_class($provider),
+                    $contextDefinition->getName()
                 );
             }
         }
@@ -254,7 +279,6 @@ abstract class AbstractRunner
         $this->logger->error($errorMessage, 'workflow', $contextDefinition->getName());
 
         foreach ($providers as $provider) {
-
             $providerName = $provider instanceof DataProviderInterface ? $contextDefinition->getDataProviderName() : $contextDefinition->getIndexProviderName();
             $this->logger->log('DEBUG', sprintf('executing provider emergency shutdown'), $providerName, $contextDefinition->getName());
 

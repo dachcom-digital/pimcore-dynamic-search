@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Controller;
 
 use DynamicSearchBundle\Configuration\ConfigurationInterface;
@@ -69,8 +80,12 @@ class SearchFrontendController extends FrontendController
                 $outputChannelResult = $this->outputChannelWorkflowProcessor->dispatchOutputChannelQuery($contextName, $outputChannelName);
             } catch (\Throwable $e) {
                 $hasError = true;
-                $errorMessage = sprintf('Error while loading search output channel "%s" for "%s" context. Error was: %s', $outputChannelName, $contextName,
-                    $e->getMessage());
+                $errorMessage = sprintf(
+                    'Error while loading search output channel "%s" for "%s" context. Error was: %s',
+                    $outputChannelName,
+                    $contextName,
+                    $e->getMessage()
+                );
             }
         }
 
@@ -163,7 +178,7 @@ class SearchFrontendController extends FrontendController
         ];
     }
 
-    protected function outputChannelExists(string $contextName, string $outputChannelName, bool $multiSearchOnly = false) :bool
+    protected function outputChannelExists(string $contextName, string $outputChannelName, bool $multiSearchOnly = false): bool
     {
         $channelConfig = $this->getOutputChannelConfig($contextName, $outputChannelName);
 
@@ -186,7 +201,7 @@ class SearchFrontendController extends FrontendController
         return $channelConfig['use_frontend_controller'] === true;
     }
 
-    protected function getOutputChannelView(string $contextName, string $outputChannelName, string $default) :string
+    protected function getOutputChannelView(string $contextName, string $outputChannelName, string $default): string
     {
         $channelConfig = $this->getOutputChannelConfig($contextName, $outputChannelName);
 

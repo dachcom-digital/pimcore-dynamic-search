@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Queue\MessageHandler;
 
 use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
@@ -20,7 +31,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class QueuedResourcesHandler implements BatchHandlerInterface
 {
-
     use BatchHandlerTrait;
 
     public function __construct(
@@ -28,8 +38,8 @@ class QueuedResourcesHandler implements BatchHandlerInterface
         protected ContextDefinitionBuilderInterface $contextDefinitionBuilder,
         protected ResourceHarmonizerInterface $resourceHarmonizer,
         protected MessageBusInterface $messageBus
-    )
-    {}
+    ) {
+    }
 
     public function __invoke(QueueResourceMessage $message, ?Acknowledger $ack = null)
     {
@@ -40,11 +50,10 @@ class QueuedResourcesHandler implements BatchHandlerInterface
     {
         /**
          * @var QueueResourceMessage $message
-         * @var Acknowledger $ack
+         * @var Acknowledger         $ack
          */
         foreach ($jobs as [$message, $ack]) {
             try {
-
                 $resource = $message->resource;
                 // @todo: use introduced "resource info" dto to determinate resource / type
                 if (str_contains($message->resourceType, '-')) {
@@ -59,8 +68,8 @@ class QueuedResourcesHandler implements BatchHandlerInterface
                         // we need to create a dummy resource to retrieve a valid resource meta for deletion
                         $resource = match ($type) {
                             'document' => new Document(),
-                            'asset' => new Asset(),
-                            'object' => new DataObject\Concrete(),
+                            'asset'    => new Asset(),
+                            'object'   => new DataObject\Concrete(),
                         };
                         $resource->setId($id);
                     }
@@ -76,6 +85,7 @@ class QueuedResourcesHandler implements BatchHandlerInterface
                     );
 
                     $ack->ack($message);
+
                     continue;
                 }
 
@@ -90,6 +100,7 @@ class QueuedResourcesHandler implements BatchHandlerInterface
                         );
 
                         $ack->ack($message);
+
                         continue;
                     }
 

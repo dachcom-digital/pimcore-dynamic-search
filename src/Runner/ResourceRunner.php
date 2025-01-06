@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Runner;
 
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
@@ -17,6 +28,7 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
     {
         if ($dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
             $this->runDeleteStack($contextName, $resourceMetaStack);
+
             return;
         }
 
@@ -34,7 +46,6 @@ class ResourceRunner extends AbstractRunner implements ResourceRunnerInterface
         }
 
         $this->coolDownProvider($contextDefinition, $providers);
-
     }
 
     public function runResource(string $contextName, string $dispatchType, ResourceMetaInterface $resourceMeta): void

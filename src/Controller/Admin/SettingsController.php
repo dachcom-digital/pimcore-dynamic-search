@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace DynamicSearchBundle\Controller\Admin;
 
 use DynamicSearchBundle\Manager\QueueManagerInterface;
@@ -16,15 +27,13 @@ class SettingsController extends AdminAbstractController
 {
     public function __construct(
         private array $contextFullConfiguration
-    )
-    {
+    ) {
     }
 
     public function healthStateAction(HealthStateRegistryInterface $healthStateRegistry): JsonResponse
     {
         $stateLines = [];
         foreach ($healthStateRegistry->all() as $healthStateService) {
-
             $stateIcon = 'pimcore_icon_save';
             if ($healthStateService->getState() === HealthStateInterface::STATE_WARNING) {
                 $stateIcon = 'pimcore_icon_info';
@@ -40,7 +49,6 @@ class SettingsController extends AdminAbstractController
                 'comment' => $healthStateService->getComment(),
                 'icon'    => $stateIcon,
             ];
-
         }
 
         return $this->json([
@@ -59,7 +67,7 @@ class SettingsController extends AdminAbstractController
     {
         return $this->json([
             'tableName' => $queueManager->getQueueTableName(),
-            'count' => $queueManager->getTotalQueuedItems()
+            'count'     => $queueManager->getTotalQueuedItems()
         ]);
     }
 
