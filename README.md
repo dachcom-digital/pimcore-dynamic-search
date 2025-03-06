@@ -24,7 +24,7 @@ It's based on several data- and index providers.
 There are several data- and index providers available:
 
 ### Data Provider
-- [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) | Fetch data by crawling urls [_legacy, recommended_]
+- [WebCrawler](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-crawler) | Fetch data by crawling urls [_legacy, not recommended_]
 - [Trinity Data](https://github.com/dachcom-digital/pimcore-dynamic-search-data-provider-trinity) | Fetch pimcore entities: object, asset, document
 
 ### Index Provider
