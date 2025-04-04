@@ -68,7 +68,7 @@ class ProcessResourceHandler implements BatchHandlerInterface
                 $groupedResourceMetas[$message->contextName][$message->dispatchType] = [];
             }
 
-            $key = sprintf('%s_%s', $message->contextName, $message->resourceMeta->documentId);
+            $key = sprintf('%s_%s', $message->contextName, $message->resourceMeta->getDocumentId());
 
             if (in_array($key, $existingKeys, true)) {
                 continue;
