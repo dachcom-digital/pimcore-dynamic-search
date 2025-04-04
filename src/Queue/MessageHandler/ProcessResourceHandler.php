@@ -38,21 +38,45 @@ class ProcessResourceHandler implements BatchHandlerInterface
 
     private function process(array $jobs): void
     {
+        $processableJobs = [];
         $groupedResourceMetas = [];
+        $existingKeys = [];
 
         /**
          * @var ProcessResourceMessage $message
          * @var Acknowledger           $ack
          */
         foreach ($jobs as [$message, $ack]) {
+            $processableJobs[] = $message;
+            $ack->ack($message);
+        }
+
+        /*
+        * A resource can be added multiple times (saving an element 3 or more times in short intervals for example).
+        * Only the latest resource of its kind should be used in index processing to improve performance.
+        */
+        $processableJobs = array_reverse($processableJobs);
+
+        /** @var ProcessResourceMessage $message */
+        foreach ($processableJobs as $message) {
+
             if (!isset($groupedResourceMetas[$message->contextName])) {
                 $groupedResourceMetas[$message->contextName] = [];
             }
+
             if (!isset($groupedResourceMetas[$message->contextName][$message->dispatchType])) {
                 $groupedResourceMetas[$message->contextName][$message->dispatchType] = [];
             }
+
+            $key = sprintf('%s_%s', $message->contextName, $message->resourceMeta->documentId);
+
+            if (in_array($key, $existingKeys, true)) {
+                continue;
+            }
+
             $groupedResourceMetas[$message->contextName][$message->dispatchType][] = $message->resourceMeta;
-            $ack->ack($message);
+
+            $existingKeys[] = $key;
         }
 
         foreach ($groupedResourceMetas as $contextName => $contextResourceMetas) {
