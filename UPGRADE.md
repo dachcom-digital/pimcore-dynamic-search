@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 4.0.7
+- [BUGFIX] Reverse job processing order to prevent wrong dispatch type execution. Also merge dispatch types to improve workload 
 ## 4.0.6
 - [LICENSE] Dual-License with GPL and Dachcom Commercial License (DCL) added
 ## 4.0.5
