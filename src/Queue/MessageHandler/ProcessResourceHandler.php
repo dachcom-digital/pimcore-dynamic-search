@@ -59,7 +59,6 @@ class ProcessResourceHandler implements BatchHandlerInterface
 
         /** @var ProcessResourceMessage $message */
         foreach ($processableJobs as $message) {
-
             if (!isset($groupedResourceMetas[$message->contextName])) {
                 $groupedResourceMetas[$message->contextName] = [];
             }
