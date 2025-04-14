@@ -53,11 +53,13 @@ class PimcoreElementListener implements EventSubscriberInterface
 
     public function onDocumentPostUpdate(DocumentEvent $event): void
     {
+        $listenerOptions = $this->configuration->get('element_listener_options');
+
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
         }
 
-        if ($event->getDocument()->getType() !== 'page') {
+        if (!in_array($event->getDocument()->getType(), $listenerOptions['allowed_document_types'], true)) {
             return;
         }
 
@@ -80,11 +82,13 @@ class PimcoreElementListener implements EventSubscriberInterface
 
     public function onDocumentPreDelete(DocumentEvent $event): void
     {
+        $listenerOptions = $this->configuration->get('element_listener_options');
+
         if ($this->configuration->get('enable_pimcore_element_listener') === false) {
             return;
         }
 
-        if ($event->getDocument()->getType() !== 'page') {
+        if (!in_array($event->getDocument()->getType(), $listenerOptions['allowed_document_types'], true)) {
             return;
         }
 
