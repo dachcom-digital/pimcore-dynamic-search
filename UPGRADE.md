@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 4.0.8
+- [IMPROVEMENT] `dynamic_search.element_listener_options.allowed_document_types` added, read more about it [here](./docs/01_DispatchWorkflow.md#listener)
 ## 4.0.7
 - [BUGFIX] Reverse job processing order to prevent wrong dispatch type execution. Also merge dispatch types to improve workload 
 ## 4.0.6

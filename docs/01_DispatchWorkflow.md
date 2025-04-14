@@ -18,6 +18,22 @@ dynamic_search:
     enable_pimcore_element_listener: true
 ```
 
+This will listen to:
+- objects (`all`)
+- documents (`page`)
+- assets (`all`)
+
+If you want to add more document types to the listener:
+
+```yaml
+dynamic_search:
+    enable_pimcore_element_listener: true
+    element_listener_options:
+        allowed_document_types:
+            - page
+            - hardlink
+```
+
 #### Element Watcher
 At every modification/deletion event of every pimcore element,
 DynamicSearch will validate this element by calling [ResourceValidator](./40_ResourceValidator.md). 
