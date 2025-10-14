@@ -17,8 +17,10 @@ use DynamicSearchBundle\Builder\ContextDefinitionBuilderInterface;
 use DynamicSearchBundle\Context\ContextDefinitionInterface;
 use DynamicSearchBundle\Logger\LoggerInterface;
 use DynamicSearchBundle\Queue\Message\QueueResourceMessage;
+use DynamicSearchBundle\Resource\ResourceInfo;
 use DynamicSearchBundle\Service\LockServiceInterface;
 use DynamicSearchBundle\Validator\ResourceValidatorInterface;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -108,10 +110,19 @@ class DataCollector implements DataCollectorInterface
 
     protected function generateJob(string $contextName, string $dispatchType, mixed $resource, array $options): void
     {
-        // @todo: introduce generic "resource info" dto with resource information
+        // @ToDo: only support pimcore elements. this is a *pimcore* bundle ..
         if ($resource instanceof ElementInterface) {
-            $resourceType = sprintf('%s-%s', Element\Service::getElementType($resource), $resource->getId());
-            $resource = null;
+            $resourceInfo = new ResourceInfo(
+                $resource->getId(),
+                Element\Service::getElementType($resource)
+            );
+            if ($resource instanceof Document) {
+                if (($locale = $resource->getProperty('language')) !== null) {
+                    $resourceInfo->setResourceLocale($locale);
+                }
+            }
+            $resourceType = 'pimcore-element';
+            $resource = $resourceInfo;
         } elseif (is_object($resource)) {
             $resourceType = get_class($resource);
         } else {
