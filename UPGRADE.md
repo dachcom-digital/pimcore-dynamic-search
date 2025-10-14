@@ -1,5 +1,7 @@
 # Upgrade Notes
 
+## 4.0.9
+- [BUGFIX] fixed document deletion [see more](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/108)
 ## 4.0.8
 - [IMPROVEMENT] `dynamic_search.element_listener_options.allowed_document_types` added, read more about it [here](./docs/01_DispatchWorkflow.md#listener)
 ## 4.0.7
