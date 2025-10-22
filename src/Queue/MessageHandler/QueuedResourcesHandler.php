@@ -56,12 +56,12 @@ class QueuedResourcesHandler implements BatchHandlerInterface
         foreach ($jobs as [$message, $ack]) {
             try {
                 $resource = $message->resource;
-                // @ToDo: only support pimcore elements. this is a *pimcore* bundle ..
-                if ($message->resourceType === 'pimcore-element') {
+
+                if ($message->resourceType === ResourceInfoInterface::TYPE_PIMCORE_ELEMENT) {
                     $resourceInfo = $resource;
                     if (!$resourceInfo instanceof ResourceInfoInterface) {
                         $this->logger->error(
-                            sprintf('Unable to get resource info for pimcore resource.'),
+                            'Unable to get resource info for pimcore resource.',
                             'queue',
                             $message->contextName
                         );
@@ -71,7 +71,6 @@ class QueuedResourcesHandler implements BatchHandlerInterface
                         continue;
                     }
 
-                    ;
                     $resource = Element\Service::getElementById($resourceInfo->getResourceType(), $resourceInfo->getResourceId());
                     if ($resource === null && $message->dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
                         // at this time, the resource is already deleted by pimcore
