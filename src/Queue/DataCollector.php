@@ -116,11 +116,11 @@ class DataCollector implements DataCollectorInterface
                 $resource->getId(),
                 Element\Service::getElementType($resource)
             );
-            if ($resource instanceof Document) {
-                if (($locale = $resource->getProperty('language')) !== null) {
-                    $resourceInfo->setResourceLocale($locale);
-                }
+
+            if ($resource instanceof Document && null !== $locale = $resource->getProperty('language')) {
+                $resourceInfo->setResourceLocale($locale);
             }
+
             $resourceType = 'pimcore-element';
             $resource = $resourceInfo;
         } elseif (is_object($resource)) {

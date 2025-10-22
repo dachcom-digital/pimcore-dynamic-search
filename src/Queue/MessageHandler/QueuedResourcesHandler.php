@@ -84,7 +84,8 @@ class QueuedResourcesHandler implements BatchHandlerInterface
                             'object'   => new DataObject\Concrete(),
                         };
                         $resource->setId($resourceInfo->getResourceId());
-                        if (($locale = $resourceInfo->getResourceLocale()) !== null) {
+
+                        if ($resource instanceof Document && null !== $locale = $resourceInfo->getResourceLocale()) {
                             $resource->setProperty('language', 'text', $locale, false, true);
                         }
                     }
