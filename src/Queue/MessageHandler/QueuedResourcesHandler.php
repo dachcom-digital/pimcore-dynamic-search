@@ -75,14 +75,16 @@ class QueuedResourcesHandler implements BatchHandlerInterface
                     if ($resource === null && $message->dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
                         // at this time, the resource is already deleted by pimcore
                         // since we do not serialize the resource into the message,
-                        // we need to create a dummy resource in order for the resource normalizer
+                        // we need to create a fake resource in order for the resource normalizer
                         // to generate a valid resource meta for deletion
                         $resource = match ($resourceInfo->getResourceType()) {
                             'document' => new Document(),
                             'asset'    => new Asset(),
                             'object'   => new DataObject\Concrete(),
+                            default    => null,
                         };
-                        $resource->setId($resourceInfo->getResourceId());
+
+                        $resource?->setId($resourceInfo->getResourceId());
 
                         if ($resource instanceof Document && null !== $locale = $resourceInfo->getResourceLocale()) {
                             $resource->setProperty('language', 'text', $locale, false, true);
