@@ -20,6 +20,7 @@ use DynamicSearchBundle\Normalizer\Resource\NormalizedDataResourceInterface;
 use DynamicSearchBundle\Processor\Harmonizer\ResourceHarmonizerInterface;
 use DynamicSearchBundle\Queue\Message\ProcessResourceMessage;
 use DynamicSearchBundle\Queue\Message\QueueResourceMessage;
+use DynamicSearchBundle\Resource\ResourceInfoInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -55,23 +56,39 @@ class QueuedResourcesHandler implements BatchHandlerInterface
         foreach ($jobs as [$message, $ack]) {
             try {
                 $resource = $message->resource;
-                // @todo: use introduced "resource info" dto to determinate resource / type
-                if (str_contains($message->resourceType, '-')) {
-                    [$type, $id] = explode('-', $message->resourceType);
-                    if (is_numeric($id)) {
-                        $id = (int) $id;
+
+                if ($message->resourceType === ResourceInfoInterface::TYPE_PIMCORE_ELEMENT) {
+                    $resourceInfo = $resource;
+                    if (!$resourceInfo instanceof ResourceInfoInterface) {
+                        $this->logger->error(
+                            'Unable to get resource info for pimcore resource.',
+                            'queue',
+                            $message->contextName
+                        );
+
+                        $ack->ack($message);
+
+                        continue;
                     }
-                    $resource = Element\Service::getElementById($type, $id);
+
+                    $resource = Element\Service::getElementById($resourceInfo->getResourceType(), $resourceInfo->getResourceId());
                     if ($resource === null && $message->dispatchType === ContextDefinitionInterface::CONTEXT_DISPATCH_TYPE_DELETE) {
                         // at this time, the resource is already deleted by pimcore
                         // since we do not serialize the resource into the message,
-                        // we need to create a dummy resource to retrieve a valid resource meta for deletion
-                        $resource = match ($type) {
+                        // we need to create a fake resource in order for the resource normalizer
+                        // to generate a valid resource meta for deletion
+                        $resource = match ($resourceInfo->getResourceType()) {
                             'document' => new Document(),
                             'asset'    => new Asset(),
                             'object'   => new DataObject\Concrete(),
+                            default    => null,
                         };
-                        $resource->setId($id);
+
+                        $resource?->setId($resourceInfo->getResourceId());
+
+                        if ($resource instanceof Document && null !== $locale = $resourceInfo->getResourceLocale()) {
+                            $resource->setProperty('language', 'text', $locale, false, true);
+                        }
                     }
                 }
 
