@@ -180,9 +180,15 @@ class IndexDocumentGenerator implements IndexDocumentGeneratorInterface
     /**
      * @throws \Exception
      */
-    protected function dispatchResourceFieldTransformer(array $options, string $dispatchTransformerName, ResourceContainerInterface $resourceContainer): mixed
+    protected function dispatchResourceFieldTransformer(?array $options, string $dispatchTransformerName, ResourceContainerInterface $resourceContainer): mixed
     {
         $fieldTransformerName = $options['type'];
+
+        // it's not a source field
+        if ($fieldTransformerName === null) {
+            return null;
+        }
+
         $fieldTransformerConfiguration = $options['configuration'];
 
         $fieldTransformer = $this->transformerManager->getResourceFieldTransformer($dispatchTransformerName, $fieldTransformerName, $fieldTransformerConfiguration);
