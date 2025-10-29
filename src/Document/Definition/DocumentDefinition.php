@@ -67,7 +67,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
         $resolver = new OptionsResolver();
         $resolver->setRequired(['name', 'data_transformer']);
         $resolver->setAllowedTypes('name', ['string']);
-        $resolver->setAllowedTypes('data_transformer', ['array']);
+        $resolver->setAllowedTypes('data_transformer', ['array', 'null']);
 
         try {
             $options = $resolver->resolve($definition);
@@ -100,7 +100,7 @@ class DocumentDefinition implements DocumentDefinitionInterface
         $resolver->setRequired(['name', 'index_transformer', 'data_transformer']);
         $resolver->setAllowedTypes('name', ['string']);
         $resolver->setAllowedTypes('index_transformer', ['array']);
-        $resolver->setAllowedTypes('data_transformer', ['array']);
+        $resolver->setAllowedTypes('data_transformer', ['array', 'null']);
 
         try {
             $options = $resolver->resolve($definition);
