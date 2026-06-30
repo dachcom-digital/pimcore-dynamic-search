@@ -23,19 +23,32 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\DBAL\Query\ForUpdate\ConflictResolutionMode;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
+use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Satag\DoctrineFirebirdDriver\Platforms\FirebirdPlatform;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
+use Doctrine\DBAL\Schema\ComparatorConfig;
+use Doctrine\DBAL\Schema\Index;
+use Doctrine\DBAL\Schema\Name\Identifier;
+use Doctrine\DBAL\Schema\Name\UnqualifiedName;
+use Doctrine\DBAL\Schema\PrimaryKeyConstraint;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaDiff;
+use Doctrine\DBAL\Schema\Sequence;
 use Doctrine\DBAL\Schema\Synchronizer\SchemaSynchronizer;
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection;
 use Symfony\Component\Messenger\Exception\TransportException;
 
 final class ExtendedDoctrineConnection extends Connection
 {
+    private const ORACLE_SEQUENCES_SUFFIX = '_seq';
+
     private bool $autoSetup;
     private ?SchemaSynchronizer $schemaSynchronizer;
 
@@ -50,23 +63,33 @@ final class ExtendedDoctrineConnection extends Connection
     {
         $configuration = $this->driverConnection->getConfiguration();
         $assetFilter = $configuration->getSchemaAssetsFilter();
-        $configuration->setSchemaAssetsFilter(static fn () => true);
+        $configuration->setSchemaAssetsFilter(function ($tableName) {
+            if ($tableName instanceof AbstractAsset) {
+                $tableName = $tableName->getName();
+            }
+
+            if (!is_string($tableName)) {
+                throw new \TypeError(sprintf('The table name must be an instance of "%s" or a string ("%s" given).', AbstractAsset::class, get_debug_type($tableName)));
+            }
+
+            return $tableName === $this->configuration['table_name'];
+        });
         $this->updateSchema();
         $configuration->setSchemaAssetsFilter($assetFilter);
         $this->autoSetup = false;
     }
 
-    public function configureSchema(Schema $schema, DBALConnection $forConnection, \Closure $isSameDatabase): void
+    public function configureSchema(Schema $schema, DBALConnection $forConnection, \Closure $isSameDatabase): Schema
     {
         if ($schema->hasTable($this->configuration['table_name'])) {
-            return;
+            return $schema;
         }
 
         if ($forConnection !== $this->driverConnection && !$isSameDatabase($this->executeStatement(...))) {
-            return;
+            return $schema;
         }
 
-        $this->addTableToSchema($schema);
+        return $this->addTableToSchema($schema);
     }
 
     public function get(): ?array
@@ -91,26 +114,30 @@ final class ExtendedDoctrineConnection extends Connection
                 $query->select('m.id');
             }
 
-            // Append pessimistic write lock to FROM clause if db platform supports it
             $sql = $query->getSQL();
 
-            // Wrap the rownum query in a sub-query to allow writelocks without ORA-02014 error
             if ($this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
                 $query = $this->createQueryBuilder('w')
                     ->where('w.id IN (' . str_replace('SELECT a.* FROM', 'SELECT a.id FROM', $sql) . ')')
                     ->setParameters($query->getParameters(), $query->getParameterTypes());
 
                 if (method_exists(QueryBuilder::class, 'forUpdate')) {
-                    $query->forUpdate();
+                    $query->forUpdate(ConflictResolutionMode::SKIP_LOCKED);
                 }
 
                 $sql = $query->getSQL();
             } elseif (method_exists(QueryBuilder::class, 'forUpdate')) {
-                $query->forUpdate();
+                $query->forUpdate(ConflictResolutionMode::SKIP_LOCKED);
 
                 try {
                     $sql = $query->getSQL();
                 } catch (DBALException $e) {
+                    $query->forUpdate();
+
+                    try {
+                        $sql = $query->getSQL();
+                    } catch (DBALException $e) {
+                    }
                 }
             } elseif (preg_match('/FROM (.+) WHERE/', (string) $sql, $matches)) {
                 $fromClause = $matches[1];
@@ -121,7 +148,6 @@ final class ExtendedDoctrineConnection extends Connection
                 );
             }
 
-            // use SELECT ... FOR UPDATE to lock table
             if (!method_exists(QueryBuilder::class, 'forUpdate')) {
                 $sql .= ' ' . $this->driverConnection->getDatabasePlatform()->getWriteLockSQL();
             }
@@ -139,10 +165,8 @@ final class ExtendedDoctrineConnection extends Connection
 
                 return null;
             }
-            // Postgres can "group" notifications having the same channel and payload
-            // We need to be sure to empty the queue before blocking again
-            $this->queueEmptiedAt = null;
 
+            $this->queueEmptiedAt = null;
             $doctrineEnvelope = $this->decodeEnvelopeHeaders($doctrineEnvelope);
 
             $queryBuilder = $this->driverConnection->createQueryBuilder()
@@ -186,7 +210,7 @@ final class ExtendedDoctrineConnection extends Connection
                 'queue_name'         => '?',
                 'created_at'         => '?',
                 'available_at'       => '?',
-                'available_at_micro' => '?'
+                'available_at_micro' => '?',
             ]);
 
         return $this->executeInsert($queryBuilder->getSQL(), [
@@ -195,14 +219,14 @@ final class ExtendedDoctrineConnection extends Connection
             $this->configuration['queue_name'],
             $now,
             $availableAt,
-            $availableAtMicro
+            $availableAtMicro,
         ], [
             Types::STRING,
             Types::STRING,
             Types::STRING,
             Types::DATETIME_IMMUTABLE,
             Types::DATETIME_IMMUTABLE,
-            Types::BIGINT
+            Types::BIGINT,
         ]);
     }
 
@@ -233,13 +257,13 @@ final class ExtendedDoctrineConnection extends Connection
 
         $alias .= '.';
 
-        if (!$this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
+        if (!$this->driverConnection->getDatabasePlatform() instanceof FirebirdPlatform
+            && !$this->driverConnection->getDatabasePlatform() instanceof OraclePlatform
+        ) {
             return $queryBuilder->select($alias . '*');
         }
 
-        // Oracle databases use UPPER CASE on tables and column identifiers.
-        // Column alias is added to force the result to be lowercase even when the actual field is all caps.
-
+        // Oracle/Firebird use UPPER CASE identifiers — aliases force lowercase results
         return $queryBuilder->select(str_replace(
             ', ',
             ', ' . $alias,
@@ -268,8 +292,6 @@ final class ExtendedDoctrineConnection extends Connection
 
     private function executeInsert(string $sql, array $parameters = [], array $types = []): string
     {
-        // Use PostgreSQL RETURNING clause instead of lastInsertId() to get the
-        // inserted id in one operation instead of two.
         if ($this->driverConnection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
             $sql .= ' RETURNING id';
         }
@@ -279,12 +301,18 @@ final class ExtendedDoctrineConnection extends Connection
 
         try {
             if ($this->driverConnection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
-                $first = $this->driverConnection->fetchFirstColumn($sql, $parameters, $types);
-
-                $id = $first[0] ?? null;
-
-                if (!$id) {
+                if (!$id = $this->driverConnection->fetchFirstColumn($sql, $parameters, $types)[0] ?? null) {
                     throw new TransportException('no id was returned by PostgreSQL from RETURNING clause.');
+                }
+
+                $this->driverConnection->executeStatement('SELECT pg_notify(?, ?)', [$this->configuration['table_name'], $this->configuration['queue_name']]);
+            } elseif ($this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
+                $sequenceName = $this->configuration['table_name'] . self::ORACLE_SEQUENCES_SUFFIX;
+
+                $this->driverConnection->executeStatement($sql, $parameters, $types);
+
+                if (!$id = (int) $this->driverConnection->fetchOne('SELECT ' . $sequenceName . '.CURRVAL FROM DUAL')) {
+                    throw new TransportException('no id was returned by Oracle from sequence: ' . $sequenceName);
                 }
             } else {
                 $this->driverConnection->executeStatement($sql, $parameters, $types);
@@ -298,7 +326,6 @@ final class ExtendedDoctrineConnection extends Connection
         } catch (\Throwable $e) {
             $this->driverConnection->rollBack();
 
-            // handle setup after transaction is no longer open
             if ($this->autoSetup && $e instanceof TableNotFoundException) {
                 $this->setup();
                 goto insert;
@@ -310,49 +337,99 @@ final class ExtendedDoctrineConnection extends Connection
         return $id;
     }
 
-    private function createSchemaManager(): AbstractSchemaManager
-    {
-        return method_exists($this->driverConnection, 'createSchemaManager')
-            ? $this->driverConnection->createSchemaManager()
-            : $this->driverConnection->getSchemaManager();
-    }
-
     private function getSchema(): Schema
     {
-        $schema = new Schema([], [], $this->createSchemaManager()->createSchemaConfig());
-        $this->addTableToSchema($schema);
+        return $this->addTableToSchema(new Schema([], [], $this->createSchemaManager()->createSchemaConfig()));
+    }
+
+    private function addTableToSchema(Schema $schema): Schema
+    {
+        $oracleSequenceName = null;
+        $idOptions = ['autoincrement' => true, 'notnull' => true];
+
+        if ($this->driverConnection->getDatabasePlatform() instanceof OraclePlatform) {
+            $serverVersion = $this->driverConnection->executeQuery("SELECT version FROM product_component_version WHERE product LIKE 'Oracle Database%'")->fetchOne();
+            if (version_compare($serverVersion, '12.1.0', '>=')) {
+                $oracleSequenceName = $this->configuration['table_name'] . self::ORACLE_SEQUENCES_SUFFIX;
+                $idOptions = ['autoincrement' => false, 'notnull' => true, 'default' => $oracleSequenceName . '.nextval'];
+            }
+        }
+
+        if (method_exists($schema, 'edit')) {
+            $editor = $schema->edit()->addTable($this->buildSchemaTable($oracleSequenceName));
+            if (null !== $oracleSequenceName) {
+                $editor->addSequence(new Sequence($oracleSequenceName));
+            }
+
+            return $editor->create();
+        }
+
+        $this->configureSchemaTable($schema->createTable($this->configuration['table_name']), $idOptions);
+
+        if (null !== $oracleSequenceName) {
+            $schema->createSequence($oracleSequenceName);
+        }
 
         return $schema;
     }
 
-    private function addTableToSchema(Schema $schema): void
+    private function buildSchemaTable(?string $oracleSequenceName): Table
     {
-        $table = $schema->createTable($this->configuration['table_name']);
-        // add an internal option to mark that we created this & the non-namespaced table name
+        $idEditor = Column::editor()->setUnquotedName('id')->setTypeName(Types::BIGINT)->setNotNull(true);
+
+        if (null !== $oracleSequenceName) {
+            $idEditor->setAutoincrement(false)->setDefaultValue($oracleSequenceName . '.nextval');
+        } else {
+            $idEditor->setAutoincrement(true);
+        }
+
+        return Table::editor()
+            ->setUnquotedName($this->configuration['table_name'])
+            ->setOptions([self::TABLE_OPTION_NAME => $this->configuration['table_name']])
+            ->addColumn($idEditor->create())
+            ->addColumn(Column::editor()->setUnquotedName('body')->setTypeName(Types::TEXT)->setNotNull(true)->create())
+            ->addColumn(Column::editor()->setUnquotedName('headers')->setTypeName(Types::TEXT)->setNotNull(true)->create())
+            ->addColumn(Column::editor()->setUnquotedName('queue_name')->setTypeName(Types::STRING)->setLength(190)->setNotNull(true)->create())
+            ->addColumn(Column::editor()->setUnquotedName('created_at')->setTypeName(Types::DATETIME_IMMUTABLE)->setNotNull(true)->create())
+            ->addColumn(Column::editor()->setUnquotedName('available_at')->setTypeName(Types::DATETIME_IMMUTABLE)->setNotNull(true)->create())
+            ->addColumn(Column::editor()->setUnquotedName('delivered_at')->setTypeName(Types::DATETIME_IMMUTABLE)->setNotNull(false)->create())
+            ->addColumn(Column::editor()->setUnquotedName('available_at_micro')->setTypeName(Types::BIGINT)->setNotNull(true)->create())
+            ->addPrimaryKeyConstraint(new PrimaryKeyConstraint(null, [new UnqualifiedName(Identifier::unquoted('id'))], true))
+            ->addIndex(Index::editor()->setUnquotedColumnNames('queue_name', 'available_at', 'delivered_at', 'id'))
+            ->addIndex(Index::editor()->setUnquotedColumnNames('available_at_micro'))
+            ->create();
+    }
+
+    /**
+     * To be removed when doctrine/dbal minimum is bumped to ^4.5.
+     *
+     * @param array<string, mixed> $idOptions
+     */
+    private function configureSchemaTable(Table $table, array $idOptions): void
+    {
         $table->addOption(self::TABLE_OPTION_NAME, $this->configuration['table_name']);
-        $table->addColumn('id', Types::BIGINT)
-            ->setAutoincrement(true)
-            ->setNotnull(true);
-        $table->addColumn('body', Types::TEXT)
-            ->setNotnull(true);
-        $table->addColumn('headers', Types::TEXT)
-            ->setNotnull(true);
-        $table->addColumn('queue_name', Types::STRING)
-            ->setLength(190) // MySQL 5.6 only supports 191 characters on an indexed column in utf8mb4 mode
-            ->setNotnull(true);
-        $table->addColumn('created_at', Types::DATETIME_IMMUTABLE)
-            ->setNotnull(true);
-        $table->addColumn('available_at', Types::DATETIME_IMMUTABLE)
-            ->setNotnull(true);
-        $table->addColumn('delivered_at', Types::DATETIME_IMMUTABLE)
-            ->setNotnull(false);
-        $table->addColumn('available_at_micro', Types::BIGINT)
-            ->setNotnull(true);
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['queue_name']);
-        $table->addIndex(['available_at']);
-        $table->addIndex(['delivered_at']);
+        $table->addColumn('id', Types::BIGINT, $idOptions);
+        $table->addColumn('body', Types::TEXT, ['notnull' => true]);
+        $table->addColumn('headers', Types::TEXT, ['notnull' => true]);
+        $table->addColumn('queue_name', Types::STRING, ['length' => 190, 'notnull' => true]);
+        $table->addColumn('created_at', Types::DATETIME_IMMUTABLE, ['notnull' => true]);
+        $table->addColumn('available_at', Types::DATETIME_IMMUTABLE, ['notnull' => true]);
+        $table->addColumn('delivered_at', Types::DATETIME_IMMUTABLE, ['notnull' => false]);
+        $table->addColumn('available_at_micro', Types::BIGINT, ['notnull' => true]);
+        if (class_exists(PrimaryKeyConstraint::class)) {
+            $table->addPrimaryKeyConstraint(new PrimaryKeyConstraint(null, [new UnqualifiedName(Identifier::unquoted('id'))], true));
+        } else {
+            $table->setPrimaryKey(['id']);
+        }
+        $table->addIndex(['queue_name', 'available_at', 'delivered_at', 'id']);
         $table->addIndex(['available_at_micro']);
+    }
+
+    private function decodeEnvelopeHeaders(array $doctrineEnvelope): array
+    {
+        $doctrineEnvelope['headers'] = json_decode($doctrineEnvelope['headers'], true);
+
+        return $doctrineEnvelope;
     }
 
     private function updateSchema(): void
@@ -403,15 +480,19 @@ final class ExtendedDoctrineConnection extends Connection
         }
     }
 
-    private function decodeEnvelopeHeaders(array $doctrineEnvelope): array
+    private function createSchemaManager(): AbstractSchemaManager
     {
-        $doctrineEnvelope['headers'] = json_decode($doctrineEnvelope['headers'], true);
-
-        return $doctrineEnvelope;
+        return method_exists($this->driverConnection, 'createSchemaManager')
+            ? $this->driverConnection->createSchemaManager()
+            : $this->driverConnection->getSchemaManager();
     }
 
     private function createComparator(AbstractSchemaManager $schemaManager): Comparator
     {
+        if (class_exists(ComparatorConfig::class)) {
+            return $schemaManager->createComparator((new ComparatorConfig())->withReportModifiedIndexes(false));
+        }
+
         return method_exists($schemaManager, 'createComparator')
             ? $schemaManager->createComparator()
             : new Comparator();

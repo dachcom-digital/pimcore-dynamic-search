@@ -44,7 +44,8 @@
     },
     "require": {
         "symfony/form": "^6.2",
-        "pimcore/pimcore": "^11.0"
+        "pimcore/pimcore": "^11.0",
+        "symfony/doctrine-messenger": "^6.4.42"
     },
     "require-dev": {
         "codeception/codeception": "^5.0",
