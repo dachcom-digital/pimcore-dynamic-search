@@ -68,8 +68,8 @@ final class ExtendedDoctrineConnection extends Connection
                 $tableName = $tableName->getName();
             }
 
-            if (!\is_string($tableName)) {
-                throw new \TypeError(\sprintf('The table name must be an instance of "%s" or a string ("%s" given).', AbstractAsset::class, get_debug_type($tableName)));
+            if (!is_string($tableName)) {
+                throw new \TypeError(sprintf('The table name must be an instance of "%s" or a string ("%s" given).', AbstractAsset::class, get_debug_type($tableName)));
             }
 
             return $tableName === $this->configuration['table_name'];
@@ -142,8 +142,8 @@ final class ExtendedDoctrineConnection extends Connection
             } elseif (preg_match('/FROM (.+) WHERE/', (string) $sql, $matches)) {
                 $fromClause = $matches[1];
                 $sql = str_replace(
-                    \sprintf('FROM %s WHERE', $fromClause),
-                    \sprintf('FROM %s WHERE', $this->driverConnection->getDatabasePlatform()->appendLockHint($fromClause, LockMode::PESSIMISTIC_WRITE)),
+                    sprintf('FROM %s WHERE', $fromClause),
+                    sprintf('FROM %s WHERE', $this->driverConnection->getDatabasePlatform()->appendLockHint($fromClause, LockMode::PESSIMISTIC_WRITE)),
                     $sql
                 );
             }
@@ -199,7 +199,7 @@ final class ExtendedDoctrineConnection extends Connection
     public function send(string $body, array $headers, int $delay = 0): string
     {
         $now = new \DateTimeImmutable('UTC');
-        $availableAt = $now->modify(\sprintf('%+d seconds', $delay / 1000));
+        $availableAt = $now->modify(sprintf('%+d seconds', $delay / 1000));
         $availableAtMicro = ((int) $availableAt->format('U') * 1000000) + (int) $availableAt->format('u');
 
         $queryBuilder = $this->driverConnection->createQueryBuilder()
@@ -233,7 +233,7 @@ final class ExtendedDoctrineConnection extends Connection
     private function createAvailableMessagesQueryBuilder(): QueryBuilder
     {
         $now = new \DateTimeImmutable('UTC');
-        $redeliverLimit = $now->modify(\sprintf('-%d seconds', $this->configuration['redeliver_timeout']));
+        $redeliverLimit = $now->modify(sprintf('-%d seconds', $this->configuration['redeliver_timeout']));
 
         return $this->createQueryBuilder()
             ->where('m.queue_name = ?')

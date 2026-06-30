@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 4.0.10
+- [IMPROVEMENT] Add `symfony/doctrine-messenger:6.4.42` support, see [https://github.com/symfony/symfony/pull/64617](symfony/symfony:#64617)
+
 ## 4.0.9
 - [BUGFIX] fixed document deletion [see more](https://github.com/dachcom-digital/pimcore-dynamic-search/pull/108)
 - [IMPROVEMENT] allow `data_transformer` to accept `null` values and handle null resource field transformers
